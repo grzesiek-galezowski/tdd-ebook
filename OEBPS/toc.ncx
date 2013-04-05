@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN"
+ "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
+<head>
+   <meta content="urn:uuid:6d00fb77-2111-4dd8-bba0-36b822fd09b2" name="dtb:uid"/>
+   <meta content="0" name="dtb:depth"/>
+   <meta content="0" name="dtb:totalPageCount"/>
+   <meta content="0" name="dtb:maxPageNumber"/>
+</head>
+<docTitle>
+   <text>Unknown</text>
+</docTitle>
+<navMap>
+<navPoint id="navPoint-1" playOrder="1">
+  <navLabel>
+    <text>Start</text>
+  </navLabel>
+  <content src="Text/B_Test-First.xhtml"/>
+</navPoint>
+</navMap>
+</ncx>

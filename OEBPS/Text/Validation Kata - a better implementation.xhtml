@@ -1,0 +1,1981 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Validation Kata - a better implementation</title>
+</head>
+
+<body>
+  <p>Hi, last time, I tried to show you how to <a href="http://feelings-erased.blogspot.com/2012/09/a-kata-challenge-to-try-your-tdd-skills_25.html">screw up</a> the <a href="http://feelings-erased.blogspot.com/2012/09/a-kata-challenge-to-try-your-tdd-skills.html">kata I published some time ago</a>. This time, I'll try to examine the right (or "more right" :-)) way of doing it, using what the specifications told us the last time. The post turned out so long that I thought about splitting it, but hey, we're living in a "Push To Kindle" age, so here it is - the full thing as a single document. Enjoy!</p>
+
+  <p>I'll start again from scratch, thus I'll have to repeat some of the stuff from previous post to spare you the effort made on jumping back and forward between this post and the previous one. Don't worry, even the steps that are going to be the same as previously, are written differently, since I was not copy-pasting anything but wrote everything again.</p>
+
+  <p>This time, I'll divide each TDD cycle into four stages:</p>
+
+  <ol>
+    <li><strong>Create a specification</strong> - we create a specification in a Given-When-Then form and translate it into code. At this point, it will probably not compile, often it won't be complete (e.g. will be missing some variable declarations)</li>
+
+    <li><strong>Make it fail for proper reason</strong> - at this point, we make our specification compile by supplying all the necessary types, variables etc. Also, just failing is not enough for us - we want the spec to fail either on assertion or mock verification. In other words - the spec must be failing because the expected end result is not supplied by the production code</li>
+
+    <li><strong>Make it pass</strong> - at this point, we implement the behavior (of course, the simplest thing that will make the current spec pass and not break any other spec)</li>
+
+    <li><strong>Examine TODO list</strong> - when finished, we need to determine our next step. Since TDD is broken down into short cycles, each of them having its own goal, we have to constantly evaluate our list of goals - the TODO list, adding items, removing items and choosing next item to implement.</li>
+  </ol>
+
+  <p>For educational purposes, I'll not be doing refactoring - a short explanation why is at the end of this post.</p>
+
+  <h3>Let's begin!</h3>
+
+  <p>First, we'll need to start with something. Thus, we'll add the following two items to the TODO list:</p>
+
+  <ol>
+    <li><strong>Create entry point to the module (top-level abstraction)</strong></li>
+
+    <li><strong>Describe main work-flow of the module</strong></li>
+  </ol>
+
+  <p>By the way, new items on TODO list will always be in bold.</p>
+
+  <p>Let's take on the first item, since it's a prerequisite for everything else.</p>
+
+  <h3>Specification 1: Creating new instances of MessageProcessing class</h3>
+
+  <p>What we need first is our top-level abstraction. Since our task is to create a message processing module, I'll name the top-level abstraction: MessageProcessing.</p>
+
+  <div style="padding: 1em; border: dashed thin gray;">
+    By the way, I could name it MessageProcessor, but personally, I don't like such names. In my opinion, names of classes and interfaces should represent domain concepts and our domain does not tell anything about processor, validator, etc, but processing and validation, so these are the names I'm gonna use.
+  </div>
+
+  <h4>Create a specification</h4>
+
+  <p>We have to create a need for this class to exist, and we can do this by making the following <a href="http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html">creational specification</a>:</p>
+  <pre>
+Given nothing
+When I create a new instance of MessageProcessing class
+Then it should not result in any kind of exception
+</pre>
+
+  <p>Which, translated into code, looks like this:</p>
+  <pre class="brush: csharp">
+[Fact]
+public void ShouldAllowCreatingNewInstances()
+{
+  //GIVEN
+
+  //WHEN
+  Action whenCreatingANewInstanceOfMessageProcessingClass
+    = () =&gt; new MessageProcessing();
+  
+  //THEN
+  Assert.DoesNotThrow(whenCreatingANewInstanceOfMessageProcessingClass);
+}
+</pre>
+
+  <p>With this spec, we created a need to have a public MessageProcessing class with a parameterless constructor. Not much, but not bad either for so few lines of code.</p>
+
+  <div style="padding: 1em; border: dashed thin gray;">
+    Note that in this spec, I created a named action variable and then passed it into the Assert.DoesNotThrow() method. This is not how it's usually used - most of the time, the lambda is passed inline into the method. I did it differently to make the Given-When-Then structure of this spec explicit.
+  </div>
+
+  <h4>Make it fail for proper reason</h4>
+
+  <p>First, we have to make it compile. This can be achieved simply by creating a MessageProcessing class. Also, to make sure it can fail, we create a parameterless constructor with an exception inside:</p>
+  <pre class="brush: csharp">
+public class MessageProcessing
+{
+  public MessageProcessing()
+  {
+    throw new Exception();
+  }
+}
+</pre>
+
+  <div style="padding: 1em; border: dashed thin gray;">
+    Creating this constructor is not necessary in such simple case (without it, the spec would already pass), but I do it here anyway just to show you that we can almost mechanically transition between the four stages explained at the beginning of this article.
+  </div>
+
+  <p>Now the spec fails for the correct reason - we expect the constructor not to throw, but it does.</p>
+
+  <h4>Make it pass</h4>
+
+  <p>In order to make this spec pass, we just remove the parameterless constructor. It was there only to ensure us that the spec can fail for the proper reason and now there's no need for it. And here's the code:</p>
+  <pre class="brush: csharp">
+public class MessageProcessing
+{
+}
+</pre>
+
+  <h4>Examine TODO list</h4>
+
+  <p>After creating our top-level abstraction, our TODO list looks like this:</p>
+
+  <ol>
+    <li><strike>Create entry point to the module (top-level abstraction)</strike></li>
+
+    <li>Implement main work-flow of the module</li>
+  </ol>
+
+  <p>We have one item left on the TODO list - implement the main work-flow. Let's get right to it!</p>
+
+  <h3>Specification 2: Performing validation on a frame</h3>
+
+  <p>The second step is to sketch main work-flow of the module. As the only responsibility of the module we're creating is to validate a frame, we decide this main work-flow to be receiving the fame and submitting it to validation.</p>
+
+  <div style="padding: 1em; border: dashed thin gray;">
+    The actual validation logic (e.g. when a frame is valid, what to do if it isn't etc.) is a separate responsibility, so we'll try postponing its implementation by pushing this responsibility to a collaborator. This collaborator, for the purpose of this spec, will appear only as a fake object without real implementation.
+  </div>
+
+  <h4>Create a specification</h4>
+
+  <p>Our very first spec, written using a Given-When-Then notation, will look like this</p>
+  <pre>
+Given any frame
+When a message processing is performed for it
+Then the frame should be validated according to supplied rules
+</pre>
+
+  <p>Now let's try translating it literally into the code.</p>
+  <pre>Given any frame</pre>
+
+  <p>can be translated into:</p>
+  <pre class="brush: csharp">
+var anyFrame = Any.InstanceOf&lt;Frame&gt;();
+</pre>
+  <pre>When a message processing is performed for it</pre>
+
+  <p>will look like this:</p>
+  <pre class="brush: csharp">
+var messageProcessing = new MessageProcessing();
+messageProcessing.PerformFor(anyFrame);
+</pre>
+
+  <p>and the last line:</p>
+  <pre>
+Then the frame should be validated according to supplied rules
+</pre>
+
+  <p>may be translated like this:</p>
+  <pre class="brush: csharp">
+validationRules.Received().ApplyTo(frame);
+</pre>
+
+  <p>So the whole spec, again:</p>
+  <pre class="brush: csharp">
+[Fact]
+public void 
+ShouldValidateMessageCreatedFromFrameWithValidationRules()
+{
+  //GIVEN
+  var anyFrame = Any.InstanceOf&lt;Frame&gt;();
+
+  //WHEN
+  var messageProcessing = new MessageProcessing();
+  messageProcessing.PerformFor(anyFrame);
+
+  //THEN
+  validationRules.Received().ApplyTo(frame);
+}
+</pre>
+
+  <p>Of course, it does not compile yet, since, for instance, we have not declared any variable called validationRules. It's enough, however, to sketch the behavior and discuss the design.</p>
+
+  <p>If you remember <a href="http://feelings-erased.blogspot.com/2012/09/a-kata-challenge-to-try-your-tdd-skills_25.html">last time we did this exercise</a>, the specs told us that the approach with passing whole frame to validation led us to trouble. So let's stop for a minute to examine how we can improve the design. The Frame class is poorly encapsulated and we cannot change it to improve the encapsulation. What we can do, however, is to hide this ugly class from the rest of the application by wrapping it with our own object as soon as it enters the area under our control. Then we will be able to add domain logic into that class in order to hide its structure from general purpose logic (like validation).</p>
+
+  <p>Knowing all this, let's rewrite the last line of spec to include our observations:</p>
+  <pre class="brush: csharp">
+//GIVEN
+var anyFrame = Any.InstanceOf&lt;Frame&gt;();
+
+//WHEN
+var messageProcessing = new MessageProcessing();
+messageProcessing.PerformFor(anyFrame);
+
+//THEN
+message.Received().ValidateWith(validationRules);
+</pre>
+
+  <p>What's this message in the last line? It's our own wrapper around the frame. We don't have any variable by this name, nor do we have any variable named validationRules. At this point, it's not important - we're merely sketching out the idea and discovering what we need to implement this behavior. In the next stage, we'll figure out where to get all these variables and types from.</p>
+
+  <p>By the way, so far we have created a need to have a PerformFor() method inside MessageProcessing class, and two abstractions: message and validationRules</p>
+
+  <div style="padding: 1em; border: dashed thin gray;">
+    Note that message and validation rules take different parts in this specification: the message plays <strong>active</strong> part, since we expect some methods to be called on it. On the other hand, the validationRules is just passed around and never communicated with - its role is <strong>passive</strong>. This information will prove valuable when we get to creating these variables in the specification - stay tuned!
+  </div>
+
+  <h4>Make it fail for proper reason</h4>
+
+  <p>Now, the time has come! to supply what's missing and fill the void! Mwahahahaha!</p>
+
+  <p>... sorry, I got a little carried away.</p>
+
+  <p>Anyway, to make what we have written compile, we'll have to fill the blanks. We always do it in the following order:</p>
+
+  <ol>
+    <li>First, we add all missing variable instantiations</li>
+
+    <li>Then, we add all the missing interfaces and classes</li>
+
+    <li>Finally, we add to those types and interfaces all missing methods</li>
+  </ol>
+
+  <p>1. Add all missing variable instantiations</p>
+
+  <p>Let's see... We're missing instantiations of two variables. The first one is message. As I already wrote, message plays <strong>active</strong> role, so It's gonna be a mock:</p>
+  <pre class="brush: csharp">
+var message = Substitute.For&lt;Message&gt;();
+</pre>
+
+  <p>Then, there's validationRules. It plays a <strong>passive</strong> role, so It's going to be just any instance of interface ValidationRules:</p>
+  <pre class="brush: csharp">
+var validationRules = Any.InstanceOf&lt;ValidationRules&gt;();
+</pre>
+
+  <div style="padding: 1em; border: dashed thin gray;">
+    By the way, there are different ways of implementing "any instance of X" - it can even return a mock. In such case, what's the point for using this mechanism and not just create another mock? Well, remember that these specs will become our living documentation on a micro level, so it's always better to state explicitly which classes' behaviors we care about and which we don't.
+  </div>
+
+  <p>Another thing we need to consider here is how the MessageProcessing is going to wrap our frame with the exact instance of Message class that we just created in our spec. We cannot pass the message to the MessageProcessing constructor (because we don't know the frame yet at this point and we want to wrap each frame with its own message) nor can we pass it through the PerformFor method (because this is the entry point for third-party and if they could pass a wrapped frame to us, we wouldn't need to know about the frame at all).</p>
+
+  <p>So, again, how do we make MessageProcessing use our instance of message? The response is a factory! We have to create one, then pass it to MessageProcessing and make it return the message we created in our spec when it's asked to wrap the frame we're feeding to MessageProcessing (by the way, as you see, the factory plays an <strong>active</strong> role in our spec). Putting it all together, it looks like this:</p>
+  <pre class="brush: csharp">
+[Fact]
+public void 
+ShouldValidateTheFrameWrappedInMessageUsingValidationRules()
+{
+  //GIVEN
+  var anyFrame = Any.InstanceOf&lt;Frame&gt;();
+  var message = Substitute.For&lt;Message&gt;();
+  var validationRules = Any.InstanceOf&lt;ValidationRules&gt;();
+  var factory = Substitute.For&lt;MessageFactory&gt;();
+
+  factory.Wrap(anyFrame).Returns(message);
+
+  //WHEN
+  var messageProcessing 
+    = new MessageProcessing(factory, validationRules);
+  messageProcessing.PerformFor(anyFrame);
+
+  //THEN
+  message.Received().ValidateWith(validationRules);
+}
+</pre>
+
+  <p>And it's a complete spec, at least from syntactical point of view. The design it points to is also very good, which we'll find out going further.</p>
+
+  <p>2. Add all the missing interfaces and classes</p>
+
+  <p>So, we added all missing variable instantiations, now we can provide the missing types (by the way, note that we discovered some new types when adding missing variable instantiations and now we can provide these as well - that's why the steps are performed in this order).</p>
+
+  <p>The following types are missing:</p>
+
+  <ul>
+    <li>Message interface</li>
+
+    <li>ValidationRules interface</li>
+
+    <li>MessageFactory interface</li>
+  </ul>
+
+  <p>Providing them is a piece of cake:</p>
+  <pre class="brush: csharp">
+public interface Message
+{
+
+}
+
+public interface ValidationRules
+{
+
+}
+
+public interface MessageFactory
+{
+
+}
+</pre>
+
+  <p>3. Add all methods that do not exist but are used in the specification</p>
+
+  <p>Ok, done with second step, now the final one: satisfying the needs for methods. The spec shows us that the following methods are mising:</p>
+
+  <ul>
+    <li>Messagefactory: Message Wrap(Frame frame)</li>
+
+    <li>MessageProcessing: void PerformFor(Frame frame)</li>
+
+    <li>MessageProcessing (constructor): MessageProcessing(MessageFactory factory, ValidationRules validationRules)</li>
+
+    <li>Message: void ValidateWith(ValidationRules rules)</li>
+  </ul>
+
+  <p>Let's provide them:</p>
+  <pre class="brush: csharp">
+public class MessageProcessing
+{
+  public MessageProcessing(
+    MessafeFactory factory, 
+    ValidationRules validationRules)
+  {
+    throw new NotImplementedException();
+  }
+
+  void PerformFor(Frame frame)
+  {
+    throw new NotImplementedException();
+  }
+}
+
+public interface Message //TODO implement
+{
+  void ValidateWith(ValidationRules rules);
+}
+
+public interface ValidationRules //TODO implement
+{
+
+}
+
+public interface MessageFactory //TODO implement
+{
+  Message Wrap(Frame frame);
+}
+</pre>
+
+  <p>I put a TODO next to each interface that does not have an implementation - that's because we'll be adding them to our TODO list in a moment. For now, I just want to signalize it.</p>
+
+  <p>Also, we changed the constructor, meaning we have to update the creational specification for the MessageProcessing class, because it does not have a parameterless constructor anymore. We can deal with it in two steps: first correct the specification like this:</p>
+  <pre class="brush: csharp">
+[Fact]
+public void ShouldAllowCreatingNewInstances()
+{
+  //GIVEN
+
+  //WHEN
+  Action whenCreatingANewInstanceOfMessageProcessingClass
+    = () =&gt; new MessageProcessing(
+      Any.InstanceOf&lt;MessageFactory&gt;,
+      Any.InstanceOf&lt;ValidationRules&gt;);
+  
+  //THEN
+  Assert.DoesNotThrow(whenCreatingANewInstanceOfMessageProcessingClass);
+}
+</pre>
+
+  <p>and then remove the NotImplementedException from the constructor of MessageProcessing class:</p>
+  <pre class="brush: csharp">
+  public MessageProcessing(
+    MessafeFactory factory, 
+    ValidationRules validationRules)
+  {
+    //removed throwing
+  }
+</pre>
+
+  <p>We're now finished with all the three steps of filling in the blanks: we added necessary variables instantiations, added definitions for missing types and provided all missing methods in those types. The spec now compiles and fails. Does this mean we're done with this stage? No, not yet! If you see at where the failure is, it points towards the PerformFor method of message processing that throws a NotImplementedException - this is not failing for proper reason, since the proper reason to fail is that everything went as planned except the expected call to ValidateWith method was not made on the message object.</p>
+
+  <p>After removing the exception like this:</p>
+  <pre class="brush: csharp">
+  void PerformFor(Frame frame)
+  {
+    //removed throwing exception
+  }
+</pre>
+
+  <p>we get the result we were expecting: the specification expects a call to ValidateWith method at least once, but none was made.</p>
+
+  <p>Before we provide an implementation that will satisfy this need, let's see at what we currently have:</p>
+  <pre class="brush: csharp">
+public class MessageProcessing
+{
+  public MessageProcessing(
+    MessafeFactory factory, 
+    ValidationRules validationRules)
+  {
+  }
+
+  void PerformFor(Frame frame)
+  {
+  }
+}
+
+public interface Message //TODO implement
+{
+  void ValidateWith(ValidationRules rules);
+}
+
+public interface ValidationRules //TODO implement
+{
+
+}
+
+public interface MessageFactory //TODO implement
+{
+  Message Wrap(Frame frame);
+}
+</pre>
+
+  <h4>Making it pass</h4>
+
+  <p>We're going to fill in the implementation of MessageProcessing class. I like starting workflow implementations from the end, i.e. from the expectation. In the spec, we're expecting a call to ValidateWith(validationRules) to be made against message object, so let's write that into the method:</p>
+  <pre class="brush: csharp">
+void PerformFor(Frame frame)
+{
+  message.ValidateWith(validationRules);
+}
+</pre>
+
+  <p>Now, where do we get message from? From the factory, so let's add a previous line:</p>
+  <pre class="brush: csharp">
+void PerformFor(Frame frame)
+{
+  var message = factory.Wrap(frame);
+  message.ValidateWith(validationRules);
+}
+</pre>
+
+  <p>Where do we get the frame from? It's passed into the method. Done. Where do we get the validationRules and factory from? They're constructor arguments, so we'll have to store them as fields when an instance of MessageProcessing is created:</p>
+  <pre class="brush: csharp">
+public MessageProcessing(
+  MessafeFactory factory, 
+  ValidationRules validationRules)
+{
+  this.validationRules = validationRules;
+  this.factory = factory;
+}
+</pre>
+
+  <p>Done! The whole implementation of the MessageProcessing class looks like this:</p>
+  <pre class="brush: csharp">
+public class MessageProcessing
+{
+  readonly MessageFactory factory;
+  readonly ValidationRules validationRules;
+
+  public MessageProcessing(
+    MessafeFactory factory, 
+    ValidationRules validationRules)
+  {
+    this.validationRules = validationRules;
+    this.factory = factory;
+  }
+
+  void PerformFor(Frame frame)
+  {
+    var message = factory.Wrap(frame);
+    message.ValidateWith(validationRules);
+  }
+}
+</pre>
+
+  <p>And the specification passes. Now we can proceed to the next stage:</p>
+
+  <h4>Examine TODO list</h4>
+
+  <p>Remember we left some TODOs in the code next to each interface? Let's look at it again:</p>
+  <pre class="brush: csharp">
+public interface Message //TODO implement
+{
+  void ValidateWith(ValidationRules rules);
+}
+
+public interface ValidationRules //TODO implement
+{
+
+}
+
+public interface MessageFactory //TODO implement
+{
+  Message Wrap(Frame frame);
+}
+</pre>
+
+  <p>Now let's add them to the TODO list and cross off the implemented main work-flow:</p>
+
+  <ol>
+    <li><strike>Create entry point to the module (top-level abstraction)</strike></li>
+
+    <li><strike>Implement main workflow of the module</strike></li>
+
+    <li><strong>Implement Message interface</strong></li>
+
+    <li><strong>Implement MessageFactory interface</strong></li>
+
+    <li><strong>Implement ValidationRules interface</strong></li>
+  </ol>
+
+  <p>What shall we implement next? Obviouslt, there's no point in implementing ValidationRules, since it doesn't contain any methods yet, so we don't even know what behaviors we need to provide. On the other hand, we've got MessageFactory and Message - each having a single method. It makes more sense to start with the MessageFactory, since its functionality is actually about creating messages, so probably, when we finish with specifying and implementing the factory, we'll also have a class implementing the Message interface already.</p>
+
+  <h3>Specification 3: Creating new instances of MessageFactory class</h3>
+
+  <p>Before we can use the factory to create new messages, we need to have a concrete class implementing the MessageFactory interface (I'll name this class LocationMessageFactory). This is gonna be a simple creational specification. Let's go!</p>
+
+  <h4>Create a specification</h4>
+
+  <p>The Given-When-Then form of the spec is:</p>
+  <pre>
+Given nothing
+When I create a new instance of LocationMessageFactory class
+Then it should not result in any kind of exception
+And it should implement the MessageFactory interface
+</pre>
+
+  <p>As you see, this is almost the same as the specification 1. Except for the last line. Anyway, translating the spec into the code leads us to the following:</p>
+  <pre class="brush: csharp">
+[Fact]
+public void ShouldAllowCreatingNewInstances()
+{
+  //GIVEN
+
+  //WHEN
+  MessageFactory factory = null;
+
+  Action whenCreatingANewInstanceOfLocationMessageFactoryClass
+    = () =&gt; 
+    {
+      factory = new LocationMessageFactory();
+    };
+  
+  //THEN
+  Assert.DoesNotThrow(
+    whenCreatingANewInstanceOfLocationMessageFactoryClass
+  );
+}
+</pre>
+
+  <p>Note that we did not declare the factory variable using var keyword, but as a base type. This is also a part of specification - it says that LocationMessageFactory is a subtype of MessageFactory.</p>
+
+  <h4>Make it fail for proper reason</h4>
+
+  <p>This spec created a need to have a LocationMessageFactory class that implements MessageFactory interface and has a parameterless constructor. Let's provide it then!</p>
+  <pre class="brush: csharp">
+public class LocationMessageFactory : MessageFactory
+{
+  public LocationMessageFactory()
+  {
+    throw new Exception();
+  }
+
+  public Message Wrap(Frame frame)
+  {
+    throw new NotImplementedException();
+  }
+}
+</pre>
+
+  <p>Note two things: first, we put an exception into the constructor, so that the spec we created can fail on assertion (Assert.DoesNotThrow). The second thing to note - the interface signature forced us to provide an implementation for a method called Wrap - currently it throws NotImplementedException and is out of scope of the current specification. By the way, I treat all NotImplementedExceptions as TODO list items - we'll take care of it when we examine our TODO list in a minute. For now, the spec fails for proper reason, so let's get to the next stage.</p>
+
+  <h4>Make it pass</h4>
+
+  <p>We make this spec pass by removing the constructor we introduced earlier. Remember that we don't have to touch the Wrap method, since it's out of scope of current specification. The code looks like this:</p>
+  <pre class="brush: csharp">
+public class LocationMessageFactory : Messagefactory
+{
+  public Message Wrap(Frame frame)
+  {
+    throw new NotImplementedException();
+  }
+}
+</pre>
+
+  <h4>Examine TODO list</h4>
+
+  <p>We can cross off the item related to implementing MessageFactory class. Now we have all the initial items crossed off, but another one popped out in the meantime - the NotImplementedException inside the Wrap method - it clearly points that we need to provide a behavior over there.</p>
+
+  <p>Our current TODO list:</p>
+
+  <ol>
+    <li><strike>Create entry point to the module (top-level abstraction)</strike></li>
+
+    <li><strike>Implement main work-flow of the module</strike></li>
+
+    <li>Implement Message interface</li>
+
+    <li><strike>Implement MessageFactory interface</strike></li>
+
+    <li>Implement ValidationRules interface</li>
+
+    <li><strong>Implement behavior required from Wrap method in LocationMessageFactory class</strong></li>
+  </ol>
+
+  <p>The newly added item on the TODO list is our next target.</p>
+
+  <h3>Specification 4: wrapping frames with messages</h3>
+
+  <p>Let's implement the Wrap method in LocationMessageFactory so that it actually creates something useful for us.</p>
+
+  <h4>Create a specification</h4>
+
+  <p>A Given-When-Then form of the spec looks like this:</p>
+  <pre>
+Given a factory
+And any frame
+When I ask the factory to wrap the frame
+Then it should create a LocationMessage object from the frame
+</pre>
+
+  <p>Which translates into the following code:</p>
+  <pre class="brush: csharp">
+[Fact]
+public void ShouldWrapFramesWithLocationMessageObjects()
+{
+  //GIVEN
+  var factory = new LocationMessageFactory();
+  var anyFrame = Any.InstanceOf&lt;Frame&gt;();
+
+  //WHEN
+  var result = factory.Wrap(anyFrame);
+  
+  //THEN
+  Assert.IsType&lt;LocationMessage&gt;(result);
+}
+</pre>
+
+  <p>There's one thing that might seem wierd about this spec - we specify nowhere that the message is wrapping the particular frame we pass to it - it can just create another one or just wrap nothing. Is it wrong? I think not - the creational specs are always awkward and you can almost never specify entirely from which objects another object is created. We will just have to trust the production code that it wraps the frame (by the way, there are some cases where object construction rules are so complex that we DO want to specify them in detail, but this is not such a case).</p>
+
+  <h4>Make it fail for proper reason</h4>
+
+  <p>The spec creates a need for a new type - a LocationMessage. An instance of this type needs to be created by the factory in order to fulfill this spec. That's why we won't have to write a separate creational specification for creating LocationMessage objects - we're specifying everything we need in the factory specification already.</p>
+
+  <p>Anyway, the first thing to do is to satisfy the newly introduced need and create a LocationMessage. It needs to implement the Message interface, otherwise the code won't compile. Here's the implementation of the LocationMessage class:</p>
+  <pre class="brush: csharp">
+public class LocationMessage : Message
+{
+  public LocationMessage(Frame frame)
+  {
+    //We'll need this anyway, so I'm adding it now.
+  }
+
+  void ValidateWith(ValidationRules rules)
+  {
+    throw new NotImplementedException();
+  }
+}
+</pre>
+
+  <p>I added a constructor, although it wasn't forced directly by the specification (such cases should be extremaly rare). Also, implementing the Message interface forced us to provide an implementation of the ValidateWith method. For now we don't care about it, since it's out of scope of the current specification, but we'll be adding it to our TODO list shortly.</p>
+
+  <p>Even though we needed the LocationMessage to make the compilation pass, we won't be using it in the factory implementation just yet. The specification expects an object of type LocationMessage to pass, so in order to fail for proper reason, we'll have to make the factory return something different. The quick choice for such cases is null:</p>
+  <pre class="brush: csharp">
+public class LocationMessageFactory : Messagefactory
+{
+  public Message Wrap(Frame frame)
+  {
+    return null;
+  }
+}
+</pre>
+
+  <p>Ok, the specification expects an instance of type LocationMessage, but gets a null instead - the spec fails on assertion, which is proper reason for it to fail and it means it's time to move on to the next stage.</p>
+
+  <h4>Make it fail for proper reason</h4>
+
+  <p>In order to do this, we'll just have to return an instance of LocationMessage type and use the constructor we have created:</p>
+  <pre class="brush: csharp">
+public class LocationMessageFactory : Messagefactory
+{
+  public Message Wrap(Frame frame)
+  {
+    return new LocationMessage(frame);
+  }
+}
+</pre>
+
+  <p>Finished! Now to check the TODO list!</p>
+
+  <h4>Examine TODO list</h4>
+
+  <p>We can cross off the item related to implementing Wrap method as well as implementing Message interface. Also, by implementing the Message interface with LocationMessage class, which, just to remind you, looks like this:</p>
+  <pre class="brush: csharp">
+public class LocationMessage : Message
+{
+  public LocationMessage(Frame frame)
+  {
+    //We don't need to use the frame just yet
+  }
+
+  void ValidateWith(ValidationRules rules)
+  {
+    throw new NotImplementedException();
+  }
+}
+</pre>
+
+  <p>we discovered that we need to supply implementation to the ValidateWith method, which currently throws a NotImplementedException. This item should be added to our list.</p>
+
+  <p>So, to sum up, the list looks like this:</p>
+
+  <ol>
+    <li><strike>Create entry point to the module (top-level abstraction)</strike></li>
+
+    <li><strike>Implement main work-flow of the module</strike></li>
+
+    <li><strike>Implement Message interface</strike></li>
+
+    <li><strike>Implement MessageFactory interface</strike></li>
+
+    <li>Implement ValidationRules interface</li>
+
+    <li><strike>Implement behavior required from Wrap method in LocationMessageFactory class</strike></li>
+
+    <li><strong>Implement behavior required from ValidateWith method in LocationMessage class</strong></li>
+  </ol>
+
+  <p>We already know that we have three fields in the class: Speed, Age and Sender, so we can add more details to the last item and split it into three:</p>
+
+  <ol>
+    <li><strike>Create entry point to the module (top-level abstraction)</strike></li>
+
+    <li><strike>Implement main workflow of the module</strike></li>
+
+    <li><strike>Implement Message interface</strike></li>
+
+    <li><strike>Implement MessageFactory interface</strike></li>
+
+    <li>Implement ValidationRules interface</li>
+
+    <li><strike>Implement behavior required from Wrap method in LocationMessageFactory class</strike></li>
+
+    <li><strong>Implement behavior required from ValidateWith method in LocationMessage class for Speed field</strong></li>
+
+    <li><strong>Implement behavior required from ValidateWith method in LocationMessage class for Age field</strong></li>
+
+    <li><strong>Implement behavior required from ValidateWith method in LocationMessage class for Sender field</strong></li>
+  </ol>
+
+  <p>Again, there's no sense in picking ValidationRules interface implementation, since it has no methods, so let's take the three last items, one by one.</p>
+
+  <h3>Specification 5: Submit Speed field to validation</h3>
+
+  <p>As I stated previously, the reason Message abstraction exists is to decouple validation rules from the frame structure. The choice of which validation rule to apply to which frame field should be made by implementations of the Message interface - i.e. LocationMessage. The first field that needs to be passed to a validation rule is Speed.</p>
+
+  <h4>Create a specification</h4>
+
+  <p>Again, let's use a Given-When-Then notation, to write down the following:</p>
+  <pre>
+Given any frame
+And a location message wrapping that frame
+And validation rules
+When I validate the message using the validation rules
+Then validation rule for integer values should be applied to the Speed field
+</pre>
+
+  <p>Translated into code, it looks like this:</p>
+  <pre class="brush: csharp">
+[Fact]
+public void ShouldPerformValidationForSpeedFieldWhenValidated()
+{
+  //GIVEN
+  var anyFrame = Any.InstanceOf&lt;Frame&gt;();
+  var message = new LocationMessage(anyFrame);
+  var validationRules = Substitute.For&lt;ValidationRules&gt;();
+  
+  //WHEN
+  message.ValidateWith(validationRules);
+
+  //THEN 
+  validationRules.Received().ApplyTo(anyFrame.Speed);
+}
+</pre>
+
+  <p>Note that this is actually the first time we're referencing a field of the Frame class! What's more, we expect it to be passed into the validation rules which don't know that the passed value belongs to the frame. Thus, we have managed to successfully encapsulate the frame structure inside the LocationMessage class and decouple it from validation rules.</p>
+
+  <h4>Make it fail for proper reason</h4>
+
+  <p>The specification created a need for one new method inside VlidationRules interface: ApplyTo with an int argument. To satisfy this need, let's provide the necessary signature inside the ValidationRules interface:</p>
+  <pre class="brush: csharp">
+public interface ValidationRules
+{
+  void ApplyTo(int intValue);
+}
+</pre>
+
+  <p>This is great news, because up to now, the ValidationRules interface was empty and we had no clue what to do with it. Now we do, but we'll leave it for later as currently the implementation of ApplyTo method is out of scope.</p>
+
+  <p>Another thing to do is to remove the NotImplementedException from the ValidateWith method inside the LocationMessage class. Done. Now it looks like this:</p>
+  <pre class="brush: csharp">
+public class LocationMessage : Message
+{
+  public LocationMessage(Frame frame)
+  {
+    //We don't need to use the frame just yet
+  }
+
+  void ValidateWith(ValidationRules rules)
+  {
+    
+  }
+}
+</pre>
+
+  <p>The spec fails because a call to ApplyTo method with specific int value was expected on the validationRules, but was not performed, which means that the spec fails for proper reason.</p>
+
+  <h4>Make it pass</h4>
+
+  <p>The implementation that makes our code fulfill the spec is really easy, so I'll just type it in:</p>
+  <pre class="brush: csharp">
+public class LocationMessage : Message
+{
+  private readonly Frame wrappedFrame;
+
+  public LocationMessage(Frame frame)
+  {
+    wrappedFrame = frame; //added
+  }
+
+  void ValidateWith(ValidationRules rules)
+  {
+    rules.ApplyTo(frame.Speed); //added  
+  }
+}
+</pre>
+
+  <p>And that's it.</p>
+
+  <h4>Examine TODO list</h4>
+
+  <p>We can cross off Speed field:</p>
+
+  <ol>
+    <li><strike>Create entry point to the module (top-level abstraction)</strike></li>
+
+    <li><strike>Implement main work-flow of the module</strike></li>
+
+    <li><strike>Implement Message interface</strike></li>
+
+    <li><strike>Implement MessageFactory interface</strike></li>
+
+    <li>Implement ValidationRules interface</li>
+
+    <li><strike>Implement behavior required from Wrap method in LocationMessageFactory class</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Speed field</strike></li>
+
+    <li>Implement behavior required from ValidateWith method in LocationMessage class for Age field</li>
+
+    <li>Implement behavior required from ValidateWith method in LocationMessage class for Sender field</li>
+  </ol>
+
+  <p>Looking at the TODO list, it should be very easy to implement the Age field validation, as it's an integer, just like Speed, which we just finished implementing. Let's take it on then!</p>
+
+  <h3>Specification 6: Submit Age field to validation</h3>
+
+  <h4>Create a specification</h4>
+
+  <p>The spec is going to be almost the same as previously, so all we need to do is copy the previous one and make a change or two. Hey, we're copy-pasting here! Let's use this as an opportunity to perform an experiment - we'll make an error by correcting only the name of the pasted specification, leaving the validated field name as Speed (not Age, which should be here instead) and watch whether we can get away with it:</p>
+  <pre class="brush: csharp">
+[Fact]
+public void ShouldPerformValidationForAgeFieldWhenValidated()
+{
+  //GIVEN
+  var anyFrame = Any.InstanceOf&lt;Frame&gt;();
+  var message = new LocationMessage(anyFrame);
+  var validationRules = Substitute.For&lt;ValidationRules&gt;();
+  
+  //WHEN
+  message.ValidateWith(validationRules);
+
+  //THEN 
+  //Oh, we forgot to change Speed to Age...
+  validationRules.Received().ApplyTo(anyFrame.Speed);
+}
+</pre>
+
+  <p>What happens? The spec passes right away - a warning sign!</p>
+
+  <div style="padding: 1em; border: dashed thin gray;">
+    Test-first has this advantage when compared to test-after, that we always validate the specification by letting it fail at first for proper reason. When a specification passes right away after being written, then it's a warning sign and we need to investigate what's going on.
+  </div>
+
+  <p>It feels really good to be protected somehow from copy-pasting errors :-). Let's quickly correct the spec:</p>
+  <pre class="brush: csharp">
+[Fact]
+public void ShouldPerformValidationForAgeFieldWhenValidated()
+{
+  //GIVEN
+  var anyFrame = Any.InstanceOf&lt;Frame&gt;();
+  var message = new LocationMessage(anyFrame);
+  var validationRules = Substitute.For&lt;ValidationRules&gt;();
+  
+  //WHEN
+  message.ValidateWith(validationRules);
+
+  //THEN 
+  //corrected:
+  validationRules.Received().ApplyTo(anyFrame.Age);
+}
+</pre>
+
+  <p>There, this should do it - the spec fails on mock verification which is what we were aiming at.</p>
+
+  <div style="padding: 1em; border: dashed thin gray;">
+    Some of you may notice that I'm not using Setup and Teardown kind of methods. This is on purpose - not only do Setup and Teardown make the tutorial hard to follow by splitting specifications into several methods, they also have other problems. So for me, a better (and yes - more maintainable!) way is even to copy-paste existing specification and make some adjustments that to use Setup and Teardown. Maybe someday I'll write a post on that. In the meantime you can look for some arguments from both sides of the fence in the internet, as such approach has its proponents and opponents.
+  </div>
+
+  <div style="padding: 1em; border: dashed thin gray;">
+    Another question that may be raised is: why don't I write one specifications for all the fields, but a separate spec for each of them? Actually, there's no big deal about that. The main reason is that in case I did one specification for all the fields, I would have to name it something like ShouldApplyValidationRulesToAllFields() - it would not tell me which rules apply to which field. I like to think of unit test tool report (which consists of unit test names) as a form of documentation and by separating the specifications for each field, I make this documentation more verbose.
+  </div>
+
+  <h4>Make it fail for proper reason</h4>
+
+  <p>The specification already fails for proper reason. We're expecting validation rules to be applied to field named Age, but there's no such logic inside the LocationMessage's ValidateWith method's implementation.</p>
+
+  <h4>Make it pass</h4>
+
+  <p>Just add one line of code and we're all set:</p>
+  <pre class="brush: csharp">
+public class LocationMessage : Message
+{
+  private readonly Frame wrappedFrame;
+
+  public LocationMessage(Frame frame)
+  {
+    wrappedFrame = frame;    
+  }
+
+  void ValidateWith(ValidationRules rules)
+  {
+    rules.ApplyTo(frame.Speed);
+    rules.ApplyTo(frame.Age); //added this line
+  }
+}
+</pre>
+
+  <p>Ok, it passes - now, wasn't that easy?</p>
+
+  <h4>Examine TODO list</h4>
+
+  <p>We can cross off another item from the TODO list - the one about Age field, leaving us with the following:</p>
+
+  <ol>
+    <li><strike>Create entry point to the module (top-level abstraction)</strike></li>
+
+    <li><strike>Implement main work-flow of the module</strike></li>
+
+    <li><strike>Implement Message interface</strike></li>
+
+    <li><strike>Implement MessageFactory interface</strike></li>
+
+    <li>Implement ValidationRules interface</li>
+
+    <li><strike>Implement behavior required from Wrap method in LocationMessageFactory class</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Speed field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Age field</strike></li>
+
+    <li>Implement behavior required from ValidateWith method in LocationMessage class for Sender field</li>
+  </ol>
+
+  <p>Only two choices left. Since we already began with the ValidateWith method, let's take on the last one from this series - the one related to Sender field.</p>
+
+  <h3>Specification 7: Submit Sender field to validation</h3>
+
+  <p>This case is going to be pretty much the same as with both previous fields, only this time we'll be handling a string instead of an integer.</p>
+
+  <h4>Create a specification</h4>
+
+  <p>In order to create a specification in a Given-When-Then notation, let's write down the following:</p>
+  <pre>
+Given any frame
+And a location message wrapping that frame
+And a validation
+When I validate the message using the validationRules
+Then validation rule for string values should be applied to the Sender field
+</pre>
+
+  <p>The spec is going to look pretty much the same as two previous ones:</p>
+  <pre class="brush: csharp">
+[Fact]
+public void ShouldPerformValidationForSenderFieldWhenValidated()
+{
+  //GIVEN
+  var anyFrame = Any.InstanceOf&lt;Frame&gt;();
+  var message = new LocationMessage(anyFrame);
+  var validationRules = Substitute.For&lt;ValidationRules&gt;();
+  
+  //WHEN
+  message.ValidateWith(validationRules);
+
+  //THEN 
+  validationRules.Received().ApplyTo(anyFrame.Sender);
+}
+</pre>
+
+  <h4>Make it fail for proper reason</h4>
+
+  <p>As I said, the only difference is that this time, Sender is a string value. Yet we still use the ApplyTo name for a method expected to be called, although its declaration looks like this:</p>
+  <pre class="brush: csharp">
+public interface ValidationRules
+{
+  void ApplyTo(int intValue);
+}
+</pre>
+
+  <p>Thus, the spec won't compile. It means that we created a need for an overload of the ApplyTo method, taking a string argument:</p>
+  <pre class="brush: csharp">
+public interface ValidationRules
+{
+  void ApplyTo(int intValue);
+  void ApplyTo(string stringValue); //added line
+}
+</pre>
+
+  <p>That makes our spec compile and fail for proper reason - we were expecting ApplyTo method to be called, but it wasn't.</p>
+
+  <h4>Make it pass</h4>
+
+  <p>The implementation of this spec is going to be as easy as the previous one. Just watch:</p>
+  <pre class="brush: csharp">
+public class LocationMessage : Message
+{
+  private readonly Frame wrappedFrame;
+
+  public LocationMessage(Frame frame)
+  {
+    wrappedFrame = frame;    
+  }
+
+  void ValidateWith(ValidationRules rules)
+  {
+    rules.ApplyTo(frame.Speed);
+    rules.ApplyTo(frame.Age);
+    rules.ApplyTo(frame.Sender); //added this line
+  }
+}
+</pre>
+
+  <p>Ok, that's it.</p>
+
+  <div style="padding: 1em; border: dashed thin gray;">
+    One may argue that using the same name for different validation methods does not provide enough readability, because when looking at the implementation of ValidateWith method, one can't really tell that two different validation rules are being applied - it looks like it's always one. This is a valid argument and one may consider giving the validation methods distinct names, such as ApplyToInt for integers and ApplyToString for strings. For this kata, I'll leave the overloads, since it doesn't really matter so much.
+  </div>
+
+  <h4>Examine TODO list</h4>
+
+  <p>Another item to cross off from our TODO list, this time for implementing the Sender field:</p>
+
+  <ol>
+    <li><strike>Create entry point to the module (top-level abstraction)</strike></li>
+
+    <li><strike>Implement main workflow of the module</strike></li>
+
+    <li><strike>Implement Message interface</strike></li>
+
+    <li><strike>Implement MessageFactory interface</strike></li>
+
+    <li>Implement ValidationRules interface</li>
+
+    <li><strike>Implement behavior required from Wrap method in LocationMessageFactory class</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Speed field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Age field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Sender field</strike></li>
+  </ol>
+
+  <p>which leaves us with only one item: implementation of the ValidationRules interface.</p>
+
+  <h3>Specification 8: Creating new instances of SimpleValidationRules class</h3>
+
+  <p>We decide that the implementation of the ValidationRules interface will be called SimpleValidationRules. We need to drive the existence of this class and the following Given-When-Then specification will help us with this task:</p>
+  <pre>
+Given nothing
+When I create a new instance of SimpleValidationRules class
+Then it should not result in any kind of exception
+</pre>
+
+  <p>Without further comments, let's take it to the code:</p>
+  <pre class="brush: csharp">
+[Fact]
+public void ShouldAllowCreatingNewInstances()
+{
+  //GIVEN
+
+  //WHEN
+  ValidationRules rules = null;
+
+  Action whenCreatingANewInstanceOfSimpleValidationRulesClass
+    = () =&gt; 
+    {
+      rules = new SimpleValidationRules();
+    };
+  
+  //THEN
+  Assert.DoesNotThrow(
+    whenCreatingANewInstanceOfSimpleValidationRulesClass
+  );
+}
+</pre>
+
+  <h4>Make it fail for proper reason</h4>
+
+  <p>We created a need to have a SimpleValidationRules class implementing ValidationRules interface. To satisfy this need, we'll have to create this class. Here we go:</p>
+  <pre class="brush: csharp">
+public class SimpleValidationRules : ValidationRules
+{
+  public void SimpleValidationRules()
+  {
+    throw new NotImplementedException();
+  }
+
+  public void ApplyTo(int intValue)
+  {
+    throw new NotImplementedException();
+  }
+
+  public void ApplyTo(string stringValue)
+  {
+    throw new NotImplementedException();
+  }
+}
+</pre>
+
+  <p>As you see, the interface signature forced us to implement ApplyTo method in two flavors. We do not need to concern ourselves with that yet, but we'll get back to it when evaluating TODO list.</p>
+
+  <p>For now, the spec fails on assertion, i.e. for a proper reason. It means that we can proceed with the next stage. By the way, I put an exception in the constructor again just to make the spec fail - if I didn't introduce the constructor at all, it would probably be green by now. Just to remind you, this is to make a point that we can follow a strict set of steps almost mechanically and that specification failing for proper reason is so valuable as a source of feedback, that we're willing to put in a bit of extra code just to attain it.</p>
+
+  <h4>Make it pass</h4>
+
+  <p>Piece of cake - just remove the constructor:</p>
+  <pre class="brush: csharp">
+public class SimpleValidationRules : ValidationRules
+{
+  public void ApplyTo(int intValue)
+  {
+    throw new NotImplementedException();
+  }
+
+  public void ApplyTo(string stringValue)
+  {
+    throw new NotImplementedException();
+  }
+}
+</pre>
+
+  <p>And done - the spec passes. No further comments needed.</p>
+
+  <h4>Examine TODO list</h4>
+
+  <p>Fulfilling this specification led us to discovering a new class with two methods not yet implemented - we need to add them. Also, we can cross off implementing ValidationRules interface, since we just did it:</p>
+
+  <ol>
+    <li><strike>Create entry point to the module (top-level abstraction)</strike></li>
+
+    <li><strike>Implement main work-flow of the module</strike></li>
+
+    <li><strike>Implement Message interface</strike></li>
+
+    <li><strike>Implement MessageFactory interface</strike></li>
+
+    <li><strike>Implement ValidationRules interface</strike></li>
+
+    <li><strike>Implement behavior required from Wrap method in LocationMessageFactory class</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Speed field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Age field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Sender field</strike></li>
+
+    <li><strong>Implement behavior required from ApplyTo method in SimpleValidationRules class for integer values</strong></li>
+
+    <li><strong>Implement behavior required from ApplyTo method in SimpleValidationRules class for string values</strong></li>
+  </ol>
+
+  <p>But this is not end yet! Let's remind ourselves what exactly hides below these two newly added items by looking back at the table from the exercise description:</p>
+
+  <table style="border: solid thin black;">
+    <tr>
+      <th style="padding: 0.5em; background-color: #eeeefe;">type of field</th>
+
+      <th style="padding: 0.5em; background-color: #eeeefe;">Correctness criteria</th>
+
+      <th style="padding: 0.5em; background-color: #eeeefe;">When satisfied</th>
+
+      <th style="padding: 0.5em; background-color: #eeeefe;">When not satisfied</th>
+    </tr>
+
+    <tr>
+      <td style="padding: 0.5em;">int</td>
+
+      <td style="padding: 0.5em;">greater than 0</td>
+
+      <td style="padding: 0.5em;">do nothing</td>
+
+      <td style="padding: 0.5em;">throw exception</td>
+    </tr>
+
+    <tr>
+      <td style="padding: 0.5em; background-color: #eeeeee;">string</td>
+
+      <td style="padding: 0.5em; background-color: #eeeeee;">not null and not empty</td>
+
+      <td style="padding: 0.5em; background-color: #eeeeee;">do nothing</td>
+
+      <td style="padding: 0.5em; background-color: #eeeeee;">throw exception</td>
+    </tr>
+  </table>
+
+  <p>From the table, it looks like we have the following exact behaviors to specify and implement inside SimpleValidationRules class:</p>
+
+  <ol>
+    <li><strike>Create entry point to the module (top-level abstraction)</strike></li>
+
+    <li><strike>Implement main work-flow of the module</strike></li>
+
+    <li><strike>Implement Message interface</strike></li>
+
+    <li><strike>Implement MessageFactory interface</strike></li>
+
+    <li><strike>Implement ValidationRules interface</strike></li>
+
+    <li><strike>Implement behavior required from Wrap method in LocationMessageFactory class</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Speed field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Age field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Sender field</strike></li>
+
+    <li><strong>SimpleValidationRules should throw exception when applied to integer less than or equal 0</strong></li>
+
+    <li><strong>SimpleValidationRules should not throw exception when applied to integer greater than 0</strong></li>
+
+    <li><strong>SimpleValidationRules should throw exception when applied to null string</strong></li>
+
+    <li><strong>SimpleValidationRules should throw exception when applied to empty string</strong></li>
+
+    <li><strong>SimpleValidationRules should not throw exception when applied to string that's neither null nor empty</strong></li>
+  </ol>
+
+  <p>When we look at the TODO items, there is one more thing that attracts our attention - it's the '0' in both items related to integer validation. In contrast to null and empty string, 0 is not a special kind of value here - it's a number like any other. It may be 0 today, and 5 tomorrow. Leaving it in two specifications will lead us to maintaining two specs whenever this number changes. That's why we'll extract the requirement for this value to be 0 into a separate TODO list item. At the same time, we'll rewrite the two items to be more general:</p>
+
+  <ol>
+    <li><strike>Create entry point to the module (top-level abstraction)</strike></li>
+
+    <li><strike>Implement main work-flow of the module</strike></li>
+
+    <li><strike>Implement Message interface</strike></li>
+
+    <li><strike>Implement MessageFactory interface</strike></li>
+
+    <li><strike>Implement ValidationRules interface</strike></li>
+
+    <li><strike>Implement behavior required from Wrap method in LocationMessageFactory class</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Speed field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Age field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Sender field</strike></li>
+
+    <li><strong>SimpleValidationRules should throw exception when applied to integer less than minimum allowed integer</strong></li>
+
+    <li><strong>SimpleValidationRules should not throw exception when applied to integer greater or equal to minimum allowed integer</strong></li>
+
+    <li><strong>SimpleValidationRules should treat 1 as minimum allowed integer</strong></li>
+
+    <li><strong>SimpleValidationRules should throw exception when applied to null string</strong></li>
+
+    <li><strong>SimpleValidationRules should throw exception when applied to empty string</strong></li>
+
+    <li><strong>SimpleValidationRules should not throw exception when applied to string that's neither null nor empty</strong></li>
+  </ol>
+
+  <p>The only thing to note here is that we changed 0 to 1 while adjusting the greater/less conditions (what was previously less than or equal 0, now is less than 1 etc.). We could keep the 0, but thinking in terms of "minimum allowed value" (which is 1) is easier for me than in terms of "maximum disallowed value" (which is 0). You may choose to do otherwise when you perform this kata on your own.</p>
+
+  <p>Let's take on the first unimplemented item.</p>
+
+  <h3>Specification 9: Throwing exceptions when applied to integers that are less than minimum allowed integer value</h3>
+
+  <p>From now on, we'll move forward without mocks, as we've reached the border of the system. Most of the specification we'll be writing are called <a href="http://www.sustainabletdd.com/2012/01/test-categories.html">functional specifications</a> (as opposed to mock-based work-flow specifications and creational specifications that we were doing so far) and a little bit different practices apply to this kind of specs, as we'll shortly see. Also, we'll speed up a little with more obvious parts.</p>
+
+  <h4>Create a specification</h4>
+
+  <p>Our specification in the Given-When-Then form:</p>
+  <pre>
+Given simple validation rules
+When I apply them to an integer value less than minimum allowed integer by at least 1
+Then an exception should be thrown
+</pre>
+
+  <p>This is pretty straightforward. Translating the spec into the code leaves us with the following:</p>
+  <pre class="brush: csharp">
+[Fact]
+public void 
+ShouldThrowExceptionWhenValidatedIntegerIsBelowAllowedMinimum()
+{
+  //GIVEN
+  var rules = new SimpleValidationRules();
+  var integerBelowAllowedMinimum 
+    = SimpleValidation.MinimumAllowedInteger - 1;
+
+  //WHEN
+  Action applyingRulesToIntegerBelowAllowedMinimum 
+    = () =&gt; rules.ApplyTo(integerBelowAllowedMinimum);
+
+  //THEN
+  Assert.Throws&lt;Exception&gt;(applyingRulesToIntegerBelowAllowedMinimum);
+}
+</pre>
+
+  <p>Why did we use SimpleValidation.MinimumAllowedInteger - 1? because it's the thinnest possible boundary between two behaviors - throwing when value is invalid and not throwing when it's valid. You can read more on this in <a href="http://www.sustainabletdd.com/2012/01/test-categories.html">a great post by Amir Kolsky and Scott Bain</a>.</p>
+
+  <p>Now, let's see what's missing...</p>
+
+  <h4>Making it fail for proper reason</h4>
+
+  <p>As it stands now, the code does not compile. We're missing the SimpleValidation.MinimumAllowedInteger constant (since the above spec is the first place in the code where it actually appears). Let's introduce it then:</p>
+  <pre class="brush: csharp">
+public class SimpleValidationRules : ValidationRules
+{
+  public const int MinimumAllowedInteger = 12345; //TODO
+
+  public void ApplyTo(int intValue)
+  {
+    throw new NotImplementedException();
+  }
+
+  public void ApplyTo(string stringValue)
+  {
+    throw new NotImplementedException();
+  }
+}
+</pre>
+
+  <p>By giving this constant a value of 12345 and placing a TODO next to it, we're signalizing that it doesn't really matter for now what the value of this constant is, but we'll need to take care of it later (by the way, it's already on our TODO list - remember?).</p>
+
+  <p>This time the spec not only compiles, but it also passes, thanks to a NotImplementedException thrown from inside of ApplyTo method. I'm sorry, but you know the rules - we have to make it fail :-). In order to do so, we'll remove throwing the mentioned NotImplementedException:</p>
+  <pre class="brush: csharp">
+public class SimpleValidationRules : ValidationRules
+{
+  public const int MinimumAllowedInteger = 12345; //TODO
+
+  public void ApplyTo(int intValue)
+  {
+    //removed throwing exception from here
+  }
+
+  public void ApplyTo(string stringValue)
+  {
+    throw new NotImplementedException();
+  }
+}
+</pre>
+
+  <p>Great, now the spec fails for the correct reason - we were expecting a call to ApplyTo method to throw an exception, but nothing was thrown.</p>
+
+  <h4>Make it pass</h4>
+
+  <p>The specification expects an exception to be thrown, so let's throw it! Only this time, as opposed to the previous throw that was present in the ApplyTo method, we're gonna throw an object of class Exception, not NotImplementedException:</p>
+  <pre class="brush: csharp">
+public class SimpleValidationRules : ValidationRules
+{
+  public const MinimumAllowedInteger = 12345; //TODO
+
+  public void ApplyTo(int intValue)
+  {
+    throw new Exception(); //added line
+  }
+
+  public void ApplyTo(string stringValue)
+  {
+    throw new NotImplementedException();
+  }
+}
+</pre>
+
+  <p>And we're done!</p>
+
+  <div style="padding: 1em; border: dashed thin gray;">
+    "Are we really done here?" - one might argue. This logic does not validate anything - it just throws an exception! That's true, however, we have to remember that we only do what's necessary to make the existing specs pass. Every specification introduces a behavioral distinction and we have not yet introduced a specification that tells us when not to throw. We should add such specification to the TODO list - oh, actually, we already did that! We'll try to fulfil it in a minute, just after we examine our TODO list.
+  </div>
+
+  <h4>Examine TODO list</h4>
+
+  <p>We can cross off throwing exception when validated integer is below allowed minimum from our TODO list:</p>
+
+  <ol>
+    <li><strike>Create entry point to the module (top-level abstraction)</strike></li>
+
+    <li><strike>Implement main work-flow of the module</strike></li>
+
+    <li><strike>Implement Message interface</strike></li>
+
+    <li><strike>Implement MessageFactory interface</strike></li>
+
+    <li><strike>Implement ValidationRules interface</strike></li>
+
+    <li><strike>Implement behavior required from Wrap method in LocationMessageFactory class</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Speed field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Age field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Sender field</strike></li>
+
+    <li><strike>SimpleValidationRules should throw exception when applied to integer less than minimum allowed integer</strike></li>
+
+    <li>SimpleValidationRules should not throw exception when applied to integer greater or equal to minimum allowed integer</li>
+
+    <li>SimpleValidationRules should treat 1 as minimum allowed integer</li>
+
+    <li>SimpleValidationRules should throw exception when applied to null string</li>
+
+    <li>SimpleValidationRules should throw exception when applied to empty string</li>
+
+    <li>SimpleValidationRules should not throw exception when applied to string that's neither null nor empty</li>
+  </ol>
+
+  <p>Now let's specify when the exception should not be thrown.</p>
+
+  <h3>Specification 10: not throwing exception when validated integer is at least minimum allowed integer</h3>
+
+  <p>First, a Given-When-Then specification:</p>
+  <pre>
+Given simple validation rules
+When I apply them to an integer value less than minimum allowed integer by at least 1
+Then an exception should be thrown
+</pre>
+
+  <p>Second, its translation into the code:</p>
+  <pre class="brush: csharp">
+[Fact]
+public void 
+ShouldNotThrowAnyExceptionWhenValidatedIntegerIsAtLeastAllowedMinimum()
+{
+  //GIVEN
+  var rules = new SimpleValidationRules();
+  var integerAtLeastOfMinimumAllowedValue
+    = SimpleValidation.MinimumAllowedInteger;
+
+  //WHEN
+  Action applyingRulesToIntegerAtLeastOfAllowedMinimum 
+    = () =&gt; rules.ApplyTo(integerAtLeastOfMinimumAllowedValue);
+
+  //THEN
+  Assert.DoesNotThrow(applyingRulesToIntegerAtLeastOfAllowedMinimum);
+}
+</pre>
+
+  <p>We picked SimpleValidation.MinimumAllowedInteger value for this specification because it's a boundary value for specified behavior. Now to make it fail for proper reason...</p>
+
+  <h4>Make it fail for proper reason</h4>
+
+  <p>Actually... it already fails for proper reason - the specification expects that no exception is thrown, but it's thrown. All we need to do is to...</p>
+
+  <h4>Make it pass</h4>
+
+  <p>Remember that this is a second specification that passes through the ApplyTo method with int argument. Thus, while implementnig this one, we have to take care not to make the previous one fail. The boundary between the two behaviors described by the specs is the SimpleValidation.MinimumAllowedInteger, so let's turn this knowledge into an if statement:</p>
+  <pre class="brush: csharp">
+public class SimpleValidationRules : ValidationRules
+{
+  public const int MinimumAllowedInteger = 12345; //TODO
+
+  public void ApplyTo(int intValue)
+  {
+    if(intValue &lt; MinimumAllowedInteger) //added
+    {                                       //added
+      throw new Exception();
+    }                                       //added
+  }
+
+  public void ApplyTo(string stringValue)
+  {
+    throw new NotImplementedException();
+  }
+}
+</pre>
+
+  <p>Now both specs pass, which means we can go on.</p>
+
+  <h4>Examine TODO list</h4>
+
+  <p>We can cross off another item on the TODO list - the one related to not throwing exceptions when validating integer that's at least of allowed minimum integer value:</p>
+
+  <ol>
+    <li><strike>Create entry point to the module (top-level abstraction)</strike></li>
+
+    <li><strike>Implement main work-flow of the module</strike></li>
+
+    <li><strike>Implement Message interface</strike></li>
+
+    <li><strike>Implement MessageFactory interface</strike></li>
+
+    <li><strike>Implement ValidationRules interface</strike></li>
+
+    <li><strike>Implement behavior required from Wrap method in LocationMessageFactory class</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Speed field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Age field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Sender field</strike></li>
+
+    <li><strike>SimpleValidationRules should throw exception when applied to integer less than minimum allowed integer</strike></li>
+
+    <li><strike>SimpleValidationRules should not throw exception when applied to integer greater or equal to minimum allowed integer</strike></li>
+
+    <li>SimpleValidationRules should treat 1 as minimum allowed integer</li>
+
+    <li>SimpleValidationRules should throw exception when applied to null string</li>
+
+    <li>SimpleValidationRules should throw exception when applied to empty string</li>
+
+    <li>SimpleValidationRules should not throw exception when applied to string that's neither null nor empty</li>
+  </ol>
+
+  <p>To finish off the integer validation functionality, let's take on treating 1 as minimum allowed integer.</p>
+
+  <h3>Specification 11: 1 should be used as minimum valid integer</h3>
+
+  <p>This time, to breathe a bit of fresh air, it's gonna be a <a href="http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html">constant specification</a>. We'll go faster with this one as it's a really obvious to specify and implement. We don't even have to come up with a Given-When-Then specification.</p>
+
+  <p>Here's the spec:</p>
+  <pre class="brush: csharp">
+[Fact]
+public void 
+ShouldTreat1AsMinimumAllowedInteger()
+{
+  Assert.Equal(1, SimpleValidationRules.MinimumAllowedInteger);
+}
+</pre>
+
+  <p>This fails for proper reason straight away, because the spec expects 1, but it gets 12345, so let's make a change to make it pass:</p>
+  <pre class="brush: csharp">
+public class SimpleValidationRules : ValidationRules
+{
+  public const MinimumAllowedInteger = 1;
+
+  //... the two ApplyTo methods ...
+}
+</pre>
+
+  <p>Done! we can cross off another item from our TODO list:</p>
+
+  <ol>
+    <li><strike>Create entry point to the module (top-level abstraction)</strike></li>
+
+    <li><strike>Implement main work-flow of the module</strike></li>
+
+    <li><strike>Implement Message interface</strike></li>
+
+    <li><strike>Implement MessageFactory interface</strike></li>
+
+    <li><strike>Implement ValidationRules interface</strike></li>
+
+    <li><strike>Implement behavior required from Wrap method in LocationMessageFactory class</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Speed field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Age field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Sender field</strike></li>
+
+    <li><strike>SimpleValidationRules should throw exception when applied to integer less than minimum allowed integer</strike></li>
+
+    <li><strike>SimpleValidationRules should not throw exception when applied to integer greater or equal to minimum allowed integer</strike></li>
+
+    <li><strike>SimpleValidationRules should treat 1 as minimum allowed integer</strike></li>
+
+    <li>SimpleValidationRules should throw exception when applied to null string</li>
+
+    <li>SimpleValidationRules should throw exception when applied to empty string</li>
+
+    <li>SimpleValidationRules should not throw exception when applied to string that's neither null nor empty</li>
+  </ol>
+
+  <p>Ok, the last functionality to implement is the one related to the string validation rules. Let's go!</p>
+
+  <h3>Specification 12: throwing exceptions when validated string is null</h3>
+
+  <p>This case is very similar to throwing exceptions during integer validations. If you're bored reading this, you can just skim through this section briefly as there's nothing new to learn here.</p>
+
+  <h4>Create a specification</h4>
+
+  <p>Our Given-When-Then specification looks like this:</p>
+  <pre>
+Given simple validation rules
+When I apply them to a null string
+Then an exception should be thrown
+</pre>
+
+  <p>which translates into:</p>
+  <pre class="brush: csharp">
+[Fact]
+public void 
+ShouldThrowExceptionWhenAppliedToNullString()
+{
+  //GIVEN
+  var rules = new SimpleValidationRules();
+  string nullString = null;
+
+  //WHEN
+  Action applyingRulesToNullString
+    = () =&gt; rules.ApplyTo(nullString);
+
+  //THEN
+  Assert.Throws&lt;Exception&gt;(applyingRulesToNullString);
+}
+</pre>
+
+  <p>No new methods or classes needed to compile this. Also, it already passes because currently the implementation of ApplyTo for strings already throws an exception:</p>
+  <pre class="brush: csharp">
+  public void ApplyTo(string stringValue)
+  {
+    throw new NotImplementedException();
+  }
+</pre>
+
+  <p>Let's make it fail for proper reason.</p>
+
+  <h4>Make it fail for proper reason</h4>
+
+  <p>We can achieve this by removing throwing the exception from the ApplyTo method like this:</p>
+  <pre class="brush: csharp">
+public class SimpleValidationRules : ValidationRules
+{
+  public const int MinimumAllowedInteger = 1;
+
+  public void ApplyTo(int intValue)
+  {
+    if(intValue &lt; MinimumAllowedInteger)
+    {
+      throw new Exception();
+    }
+  }
+
+  public void ApplyTo(string stringValue)
+  {
+    //removed throwing NotImplementedException
+  }
+}
+</pre>
+
+  <p>The specification expects that exception is thrown, but none is, so the failure is for proper reason.</p>
+
+  <h4>Make it pass</h4>
+
+  <p>Putting an exception back (but not NotImplementedException, since we mark TODO items with these) will do it:</p>
+  <pre class="brush: csharp">
+public class SimpleValidationRules : ValidationRules
+{
+  public const int MinimumAllowedInteger = 1;
+
+  public void ApplyTo(int intValue)
+  {
+    if(intValue &lt; MinimumAllowedInteger)
+    {
+      throw new Exception();
+    }
+  }
+
+  public void ApplyTo(string stringValue)
+  {
+    throw new Exception();
+  }
+}
+</pre>
+
+  <p>The spec passes now, so we're all happy - time to move on.</p>
+
+  <h4>Examine TODO list</h4>
+
+  <p>Another item to get rid of from the TODO list - the one related to throwing exception when null string is validated:</p>
+
+  <ol>
+    <li><strike>Create entry point to the module (top-level abstraction)</strike></li>
+
+    <li><strike>Implement main work-flow of the module</strike></li>
+
+    <li><strike>Implement Message interface</strike></li>
+
+    <li><strike>Implement MessageFactory interface</strike></li>
+
+    <li><strike>Implement ValidationRules interface</strike></li>
+
+    <li><strike>Implement behavior required from Wrap method in LocationMessageFactory class</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Speed field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Age field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Sender field</strike></li>
+
+    <li><strike>SimpleValidationRules should throw exception when applied to integer less than minimum allowed integer</strike></li>
+
+    <li><strike>SimpleValidationRules should not throw exception when applied to integer greater or equal to minimum allowed integer</strike></li>
+
+    <li><strike>SimpleValidationRules should treat 1 as minimum allowed integer</strike></li>
+
+    <li><strike>SimpleValidationRules should throw exception when applied to null string</strike></li>
+
+    <li>SimpleValidationRules should throw exception when applied to empty string</li>
+
+    <li>SimpleValidationRules should not throw exception when applied to string that's neither null nor empty</li>
+  </ol>
+
+  <p>Great - only two more to go! We're almost there! Let's pick up the next item - throwing exception on empty string.</p>
+
+  <h3>Specification 13: throwing exceptions when validating empty string</h3>
+
+  <p>The Given-When-Then specification is almost the same as the previous one:</p>
+  <pre>
+Given simple validation rules
+When I apply them to an empty string
+Then an exception should be thrown
+</pre>
+
+  <p>which translates into:</p>
+  <pre class="brush: csharp">
+[Fact]
+public void 
+ShouldThrowExceptionAppliedToEmptyString()
+{
+  //GIVEN
+  var rules = new SimpleValidationRules();
+  string nullString = null;
+
+  //WHEN
+  Action applyingRulesToNullString
+    = () =&gt; rules.ApplyTo(nullString);
+
+  //THEN
+  Assert.Throws&lt;Exception&gt;(applyingRulesToNullString);
+}
+</pre>
+
+  <p>This specification compiles and passes instantly. As you remember, we have to make it fail for proper reason. But wait, this time we cannot remove throwing the exception, because the previous specification will fail. What are we gonna do?</p>
+
+  <h4>Make it fail for proper reason</h4>
+
+  <p>You won't like this probably, but we'll add temporary code to ApplyTo method just to make this one specification fail.</p>
+
+  <p>Here's this code:</p>
+  <pre class="brush: csharp">
+  public void ApplyTo(string stringValue)
+  {
+    if(stringValue != string.Empty) //added temporary code
+    {                               //added temporary code
+      throw new Exception();
+    }                               //added temporary code
+  }
+</pre>
+
+  <p>You may think I'm insane to put in so much code just to make a specification fail, but remember I'm trying to make a point during this kata ;-).</p>
+
+  <h4>Make it pass</h4>
+
+  <p>Now that we know that the spec can fail for proper reason, we can revert the changes we just made and get back to the previous implementation that was actually good enough :-).</p>
+  <pre class="brush: csharp">
+  public void ApplyTo(string stringValue)
+  {
+    // this is good enough to pass the current spec
+    // and the previous one.
+    throw new Exception();
+  }
+</pre>
+
+  <p>You may think this is really funny - we made some effort just to revert it back. What we gained from it is a new specification and a certainty that it can fail when it's not fulfilled.</p>
+
+  <h4>Examine TODO list</h4>
+
+  <p>Another item to cross off:</p>
+
+  <ol>
+    <li><strike>Create entry point to the module (top-level abstraction)</strike></li>
+
+    <li><strike>Implement main work-flow of the module</strike></li>
+
+    <li><strike>Implement Message interface</strike></li>
+
+    <li><strike>Implement MessageFactory interface</strike></li>
+
+    <li><strike>Implement ValidationRules interface</strike></li>
+
+    <li><strike>Implement behavior required from Wrap method in LocationMessageFactory class</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Speed field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Age field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Sender field</strike></li>
+
+    <li><strike>SimpleValidationRules should throw exception when applied to integer less than minimum allowed integer</strike></li>
+
+    <li><strike>SimpleValidationRules should not throw exception when applied to integer greater or equal to minimum allowed integer</strike></li>
+
+    <li><strike>SimpleValidationRules should treat 1 as minimum allowed integer</strike></li>
+
+    <li><strike>SimpleValidationRules should throw exception when applied to null string</strike></li>
+
+    <li><strike>SimpleValidationRules should throw exception when applied to empty string</strike></li>
+
+    <li>SimpleValidationRules should not throw exception when applied to string that's neither null nor empty</li>
+  </ol>
+
+  <p>Now, it's time for the last one and we're finished!</p>
+
+  <h3>Specification 13: not throwing exception when validated string is neither null nor empty</h3>
+
+  <h4>Create a specification</h4>
+
+  <p>The last specification in a Given-When-Then form:</p>
+  <pre>
+Given simple validation rules
+When I apply them to a string that's neither null nor empty
+Then no exception should be thrown
+</pre>
+
+  <p>which translates into:</p>
+  <pre class="brush: csharp">
+[Fact]
+public void 
+ShouldNotThrowExceptionWhenAppliedToAStringThatIsNeitherNullNorEmpty()
+{
+  //GIVEN
+  var rules = new SimpleValidationRules();
+  string notNullNotEmptyString = Any.MeaningfulString();
+
+  //WHEN
+  Action applyingRulesToNotNullNotEmptyString
+    = () =&gt; rules.ApplyTo(notNullNotEmptyString);
+
+  //THEN
+  Assert.DoesNotThrow(applyingRulesToNotNullNotEmptyString);
+}
+</pre>
+
+  <h4>Make it fail for proper reason</h4>
+
+  <p>It already compiles and fails for proper reason - the specification is expecting no exception, but one is thrown so nothing needs to be done at this stage.</p>
+
+  <h4>Make it pass</h4>
+
+  <p>Currently, the implementation of ApplyTo method looks like this:</p>
+  <pre class="brush: csharp">
+  public void ApplyTo(string stringValue)
+  {
+    throw new Exception();
+  }
+</pre>
+
+  <p>I.e. it always throws. What we want is to make it not throw when passed string is neither null nor empty. Actually, implementing it is quite easy:</p>
+  <pre class="brush: csharp">
+  public void ApplyTo(string stringValue)
+  {
+    if(!string.IsNullOrEmpty(stringValue)) //added
+    {                                      //added
+      throw new Exception();
+    }                                      //added
+  }
+</pre>
+
+  <p>This makes our final specification pass.</p>
+
+  <h4>Examine TODO list</h4>
+
+  <p>We cross off the final item from TODO list:</p>
+
+  <ol>
+    <li><strike>Create entry point to the module (top-level abstraction)</strike></li>
+
+    <li><strike>Implement main workflow of the module</strike></li>
+
+    <li><strike>Implement Message interface</strike></li>
+
+    <li><strike>Implement MessageFactory interface</strike></li>
+
+    <li><strike>Implement ValidationRules interface</strike></li>
+
+    <li><strike>Implement behavior required from Wrap method in LocationMessageFactory class</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Speed field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Age field</strike></li>
+
+    <li><strike>Implement behavior required from ValidateWith method in LocationMessage class for Sender field</strike></li>
+
+    <li><strike>SimpleValidationRules should throw exception when applied to integer less than minimum allowed integer</strike></li>
+
+    <li><strike>SimpleValidationRules should not throw exception when applied to integer greater or equal to minimum allowed integer</strike></li>
+
+    <li><strike>SimpleValidationRules should treat 1 as minimum allowed integer</strike></li>
+
+    <li><strike>SimpleValidationRules should throw exception when applied to null string</strike></li>
+
+    <li><strike>SimpleValidationRules should throw exception when applied to empty string</strike></li>
+
+    <li><strike>SimpleValidationRules should not throw exception when applied to string that's neither null nor empty</strike></li>
+  </ol>
+
+  <p>and we're all set! <strong>Congratulations - you managed to get with me through this lengthy tutorial :-)</strong></p>
+
+  <p>Now, there are few things we need to discuss before we finish</p>
+
+  <h3>1. What's "better" in this implementation than in the previous, "worse" one?</h3>
+
+  <p>Compared to the <a href="http://feelings-erased.blogspot.com/2012/09/a-kata-challenge-to-try-your-tdd-skills_25.html">previous approach</a>, we wrote 13 specifications as opposed to 8 last time. This means that we wrote 5 more specs! What's the return of investment?</p>
+
+  <p>Let's compare the two solutions against some exemplary changes:</p>
+
+  <table>
+    <tr>
+      <th>Exemplary change</th>
+
+      <th>Previous solution</th>
+
+      <th>New solution</th>
+    </tr>
+
+    <tr>
+      <td>Field <strong>int Longitude</strong> is added to the frame</td>
+
+      <td>Maintain 4 existing specs, write 1 new</td>
+
+      <td>Write 1 new spec</td>
+    </tr>
+
+    <tr>
+      <td>New validation rule is added for Speed field that it has to be less than 100</td>
+
+      <td>Maintain 4 existing specs, write 1 new</td>
+
+      <td>Write 3 new specs</td>
+    </tr>
+
+    <tr>
+      <td>The existing validation rule for integers changes so that now they have to be less than 0 instead of more than 0</td>
+
+      <td>Maintain 4 existing specs</td>
+
+      <td>Maintain 2 existing specs</td>
+    </tr>
+  </table>
+
+  <p>The difference grows as more fields and more validation rules are added and the advantage of the approach described in this post becomes more obvious. If you don't believe me, try it out and see for yourself.</p>
+
+  <h3>2. What about refactoring?</h3>
+
+  <p>That's right - the TDD cycle is red-green-refactor, but I didn't even mention the last one during the kata. This was done on purpose - let me explain myself :-). With the previous, screwed up approach to this kata, I stated that what I wrote should be refactored, but I'd start from scratch next time anyway. So this time I started from scratch and made it so that no refactoring is necessary. This is because most of the TDD tutorials I saw that involve refactoring are hard to follow. So I traded off showing full TDD cycle for the example being easy to follow and understand. In normal circumstances (not educational ones), I'd probably go with the approach shown earlier and refactor to this approach when the specifications would tell me that the design contains smells.</p>
+
+  <p>Another reason is that the kata shows a single slice of functionality, and no incremental scope pulling is taking place.</p>
+
+  <p>Maybe someday I'll write a post on refactoring so that we get from previous attempt to this one. For now, I'm skipping it.</p>
+
+  <h3>3. Can't we abstract the invalid values for strings? Isn't the current solution a code smell?</h3>
+
+  <p>By the way, if you look at some parts of the solution, namely the string validation, you can spot that it can be further abstracted. Instead of hardcoding two cases where a string is invalid (null and empty string), we could turn it into a list of invalid values and implement a general mechanism inside SimpleValidationRules that compares a validated string with such list. This would make the specs even more maintainable, but I consider it an overdesign. Not every mechanism is worth abstracting away and nothing points that more than two values will be forbidden. Of course, if this assumption doesn't hold in the future, the specs will tell me that. For now, I prefer keeping this part simple.</p>
+
+  <h3>Summary</h3>
+
+  <p>I hope this post is of any use for anyone - I made a lot of effort to put it together. Of course, it lacks some aspects of TDD (e.g. acceptance specifications or refactoring), but should give a general feel of how we can derive design and responsibilities using executable specifications and test-first approach.</p>
+
+  <p>By the way, the post is so long that I probably made at least few mistakes when writing it. If you see any of those, please let me know. Also, I welcome any feedback - feel free to leave a comment!</p>
+
+  <p>That's all for now - see ya!</p>
+</body>
+</html>
