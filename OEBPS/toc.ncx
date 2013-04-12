@@ -16,7 +16,7 @@
   <navLabel>
     <text>Start</text>
   </navLabel>
-  <content src="Text/B_Test-First.xhtml"/>
+  <content src="Text/Test-First.xhtml"/>
 </navPoint>
 </navMap>
 </ncx>

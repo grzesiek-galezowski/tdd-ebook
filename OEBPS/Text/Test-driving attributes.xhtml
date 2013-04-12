@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Test-driving attributes</title>
+</head>
+
+<body>
+  <p>This post is mostly C#-specific, although Java guys can make some use of the ideas presented here.</p>
+
+  <h3>Simplest attributes</h3>
+
+  <p>Sometimes, especially when dealing with third-party frameworks such as WCF, you scratch your head for how far can you really go with unit tests to specify that "method X should be a remote operation?". As we all know, firing up a WCF server just to make a call inside unit test is unacceptable. What do we have left?</p>
+
+  <p>Let's see, remote operations are marked with OperationContract attribute:</p>
+  <pre class="brush: c#">
+[ServiceContract(Namespace="X.Y.Z")]
+public interface RemoteEntity
+{
+  [OperationContract]
+  void DoSomething();
+}
+</pre>
+
+  <p>So, this is what really defines a remote operation: an attribute. So why not test-drive it? You may think this is insane, until you realize that attributes are just classes that are instantiated and configured at runtime. So, if you test-drive assigning values to C# properties, why not attributes?</p>
+
+  <p>Ok, I assume that you calmed down after the last paragraph and don't consider this idea crazy (because it's not). So, the question changes to "how do we specify that method X has attribute Y?". It appears that <a href="http://osdir.com/ml/nunit-discuss/2010-03/msg00193.html">nUnit has the capability to do this</a>, but it's quite limited.</p>
+
+  <p>I've decided to design my own helper, also as an exercise in coding. Using reflection, I came up with the following API for asserting the attribute:</p>
+  <pre class="brush: c#">
+[Test]
+public void ShouldContainRemoteOperationForDoingSomething()
+{
+ Assert.IsTrue(
+ Method.Of&lt;RemoteEntity&gt;(entity =&gt; entity.DoSomething())
+   .HasAttribute&lt;OperationContractAttribute&gt;()
+ );
+}
+</pre>
+
+  <p>And here's the implementation:</p>
+  <pre class="brush: c#">
+public class Method
+{
+  public static Method Of&lt;T&gt;(Expression&lt;Action&lt;T&gt;&gt; expression)
+  {
+    return new Method((expression.Body as MethodCallExpression).Method);
+  }
+
+  public bool HasAttribute&lt;T&gt;()
+  {
+    return Attribute.IsDefined(methodInfo, typeof(T));
+  }
+
+  private Method(MethodInfo method)
+  {
+    methodInfo = method;
+  }
+
+  private MethodInfo methodInfo;
+}
+</pre>
+
+  <p>Note that the method Of() takes a lambda expression consisting solely of a call to the method we want to check. Also note that this lambda expression is actually never called! We need it only to extract the metadata for the method that the expression is referring to. Also note that the expression must consist of a single call - otherwise we won't be able to cast it to MethodCallExpression.</p>
+
+  <p>Ok, so what if our DoSomething() method takes a parameter? We have to provide it, but the value doesn't really matter, since (remember!) the call is never made and method metadata is extracted from the expression by signature, not by call parameters. So, assuming DoSomething() takes an integer, we can write:</p>
+  <pre class="brush: c#">
+[Test]
+public void ShouldContainRemoteOperationForDoingSomething()
+{
+ Assert.IsTrue(
+  Method.Of&lt;RemoteEntity&gt;(entity =&gt; entity.DoSomething(Any.Integer()))
+   .HasAttribute&lt;OperationContractAttribute&gt;()
+ );
+}
+</pre>
+
+  <p>Easy, right? Ok, but what if we have an attribute that takes a constructor parameter and some properties?</p>
+
+  <h3>Attributes with properties and constructor parameters</h3>
+
+  <p>Consider this:</p>
+  <pre class="brush: c#">
+public class Book
+{
+  [StringLength(256, ErrorMessage = "Max 256 characters!")]
+  public string GetDescription();
+}
+</pre>
+
+  <p>Here, we have to use more elaborate techniques, but we'll try to keep the syntax clean:</p>
+  <pre class="brush: c#">
+[Test]
+public void ShouldContainLengthValidationFor256Characters()
+{
+  Assert.IsTrue(
+    Method.Of&lt;Book&gt;(book =&gt; book.GetDescription())
+      .HasAttribute(new StringLengthAttribute(256) 
+        { ErrorMessage = "Max 256 characters!" })
+  );
+}
+</pre>
+
+  <p>All we have to do is to create an overload for HasAttribute(), taking one parameter instead of none. Note that, compared to the previous examples, in this one, we add the actual instance of the attribute object we are comparing against. This leads to one complication - while the comparison of types was relatively easy to achieve through the Attribute.isDefined() method, comparing objects requires equality to be properly implemented for those objects.</p>
+
+  <p>For now, int the following implementation, we'll leave the equality issue for later and close it inside a method named AreEqual(), then I'll show you two ways to go forward with the equality check.</p>
+  <pre class="brush: c#">
+public bool HasAttribute&lt;T&gt;(T expectedAttribute) where T : class
+{
+  var attrs = Attribute.GetCustomAttributes(methodInfo, typeof(T));
+  var any = attrs.Any(
+    currentAttribute =&gt; AreEqual(expectedAttribute, currentAttribute)
+  );
+  return any;
+}
+</pre>
+
+  <p>Now for the two methods of filling in this AreEqual() gap. The first option is quite straightforward:</p>
+  <pre class="brush: c#">
+private static bool AreEqual&lt;T_Attribute&gt;
+(
+  T_Attribute attr1, Attribute attr2
+) where T_Attribute : class
+{
+  return attr1.Equals(attr2);
+}
+</pre>
+
+  <p>The implementation above requires the attribute classes to have properly defined equality, which may turn out not to be true in some third party libraries you may be forced to use in your project.</p>
+
+  <p>Another option is to use Ploeh's Semantic Comparison library, which is a part of <a href="http://autofixture.codeplex.com/">Autofixture</a>. It contains a Likeness class that we can use to write the following:</p>
+  <pre class="brush: c#">
+private static bool AreEqual&lt;T_Attribute&gt;
+(
+  T_Attribute attr1, Attribute attr2
+) where T_Attribute : class
+{
+  return attr2 is T_Attribute 
+    &amp;&amp; new Likeness&lt;T_Attribute, T_Attribute&gt;
+       (attr2 as T_Attribute).Equals(attr1);
+}
+</pre>
+
+  <p>Likeness works by searching both objects and comparing their public fields and properties (By the way, it's interesting in that it can compare unrelated types, but that's beyond the scope of this post).</p>
+
+  <p>Why is it reasonable to compare two attributes by their "likeness"? It's because attributes are mostly used as containers for the information. So, any information you put into the attribute by setting its properties and passing parameters to a constructor, you sooner or later want to get back from it and that's usually achieved by properties.</p>
+
+  <h3>What about class attributes?</h3>
+
+  <p>So, what about classes and their attributes? Luckily, nUnit has a decent support for these - just look it up in the documentation! Also, if you dig deep enough into the mentioned topic on nunit discussion list, you'll reach a way to achieve the same end result as this article shows by using extension methods to plug into nUnit's objects used for fluent assertions. It's a good idea to use what I've shown you as a building block for that if you decide to perform this exercise.</p>
+</body>
+</html>

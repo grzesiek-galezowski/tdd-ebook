@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title></title>
+</head>
+
+<body>
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    Some time ago, I've read a <a href="http://www.sustainabletdd.com/2012/03/importance-of-test-failure.html" target="_blank">great post by Amir Kolsky and Scott Bain</a> about why Test First technique is so important in TDD. I'd like to use it to elaborate on the few reasons I consider Test First to be an essential practice:
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <b>1. You don't know whether the test can ever fail.</b>
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    This is one of the main points by Amir and Scott. When your write your test after the fact, you don't even know whether the test can ever fail even when the behavior described by the test is broken/changed.
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    The first time I encountered this argument (and it was long before the Amir and Scott's post), it quickly raised my self-defense mechanism: "But how can it be? I'm a wise person, I know what code I'm writing. If I make my unit tests small enough, it's self-evident that I'm describing the correct behavior. This is paranoid". However, this turned out not to be true. Let me describe, from my experience, just three ways (I know there are more, I just forgot the rest :-D) one can really put in a unit test that never fails:
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <b>a) Accidentially skipping addition to test suite.</b>
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    However funny this may sound, it happens. The example I'm going to give is from C#, but almost every unit testing framework in almost every language has some kind of machanism of marking methods as "tests", whether by attributes (C#) or annotations (Java) or with macros (C and C++) or by inheriting from common class, or just a naming convention.
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    So, in my example, I'm using nUnit. In nUnit, to make a method "a test", you mark its class with <span style="font-family: &quot;Courier New&quot;,Courier,monospace;">[TestFixture]</span> attribute, and every test must be marked with <span style="font-family: &quot;Courier New&quot;,Courier,monospace;">[Test]</span> attribute in the following way:
+  </div>
+  <pre class="brush:csharp;">
+[TestFixture]
+public class CalculatorSpecification
+{
+  [Test]
+  public void ShouldDisplayAdditionResultAsSumOfArguments() 
+  {
+    //... 
+  }
+}
+</pre>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    Now, imagine that you're doing post-factum unit testing in an environment that has, let's say, more than thirty unit tests - you've written the code, now you're just making test after test "to ensure" (as you see, this is not my favourite reason for writing unit tests) the code works.Test - pass, test - pass, test-pass. You almost always launch the whole suite, since it's usually painful to point out each time, which test you wanna run, plus, you don't want to introduce a regression. So, this is really: Test - all pass, test - all pass, test - all pass... Hopefully, you use some kind of snippets mechanism for creating new unit tests, but if not (and many don't actually do this, myself included :-( ), once in a while, you do something like this:
+  </div>
+  <pre class="brush:csharp;">
+[TestFixture]
+public class CalculatorSpecification
+{
+  //... some unit tests here
+
+  public void ShouldDisplayZeroWhenResetIsPerformed()
+  {
+    //... 
+  }
+}
+</pre>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    And you don't even notice that this is not added to your test suite, because there are so many unit tests already that it's almost irrational to search for your new test in the test list. Also, this fact that you have omitted the addition, does not disturb your work flow: test - all pass, test all pass, test - all pass... So, what you end up is a test that not only will never fail - <b>it will never be executed</b>.
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    So, why does Test First help here?&nbsp; <b>Because, in Test First, a test passing right away is what DOES disturb your work flow.</b> In TDD, the work flow is: test - fail - pass (ok, and refactor, but for the sake of THIS discussion, it doesn't matter so much), test - fail - pass, test - fail - pass...&nbsp;
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    Once in a while, I stumble upon a situation where Test First saves me from this trap.
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <b>b) Misplacing mock setup</b>
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    Ok, this may sound even funnier (well, honestly, every mistake sounds funny), but it happened to me a couple of times, so it's beneficial to mention this. The example I'm going to show uses manual mocks, but, just not to jump into "dynamic vs handmade mocks" discussion here, this can happen with dynamic mocks as well, especially if you're in a hurry.
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    So, without further ado, the code (yes, this is a stupid example I made up in two minutes, so don't criticize the design here, please ;-):
+  </div>
+  <pre class="brush:csharp;">
+[Test]
+public void ShouldRecognizeTimeSlotAboveMaximumAllowedAsInvalid()
+{
+  var frame = new FrameMock();
+
+  var validation = new Validation();
+  var timeSlotAboveMaximumAllowed = TimeSlot.MaxAllowed + 1;
+
+  var result = validation.PerformForTimeSlotIn(frame);
+  frame.GetTimeSlot_Returns = timeSlotAboveMaximumAllowed;
+
+  Assert.IsFalse(result.Passed);
+  Assert.AreEqual(
+    ValidationFailureReasons.AboveAcceptableLimit, 
+    result.Reason);
+}
+</pre>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    Note how the tested method (which is PerformForTimeSlotIn()) is called BEFORE the mock is actually set up and the set up return value is never taken into account. So, how did it happen that, despite this fact, the call yielded correct result? This sometimes happens, and it happens most often in case of various boundary values (nulls etc.).
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <b>c) Using static data inside production code.</b>
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    Once in a while, you have to jump in and add some tests and logic to code that's written by someone else. Imagine this code is a wrapper around your product XML configuration file. You decide to write your unit tests after applying the changes ("well", you can say, "I'm all protected by the suite that's already in place, so I can make my change without risking regression, then just test my changes and it's all good...").&nbsp;
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    So, you start writing a test. The test suite class contains a member like this:
+  </div>
+  <pre class="brush:csharp;">
+XmlConfiguration config = new XmlConfiguration(xmlFixtureString);
+</pre>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    What it does is to set up a global object used by all the tests. BUT, what you can also see, it uses the same <span style="font-family: &quot;Courier New&quot;,Courier,monospace;">fixture</span> object every time. What you need to write tests for is a little corner case that does not need all this crap that already got into the global fixture. So, you decide to start fresh and write your own fixture. Your test begins like this:
+  </div>
+  <pre class="brush:csharp;">
+string customFixture = CreateMyOwnFixtureForThisTestOnly();
+var configuration = new XmlConfiguration(customFixture);
+...
+</pre>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    And it passes. Ok, what's wrong with this? Nothing big, unless you read the source code of XmlConfiguration class carefully. Inside, you can see, where the xml string is stored:
+  </div>
+  <pre class="brush:csharp;">
+private static string xmlText; //note the static keyword!
+</pre>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    What the...? Well, well, here's what happened: the author of this class coded in a small little optimization. He thought: "The configuration is only changed by the field group and to do it, they have to shut down the system, so, there is no need to read the XML file every time an XmlConfiguration object is created. I can save some cycles and I/O operations by reading it only once when the first object is created. Another created object will just use the same XML!". Good for him, not so good for you. Why? <b>Because (unless your test runs first), your custom fixture will never be used!</b>
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    This was the last way I wanted to mention, now to the second point.
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <b>2) "Test After" ends up as "Test Never"</b>
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    Once in a while, I come into argument with a coworker of mine. What those guys usually say is: "Ok, I know that unit testing is good, I just don't buy the Test First part". When I raise the argument mentioned in point 1, they say: "I can make it without Test First - after I write each unit test, I modify production code on purpose to make sure this test fails - then I get the same value as you do, without the Test First absurd". What I usually do then is to take them to my desk and show them a code coverage report for a single file. All of the methods are covered in green as covered, and one single method is in red as not covered. Then I say: "Guess which parts of this code was written Test First and which is written Test After". I like it when they discover (or I tell them) that this uncovered code is Test After that ended up as <i>Test Never</i>.
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    Let's be honest - we're all in a hurry, we're all under pressure and when this pressure is too high, it triggers heroic behaviors in us, especially when there's a risk of not making it with the iteration commitment. <b>Such heroic behavior usually goes by the following rules: drop all the "baggage", stop learning and experimenting, revert to all of the old "safe" behaviors and "save what we can!"</b>. If tests are written last, they're considered "baggage", since the code is already written, "and it will be tested anyway" by real tests (box testing, smoke testing, sanity testing etc. comes into play). It is quite the contrary when using Test First, <b>where failing test is a reason to write any code</b>. To write the code, you need the reason and thus, unit tests become irremovable part of your development. By the way, I bet in big corporations no one sane ever thinks they can abandon checking in the code to source control, at the same time treating unit tests as "an optional addition", but that's a topic for another post.
+  </div>
+
+  <p><b style="font-family: Arial, Helvetica, sans-serif;">3) Not doing Test First is a waste of time.</b><br /></p>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    One day, I was listening to <a href="http://www.confreaks.com/videos/759-rubymidwest2011-keynote-architecture-the-lost-years" target="_blank">Robert C. Martin's keynote at Ruby Midwest 2011, called Architecture The Lost Years</a>. At the end, Robert made some digressions, one of them being about TDD. He said that writing unit tests after the code is not TDD. It is a waste of time.&nbsp;
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    The first time I thought about it, I thought it was only about missing all the benefits that Test First brings you: the ability for a test to fail, ability to do a clean-sheet analysis, ability to do Need Driven Design etc., however, now I think there is more to it. If you're reading the <a href="http://sustainabletdd.com/" target="_blank">Sustainable Test Driven Development</a> blog regularly, you know that Amir and Scott value <i>testability</i> as design quality, along with cohesion, encapsulation and others. Also, they state that in order to make TDD (and even plain unit testing for that matter) sustainable, the code must have this testability quality on a very high level. How can we use this valuable insight to identify the waste? Let's see how testability looks like in Test First workflow (let's assume that we're creating new code, not adding stuff to dirty, ugly legacy code):
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Verdana,sans-serif;">
+    - Write unit test that fails <b><span style="color: #274e13;">(</span></b><i><b><span style="color: #274e13;">The code has high testability</span></b></i><b><span style="color: #274e13;">)&nbsp;</span></b>
+  </div>
+
+  <div style="font-family: Verdana,sans-serif;">
+    - Write code that satisfies the test
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    Now, how does it usually look like in Test After approach (from what I saw in various situations):
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Verdana,sans-serif;">
+    - Write some code (probably spans few classes until we're satisfied).
+  </div>
+
+  <div style="font-family: Verdana,sans-serif;">
+    <i><b>- Start writing unit tests</b></i>
+  </div>
+
+  <div style="font-family: Verdana,sans-serif;">
+    <i><b>- Notice that unit testing the whole set of classes is cumbersome and unsustainable and contains high redundancy.</b></i>
+  </div>
+
+  <div style="font-family: Verdana,sans-serif;">
+    <i><b>- Refactor the code to be able to isolate objects and inject some mocks <span style="color: #274e13;">(The code has high testability)</span></b></i>
+  </div>
+
+  <div style="font-family: Verdana,sans-serif;">
+    - Write proper unit tests.
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    As you may have noticed, I emphasized few steps that are additional in Test After approach. What's their equivalent in Test First? <b>Nothing!</b> Doing these things is a waste of time! And, this is a waste of time I'm seeing done over and over again!
+  </div>
+
+  <div style="font-family: Arial,Helvetica,sans-serif;">
+    <br />
+  </div>
+
+  <p><span style="font-family: Arial,Helvetica,sans-serif;">Anyway, because of this, let me say it clearly: if you've got a guy in your team that's doing TDD and he's the only one, and you're just "coding and shipping" carelessly even without unit tests, be informed, that this guy will ALWAYS have to corect your code to make it testable and, for that matter, better designed. So, if you really wanna stay on the dark side and not do what's right and ethical (which is to do TDD), at least buy him a soft drink from time to time.</span><br />
+  <br />
+  <span style="font-family: Arial,Helvetica,sans-serif;">Ok, that's it. Enjoy your weekend!</span></p>
+</body>
+</html>
