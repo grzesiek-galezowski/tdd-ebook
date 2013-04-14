@@ -44,6 +44,8 @@
         <item href="Text/02%20-%20Basic%20tools%20and%20their%20features.xhtml" id="x02_-_Basic_tools_and_their_features.xhtml" media-type="application/xhtml+xml"/>
     </manifest>
     <spine toc="ncx">
+        <itemref idref="x01_-_Motivations.xhtml"/>
+        <itemref idref="x02_-_Basic_tools_and_their_features.xhtml"/>
         <itemref idref="We_are_in_need_of_feedback.xhtml"/>
         <itemref idref="Test_Driven_Development_-_objections_part_1.xhtml"/>
         <itemref idref="Test_Driven_Development_-_objections_part_2.xhtml"/>
@@ -76,8 +78,6 @@
         <itemref idref="How_to_test-drive_decorators_-_adding_same_logic_to_all_wrapped_methods.xhtml"/>
         <itemref idref="Test-driving_attributes.xhtml"/>
         <itemref idref="Don_t_use_setup_and_teardown_or_I_will....xhtml"/>
-        <itemref idref="x01_-_Motivations.xhtml"/>
-        <itemref idref="x02_-_Basic_tools_and_their_features.xhtml"/>
         <itemref idref="TODO.xhtml"/>
     </spine>
     <guide>

@@ -144,6 +144,46 @@ public static void AssertTwoIntegersAreEqual(
 
   <p>For these and other reasons, automated testing tools were born. Those testing tools are generally referenced to as <strong>xUnit family</strong>, because many of them have names that end with the word "Unit", e.g. CppUnit (for C++), JUnit (for Java), NUnit (for .NET) etc.</p>
 
-  <p>TODO show how to transition from out code to the xUnit!!! (we have three elements: test list, test method and assertion)</p>
+  <p>To be honest, I can't wait to show you how the test we wrote just a minute ago looks like when xUnit framework is used, however, before I do this, I'd like to recap quickly what we have in our brute-force naive approach to writing automated tests:</p>
+
+  <ol>
+    <li>The Main() method serves as a <strong>Test List</strong></li>
+
+    <li>The Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers() method is a <strong>Test Method</strong></li>
+
+    <li>The AssertTwoIntegersAreEqual() method is <strong>an Assertion</strong></li>
+  </ol>
+
+  <p>Quite to our joy, those three elements are present in xUnit frameworks as well. To illustrate it, here's (finally!) the same test we wrote, but with an xUnit framework (this one is called XUnit.Net):</p>
+  <pre>
+
+[Fact]
+public void 
+Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
+{
+  //Assuming...
+  var multiplication = new Multiplication(3,7);
+  
+  //when this happens:
+  var result = multiplication.Perform();
+  
+  //then the result should be...
+  Assert.Equal(21, result);
+}
+</pre>
+
+  <p>As you can see, it looks like two methods that we previously had are gone now and the test is the only thing that's left. Well, to tell you the truth, they're not gone - it's just that the framework handles these for us. Let's reiterate through the three elements of the previous version of the test that I promised would be there after the transition to xUnit framework:</p>
+
+  <ol>
+    <li><strong>Test List</strong> is now created automatically by the framework from all methods marked with a [Fact] attribute, so no need to maintain one or more central lists. Thus, the Main() method is gone.</li>
+
+    <li>The <strong>Test Method is here and looks almost the same as the last time.</strong></li>
+
+    <li>The <strong>Assertion</strong> took the form of a call to static Assert.Equal() method - the xUnit.NET framework is bundled with a wide range of pre-made assertions for your convenience. Of course, no one stops you from writing your own custom one if you don't find what you're looking for in a default set.</li>
+  </ol>
+
+  <p>Phew, I hope I made the transition quite painless for you. Now the last thing to add - as there is not Main() method anymore in the last example, you surely must wonder how we run those tests, right? Ok, the last big secret unveiled - we use an external application for this - we tell it which assemblies to run and it loads them, runs them, reports results etc. It can take various forms, e.g. it can be a console application, a GUI application or a plugin to our IDEs.</p>
+
+  <h1>TODO put an image of a runner built into an IDE</h1>
 </body>
 </html>
