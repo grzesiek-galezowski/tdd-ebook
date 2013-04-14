@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Basic tools</title>
+</head>
+
+<body>
+  <h1>Basic tools and their features</h1>
+
+  <p>Ever watched Karate Kid, either the old version or the new one? The thing they have in common is that when the kid starts learning Karate (or Kung-Fu) from his master, he is given a basic, repetitive task (like taking of a jacket, and putting it on again), not knowing yet where it would lead him. Or look at first Rocky film (yeah, the one starring Sylvester Stallone), where Rocky was chasing a chicken in order to train agility.</p>
+
+  <p>When I first tried to learn guitar, I found two advices on the web: the first was to start by mastering a single, difficult song. The second was to play with a single string, learn how to make it sound in different ways and try to play some melodies by ear just with this one string. Do I have to tell you that the second advice worked better?</p>
+
+  <p>Honestly, I could dive right into the core techniques of TDD, but this would be like putting you on a ring with a demanding opponent - you'd most probably be discouraged before gaining the necessary skills. So, instead of explaining how to win a race, in this chapter we'll take a look at what shiny cars we'll be driving.</p>
+
+  <p>In other words, I'll give you a brief tour of the tools we're gonna use.</p>
+
+  <h2>Our shiny tools</h2>
+
+  <p>TODO each language has one of these. We'll choose C#.</p>
+
+  <h3>xUnit framework</h3>
+
+  <p>The first and most essential tool we're gonna use is an xUnit framework.</p>
+
+  <h4>What problem does it solve?</h4>
+
+  <p>Let's assume that our application looks like this:<br /></p>
+
+  <div style="text-align: center;"></div>
+  <pre>
+public static void Main(string[] args) 
+{
+  try
+  {
+    int firstNumber = Int32.Parse(args[0]);
+    int secondNumber = Int32.Parse(args[1]);
+
+    var result = 
+      new Multiplication(firstNumber, secondNumber).Perform();
+
+    Console.WriteLine("Result is: " + result);
+  }
+  catch(Exception e)
+  {
+    Console.WriteLine("Addition failed because of: " + e);
+  } 
+}
+</pre>
+
+  <p>Now, let's assume we want to check whether is produces correct results. The most obvious way would be to invoke the application from commandline with some exemplary arguments, check the output to the console and compare it with what we expect to see. Such session could look like this:</p>
+  <pre>
+C:\MultiplicationApp\MultiplicationApp.exe 3 7
+21
+C:\MultiplicationApp\
+</pre>
+
+  <p>As you can see, the application produced a result of 21 for multiplication of 7 by 3. This is correct, so we assume the test is passed. But what if we produced an application that additionally does addition, subtraction, division, calculus etc.? How many times would we have to invoke the application to make sure every operation works correct?</p>
+
+  <p>But wait, we're programmers, right? So we can write programs that can do this for us! In order to do this, we'll create a second application that will also use the Multiplication class, but in a little different way:</p>
+  <pre>
+public static void Main(string[] args) 
+{
+  var multiplication = new Multiplication(3,7);
+  
+  var result = multiplication.Perform();
+  
+  if(result != 21)
+  {
+    throw new Exception("Failed! Expected: 21 but was: " + result);
+  }
+}
+</pre>
+
+  <p>Sounds easy, right? Let's take another step and extract the result check into something more reusable - after all, we'll be adding division in a second, remember? So here goes:</p>
+  <pre>
+public static void Main(string[] args) 
+{
+  var multiplication = new Multiplication(3,7);
+  
+  var result = multiplication.Perform();
+  
+  AssertTwoIntegersAreEqual(expected: 21, actual: result);
+}
+
+public static void AssertTwoIntegersAreEqual(
+  int expected, int actual)
+{
+  if(actual != expected)
+  {
+    throw new Exception(
+      "Failed! Expected: " + expected + " but was: " + actual);
+  }
+}
+</pre>
+
+  <p>Note that I started the name of the method with "Assert" - we'll get back to the naming soon, for now just assume that this is just a good name for the method. Let's take one last round and put the test into its own method:</p>
+  <pre>
+public static void Main(string[] args) 
+{
+  Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers();
+}
+
+public void 
+Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
+{
+  //Assuming...
+  var multiplication = new Multiplication(3,7);
+  
+  //when this happens:
+  var result = multiplication.Perform();
+  
+  //then the result should be...
+  AssertTwoIntegersAreEqual(expected: 21, actual: result);
+}
+
+public static void AssertTwoIntegersAreEqual(
+  int expected, int actual)
+{
+  if(actual != expected)
+  {
+    throw new Exception(
+      "Failed! Expected: " + expected + " but was: " + actual);
+  }
+}
+</pre>
+
+  <p>And we're finished. Now if we need another test, e.g. for division, we can just add a new method call to the Main() method and implement it. When implementing it, we can reuse the AssertTwoIntegersAreEqual() method, since the check for division would be analogous.</p>
+
+  <p>As you can see, we can easily write automated checks like this, but this way has some disadvantages:</p>
+
+  <ol>
+    <li>Every time we add new test, we have to maintain the Main() method, adding a call to the new test. If you forgot to add such a method, the test would never be run, which, in case of many tests, is hard to notice.</li>
+
+    <li>Imagine your system consists of more than one application - you'd have some problems trying to gather summary results for all of the applications that your system consists of.</li>
+
+    <li>A need would very quickly arise to write a lot of other checks like AssertTwoIntegersAreEqual() - this one compares two integers for equality, but what if you wanted to check that one is greater than the other? What if you wanted to check equality not for integers, but for characters, strings, floats etc.? What if you wanted to check some conditions on collections, e.g. that a collection is sorted or that all items in the collection are unique?</li>
+
+    <li>Given that a test would end with error, it would be hard to navigate from the commandline output to the line in your IDE. Wouldn't it be easier if you could click on the call stack to take you immediately to the code where the failure took place?</li>
+  </ol>
+
+  <p>For these and other reasons, automated testing tools were born. Those testing tools are generally referenced to as <strong>xUnit family</strong>, because many of them have names that end with the word "Unit", e.g. CppUnit (for C++), JUnit (for Java), NUnit (for .NET) etc.</p>
+
+  <p>TODO show how to transition from out code to the xUnit!!! (we have three elements: test list, test method and assertion)</p>
+</body>
+</html>
