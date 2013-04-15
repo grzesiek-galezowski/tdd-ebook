@@ -2,8 +2,8 @@
 <package xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookId" version="2.0">
     <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
         <dc:identifier id="BookId" opf:scheme="UUID">urn:uuid:6d00fb77-2111-4dd8-bba0-36b822fd09b2</dc:identifier>
+        <dc:date opf:event="modification">2013-04-15</dc:date>
         <meta content="0.6.2" name="Sigil version"/>
-        <dc:date opf:event="modification">2013-04-14</dc:date>
     </metadata>
     <manifest>
         <item href="toc.ncx" id="ncx" media-type="application/x-dtbncx+xml"/>
@@ -42,6 +42,7 @@
         <item href="Text/01%20-%20Motivations.xhtml" id="x01_-_Motivations.xhtml" media-type="application/xhtml+xml"/>
         <item href="Text/TODO.xhtml" id="TODO.xhtml" media-type="application/xhtml+xml"/>
         <item href="Text/02%20-%20Basic%20tools%20and%20their%20features.xhtml" id="x02_-_Basic_tools_and_their_features.xhtml" media-type="application/xhtml+xml"/>
+        <item href="Images/XUnit.NET.Window.png" id="XUnit.NET.Window.png" media-type="image/png"/>
     </manifest>
     <spine toc="ncx">
         <itemref idref="x01_-_Motivations.xhtml"/>
