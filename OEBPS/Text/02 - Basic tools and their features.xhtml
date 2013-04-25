@@ -20,7 +20,7 @@
 
   <h2>Our shiny tools</h2>
 
-  <p>TODO each language has one of these. We'll choose C#.</p>
+  <p>TODO each language has one of these. We'll choose C#. Also, a disclaimer - in this chapter, I'll oversimplify some things just to get you up and running without getting into the philosophy of TDD yet (think: physics lessons in primary school). Don't worry about it :-), we'll fix that in the next chapters!</p>
 
   <h3>xUnit framework</h3>
 
@@ -184,5 +184,83 @@ Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
   <p>Phew, I hope I made the transition quite painless for you. Now the last thing to add - as there is not Main() method anymore in the last example, you surely must wonder how we run those tests, right? Ok, the last big secret unveiled - we use an external application for this (we'll refer to it using a term <strong>Test Runner</strong>) - we tell it which assemblies to run and it loads them, runs them, reports results etc. It can take various forms, e.g. it can be a console application, a GUI application or a plugin to our IDEs. Here's an example of a stand-alone runner for xUnit.NET framework:</p>
 
   <p style="margin-left: auto; margin-right: auto;"><img alt="XUnit.NET.Window" src="../Images/XUnit.NET.Window.png" /></p>
+
+  <h4>In other languages/technologies</h4>
+
+  <p>TODO</p>
+
+  <h3>Mocking framework</h3>
+
+  <p>Mocking frameworks are libraries for runtime creation of objects (called "mocks") that adhere to specified interface. Aside from the creation itself, we're given an API to configure our mocks on how they behave when certain methods are called on them and we can inspect which methods were called on them.</p>
+
+  <p>Mocking frameworks are not as old as xUnit frameworks and were not present in TDD since the very beginning. As you might be wondering why on earth do we need something like this, I'll let you in on a secret: they were born with a goal of aiding a specific approach to object oriented design that happens during TDD in mind.</p>
+
+  <p>For now, however, let's try to keep things easy. I'll defer explaining the actual rationale for mocking frameworks until later and instead give you a quick example where you can see them in action. Ready? Let's go!</p>
+
+  <p>Let's pretend that we have the following code for adding new set of orders for products to a database and handling exceptions (by writing a message to a log) when it fails:</p>
+  <pre>
+public class OrderProcessing
+{
+  //other code...
+
+  public void Place(Order order)
+  {
+    try
+    {
+      this.orderDatabase.Insert(order);
+    }
+    catch(Exception e)
+    {
+      this.log.Write("Could not insert an order. Reason: " + e);
+    }
+  }
+
+  //other code...
+}
+</pre>
+
+  <p>Now, imagine we need to test it - how do we do it? I can already see you shaking your head and saying: "Let's just create this database, invoke this method and see if the record is added properly". In such case, the first test would look like this:</p>
+  <pre>
+[Fact]
+public void ShouldInsertNewOrderToDatabase()
+{
+  //GIVEN
+  var orderDatabase = new MySqlOrderDatabase()
+  orderDatabase.Connect();
+  orderDatabase.Clean();
+  var orderProcessing = new OrderProcessing(orderDatabase);
+  var order = new Order(
+    name: "Grzesiek", 
+    surname: "Galezowski", 
+    product: "Agile Acceptance Testing", 
+    date: DateTime.Now,
+    quantity: 1);
+
+  //WHEN
+  orderProcessing.Place(order);
+
+  //THEN
+  var allOrders = orderDatabase.SelectAllOrders();
+  Assert.Contains(order, allOrders);
+}
+</pre>
+
+  <p>As you see, at the beginning of the test, we're opening a connection and cleaning all existing orders (more on that shortly!), then creating an order object, inserting it into a database and then querying the database to give us all of the held instances. At the end, we make an assertion that the order we tried to insert must be inside all orders in a database.</p>
+
+  <p>Why do we clean up the database? Remember a database is a persistent storage, so if we didn't clean it up and run this test again, the database may have already contained the item (maybe another test already added it?) and would probably not allow us to add the same item again. Thus, the test would fail. Ouch! It hurts so bad, because we wanted our tests to prove something works, but looks like it can fail even when the logic is coded correctly. What use is such a test if it cannot reliably provide the information we demand from it (whether the implemented logic is correct or not)? Thus, we clean up before each run to make sure the state of the persistent storage is the same every time we run this test.</p>
+
+  <p>So, got what you want? Not me, anyway. Personally, I wouldn't go this way. There are several reasons:</p>
+
+  <ol>
+    <li>The test is going to be slow. It's not uncommon to have more then thousand tests in your suite and I don't want to spend half a hour running them very time. Do you?</li>
+
+    <li>Everyone running this test will have to set up a database on their machine. What if their setup is slightly different than yours? What if the schema gets outdated? Will you re-run your database creation script only to ensure you've got the latest schema available to run your tests against?</li>
+
+    <li>There may not be an implementation of a specified database engine for your development machine if your target platform is an exotic or mobile platform.</li>
+
+    <li>Note that this test you've written is only the out of two. You'll have to write another one for the scenario where inserting an order ends with exception. How do you setup your database in a state where it throws an exception? It's possible, but requires significant effort (e.g. deleting a table and recreating it later for other tests to run correctly), which may lead you to a conclusion that it's not worth to write such tests at all.</li>
+  </ol>
+
+  <p>Now, let's try something else. Let's assume that our database works OK (or will be tested by black-box tests) and the only thing we want to test is our implementation. In this situation, we can create a fake object that implements the same interface as MySqlOrderDatabase, but does not write to a database at all - it only stores the inserted records in a list.</p>
 </body>
 </html>
