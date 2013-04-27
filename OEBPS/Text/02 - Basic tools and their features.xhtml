@@ -4,11 +4,11 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <title>Basic tools</title>
+  <title>The three most essential tools</title>
 </head>
 
 <body>
-  <h1>Basic tools and their features</h1>
+  <h1>The three most essential tools</h1>
 
   <p>Ever watched Karate Kid, either the old version or the new one? The thing they have in common is that when the kid starts learning Karate (or Kung-Fu) from his master, he is given a basic, repetitive task (like taking of a jacket, and putting it on again), not knowing yet where it would lead him. Or look at first Rocky film (yeah, the one starring Sylvester Stallone), where Rocky was chasing a chicken in order to train agility.</p>
 
@@ -16,11 +16,11 @@
 
   <p>Honestly, I could dive right into the core techniques of TDD, but this would be like putting you on a ring with a demanding opponent - you'd most probably be discouraged before gaining the necessary skills. So, instead of explaining how to win a race, in this chapter we'll take a look at what shiny cars we'll be driving.</p>
 
-  <p>In other words, I'll give you a brief tour of the tools we're gonna use.</p>
+  <p>In other words, I'll give you a brief tour of the three most essential tools we'll be using throughout this book.</p>
 
   <h2>Our shiny tools</h2>
 
-  <p>TODO each language has one of these. We'll choose C#. Also, a disclaimer - in this chapter, I'll oversimplify some things just to get you up and running without getting into the philosophy of TDD yet (think: physics lessons in primary school). Don't worry about it :-), we'll fix that in the next chapters!</p>
+  <p>A disclaimer - in this chapter, I'll oversimplify some things just to get you up and running without getting into the philosophy of TDD yet (think: physics lessons in primary school). Don't worry about it :-), we'll fix that in the coming chapters!</p>
 
   <h3>xUnit framework</h3>
 
@@ -185,13 +185,9 @@ Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
 
   <p style="margin-left: auto; margin-right: auto;"><img alt="XUnit.NET.Window" src="../Images/XUnit.NET.Window.png" /></p>
 
-  <h4>In other languages/technologies</h4>
-
-  <p>TODO</p>
-
   <h3>Mocking framework</h3>
 
-  <p>Mocking frameworks are libraries for runtime creation of objects (called "mocks") that adhere to specified interface. Aside from the creation itself, we're given an API to configure our mocks on how they behave when certain methods are called on them and we can inspect which methods were called on them.</p>
+  <p>Mocking frameworks are libraries that automate runtime creation of objects (called "mocks") that adhere to specified interface. Aside from the creation itself, the frameworks provide an API to configure our mocks on how they behave when certain methods are called on them and to let us inspect which calls they received.</p>
 
   <p>Mocking frameworks are not as old as xUnit frameworks and were not present in TDD since the very beginning. As you might be wondering why on earth do we need something like this, I'll let you in on a secret: they were born with a goal of aiding a specific approach to object oriented design that happens during TDD in mind.</p>
 
@@ -225,10 +221,10 @@ public class OrderProcessing
 public void ShouldInsertNewOrderToDatabase()
 {
   //GIVEN
-  var orderDatabase = new MySqlOrderDatabase()
+  var orderDatabase = new MySqlOrderDatabase();
   orderDatabase.Connect();
   orderDatabase.Clean();
-  var orderProcessing = new OrderProcessing(orderDatabase);
+  var orderProcessing = new OrderProcessing(orderDatabase, new FileLog());
   var order = new Order(
     name: "Grzesiek", 
     surname: "Galezowski", 
@@ -261,6 +257,194 @@ public void ShouldInsertNewOrderToDatabase()
     <li>Note that this test you've written is only the out of two. You'll have to write another one for the scenario where inserting an order ends with exception. How do you setup your database in a state where it throws an exception? It's possible, but requires significant effort (e.g. deleting a table and recreating it later for other tests to run correctly), which may lead you to a conclusion that it's not worth to write such tests at all.</li>
   </ol>
 
-  <p>Now, let's try something else. Let's assume that our database works OK (or will be tested by black-box tests) and the only thing we want to test is our implementation. In this situation, we can create a fake object that implements the same interface as MySqlOrderDatabase, but does not write to a database at all - it only stores the inserted records in a list.</p>
+  <p>Now, let's try something else. Let's assume that our database works OK (or will be tested by black-box tests) and the only thing we want to test is our implementation. In this situation, we can create a fake object that implements the same interface as MySqlOrderDatabase, but does not write to a database at all - it only stores the inserted records in a list:</p>
+  <pre>
+public class FakeOrderDatabase : OrderDatabase
+{
+  public Order _receivedArgument;
+
+  public void Insert(Order order)
+  {
+    _receivedArgument = order;
+  }
+
+  public List&lt;Order&gt; SelectAllOrders()
+  {
+    return new List&lt;Order&gt;() { _receivedOrder; };
+  }
+}
+</pre>
+
+  <p>Now, we can substitute the real implementation of order database by the fake instance:</p>
+  <pre>
+[Fact]
+public void ShouldInsertNewOrderToDatabase()
+{
+  //GIVEN
+  var orderDatabase = new FakeOrderDatabase();
+  var orderProcessing = new OrderProcessing(orderDatabase, new FileLog());
+  var order = new Order(
+    name: "Grzesiek", 
+    surname: "Galezowski", 
+    product: "Agile Acceptance Testing", 
+    date: DateTime.Now,
+    quantity: 1);
+
+  //WHEN
+  orderProcessing.Place(order);
+
+  //THEN
+  var allOrders = orderDatabase.SelectAllOrders();
+  Assert.Contains(order, allOrders);
+}
+</pre>
+
+  <p>Note that we don't clean the fake database object, since we create it as fresh each time the test is run. Also, the test is going to be much quicker now. But, that's not the end! We can easily write a test for an exception situation. How do we do it? Just make another fake object implemented like this:</p>
+  <pre>
+public class ExplodingOrderDatabase : OrderDatabase
+{
+  public void Insert(Order order)
+  {
+    throw new Exception();
+  }
+
+  public List&lt;Order&gt; SelectAllOrders()
+  {
+  }
+}
+</pre>
+
+  <p>Ok, so far so good, but the bad is that now we've got two fake objects to maintain (and we may expect more). Any method or argument added will need to be propagated to all these objects. We can spare some coding by making our mocks a little more generic so their behavior can be configured using lambda expressions:</p>
+  <pre>
+public class ConfigurableOrderDatabase : OrderDatabase
+{
+  public Action&lt;Order&gt; doWhenInsertCalled;
+  public Func&lt;List&lt;Order&gt;&gt; doWhenSelectAllOrdersCalled;
+
+  public void Insert(Order order)
+  {
+    doWhenInsertCalled(order);
+  }
+
+  public List&lt;Order&gt; SelectAllOrders()
+  {
+    return doWhenSelectAllOrdersCalled();
+  }
+}
+</pre>
+
+  <p>Now, we don't have to create additional classes for new scenarios, but our syntax gets awkward. See for yourself how we configure the fake order database to remember and yield the inserted order:</p>
+  <pre>
+var db = new ConfigurableOrderDatabase();
+Order gotOrder = null;
+db.doWhenInsertCalled = o =&gt; {gotOrder = o;};
+db.doWhenSelectAllOrdersCalled = () =&gt; new List&lt;Order&gt;() { gotOrder };
+</pre>
+
+  <p>And if we want it to throw an exception when anything is inserted:</p>
+  <pre>
+var db = new ConfigurableOrderDatabase();
+db.doWhenInsertCalled = o =&gt; {throw new Exception();};
+  </pre>
+
+  <p>Thankfully, some smart programmers created frameworks that provide further automation in such scenarios. One of them is called <strong>NSubstitute</strong> and provides an API in a form of extension methods (that's why it might seem a bit magical at first. Don't worry, you'll get used to it).</p>
+
+  <p>Using NSubstitute, out first test can be rewritten as such:</p>
+  <pre>
+[Fact]
+public void ShouldInsertNewOrderToDatabase()
+{
+  //GIVEN
+  var orderDatabase = new Substitute.For&lt;OrderDatabase&gt;();
+  var orderProcessing = new OrderProcessing(orderDatabase, new FileLog());
+  var order = new Order(
+    name: "Grzesiek", 
+    surname: "Galezowski", 
+    product: "Agile Acceptance Testing", 
+    date: DateTime.Now,
+    quantity: 1);
+
+  //WHEN
+  orderProcessing.Place(order);
+
+  //THEN
+  orderDatabase.Received(1).Insert(order);
+}
+</pre>
+
+  <p>Note that we don't need the SelectAllOrders() method. If no one except this test needs it, we can delete it and spare some more maintainability trouble. The last line of this test is actually a camouflaged assertion that checks whether Insert method was called once with order object as parameter.</p>
+
+  <p>I'll get back to mocks, since, as I said, there's a huge philosophy behind them and we have only scratched the surface here.</p>
+
+  <h3>Anonymous values generator</h3>
+
+  <p>Look at the test in the previous section. Doesn't it trouble you that we fill the order object with so many values that are totally irrelevant to the test logic itself? They actually hinder readability of the test. Also, they make us believe that the tested object really cares what these values are, although it doesn't (the database does, but we already got rid of it from the test). Let's move it to a method with descriptive name:</p>
+  <pre>
+[Fact]
+public void ShouldInsertNewOrderToDatabase()
+{
+  //GIVEN
+  var orderDatabase = new Substitute.For&lt;OrderDatabase&gt;();
+  var orderProcessing = new OrderProcessing(orderDatabase, new FileLog());
+  var order = AnonymousOrder();
+
+  //WHEN
+  orderProcessing.Place(order);
+
+  //THEN
+  orderDatabase.Received(1).Insert(order);
+}
+
+public Order AnonymousOrder()
+{
+  return new Order(
+    name: "Grzesiek", 
+    surname: "Galezowski", 
+    product: "Agile Acceptance Testing", 
+    date: DateTime.Now,
+    quantity: 1);
+}
+</pre>
+
+  <p>Now that's better. Not only did we make the test shorter, we also provided a hint to the test reader that the actual values used to create an order don't matter from the perspective of tested order processing logic, hence the name AnonymousOrder.</p>
+
+  <p>By the way, wouldn't it be nice if we didn't have to provide the anonymous objects ourselves, but rely on another library to generate them for us? Susprise, surprise, there is one! It's called <strong>Autofixture</strong>. It's an example of an anonymous values generator (although its creator likes to say that it's an implementation of Test Data Builder pattern, but let's skip this discussion here). After refactoring our test to use AutoFixture, we arrive at the following:</p>
+  <pre>
+[Fact]
+public void ShouldInsertNewOrderToDatabase()
+{
+  //GIVEN
+  var orderDatabase = new Substitute.For&lt;OrderDatabase&gt;();
+  var orderProcessing = new OrderProcessing(orderDatabase, new FileLog());
+  var order = any.Create&lt;Order&gt;();
+
+  //WHEN
+  orderProcessing.Place(order);
+
+  //THEN
+  orderDatabase.Received(1).Insert(order);
+}
+
+private Fixture any = new Fixture();
+</pre>
+
+  <p>Nice, huh? AutoFixture has a lot of advanced features, but personally I'm conservative and wrap it behind a static class called Any:</p>
+  <pre>
+public static class Any
+{
+  private static any = new Fixture();
+  
+  public static T ValueOf&lt;T&gt;()
+  {
+    return any.Create&lt;T&gt;();
+  }
+}
+</pre>
+
+  <p>In the next chapters, you'll see me using a lot of different methods from the Any type. The more you use this class, the more it grows with other methods for creating customized objects. For now, however, let's stop here.</p>
+
+  <h3>Summary</h3>
+
+  <p>In this chapter, I tried to show you the three essential tools which we'll be using in this book and which, when mastered, will make your test-driven development smoother. If this chapter leaves you with insifficient justification for their use, don't worry - we'll dive into the philosophy behind them in the coming chapters. For now, I just want you to get familiar with the tools themselves and their syntax. Go on, download these tools, launch them, try to write something simple with them. You don't need to understand their full purpose yet, just go out and play :-).</p>
 </body>
 </html>
