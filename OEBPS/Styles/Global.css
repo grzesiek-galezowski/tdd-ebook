@@ -1,0 +1,18 @@
+div.achievement 
+{
+    border-top-width: 4px;
+    border-bottom-width: 4px;
+    border-top-style: double;
+    border-bottom-style: double;
+    border-top-color: #E1A60A;
+    border-bottom-color: #E1A60A;
+    padding: 0.5em 1em;
+}
+
+.achievement h3:before {
+  content: "Achievement: ";
+}
+
+.achievement p {
+  font-style: italic;
+}

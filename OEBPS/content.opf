@@ -45,6 +45,7 @@
         <item href="Images/XUnit.NET.Window.png" id="XUnit.NET.Window.png" media-type="image/png"/>
         <item href="Images/Tekken3.png" id="Tekken3.png" media-type="image/png"/>
         <item href="Text/03%20-%20It%20is%20not%20a%20test.xhtml" id="x03_-_It_is_not_a_test.xhtml" media-type="application/xhtml+xml"/>
+        <item href="Styles/Global.css" id="Global.css" media-type="text/css"/>
     </manifest>
     <spine toc="ncx">
         <itemref idref="x01_-_Motivations.xhtml"/>

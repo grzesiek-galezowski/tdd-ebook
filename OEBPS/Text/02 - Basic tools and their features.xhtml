@@ -5,6 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>The three most essential tools</title>
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -25,8 +26,6 @@
   <h3>xUnit framework</h3>
 
   <p>The first and most essential tool we're gonna use is an xUnit framework.</p>
-
-  <h4>What problem does it solve?</h4>
 
   <p>Let's assume that our application looks like this:<br /></p>
 
@@ -184,6 +183,12 @@ Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
   <p>Phew, I hope I made the transition quite painless for you. Now the last thing to add - as there is not Main() method anymore in the last example, you surely must wonder how we run those tests, right? Ok, the last big secret unveiled - we use an external application for this (we'll refer to it using a term <strong>Test Runner</strong>) - we tell it which assemblies to run and it loads them, runs them, reports results etc. It can take various forms, e.g. it can be a console application, a GUI application or a plugin to our IDEs. Here's an example of a stand-alone runner for xUnit.NET framework:</p>
 
   <p style="margin-left: auto; margin-right: auto;"><img alt="XUnit.NET.Window" src="../Images/XUnit.NET.Window.png" /></p>
+
+  <div class="achievement">
+    <h3>Sprinter</h3>
+
+    <p>You sure know how to run your tests. Automatically!</p>
+  </div>
 
   <h3>Mocking framework</h3>
 
@@ -376,6 +381,12 @@ public void ShouldInsertNewOrderToDatabase()
 
   <p>I'll get back to mocks, since, as I said, there's a huge philosophy behind them and we have only scratched the surface here.</p>
 
+  <div class="achievement">
+    <h3>Pretender</h3>
+
+    <p>You've managed to use a mock instead of a real object in unit test!</p>
+  </div>
+
   <h3>Anonymous values generator</h3>
 
   <p>Look at the test in the previous section. Doesn't it trouble you that we fill the order object with so many values that are totally irrelevant to the test logic itself? They actually hinder readability of the test. Also, they make us believe that the tested object really cares what these values are, although it doesn't (the database does, but we already got rid of it from the test). Let's move it to a method with descriptive name:</p>
@@ -443,8 +454,20 @@ public static class Any
 
   <p>In the next chapters, you'll see me using a lot of different methods from the Any type. The more you use this class, the more it grows with other methods for creating customized objects. For now, however, let's stop here.</p>
 
+  <div class="achievement">
+    <h3>Anonymous</h3>
+
+    <p>The values you use in your unit tests move like a shadow, unnoticed by anyone and until it is really necessary.</p>
+  </div>
+
   <h3>Summary</h3>
 
-  <p>In this chapter, I tried to show you the three essential tools which we'll be using in this book and which, when mastered, will make your test-driven development smoother. If this chapter leaves you with insifficient justification for their use, don't worry - we'll dive into the philosophy behind them in the coming chapters. For now, I just want you to get familiar with the tools themselves and their syntax. Go on, download these tools, launch them, try to write something simple with them. You don't need to understand their full purpose yet, just go out and play :-).</p>
+  <p>In this chapter, I tried to show you the three essential tools which we'll be using in this book and which, when mastered, will make your test-driven development smoother. If this chapter leaves you with insufficient justification for their use, don't worry - we'll dive into the philosophy behind them in the coming chapters. For now, I just want you to get familiar with the tools themselves and their syntax. Go on, download these tools, launch them, try to write something simple with them. You don't need to understand their full purpose yet, just go out and play :-).</p>
+
+  <div class="achievement">
+    <h3>Equipped</h3>
+
+    <p>You are now able to understand most of the code examples throughout this book!</p>
+  </div>
 </body>
 </html>
