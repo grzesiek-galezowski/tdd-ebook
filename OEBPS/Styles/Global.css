@@ -18,5 +18,6 @@ div.achievement
 }
 
 pre {
-  font-size: 62.5%;;
+   font-family: "courier new", monospace, courier;
+   font-size: 0.6em;
 }
