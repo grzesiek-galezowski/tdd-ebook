@@ -10,7 +10,7 @@
 <body>
   <p>Hi, today, I'd like to mention the topic of mocking the operating system and getting rid of it (especially the non-deterministic parts) as we write our specifications AKA unit tests.</p>
 
-  <h3>The use cases</h3>
+  <h3 class="sigil_not_in_toc">The use cases</h3>
 
   <p>In general, there are two cases where we interact with the operating system:</p>
 
@@ -20,7 +20,7 @@
     <li>We tell the operating system to use our code (when a timer expires, when a thread execution finishes etc.)</li>
   </ol>
 
-  <h3>Timers</h3>
+  <h3 class="sigil_not_in_toc">Timers</h3>
 
   <p>The topic of today's post is a combination of both above cases. Timers work as a way to say "in X milliseconds (or any other time unit), invoke Y and in the meantime, let me do my job."</p>
 
@@ -28,7 +28,7 @@
 
   <p>The scheduling phase is where our code uses the timer and the calling back phase is where the timer uses our code. But before I show you how to properly handle this kind of situation, let's examine how things can go wrong.</p>
 
-  <h3>A Baaad Idea</h3>
+  <h3 class="sigil_not_in_toc">A Baaad Idea</h3>
 
   <p>Let's assume that our specified class invokes an action periodically, each time passing in the current time. Also, let's assume that we don't care about the current time value (e.g. whether the passed time is really current) - in the real world we would, but this is just a toy example, so please bear with it. The most widely seen (but wrong - read on) way of writing a spec of a class that executes some code periodically usually consists of the following steps</p>
 
@@ -63,7 +63,7 @@ public void ShouldPingPeriodically()
 
   <p>This approach has one disadvantage - the interval * expectedCallbackCount is not the total time that is spent in tested code - there's one more thing we have to take into account, which is the duration of execution of the callback passed to CurrentTimeNotification constructor. Also, usually we don't invoke this code directly from the timer, because callbacks executed by the timer often require a specific signature which our passed action does not provide (if you're curious about the details, read TimerCallback delegate documentation on MSDN), so probably there is an additional code that's executed by the timer and this code invokes the action that we pass in. Usually the 1-second tolerance is enough to cater for this (by the way, remember it's really 1 second for all the calls, so each call must take under (1/expectedCallbackCount) seconds), but what if we run unit tests on a developer machine that's performing another build at the same time and is short on resources? Can the execution of the additional code that we just mentioned take more than the assumed tolerance? Of course it can! So what do we do about it?</p>
 
-  <h3>A Better solution</h3>
+  <h3 class="sigil_not_in_toc">A Better solution</h3>
 
   <p>The time has come to draw a line between the behaviors of our code and the operating system. In a specification of a class using a timer, we want to describe three behaviors in particular:</p>
 
@@ -204,7 +204,7 @@ ShouldInvokeActionWithCurrentTimeWhenTimerExpires()
 
   <p>And that's it. Note that this set of three specifications better describe what the actual object does, not how it works when connected to the timer. This way, they're more accurate as specifications of the class than the one using Thread.Sleep().</p>
 
-  <h3>Summary</h3>
+  <h3 class="sigil_not_in_toc">Summary</h3>
 
   <p>In this post, I tried to show how to approach timer-based designs. The same approach can be used for mocking pretty much every non-deterministic or time-based or threaded element in our implementation.</p>
 

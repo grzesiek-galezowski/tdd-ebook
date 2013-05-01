@@ -26,7 +26,7 @@
 
   <p>For educational purposes, I'll not be doing refactoring - a short explanation why is at the end of this post.</p>
 
-  <h3>Let's begin!</h3>
+  <h3 class="sigil_not_in_toc">Let's begin!</h3>
 
   <p>First, we'll need to start with something. Thus, we'll add the following two items to the TODO list:</p>
 
@@ -40,7 +40,7 @@
 
   <p>Let's take on the first item, since it's a prerequisite for everything else.</p>
 
-  <h3>Specification 1: Creating new instances of MessageProcessing class</h3>
+  <h3 class="sigil_not_in_toc">Specification 1: Creating new instances of MessageProcessing class</h3>
 
   <p>What we need first is our top-level abstraction. Since our task is to create a message processing module, I'll name the top-level abstraction: MessageProcessing.</p>
 
@@ -48,7 +48,7 @@
     By the way, I could name it MessageProcessor, but personally, I don't like such names. In my opinion, names of classes and interfaces should represent domain concepts and our domain does not tell anything about processor, validator, etc, but processing and validation, so these are the names I'm gonna use.
   </div>
 
-  <h4>Create a specification</h4>
+  <h4 class="sigil_not_in_toc">Create a specification</h4>
 
   <p>We have to create a need for this class to exist, and we can do this by making the following <a href="http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html">creational specification</a>:</p>
   <pre>
@@ -79,7 +79,7 @@ public void ShouldAllowCreatingNewInstances()
     Note that in this spec, I created a named action variable and then passed it into the Assert.DoesNotThrow() method. This is not how it's usually used - most of the time, the lambda is passed inline into the method. I did it differently to make the Given-When-Then structure of this spec explicit.
   </div>
 
-  <h4>Make it fail for proper reason</h4>
+  <h4 class="sigil_not_in_toc">Make it fail for proper reason</h4>
 
   <p>First, we have to make it compile. This can be achieved simply by creating a MessageProcessing class. Also, to make sure it can fail, we create a parameterless constructor with an exception inside:</p>
   <pre class="brush: csharp">
@@ -98,7 +98,7 @@ public class MessageProcessing
 
   <p>Now the spec fails for the correct reason - we expect the constructor not to throw, but it does.</p>
 
-  <h4>Make it pass</h4>
+  <h4 class="sigil_not_in_toc">Make it pass</h4>
 
   <p>In order to make this spec pass, we just remove the parameterless constructor. It was there only to ensure us that the spec can fail for the proper reason and now there's no need for it. And here's the code:</p>
   <pre class="brush: csharp">
@@ -107,7 +107,7 @@ public class MessageProcessing
 }
 </pre>
 
-  <h4>Examine TODO list</h4>
+  <h4 class="sigil_not_in_toc">Examine TODO list</h4>
 
   <p>After creating our top-level abstraction, our TODO list looks like this:</p>
 
@@ -119,7 +119,7 @@ public class MessageProcessing
 
   <p>We have one item left on the TODO list - implement the main work-flow. Let's get right to it!</p>
 
-  <h3>Specification 2: Performing validation on a frame</h3>
+  <h3 class="sigil_not_in_toc">Specification 2: Performing validation on a frame</h3>
 
   <p>The second step is to sketch main work-flow of the module. As the only responsibility of the module we're creating is to validate a frame, we decide this main work-flow to be receiving the fame and submitting it to validation.</p>
 
@@ -127,7 +127,7 @@ public class MessageProcessing
     The actual validation logic (e.g. when a frame is valid, what to do if it isn't etc.) is a separate responsibility, so we'll try postponing its implementation by pushing this responsibility to a collaborator. This collaborator, for the purpose of this spec, will appear only as a fake object without real implementation.
   </div>
 
-  <h4>Create a specification</h4>
+  <h4 class="sigil_not_in_toc">Create a specification</h4>
 
   <p>Our very first spec, written using a Given-When-Then notation, will look like this</p>
   <pre>
@@ -204,7 +204,7 @@ message.Received().ValidateWith(validationRules);
     Note that message and validation rules take different parts in this specification: the message plays <strong>active</strong> part, since we expect some methods to be called on it. On the other hand, the validationRules is just passed around and never communicated with - its role is <strong>passive</strong>. This information will prove valuable when we get to creating these variables in the specification - stay tuned!
   </div>
 
-  <h4>Make it fail for proper reason</h4>
+  <h4 class="sigil_not_in_toc">Make it fail for proper reason</h4>
 
   <p>Now, the time has come! to supply what's missing and fill the void! Mwahahahaha!</p>
 
@@ -416,7 +416,7 @@ public interface MessageFactory //TODO implement
 }
 </pre>
 
-  <h4>Making it pass</h4>
+  <h4 class="sigil_not_in_toc">Making it pass</h4>
 
   <p>We're going to fill in the implementation of MessageProcessing class. I like starting workflow implementations from the end, i.e. from the expectation. In the spec, we're expecting a call to ValidateWith(validationRules) to be made against message object, so let's write that into the method:</p>
   <pre class="brush: csharp">
@@ -471,7 +471,7 @@ public class MessageProcessing
 
   <p>And the specification passes. Now we can proceed to the next stage:</p>
 
-  <h4>Examine TODO list</h4>
+  <h4 class="sigil_not_in_toc">Examine TODO list</h4>
 
   <p>Remember we left some TODOs in the code next to each interface? Let's look at it again:</p>
   <pre class="brush: csharp">
@@ -507,11 +507,11 @@ public interface MessageFactory //TODO implement
 
   <p>What shall we implement next? Obviouslt, there's no point in implementing ValidationRules, since it doesn't contain any methods yet, so we don't even know what behaviors we need to provide. On the other hand, we've got MessageFactory and Message - each having a single method. It makes more sense to start with the MessageFactory, since its functionality is actually about creating messages, so probably, when we finish with specifying and implementing the factory, we'll also have a class implementing the Message interface already.</p>
 
-  <h3>Specification 3: Creating new instances of MessageFactory class</h3>
+  <h3 class="sigil_not_in_toc">Specification 3: Creating new instances of MessageFactory class</h3>
 
   <p>Before we can use the factory to create new messages, we need to have a concrete class implementing the MessageFactory interface (I'll name this class LocationMessageFactory). This is gonna be a simple creational specification. Let's go!</p>
 
-  <h4>Create a specification</h4>
+  <h4 class="sigil_not_in_toc">Create a specification</h4>
 
   <p>The Given-When-Then form of the spec is:</p>
   <pre>
@@ -546,7 +546,7 @@ public void ShouldAllowCreatingNewInstances()
 
   <p>Note that we did not declare the factory variable using var keyword, but as a base type. This is also a part of specification - it says that LocationMessageFactory is a subtype of MessageFactory.</p>
 
-  <h4>Make it fail for proper reason</h4>
+  <h4 class="sigil_not_in_toc">Make it fail for proper reason</h4>
 
   <p>This spec created a need to have a LocationMessageFactory class that implements MessageFactory interface and has a parameterless constructor. Let's provide it then!</p>
   <pre class="brush: csharp">
@@ -566,7 +566,7 @@ public class LocationMessageFactory : MessageFactory
 
   <p>Note two things: first, we put an exception into the constructor, so that the spec we created can fail on assertion (Assert.DoesNotThrow). The second thing to note - the interface signature forced us to provide an implementation for a method called Wrap - currently it throws NotImplementedException and is out of scope of the current specification. By the way, I treat all NotImplementedExceptions as TODO list items - we'll take care of it when we examine our TODO list in a minute. For now, the spec fails for proper reason, so let's get to the next stage.</p>
 
-  <h4>Make it pass</h4>
+  <h4 class="sigil_not_in_toc">Make it pass</h4>
 
   <p>We make this spec pass by removing the constructor we introduced earlier. Remember that we don't have to touch the Wrap method, since it's out of scope of current specification. The code looks like this:</p>
   <pre class="brush: csharp">
@@ -579,7 +579,7 @@ public class LocationMessageFactory : Messagefactory
 }
 </pre>
 
-  <h4>Examine TODO list</h4>
+  <h4 class="sigil_not_in_toc">Examine TODO list</h4>
 
   <p>We can cross off the item related to implementing MessageFactory class. Now we have all the initial items crossed off, but another one popped out in the meantime - the NotImplementedException inside the Wrap method - it clearly points that we need to provide a behavior over there.</p>
 
@@ -601,11 +601,11 @@ public class LocationMessageFactory : Messagefactory
 
   <p>The newly added item on the TODO list is our next target.</p>
 
-  <h3>Specification 4: wrapping frames with messages</h3>
+  <h3 class="sigil_not_in_toc">Specification 4: wrapping frames with messages</h3>
 
   <p>Let's implement the Wrap method in LocationMessageFactory so that it actually creates something useful for us.</p>
 
-  <h4>Create a specification</h4>
+  <h4 class="sigil_not_in_toc">Create a specification</h4>
 
   <p>A Given-When-Then form of the spec looks like this:</p>
   <pre>
@@ -634,7 +634,7 @@ public void ShouldWrapFramesWithLocationMessageObjects()
 
   <p>There's one thing that might seem wierd about this spec - we specify nowhere that the message is wrapping the particular frame we pass to it - it can just create another one or just wrap nothing. Is it wrong? I think not - the creational specs are always awkward and you can almost never specify entirely from which objects another object is created. We will just have to trust the production code that it wraps the frame (by the way, there are some cases where object construction rules are so complex that we DO want to specify them in detail, but this is not such a case).</p>
 
-  <h4>Make it fail for proper reason</h4>
+  <h4 class="sigil_not_in_toc">Make it fail for proper reason</h4>
 
   <p>The spec creates a need for a new type - a LocationMessage. An instance of this type needs to be created by the factory in order to fulfill this spec. That's why we won't have to write a separate creational specification for creating LocationMessage objects - we're specifying everything we need in the factory specification already.</p>
 
@@ -669,7 +669,7 @@ public class LocationMessageFactory : Messagefactory
 
   <p>Ok, the specification expects an instance of type LocationMessage, but gets a null instead - the spec fails on assertion, which is proper reason for it to fail and it means it's time to move on to the next stage.</p>
 
-  <h4>Make it fail for proper reason</h4>
+  <h4 class="sigil_not_in_toc">Make it fail for proper reason</h4>
 
   <p>In order to do this, we'll just have to return an instance of LocationMessage type and use the constructor we have created:</p>
   <pre class="brush: csharp">
@@ -684,7 +684,7 @@ public class LocationMessageFactory : Messagefactory
 
   <p>Finished! Now to check the TODO list!</p>
 
-  <h4>Examine TODO list</h4>
+  <h4 class="sigil_not_in_toc">Examine TODO list</h4>
 
   <p>We can cross off the item related to implementing Wrap method as well as implementing Message interface. Also, by implementing the Message interface with LocationMessage class, which, just to remind you, looks like this:</p>
   <pre class="brush: csharp">
@@ -746,11 +746,11 @@ public class LocationMessage : Message
 
   <p>Again, there's no sense in picking ValidationRules interface implementation, since it has no methods, so let's take the three last items, one by one.</p>
 
-  <h3>Specification 5: Submit Speed field to validation</h3>
+  <h3 class="sigil_not_in_toc">Specification 5: Submit Speed field to validation</h3>
 
   <p>As I stated previously, the reason Message abstraction exists is to decouple validation rules from the frame structure. The choice of which validation rule to apply to which frame field should be made by implementations of the Message interface - i.e. LocationMessage. The first field that needs to be passed to a validation rule is Speed.</p>
 
-  <h4>Create a specification</h4>
+  <h4 class="sigil_not_in_toc">Create a specification</h4>
 
   <p>Again, let's use a Given-When-Then notation, to write down the following:</p>
   <pre>
@@ -781,7 +781,7 @@ public void ShouldPerformValidationForSpeedFieldWhenValidated()
 
   <p>Note that this is actually the first time we're referencing a field of the Frame class! What's more, we expect it to be passed into the validation rules which don't know that the passed value belongs to the frame. Thus, we have managed to successfully encapsulate the frame structure inside the LocationMessage class and decouple it from validation rules.</p>
 
-  <h4>Make it fail for proper reason</h4>
+  <h4 class="sigil_not_in_toc">Make it fail for proper reason</h4>
 
   <p>The specification created a need for one new method inside VlidationRules interface: ApplyTo with an int argument. To satisfy this need, let's provide the necessary signature inside the ValidationRules interface:</p>
   <pre class="brush: csharp">
@@ -811,7 +811,7 @@ public class LocationMessage : Message
 
   <p>The spec fails because a call to ApplyTo method with specific int value was expected on the validationRules, but was not performed, which means that the spec fails for proper reason.</p>
 
-  <h4>Make it pass</h4>
+  <h4 class="sigil_not_in_toc">Make it pass</h4>
 
   <p>The implementation that makes our code fulfill the spec is really easy, so I'll just type it in:</p>
   <pre class="brush: csharp">
@@ -833,7 +833,7 @@ public class LocationMessage : Message
 
   <p>And that's it.</p>
 
-  <h4>Examine TODO list</h4>
+  <h4 class="sigil_not_in_toc">Examine TODO list</h4>
 
   <p>We can cross off Speed field:</p>
 
@@ -859,9 +859,9 @@ public class LocationMessage : Message
 
   <p>Looking at the TODO list, it should be very easy to implement the Age field validation, as it's an integer, just like Speed, which we just finished implementing. Let's take it on then!</p>
 
-  <h3>Specification 6: Submit Age field to validation</h3>
+  <h3 class="sigil_not_in_toc">Specification 6: Submit Age field to validation</h3>
 
-  <h4>Create a specification</h4>
+  <h4 class="sigil_not_in_toc">Create a specification</h4>
 
   <p>The spec is going to be almost the same as previously, so all we need to do is copy the previous one and make a change or two. Hey, we're copy-pasting here! Let's use this as an opportunity to perform an experiment - we'll make an error by correcting only the name of the pasted specification, leaving the validated field name as Speed (not Age, which should be here instead) and watch whether we can get away with it:</p>
   <pre class="brush: csharp">
@@ -917,11 +917,11 @@ public void ShouldPerformValidationForAgeFieldWhenValidated()
     Another question that may be raised is: why don't I write one specifications for all the fields, but a separate spec for each of them? Actually, there's no big deal about that. The main reason is that in case I did one specification for all the fields, I would have to name it something like ShouldApplyValidationRulesToAllFields() - it would not tell me which rules apply to which field. I like to think of unit test tool report (which consists of unit test names) as a form of documentation and by separating the specifications for each field, I make this documentation more verbose.
   </div>
 
-  <h4>Make it fail for proper reason</h4>
+  <h4 class="sigil_not_in_toc">Make it fail for proper reason</h4>
 
   <p>The specification already fails for proper reason. We're expecting validation rules to be applied to field named Age, but there's no such logic inside the LocationMessage's ValidateWith method's implementation.</p>
 
-  <h4>Make it pass</h4>
+  <h4 class="sigil_not_in_toc">Make it pass</h4>
 
   <p>Just add one line of code and we're all set:</p>
   <pre class="brush: csharp">
@@ -944,7 +944,7 @@ public class LocationMessage : Message
 
   <p>Ok, it passes - now, wasn't that easy?</p>
 
-  <h4>Examine TODO list</h4>
+  <h4 class="sigil_not_in_toc">Examine TODO list</h4>
 
   <p>We can cross off another item from the TODO list - the one about Age field, leaving us with the following:</p>
 
@@ -970,11 +970,11 @@ public class LocationMessage : Message
 
   <p>Only two choices left. Since we already began with the ValidateWith method, let's take on the last one from this series - the one related to Sender field.</p>
 
-  <h3>Specification 7: Submit Sender field to validation</h3>
+  <h3 class="sigil_not_in_toc">Specification 7: Submit Sender field to validation</h3>
 
   <p>This case is going to be pretty much the same as with both previous fields, only this time we'll be handling a string instead of an integer.</p>
 
-  <h4>Create a specification</h4>
+  <h4 class="sigil_not_in_toc">Create a specification</h4>
 
   <p>In order to create a specification in a Given-When-Then notation, let's write down the following:</p>
   <pre>
@@ -1003,7 +1003,7 @@ public void ShouldPerformValidationForSenderFieldWhenValidated()
 }
 </pre>
 
-  <h4>Make it fail for proper reason</h4>
+  <h4 class="sigil_not_in_toc">Make it fail for proper reason</h4>
 
   <p>As I said, the only difference is that this time, Sender is a string value. Yet we still use the ApplyTo name for a method expected to be called, although its declaration looks like this:</p>
   <pre class="brush: csharp">
@@ -1024,7 +1024,7 @@ public interface ValidationRules
 
   <p>That makes our spec compile and fail for proper reason - we were expecting ApplyTo method to be called, but it wasn't.</p>
 
-  <h4>Make it pass</h4>
+  <h4 class="sigil_not_in_toc">Make it pass</h4>
 
   <p>The implementation of this spec is going to be as easy as the previous one. Just watch:</p>
   <pre class="brush: csharp">
@@ -1052,7 +1052,7 @@ public class LocationMessage : Message
     One may argue that using the same name for different validation methods does not provide enough readability, because when looking at the implementation of ValidateWith method, one can't really tell that two different validation rules are being applied - it looks like it's always one. This is a valid argument and one may consider giving the validation methods distinct names, such as ApplyToInt for integers and ApplyToString for strings. For this kata, I'll leave the overloads, since it doesn't really matter so much.
   </div>
 
-  <h4>Examine TODO list</h4>
+  <h4 class="sigil_not_in_toc">Examine TODO list</h4>
 
   <p>Another item to cross off from our TODO list, this time for implementing the Sender field:</p>
 
@@ -1078,7 +1078,7 @@ public class LocationMessage : Message
 
   <p>which leaves us with only one item: implementation of the ValidationRules interface.</p>
 
-  <h3>Specification 8: Creating new instances of SimpleValidationRules class</h3>
+  <h3 class="sigil_not_in_toc">Specification 8: Creating new instances of SimpleValidationRules class</h3>
 
   <p>We decide that the implementation of the ValidationRules interface will be called SimpleValidationRules. We need to drive the existence of this class and the following Given-When-Then specification will help us with this task:</p>
   <pre>
@@ -1110,7 +1110,7 @@ public void ShouldAllowCreatingNewInstances()
 }
 </pre>
 
-  <h4>Make it fail for proper reason</h4>
+  <h4 class="sigil_not_in_toc">Make it fail for proper reason</h4>
 
   <p>We created a need to have a SimpleValidationRules class implementing ValidationRules interface. To satisfy this need, we'll have to create this class. Here we go:</p>
   <pre class="brush: csharp">
@@ -1137,7 +1137,7 @@ public class SimpleValidationRules : ValidationRules
 
   <p>For now, the spec fails on assertion, i.e. for a proper reason. It means that we can proceed with the next stage. By the way, I put an exception in the constructor again just to make the spec fail - if I didn't introduce the constructor at all, it would probably be green by now. Just to remind you, this is to make a point that we can follow a strict set of steps almost mechanically and that specification failing for proper reason is so valuable as a source of feedback, that we're willing to put in a bit of extra code just to attain it.</p>
 
-  <h4>Make it pass</h4>
+  <h4 class="sigil_not_in_toc">Make it pass</h4>
 
   <p>Piece of cake - just remove the constructor:</p>
   <pre class="brush: csharp">
@@ -1157,7 +1157,7 @@ public class SimpleValidationRules : ValidationRules
 
   <p>And done - the spec passes. No further comments needed.</p>
 
-  <h4>Examine TODO list</h4>
+  <h4 class="sigil_not_in_toc">Examine TODO list</h4>
 
   <p>Fulfilling this specification led us to discovering a new class with two methods not yet implemented - we need to add them. Also, we can cross off implementing ValidationRules interface, since we just did it:</p>
 
@@ -1289,11 +1289,11 @@ public class SimpleValidationRules : ValidationRules
 
   <p>Let's take on the first unimplemented item.</p>
 
-  <h3>Specification 9: Throwing exceptions when applied to integers that are less than minimum allowed integer value</h3>
+  <h3 class="sigil_not_in_toc">Specification 9: Throwing exceptions when applied to integers that are less than minimum allowed integer value</h3>
 
   <p>From now on, we'll move forward without mocks, as we've reached the border of the system. Most of the specification we'll be writing are called <a href="http://www.sustainabletdd.com/2012/01/test-categories.html">functional specifications</a> (as opposed to mock-based work-flow specifications and creational specifications that we were doing so far) and a little bit different practices apply to this kind of specs, as we'll shortly see. Also, we'll speed up a little with more obvious parts.</p>
 
-  <h4>Create a specification</h4>
+  <h4 class="sigil_not_in_toc">Create a specification</h4>
 
   <p>Our specification in the Given-When-Then form:</p>
   <pre>
@@ -1326,7 +1326,7 @@ ShouldThrowExceptionWhenValidatedIntegerIsBelowAllowedMinimum()
 
   <p>Now, let's see what's missing...</p>
 
-  <h4>Making it fail for proper reason</h4>
+  <h4 class="sigil_not_in_toc">Making it fail for proper reason</h4>
 
   <p>As it stands now, the code does not compile. We're missing the SimpleValidation.MinimumAllowedInteger constant (since the above spec is the first place in the code where it actually appears). Let's introduce it then:</p>
   <pre class="brush: csharp">
@@ -1368,7 +1368,7 @@ public class SimpleValidationRules : ValidationRules
 
   <p>Great, now the spec fails for the correct reason - we were expecting a call to ApplyTo method to throw an exception, but nothing was thrown.</p>
 
-  <h4>Make it pass</h4>
+  <h4 class="sigil_not_in_toc">Make it pass</h4>
 
   <p>The specification expects an exception to be thrown, so let's throw it! Only this time, as opposed to the previous throw that was present in the ApplyTo method, we're gonna throw an object of class Exception, not NotImplementedException:</p>
   <pre class="brush: csharp">
@@ -1394,7 +1394,7 @@ public class SimpleValidationRules : ValidationRules
     "Are we really done here?" - one might argue. This logic does not validate anything - it just throws an exception! That's true, however, we have to remember that we only do what's necessary to make the existing specs pass. Every specification introduces a behavioral distinction and we have not yet introduced a specification that tells us when not to throw. We should add such specification to the TODO list - oh, actually, we already did that! We'll try to fulfil it in a minute, just after we examine our TODO list.
   </div>
 
-  <h4>Examine TODO list</h4>
+  <h4 class="sigil_not_in_toc">Examine TODO list</h4>
 
   <p>We can cross off throwing exception when validated integer is below allowed minimum from our TODO list:</p>
 
@@ -1432,7 +1432,7 @@ public class SimpleValidationRules : ValidationRules
 
   <p>Now let's specify when the exception should not be thrown.</p>
 
-  <h3>Specification 10: not throwing exception when validated integer is at least minimum allowed integer</h3>
+  <h3 class="sigil_not_in_toc">Specification 10: not throwing exception when validated integer is at least minimum allowed integer</h3>
 
   <p>First, a Given-When-Then specification:</p>
   <pre>
@@ -1463,11 +1463,11 @@ ShouldNotThrowAnyExceptionWhenValidatedIntegerIsAtLeastAllowedMinimum()
 
   <p>We picked SimpleValidation.MinimumAllowedInteger value for this specification because it's a boundary value for specified behavior. Now to make it fail for proper reason...</p>
 
-  <h4>Make it fail for proper reason</h4>
+  <h4 class="sigil_not_in_toc">Make it fail for proper reason</h4>
 
   <p>Actually... it already fails for proper reason - the specification expects that no exception is thrown, but it's thrown. All we need to do is to...</p>
 
-  <h4>Make it pass</h4>
+  <h4 class="sigil_not_in_toc">Make it pass</h4>
 
   <p>Remember that this is a second specification that passes through the ApplyTo method with int argument. Thus, while implementnig this one, we have to take care not to make the previous one fail. The boundary between the two behaviors described by the specs is the SimpleValidation.MinimumAllowedInteger, so let's turn this knowledge into an if statement:</p>
   <pre class="brush: csharp">
@@ -1492,7 +1492,7 @@ public class SimpleValidationRules : ValidationRules
 
   <p>Now both specs pass, which means we can go on.</p>
 
-  <h4>Examine TODO list</h4>
+  <h4 class="sigil_not_in_toc">Examine TODO list</h4>
 
   <p>We can cross off another item on the TODO list - the one related to not throwing exceptions when validating integer that's at least of allowed minimum integer value:</p>
 
@@ -1530,7 +1530,7 @@ public class SimpleValidationRules : ValidationRules
 
   <p>To finish off the integer validation functionality, let's take on treating 1 as minimum allowed integer.</p>
 
-  <h3>Specification 11: 1 should be used as minimum valid integer</h3>
+  <h3 class="sigil_not_in_toc">Specification 11: 1 should be used as minimum valid integer</h3>
 
   <p>This time, to breathe a bit of fresh air, it's gonna be a <a href="http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html">constant specification</a>. We'll go faster with this one as it's a really obvious to specify and implement. We don't even have to come up with a Given-When-Then specification.</p>
 
@@ -1590,11 +1590,11 @@ public class SimpleValidationRules : ValidationRules
 
   <p>Ok, the last functionality to implement is the one related to the string validation rules. Let's go!</p>
 
-  <h3>Specification 12: throwing exceptions when validated string is null</h3>
+  <h3 class="sigil_not_in_toc">Specification 12: throwing exceptions when validated string is null</h3>
 
   <p>This case is very similar to throwing exceptions during integer validations. If you're bored reading this, you can just skim through this section briefly as there's nothing new to learn here.</p>
 
-  <h4>Create a specification</h4>
+  <h4 class="sigil_not_in_toc">Create a specification</h4>
 
   <p>Our Given-When-Then specification looks like this:</p>
   <pre>
@@ -1632,7 +1632,7 @@ ShouldThrowExceptionWhenAppliedToNullString()
 
   <p>Let's make it fail for proper reason.</p>
 
-  <h4>Make it fail for proper reason</h4>
+  <h4 class="sigil_not_in_toc">Make it fail for proper reason</h4>
 
   <p>We can achieve this by removing throwing the exception from the ApplyTo method like this:</p>
   <pre class="brush: csharp">
@@ -1657,7 +1657,7 @@ public class SimpleValidationRules : ValidationRules
 
   <p>The specification expects that exception is thrown, but none is, so the failure is for proper reason.</p>
 
-  <h4>Make it pass</h4>
+  <h4 class="sigil_not_in_toc">Make it pass</h4>
 
   <p>Putting an exception back (but not NotImplementedException, since we mark TODO items with these) will do it:</p>
   <pre class="brush: csharp">
@@ -1682,7 +1682,7 @@ public class SimpleValidationRules : ValidationRules
 
   <p>The spec passes now, so we're all happy - time to move on.</p>
 
-  <h4>Examine TODO list</h4>
+  <h4 class="sigil_not_in_toc">Examine TODO list</h4>
 
   <p>Another item to get rid of from the TODO list - the one related to throwing exception when null string is validated:</p>
 
@@ -1720,7 +1720,7 @@ public class SimpleValidationRules : ValidationRules
 
   <p>Great - only two more to go! We're almost there! Let's pick up the next item - throwing exception on empty string.</p>
 
-  <h3>Specification 13: throwing exceptions when validating empty string</h3>
+  <h3 class="sigil_not_in_toc">Specification 13: throwing exceptions when validating empty string</h3>
 
   <p>The Given-When-Then specification is almost the same as the previous one:</p>
   <pre>
@@ -1750,7 +1750,7 @@ ShouldThrowExceptionAppliedToEmptyString()
 
   <p>This specification compiles and passes instantly. As you remember, we have to make it fail for proper reason. But wait, this time we cannot remove throwing the exception, because the previous specification will fail. What are we gonna do?</p>
 
-  <h4>Make it fail for proper reason</h4>
+  <h4 class="sigil_not_in_toc">Make it fail for proper reason</h4>
 
   <p>You won't like this probably, but we'll add temporary code to ApplyTo method just to make this one specification fail.</p>
 
@@ -1767,7 +1767,7 @@ ShouldThrowExceptionAppliedToEmptyString()
 
   <p>You may think I'm insane to put in so much code just to make a specification fail, but remember I'm trying to make a point during this kata ;-).</p>
 
-  <h4>Make it pass</h4>
+  <h4 class="sigil_not_in_toc">Make it pass</h4>
 
   <p>Now that we know that the spec can fail for proper reason, we can revert the changes we just made and get back to the previous implementation that was actually good enough :-).</p>
   <pre class="brush: csharp">
@@ -1781,7 +1781,7 @@ ShouldThrowExceptionAppliedToEmptyString()
 
   <p>You may think this is really funny - we made some effort just to revert it back. What we gained from it is a new specification and a certainty that it can fail when it's not fulfilled.</p>
 
-  <h4>Examine TODO list</h4>
+  <h4 class="sigil_not_in_toc">Examine TODO list</h4>
 
   <p>Another item to cross off:</p>
 
@@ -1819,9 +1819,9 @@ ShouldThrowExceptionAppliedToEmptyString()
 
   <p>Now, it's time for the last one and we're finished!</p>
 
-  <h3>Specification 13: not throwing exception when validated string is neither null nor empty</h3>
+  <h3 class="sigil_not_in_toc">Specification 13: not throwing exception when validated string is neither null nor empty</h3>
 
-  <h4>Create a specification</h4>
+  <h4 class="sigil_not_in_toc">Create a specification</h4>
 
   <p>The last specification in a Given-When-Then form:</p>
   <pre>
@@ -1849,11 +1849,11 @@ ShouldNotThrowExceptionWhenAppliedToAStringThatIsNeitherNullNorEmpty()
 }
 </pre>
 
-  <h4>Make it fail for proper reason</h4>
+  <h4 class="sigil_not_in_toc">Make it fail for proper reason</h4>
 
   <p>It already compiles and fails for proper reason - the specification is expecting no exception, but one is thrown so nothing needs to be done at this stage.</p>
 
-  <h4>Make it pass</h4>
+  <h4 class="sigil_not_in_toc">Make it pass</h4>
 
   <p>Currently, the implementation of ApplyTo method looks like this:</p>
   <pre class="brush: csharp">
@@ -1876,7 +1876,7 @@ ShouldNotThrowExceptionWhenAppliedToAStringThatIsNeitherNullNorEmpty()
 
   <p>This makes our final specification pass.</p>
 
-  <h4>Examine TODO list</h4>
+  <h4 class="sigil_not_in_toc">Examine TODO list</h4>
 
   <p>We cross off the final item from TODO list:</p>
 
@@ -1916,7 +1916,7 @@ ShouldNotThrowExceptionWhenAppliedToAStringThatIsNeitherNullNorEmpty()
 
   <p>Now, there are few things we need to discuss before we finish</p>
 
-  <h3>1. What's "better" in this implementation than in the previous, "worse" one?</h3>
+  <h3 class="sigil_not_in_toc">1. What's "better" in this implementation than in the previous, "worse" one?</h3>
 
   <p>Compared to the <a href="http://feelings-erased.blogspot.com/2012/09/a-kata-challenge-to-try-your-tdd-skills_25.html">previous approach</a>, we wrote 13 specifications as opposed to 8 last time. This means that we wrote 5 more specs! What's the return of investment?</p>
 
@@ -1958,7 +1958,7 @@ ShouldNotThrowExceptionWhenAppliedToAStringThatIsNeitherNullNorEmpty()
 
   <p>The difference grows as more fields and more validation rules are added and the advantage of the approach described in this post becomes more obvious. If you don't believe me, try it out and see for yourself.</p>
 
-  <h3>2. What about refactoring?</h3>
+  <h3 class="sigil_not_in_toc">2. What about refactoring?</h3>
 
   <p>That's right - the TDD cycle is red-green-refactor, but I didn't even mention the last one during the kata. This was done on purpose - let me explain myself :-). With the previous, screwed up approach to this kata, I stated that what I wrote should be refactored, but I'd start from scratch next time anyway. So this time I started from scratch and made it so that no refactoring is necessary. This is because most of the TDD tutorials I saw that involve refactoring are hard to follow. So I traded off showing full TDD cycle for the example being easy to follow and understand. In normal circumstances (not educational ones), I'd probably go with the approach shown earlier and refactor to this approach when the specifications would tell me that the design contains smells.</p>
 
@@ -1966,11 +1966,11 @@ ShouldNotThrowExceptionWhenAppliedToAStringThatIsNeitherNullNorEmpty()
 
   <p>Maybe someday I'll write a post on refactoring so that we get from previous attempt to this one. For now, I'm skipping it.</p>
 
-  <h3>3. Can't we abstract the invalid values for strings? Isn't the current solution a code smell?</h3>
+  <h3 class="sigil_not_in_toc">3. Can't we abstract the invalid values for strings? Isn't the current solution a code smell?</h3>
 
   <p>By the way, if you look at some parts of the solution, namely the string validation, you can spot that it can be further abstracted. Instead of hardcoding two cases where a string is invalid (null and empty string), we could turn it into a list of invalid values and implement a general mechanism inside SimpleValidationRules that compares a validated string with such list. This would make the specs even more maintainable, but I consider it an overdesign. Not every mechanism is worth abstracting away and nothing points that more than two values will be forbidden. Of course, if this assumption doesn't hold in the future, the specs will tell me that. For now, I prefer keeping this part simple.</p>
 
-  <h3>Summary</h3>
+  <h3 class="sigil_not_in_toc">Summary</h3>
 
   <p>I hope this post is of any use for anyone - I made a lot of effort to put it together. Of course, it lacks some aspects of TDD (e.g. acceptance specifications or refactoring), but should give a general feel of how we can derive design and responsibilities using executable specifications and test-first approach.</p>
 

@@ -10,13 +10,13 @@
 <body>
   <p>Today, I'd like to continue where I left <a href="http://feelings-erased.blogspot.com/2013/02/the-two-main-techniques-in-test-driven.html">last time</a>. As you might remember, <a href="http://feelings-erased.blogspot.com/2013/02/the-two-main-techniques-in-test-driven.html">the first post</a> was about Need-Driven Development and this one's gonna be about a technique that's actually older and it's called Triangulation.</p>
 
-  <h3>Triangulation</h3>
+  <h3 class="sigil_not_in_toc">Triangulation</h3>
 
-  <h4 style="padding-top: 1em;">History</h4>
+  <h4 class="sigil_not_in_toc" style="padding-top: 1em;">History</h4>
 
   <p>The first occurence of the term triangulation I know about is in Kent Beck's book <a href="http://www.pearsonhighered.com/educator/product/Test-Driven-Development-By-Example/9780321146533.page">Test Driven Development: By Example</a> where Kent describes it as the most conservative technique of test-driving the implementation. It's one of the three core techniques of classic TDD.</p>
 
-  <h4>Description</h4>
+  <h4 class="sigil_not_in_toc">Description</h4>
 
   <p>The three approaches to test-driving the implementation and design described in Kent's book are:</p>
 
@@ -40,7 +40,7 @@
 
   <p>Triangulation is so characteristic to the classic TDD that many novices mistakenly believe TDD is all about triangulation.</p>
 
-  <h4>Example</h4>
+  <h4 class="sigil_not_in_toc">Example</h4>
 
   <p>Suppose we want to write a method that creates an aggregate sum of the list. Let's assume that we have no idea how to design the internals of our custom list class so that it fulfills its responsibility. Thus, we start with the simplest example:</p>
   <pre class="brush: csharp">
@@ -206,7 +206,7 @@ ShouldReturnSumOfAllItsElementsWhenAskedForAggregateSum()
 
   <p>And voilà! We have arrived at the final, generic solution. Note that the steps we took were tiny - so you might get the impression that the effort was not worth it. Indeed, this example was only to show the mechanics of triangulation - in real life, if we encountered such simple situation we'd know straight away what the design would be and we'd start with the general specs straight away and just type in the obvious implementation. Triangulation shows its power in more complex problems with multiple design axes and where taking tiny steps helps avoid "analysis paralysis".</p>
 
-  <h4>Principles</h4>
+  <h4 class="sigil_not_in_toc">Principles</h4>
 
   <p>These are the main principles of Triangulation:<br /></p>
 
@@ -218,19 +218,19 @@ ShouldReturnSumOfAllItsElementsWhenAskedForAggregateSum()
     <li>After arriving at the correct design, remove the redundant specs (remember, we want to have one spec failing for single reason)</li>
   </ol>
 
-  <h4>Related Concepts</h4>
+  <h4 class="sigil_not_in_toc">Related Concepts</h4>
 
-  <h5>Inside-out development</h5>
+  <h5 class="sigil_not_in_toc">Inside-out development</h5>
 
   <p>Triangulation is a core part of inside-out TDD style, where one uses mocks sparingly and focuses on getting the lower-layer (i.e. the assumptions) right before developing a more concrete solution on top of it.</p>
 
   <p>Can triangulation be used as a part of outside-in development (as described last time)? Of course, although it's probably used less often. Still, when you have a piece of functionality with well-defined inputs and outputs but don't know what the design behind it could be, you can go ahead and use triangulation whether you're developing outside-in or inside-out.</p>
 
-  <h5>Acceptance tests/specifications</h5>
+  <h5 class="sigil_not_in_toc">Acceptance tests/specifications</h5>
 
   <p>Even when doing Need-Driven Development using mocks etc., triangulation can be very useful at the acceptance level, where you can try to derive the internal design of whole module based on the tests that convey your understanding of domain rules.</p>
 
-  <h4>Applicability</h4>
+  <h4 class="sigil_not_in_toc">Applicability</h4>
 
   <p>As I stated before, triangulation is most useful when you have no idea how the internal design of a piece of functionality will look like (e.g. even if there are work-flows, they cannot be easily derived from your knowledge of the domain) and it's not obvious along which axes your design must provide generality, but you are able to give some examples of the observable behavior of that functionality given certain inputs. These are usually situations where you need to slow down and take tiny steps that slowly bring you closer to the right design - and that's what triangulation is for!</p>
 

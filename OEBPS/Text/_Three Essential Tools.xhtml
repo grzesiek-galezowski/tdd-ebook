@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>The three most essential tools</title>
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+  <h1 id="sigil_toc_id_3">The three most essential tools</h1>
+
+  <p>Ever watched Karate Kid, either the old version or the new one? The thing they have in common is that when the kid starts learning Karate (or Kung-Fu) from his master, he is given a basic, repetitive task (like taking of a jacket, and putting it on again), not knowing yet where it would lead him. Or look at first Rocky film (yeah, the one starring Sylvester Stallone), where Rocky was chasing a chicken in order to train agility.</p>
+
+  <p>When I first tried to learn guitar, I found two advices on the web: the first was to start by mastering a single, difficult song. The second was to play with a single string, learn how to make it sound in different ways and try to play some melodies by ear just with this one string. Do I have to tell you that the second advice worked better?</p>
+
+  <p>Honestly, I could dive right into the core techniques of TDD, but this would be like putting you on a ring with a demanding opponent - you'd most probably be discouraged before gaining the necessary skills. So, instead of explaining how to win a race, in this chapter we'll take a look at what shiny cars we'll be driving.</p>
+
+  <p>In other words, I'll give you a brief tour of the three most essential tools we'll be using throughout this book.</p>
+
+  <h2 id="sigil_toc_id_4">Our shiny tools</h2>
+
+  <p>A disclaimer - in this chapter, I'll oversimplify some things just to get you up and running without getting into the philosophy of TDD yet (think: physics lessons in primary school). Don't worry about it :-), we'll fix that in the coming chapters!</p>
+
+  <h3 class="sigil_not_in_toc">xUnit framework</h3>
+
+  <p>The first and most essential tool we're gonna use is an xUnit framework.</p>
+
+  <p>Let's assume that our application looks like this:<br /></p>
+
+  <div style="text-align: center;"></div>
+  <pre>
+public static void Main(string[] args) 
+{
+  try
+  {
+    int firstNumber = Int32.Parse(args[0]);
+    int secondNumber = Int32.Parse(args[1]);
+
+    var result = 
+      new Multiplication(firstNumber, secondNumber).Perform();
+
+    Console.WriteLine("Result is: " + result);
+  }
+  catch(Exception e)
+  {
+    Console.WriteLine("Addition failed because of: " + e);
+  } 
+}
+</pre>
+
+  <p>Now, let's assume we want to check whether is produces correct results. The most obvious way would be to invoke the application from commandline with some exemplary arguments, check the output to the console and compare it with what we expect to see. Such session could look like this:</p>
+  <pre>
+C:\MultiplicationApp\MultiplicationApp.exe 3 7
+21
+C:\MultiplicationApp\
+</pre>
+
+  <p>As you can see, the application produced a result of 21 for multiplication of 7 by 3. This is correct, so we assume the test is passed. But what if we produced an application that additionally does addition, subtraction, division, calculus etc.? How many times would we have to invoke the application to make sure every operation works correct?</p>
+
+  <p>But wait, we're programmers, right? So we can write programs that can do this for us! In order to do this, we'll create a second application that will also use the Multiplication class, but in a little different way:</p>
+  <pre>
+public static void Main(string[] args) 
+{
+  var multiplication = new Multiplication(3,7);
+  
+  var result = multiplication.Perform();
+  
+  if(result != 21)
+  {
+    throw new Exception("Failed! Expected: 21 but was: " + result);
+  }
+}
+</pre>
+
+  <p>Sounds easy, right? Let's take another step and extract the result check into something more reusable - after all, we'll be adding division in a second, remember? So here goes:</p>
+  <pre>
+public static void Main(string[] args) 
+{
+  var multiplication = new Multiplication(3,7);
+  
+  var result = multiplication.Perform();
+  
+  AssertTwoIntegersAreEqual(expected: 21, actual: result);
+}
+
+public static void AssertTwoIntegersAreEqual(
+  int expected, int actual)
+{
+  if(actual != expected)
+  {
+    throw new Exception(
+      "Failed! Expected: " + expected + " but was: " + actual);
+  }
+}
+</pre>
+
+  <p>Note that I started the name of the method with "Assert" - we'll get back to the naming soon, for now just assume that this is just a good name for the method. Let's take one last round and put the test into its own method:</p>
+  <pre>
+public static void Main(string[] args) 
+{
+  Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers();
+}
+
+public void 
+Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
+{
+  //Assuming...
+  var multiplication = new Multiplication(3,7);
+  
+  //when this happens:
+  var result = multiplication.Perform();
+  
+  //then the result should be...
+  AssertTwoIntegersAreEqual(expected: 21, actual: result);
+}
+
+public static void AssertTwoIntegersAreEqual(
+  int expected, int actual)
+{
+  if(actual != expected)
+  {
+    throw new Exception(
+      "Failed! Expected: " + expected + " but was: " + actual);
+  }
+}
+</pre>
+
+  <p>And we're finished. Now if we need another test, e.g. for division, we can just add a new method call to the Main() method and implement it. When implementing it, we can reuse the AssertTwoIntegersAreEqual() method, since the check for division would be analogous.</p>
+
+  <p>As you can see, we can easily write automated checks like this, but this way has some disadvantages:</p>
+
+  <ol>
+    <li>Every time we add new test, we have to maintain the Main() method, adding a call to the new test. If you forgot to add such a method, the test would never be run, which, in case of many tests, is hard to notice.</li>
+
+    <li>Imagine your system consists of more than one application - you'd have some problems trying to gather summary results for all of the applications that your system consists of.</li>
+
+    <li>A need would very quickly arise to write a lot of other checks like AssertTwoIntegersAreEqual() - this one compares two integers for equality, but what if you wanted to check that one is greater than the other? What if you wanted to check equality not for integers, but for characters, strings, floats etc.? What if you wanted to check some conditions on collections, e.g. that a collection is sorted or that all items in the collection are unique?</li>
+
+    <li>Given that a test would end with error, it would be hard to navigate from the commandline output to the line in your IDE. Wouldn't it be easier if you could click on the call stack to take you immediately to the code where the failure took place?</li>
+  </ol>
+
+  <p>For these and other reasons, automated testing tools were born. Those testing tools are generally referenced to as <strong>xUnit family</strong>, because many of them have names that end with the word "Unit", e.g. CppUnit (for C++), JUnit (for Java), NUnit (for .NET) etc.</p>
+
+  <p>To be honest, I can't wait to show you how the test we wrote just a minute ago looks like when xUnit framework is used, however, before I do this, I'd like to recap quickly what we have in our brute-force naive approach to writing automated tests:</p>
+
+  <ol>
+    <li>The Main() method serves as a <strong>Test List</strong></li>
+
+    <li>The Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers() method is a <strong>Test Method</strong></li>
+
+    <li>The AssertTwoIntegersAreEqual() method is <strong>an Assertion</strong></li>
+  </ol>
+
+  <p>Quite to our joy, those three elements are present in xUnit frameworks as well. To illustrate it, here's (finally!) the same test we wrote, but with an xUnit framework (this one is called XUnit.Net):</p>
+  <pre>
+[Fact]
+public void 
+Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
+{
+  //Assuming...
+  var multiplication = new Multiplication(3,7);
+  
+  //when this happens:
+  var result = multiplication.Perform();
+  
+  //then the result should be...
+  Assert.Equal(21, result);
+}
+</pre>
+
+  <p>As you can see, it looks like two methods that we previously had are gone now and the test is the only thing that's left. Well, to tell you the truth, they're not gone - it's just that the framework handles these for us. Let's reiterate through the three elements of the previous version of the test that I promised would be there after the transition to xUnit framework:</p>
+
+  <ol>
+    <li><strong>Test List</strong> is now created automatically by the framework from all methods marked with a [Fact] attribute, so no need to maintain one or more central lists. Thus, the Main() method is gone.</li>
+
+    <li>The <strong>Test Method is here and looks almost the same as the last time.</strong></li>
+
+    <li>The <strong>Assertion</strong> took the form of a call to static Assert.Equal() method - the xUnit.NET framework is bundled with a wide range of pre-made assertions for your convenience. Of course, no one stops you from writing your own custom one if you don't find what you're looking for in a default set.</li>
+  </ol>
+
+  <p>Phew, I hope I made the transition quite painless for you. Now the last thing to add - as there is not Main() method anymore in the last example, you surely must wonder how we run those tests, right? Ok, the last big secret unveiled - we use an external application for this (we'll refer to it using a term <strong>Test Runner</strong>) - we tell it which assemblies to run and it loads them, runs them, reports results etc. It can take various forms, e.g. it can be a console application, a GUI application or a plugin to our IDEs. Here's an example of a stand-alone runner for xUnit.NET framework:</p>
+
+  <p style="margin-left: auto; margin-right: auto;"><img alt="XUnit.NET.Window" src="../Images/XUnit.NET.Window.png" /></p>
+
+  <div class="achievement">
+    <h3 class="sigil_not_in_toc">Sprinter</h3>
+
+    <p>You sure know how to run your tests. Automatically!</p>
+  </div>
+
+  <h3 class="sigil_not_in_toc">Mocking framework</h3>
+
+  <p>Mocking frameworks are libraries that automate runtime creation of objects (called "mocks") that adhere to specified interface. Aside from the creation itself, the frameworks provide an API to configure our mocks on how they behave when certain methods are called on them and to let us inspect which calls they received.</p>
+
+  <p>Mocking frameworks are not as old as xUnit frameworks and were not present in TDD since the very beginning. As you might be wondering why on earth do we need something like this, I'll let you in on a secret: they were born with a goal of aiding a specific approach to object oriented design that happens during TDD in mind.</p>
+
+  <p>For now, however, let's try to keep things easy. I'll defer explaining the actual rationale for mocking frameworks until later and instead give you a quick example where you can see them in action. Ready? Let's go!</p>
+
+  <p>Let's pretend that we have the following code for adding new set of orders for products to a database and handling exceptions (by writing a message to a log) when it fails:</p>
+  <pre>
+public class OrderProcessing
+{
+  //other code...
+
+  public void Place(Order order)
+  {
+    try
+    {
+      this.orderDatabase.Insert(order);
+    }
+    catch(Exception e)
+    {
+      this.log.Write("Could not insert an order. Reason: " + e);
+    }
+  }
+
+  //other code...
+}
+</pre>
+
+  <p>Now, imagine we need to test it - how do we do it? I can already see you shaking your head and saying: "Let's just create this database, invoke this method and see if the record is added properly". In such case, the first test would look like this:</p>
+  <pre>
+[Fact]
+public void ShouldInsertNewOrderToDatabase()
+{
+  //GIVEN
+  var orderDatabase = new MySqlOrderDatabase();
+  orderDatabase.Connect();
+  orderDatabase.Clean();
+  var orderProcessing = new OrderProcessing(orderDatabase, new FileLog());
+  var order = new Order(
+    name: "Grzesiek", 
+    surname: "Galezowski", 
+    product: "Agile Acceptance Testing", 
+    date: DateTime.Now,
+    quantity: 1);
+
+  //WHEN
+  orderProcessing.Place(order);
+
+  //THEN
+  var allOrders = orderDatabase.SelectAllOrders();
+  Assert.Contains(order, allOrders);
+}
+</pre>
+
+  <p>As you see, at the beginning of the test, we're opening a connection and cleaning all existing orders (more on that shortly!), then creating an order object, inserting it into a database and then querying the database to give us all of the held instances. At the end, we make an assertion that the order we tried to insert must be inside all orders in a database.</p>
+
+  <p>Why do we clean up the database? Remember a database is a persistent storage, so if we didn't clean it up and run this test again, the database may have already contained the item (maybe another test already added it?) and would probably not allow us to add the same item again. Thus, the test would fail. Ouch! It hurts so bad, because we wanted our tests to prove something works, but looks like it can fail even when the logic is coded correctly. What use is such a test if it cannot reliably provide the information we demand from it (whether the implemented logic is correct or not)? Thus, we clean up before each run to make sure the state of the persistent storage is the same every time we run this test.</p>
+
+  <p>So, got what you want? Not me, anyway. Personally, I wouldn't go this way. There are several reasons:</p>
+
+  <ol>
+    <li>The test is going to be slow. It's not uncommon to have more then thousand tests in your suite and I don't want to spend half a hour running them very time. Do you?</li>
+
+    <li>Everyone running this test will have to set up a database on their machine. What if their setup is slightly different than yours? What if the schema gets outdated? Will you re-run your database creation script only to ensure you've got the latest schema available to run your tests against?</li>
+
+    <li>There may not be an implementation of a specified database engine for your development machine if your target platform is an exotic or mobile platform.</li>
+
+    <li>Note that this test you've written is only the out of two. You'll have to write another one for the scenario where inserting an order ends with exception. How do you setup your database in a state where it throws an exception? It's possible, but requires significant effort (e.g. deleting a table and recreating it later for other tests to run correctly), which may lead you to a conclusion that it's not worth to write such tests at all.</li>
+  </ol>
+
+  <p>Now, let's try something else. Let's assume that our database works OK (or will be tested by black-box tests) and the only thing we want to test is our implementation. In this situation, we can create a fake object that implements the same interface as MySqlOrderDatabase, but does not write to a database at all - it only stores the inserted records in a list:</p>
+  <pre>
+public class FakeOrderDatabase : OrderDatabase
+{
+  public Order _receivedArgument;
+
+  public void Insert(Order order)
+  {
+    _receivedArgument = order;
+  }
+
+  public List&lt;Order&gt; SelectAllOrders()
+  {
+    return new List&lt;Order&gt;() { _receivedOrder; };
+  }
+}
+</pre>
+
+  <p>Now, we can substitute the real implementation of order database by the fake instance:</p>
+  <pre>
+[Fact]
+public void ShouldInsertNewOrderToDatabase()
+{
+  //GIVEN
+  var orderDatabase = new FakeOrderDatabase();
+  var orderProcessing = new OrderProcessing(orderDatabase, new FileLog());
+  var order = new Order(
+    name: "Grzesiek", 
+    surname: "Galezowski", 
+    product: "Agile Acceptance Testing", 
+    date: DateTime.Now,
+    quantity: 1);
+
+  //WHEN
+  orderProcessing.Place(order);
+
+  //THEN
+  var allOrders = orderDatabase.SelectAllOrders();
+  Assert.Contains(order, allOrders);
+}
+</pre>
+
+  <p>Note that we don't clean the fake database object, since we create it as fresh each time the test is run. Also, the test is going to be much quicker now. But, that's not the end! We can easily write a test for an exception situation. How do we do it? Just make another fake object implemented like this:</p>
+  <pre>
+public class ExplodingOrderDatabase : OrderDatabase
+{
+  public void Insert(Order order)
+  {
+    throw new Exception();
+  }
+
+  public List&lt;Order&gt; SelectAllOrders()
+  {
+  }
+}
+</pre>
+
+  <p>Ok, so far so good, but the bad is that now we've got two fake objects to maintain (and we may expect more). Any method or argument added will need to be propagated to all these objects. We can spare some coding by making our mocks a little more generic so their behavior can be configured using lambda expressions:</p>
+  <pre>
+public class ConfigurableOrderDatabase : OrderDatabase
+{
+  public Action&lt;Order&gt; doWhenInsertCalled;
+  public Func&lt;List&lt;Order&gt;&gt; doWhenSelectAllOrdersCalled;
+
+  public void Insert(Order order)
+  {
+    doWhenInsertCalled(order);
+  }
+
+  public List&lt;Order&gt; SelectAllOrders()
+  {
+    return doWhenSelectAllOrdersCalled();
+  }
+}
+</pre>
+
+  <p>Now, we don't have to create additional classes for new scenarios, but our syntax gets awkward. See for yourself how we configure the fake order database to remember and yield the inserted order:</p>
+  <pre>
+var db = new ConfigurableOrderDatabase();
+Order gotOrder = null;
+db.doWhenInsertCalled = o =&gt; {gotOrder = o;};
+db.doWhenSelectAllOrdersCalled = () =&gt; new List&lt;Order&gt;() { gotOrder };
+</pre>
+
+  <p>And if we want it to throw an exception when anything is inserted:</p>
+  <pre>
+var db = new ConfigurableOrderDatabase();
+db.doWhenInsertCalled = o =&gt; {throw new Exception();};
+  </pre>
+
+  <p>Thankfully, some smart programmers created frameworks that provide further automation in such scenarios. One of them is called <strong>NSubstitute</strong> and provides an API in a form of extension methods (that's why it might seem a bit magical at first. Don't worry, you'll get used to it).</p>
+
+  <p>Using NSubstitute, out first test can be rewritten as such:</p>
+  <pre>
+[Fact]
+public void ShouldInsertNewOrderToDatabase()
+{
+  //GIVEN
+  var orderDatabase = new Substitute.For&lt;OrderDatabase&gt;();
+  var orderProcessing = new OrderProcessing(orderDatabase, new FileLog());
+  var order = new Order(
+    name: "Grzesiek", 
+    surname: "Galezowski", 
+    product: "Agile Acceptance Testing", 
+    date: DateTime.Now,
+    quantity: 1);
+
+  //WHEN
+  orderProcessing.Place(order);
+
+  //THEN
+  orderDatabase.Received(1).Insert(order);
+}
+</pre>
+
+  <p>Note that we don't need the SelectAllOrders() method. If no one except this test needs it, we can delete it and spare some more maintainability trouble. The last line of this test is actually a camouflaged assertion that checks whether Insert method was called once with order object as parameter.</p>
+
+  <p>I'll get back to mocks, since, as I said, there's a huge philosophy behind them and we have only scratched the surface here.</p>
+
+  <div class="achievement">
+    <h3 class="sigil_not_in_toc">Pretender</h3>
+
+    <p>You've managed to use a mock instead of a real object in unit test!</p>
+  </div>
+
+  <h3 class="sigil_not_in_toc">Anonymous values generator</h3>
+
+  <p>Look at the test in the previous section. Doesn't it trouble you that we fill the order object with so many values that are totally irrelevant to the test logic itself? They actually hinder readability of the test. Also, they make us believe that the tested object really cares what these values are, although it doesn't (the database does, but we already got rid of it from the test). Let's move it to a method with descriptive name:</p>
+  <pre>
+[Fact]
+public void ShouldInsertNewOrderToDatabase()
+{
+  //GIVEN
+  var orderDatabase = new Substitute.For&lt;OrderDatabase&gt;();
+  var orderProcessing = new OrderProcessing(orderDatabase, new FileLog());
+  var order = AnonymousOrder();
+
+  //WHEN
+  orderProcessing.Place(order);
+
+  //THEN
+  orderDatabase.Received(1).Insert(order);
+}
+
+public Order AnonymousOrder()
+{
+  return new Order(
+    name: "Grzesiek", 
+    surname: "Galezowski", 
+    product: "Agile Acceptance Testing", 
+    date: DateTime.Now,
+    quantity: 1);
+}
+</pre>
+
+  <p>Now that's better. Not only did we make the test shorter, we also provided a hint to the test reader that the actual values used to create an order don't matter from the perspective of tested order processing logic, hence the name AnonymousOrder.</p>
+
+  <p>By the way, wouldn't it be nice if we didn't have to provide the anonymous objects ourselves, but rely on another library to generate them for us? Susprise, surprise, there is one! It's called <strong>Autofixture</strong>. It's an example of an anonymous values generator (although its creator likes to say that it's an implementation of Test Data Builder pattern, but let's skip this discussion here). After refactoring our test to use AutoFixture, we arrive at the following:</p>
+  <pre>
+[Fact]
+public void ShouldInsertNewOrderToDatabase()
+{
+  //GIVEN
+  var orderDatabase = new Substitute.For&lt;OrderDatabase&gt;();
+  var orderProcessing = new OrderProcessing(orderDatabase, new FileLog());
+  var order = any.Create&lt;Order&gt;();
+
+  //WHEN
+  orderProcessing.Place(order);
+
+  //THEN
+  orderDatabase.Received(1).Insert(order);
+}
+
+private Fixture any = new Fixture();
+</pre>
+
+  <p>Nice, huh? AutoFixture has a lot of advanced features, but personally I'm conservative and wrap it behind a static class called Any:</p>
+  <pre>
+public static class Any
+{
+  private static any = new Fixture();
+  
+  public static T ValueOf&lt;T&gt;()
+  {
+    return any.Create&lt;T&gt;();
+  }
+}
+</pre>
+
+  <p>In the next chapters, you'll see me using a lot of different methods from the Any type. The more you use this class, the more it grows with other methods for creating customized objects. For now, however, let's stop here.</p>
+
+  <div class="achievement">
+    <h3 class="sigil_not_in_toc">Anonymous</h3>
+
+    <p>The values you use in your unit tests move like a shadow, unnoticed by anyone and until it is really necessary.</p>
+  </div>
+
+  <h3 class="sigil_not_in_toc">Summary</h3>
+
+  <p>In this chapter, I tried to show you the three essential tools which we'll be using in this book and which, when mastered, will make your test-driven development smoother. If this chapter leaves you with insufficient justification for their use, don't worry - we'll dive into the philosophy behind them in the coming chapters. For now, I just want you to get familiar with the tools themselves and their syntax. Go on, download these tools, launch them, try to write something simple with them. You don't need to understand their full purpose yet, just go out and play :-).</p>
+
+  <div class="achievement">
+    <h3 class="sigil_not_in_toc">Equipped</h3>
+
+    <p>You are now able to understand most of the code examples throughout this book!</p>
+  </div>
+</body>
+</html>

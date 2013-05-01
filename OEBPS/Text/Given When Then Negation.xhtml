@@ -10,7 +10,7 @@
 <body>
   <p>This post is about how TDD informs analysis and stimulates learning. We'll go through a simple example and investigate rationale and mechanics of decisions taken.</p>
 
-  <h3>The boards starts empty</h3>
+  <h3 class="sigil_not_in_toc">The boards starts empty</h3>
 
   <p>Let's imagine we're writing a virtual Kanban-like board (this is also called a 'scrum board' AFAIK). If you don't know what a scrum board is: the board is used for task tracking and is split into vertical columns that represent task progress (like NOT STARTED, IN PROGRESS, DONE). It's also split into horizontal categories that represent bigger units of work (often user stories) that the tasks belong to. We usually add a task to the story and watch it pass through the vertical columns until we reach the DONE state.<a href="http://www.mountaingoatsoftware.com/scrum/task-boards">You can read more on scrum boards if you're unfamiliar with the topic</a>, however, what I've written here is enough knowledge to push forward with our example.</p>
 
@@ -44,7 +44,7 @@ public void ShouldStartOffClean ()
 
   <p>So, did we just waste our time here?</p>
 
-  <h3>Negative learning</h3>
+  <h3 class="sigil_not_in_toc">Negative learning</h3>
 
   <p>Let's hold our horses for a minute before deleting this spec and try to write this spec in a <a href="http://dannorth.net/introducing-bdd/">Given-When-Then</a> form:</p>
 
@@ -58,7 +58,7 @@ public void ShouldStartOffClean ()
 
   <p>The Given-When-Then form has this nice capability that you can discover many things by simply negating what you already have (by the way, this is not the only way to proceed, but this is the one I want to show you). We can be smart about it, but for now, I suggest we take the brute force approach - we'll go through each part of the behavior description and try to negate everything we can. We expect to run into some VERY obvious conclusions as well as find some jewels.</p>
 
-  <h4>Assumptions: Given nothing</h4>
+  <h4 class="sigil_not_in_toc">Assumptions: Given nothing</h4>
 
   <p>Here, we can make only one negation in the following form:</p>
 
@@ -68,7 +68,7 @@ public void ShouldStartOffClean ()
 
   <p>What is "not nothing"? It's "something" :-). What can we learn from it? Not much. In fact, most of the app logic we're going to write will rely on assumption that "there is something". Nothing valuable, let's move on</p>
 
-  <h4>Trigger: When a new scrum board is created</h4>
+  <h4 class="sigil_not_in_toc">Trigger: When a new scrum board is created</h4>
 
   <p>Let's start with negating the second part (the order doesn't matter, it's just that this part is more obvious):</p>
 
@@ -86,7 +86,7 @@ public void ShouldStartOffClean ()
 
   <p>What does it mean "NOT a new board"? I means "an old board". Wait a minute, that's INTERESTING! Let's ask further question: what does it mean to "create an old board"? It rings a bell - it's about "loading an old board". Wait a minute! This is a perfectly valid use case, because no user would like the board to disappear when they turn off the app! As this is not the core functionality, while not letting our self esteem and enthusiasm about this discovery eat us, we add it to the TODO list for later and proceed with the next negation.</p>
 
-  <h4>Outcome: Then it should be empty</h4>
+  <h4 class="sigil_not_in_toc">Outcome: Then it should be empty</h4>
 
   <p>Again, there is only one negation we can perform:</p>
 
@@ -120,7 +120,7 @@ public void ShouldNotBeCleanWhenTaskIsAdded()
 
   <p>Now THAT'S a discovery! Let's quickly recap what we've learned here: we've learned that there is an abstraction called "Task" that can be added to the board by invoking the "AddNew()" method (which needs to be implemented: another item for the TODO list!). We've also got another Given-When-Then behavior description that we can analyze the same way as the first one. Shhh... I'll tell you a secret: until now we've been proceeding asking question "What if not?". Another useful question to ask is "What else?", and we can apply it to the WHEN part by asking "What else happens when we add a task?". But that's another story.</p>
 
-  <h3>Summary</h3>
+  <h3 class="sigil_not_in_toc">Summary</h3>
 
   <p>What I tried to show you is how TDD can be often used to inform analysis. I've also tried to show how potentially pointless specs can help us learn more on our domain or ask the right questions about the domain. I'm not trying to say that TDD is a substitute for other analysis methods, such as commonality-variability analysis, but it sure adds much to your current toolset.</p>
 

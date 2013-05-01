@@ -24,7 +24,7 @@
 
   <p>But for now, let’s focus on the three categories:</p>
 
-  <h3 id="unordered-chains">1. Unordered chains</h3>
+  <h3 class="sigil_not_in_toc" id="unordered-chains">1. Unordered chains</h3>
 
   <p>Let’s imagine that our system sends frames through a network interface and the frame has to be built according to a specified format. To allow building such frames easily, we introduce a builder pattern implementation to hide the format and allow us to specify each field freely. The builder can be used like this:</p>
   <pre class="brush: csharp">
@@ -47,7 +47,7 @@ var frame = new FrameWithParameters()
 
   <p>Just as in the example from <a href="http://feelings-erased.blogspot.com/2012/08/mocking-method-chains-part-1-when-not.html">part 1</a>, this kind of API is invented as a shortcut to group multiple invocations under one object and make this grouping obvious. The difference is that here, the invocations are NOT made in order to browse through object’s dependencies, but to reduce the “noise” that would result from specifying the object name before each method call.</p>
 
-  <h4 id="mocking-unordered-chains.">Mocking unordered chains.</h4>
+  <h4 class="sigil_not_in_toc" id="mocking-unordered-chains.">Mocking unordered chains.</h4>
 
   <p>Before I show you how unordered chains can be mocked/specified, we need to take a look how such objects are usually implemented. We’ll use the builder example, but modify it so that the FrameWithParameters is an interface rather than a concrete class:</p>
   <pre class="brush: csharp">
@@ -126,7 +126,7 @@ static void UnorderedCallChainingIsSupportedBy
 
   <p>Ok, that’s pretty much it. Now for ordered chains.</p>
 
-  <h3 id="ordered-chains">2. Ordered chains</h3>
+  <h3 class="sigil_not_in_toc" id="ordered-chains">2. Ordered chains</h3>
 
   <p>These is a case when making the calls in a different order gives different semantic results. Let’s take a look at a simplified example of stream parser. The stream consists of fields, each having a name and a fixed length. The role of the parser is to chop off subsequent fields from the stream and place them in a dictionary.</p>
   <pre class="brush: csharp">
@@ -177,7 +177,7 @@ callSequence.Received().BIN(“Content”, 300);
 
   <p>To sum up, ordered chains need some non-standard tricks depending on what mocking framework you use. Usually, however, one can find a way to get the desired result.</p>
 
-  <h3 id="chains-with-grammar">3. Chains with grammar</h3>
+  <h3 class="sigil_not_in_toc" id="chains-with-grammar">3. Chains with grammar</h3>
 
   <p>Conceptually, this is the most interesting chaining technique. It is used to build API that tries to mimic sentences (and as you know, in a sentence, not every word is legal in every place. There are rules that define what can be used where in a sentence and these rules are called “grammar”). Let’s take a look at the following example:</p>
   <pre class="brush: csharp">
@@ -217,13 +217,13 @@ public interface RequirementConfiguration
 
   <p>This way, the object returned by previous call creates a context for the next call. E.g. calling Requires() twice in a chain is impossible - such code would not compile.</p>
 
-  <h4 id="mocking-chains-with-grammar">Mocking chains with grammar</h4>
+  <h4 class="sigil_not_in_toc" id="mocking-chains-with-grammar">Mocking chains with grammar</h4>
 
   <p>Note that in the example above, the order of calls is mostly enforced by the “grammar”, but the last two calls are an exception - we want to be able to specify as many roles as we wish and the order of these role specifications is irrelevant. The conclusion is that parts of the chains in grammar can be ordered as enforced by the “grammar”, parts can be ordered as enforced by the semantics of produced code, and parts can be unordered.</p>
 
   <p>From mocking perspective, this is just scaling the solutions described in the first two sections to span several interfaces. Sometimes, you may even want to specify unordered calls as ordered if it makes your live easier - the penalty is having inaccurate documentation, since anyone looking at the unit test may think that the order is actually required where it’s not.</p>
 
-  <h3 id="chains-and-fluent-interfaces">Chains and Fluent Interfaces</h3>
+  <h3 class="sigil_not_in_toc" id="chains-and-fluent-interfaces">Chains and Fluent Interfaces</h3>
 
   <p>The last thing I’d like to clarify is why I avoid the term Fluent Interface throughout this post. The main reason is that this term is a bit misunderstood among the novice programmers and it doesn’t matter so much from the perspective of mocking. They often make the simplification that the “fluency” in fluent interfaces is about the chaining itself. As I said, this is a misunderstanding. Method chaining is just one of the techniques to achieve fluent interfaces. Other techniques include: function sequence, function nesting, lambdas, closures, operator overloading, annotations/attributes, abstract syntax tree manipulation etc.</p>
 
@@ -241,7 +241,7 @@ public interface RequirementConfiguration
 
   <p>There is a lot of places on the internet where you can deepen your knowledge on this topic. If there is a demand, however, I can expand on what I wrote here, but for now, I’ll hold back.</p>
 
-  <h3 id="wrapping-it-up">Wrapping it up</h3>
+  <h3 class="sigil_not_in_toc" id="wrapping-it-up">Wrapping it up</h3>
 
   <p>Wow, this series was a great challenge both in terms of scope and teaching skills. If you think there are some improvements to be made or see some errors, please let me know in the comments, so that I can clarify or correct the material.</p>
 

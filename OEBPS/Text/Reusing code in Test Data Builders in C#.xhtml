@@ -10,7 +10,7 @@
 <body>
   <p>This is a C# version of a <a href="http://feelings-erased.blogspot.com/2012/11/polymorphic-test-data-builders-in-c.html">post I did a while ago</a>. Hope it's of any use.</p>
 
-  <h3>Test Data Builders</h3>
+  <h3 class="sigil_not_in_toc">Test Data Builders</h3>
 
   <p>Sometimes, when writing unit or acceptance tests, it's a good idea to use Test Data Builder. For example, let's take a network frame that has two fields - one for source, one for destination. A builder for such frame could look like this:</p>
   <pre class="brush: c#">
@@ -48,7 +48,7 @@ public class FrameBuilder
 var frame = new FrameBuilder().Source("A").Destination("B").Build();
 </pre>
 
-  <h3>The issue with Test Data Builder method reuse</h3>
+  <h3 class="sigil_not_in_toc">The issue with Test Data Builder method reuse</h3>
 
   <p>The pattern is fairly easy, but things get complicated when we have a whole family of frames, each sharing the same set of fields. If we wanted to write a separate builder for each frame, we'd end up duplicating a lot of code. So another idea is inheritance. However, taking the naive approach gets us into some trouble. Let's see it in action:</p>
   <pre class="brush: c#">
@@ -101,7 +101,7 @@ new AuthorizationFrameBuilder().Source("b").Password("a").Build();
 
   <p>This is because Source() method returns FrameBuilder, which doesn't include a method called Password() at all. Such chains cause compile errors.</p>
 
-  <h3>Generics to the rescue!</h3>
+  <h3 class="sigil_not_in_toc">Generics to the rescue!</h3>
 
   <p>Fortuntely, there's a solution for this. Generics! Yes, they can help us here, but in order to do this, we have to use a trick that in C++ world is called "Curiously Recurring Template Pattern" (don't know if it has any name in the C# world). By using the trick, we'll force the FrameBuilder (superclass) methods to return reference to its subclass (AuthorizationFrameBuilder) - this will allow us to mix methods from FrameBuilder and AuthorizationFrameBuilder in any order in a chain, because each method, not matter which of the classes it is defined in, returns a reference to a subclass.</p>
 
@@ -165,7 +165,7 @@ public class AuthorizationFrameBuilder
   }
 </pre>
 
-  <h3>Summary</h3>
+  <h3 class="sigil_not_in_toc">Summary</h3>
 
   <p>This solution makes it easy to reuse any number of methods in any number of different builders, so it's a real treasure when we've got many data structures that happen to share some common fields.</p>
 

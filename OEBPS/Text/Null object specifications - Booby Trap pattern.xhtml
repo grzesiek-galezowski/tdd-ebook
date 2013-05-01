@@ -10,7 +10,7 @@
 <body>
   <p>Hi, Today I'd like to write a little about specifying null objects and a simple Booby Trap pattern that can be used for this purpose.</p>
 
-  <h3>A case for a null object?</h3>
+  <h3 class="sigil_not_in_toc">A case for a null object?</h3>
 
   <p>First, I'll try to introduce the example we're going to work on, at the same time introducing the null object pattern briefly for those that don't know it (are there such programmers?)</p>
 
@@ -26,7 +26,7 @@
 
   <p>This kind of object - an object that encapsulates "doing nothing" when filling a specified role - is called a <strong>null object</strong>.</p>
 
-  <h3>Specifying null object - does that make any sense?</h3>
+  <h3 class="sigil_not_in_toc">Specifying null object - does that make any sense?</h3>
 
   <p>What's the point of specifying "nothing"? Isn't it a nonsense similar to specifying that the code will not accidentally format the hard drive?</p>
 
@@ -34,7 +34,7 @@
 
   <p>Let's go back to our example and the null encryption object. What's its definition of nothing? It's "it should not encrypt the message". But can it, e.g. Write something into the system log? Sure it can! So the "nothing" is really related to the message only. Hence, in the most strict case, we want to specify that the message shouldn't be touched at all (the more loose case will be covered by a separate post somewhere in the future).</p>
 
-  <h3>Booby traps - how to specify that something should not be touched?</h3>
+  <h3 class="sigil_not_in_toc">Booby traps - how to specify that something should not be touched?</h3>
 
   <p>Let's consider a null object that should REALLY do nothing with the message (a null object that triggers some behavior on passed object is more a complex topic - maybe I'll write a follow up to this post discussing this particular case). What can we do to specify this requirement?</p>
 

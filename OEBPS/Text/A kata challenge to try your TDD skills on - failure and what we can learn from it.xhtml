@@ -12,7 +12,7 @@
 
   <p>I'll be using xUnit.NET as my unit test runner and NSubstitute as my mocking library of choice throughout this exercise. In general, I'll be following good practices most of the time and indicate where I'll be "accidentially" losing sight of them.</p>
 
-  <h3>Specification 1: Creating new instances</h3>
+  <h3 class="sigil_not_in_toc">Specification 1: Creating new instances</h3>
 
   <p>We're starting outside-in, from the inputs. In my system, I'll model the most "outside" part of the module as a MessageProcessing class. We should be able to create instances of this class, so the first specification will tell just this:</p>
   <pre class="brush: csharp">
@@ -32,7 +32,7 @@ public class MessageProcessing
 
   <p>Ok, so far so good. This, by the way, is a simple example of a <a href="http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html">Creational Specification</a>. Now let's take on a more complex behavior.</p>
 
-  <h3>Specification 2: Submitting frame to validation</h3>
+  <h3 class="sigil_not_in_toc">Specification 2: Submitting frame to validation</h3>
 
   <p>Ok, so now's the time to use the Given-When-Then analysis. We already have the MessageProcessing class - also, we've got the Frame class. How do they interact with each other?</p>
 
@@ -170,7 +170,7 @@ public class MessageProcessing
 
   <p>Now it's all green, so let's examine our TODO list. The only item on the list is the Validation interface implementation, so let's go ahead and create...</p>
 
-  <h3>Specification 3: new instances of concrete validation.</h3>
+  <h3 class="sigil_not_in_toc">Specification 3: new instances of concrete validation.</h3>
 
   <p>So we need a concrete implementation of the Validation interface. Let's call it BasicValidation, since the logic in there is gonna be really simple.</p>
   <pre class="brush: csharp">
@@ -196,7 +196,7 @@ public class SanityValidation : Validation
 
   <p>Some tools, like Resharper, put occurences of NotImplementedException on the TODO list, which is a great feature, because replacing it with concrete implementation actually IS something "to do".</p>
 
-  <h3>Specification 4: Ignoring valid frames</h3>
+  <h3 class="sigil_not_in_toc">Specification 4: Ignoring valid frames</h3>
 
   <p>Starting from this chapter, we're going to feel the pain of my bad design decision more and more. In the grand finale, I'll show you what mess we've got ourselves into. But first things first, let's write the first specification of validation, which says:</p>
   <pre style="padding: 1em; border: dashed thin gray;">
@@ -243,7 +243,7 @@ public class SanityValidation : Validation
 
   <p>Note that we're not assigning this new constant any particular value - 12345 is just a dummy number. Moreover, we're putting a TODO next to the constant, since we'll want to revisit it later and actually write a specification on what the value of the constant should be. But for now - done. Time for the next one.</p>
 
-  <h3>Specification 5: throwing exception on invalid Speed</h3>
+  <h3 class="sigil_not_in_toc">Specification 5: throwing exception on invalid Speed</h3>
 
   <p>Let's describe the expected behavior:</p>
   <pre style="padding: 1em; border: dashed thin gray;">
@@ -288,7 +288,7 @@ public class SanityValidation : Validation
 }
 </pre>
 
-  <h3>Specification 6: throwing exceptions on invalid Age</h3>
+  <h3 class="sigil_not_in_toc">Specification 6: throwing exceptions on invalid Age</h3>
 
   <p>To be honest, nothing really interesting happens here, since it's almost the same as in the previous case. Let's just write the spec:</p>
   <pre class="brush: csharp">
@@ -329,7 +329,7 @@ public class SanityValidation : Validation
 
   <p>By the way, is it only me, or is there a pattern recurring in both specs and production code? Oh, and the conclusions on bad design drawn during the previous specification are only reinforced here!</p>
 
-  <h3>Specification 7: Sender cannot be null</h3>
+  <h3 class="sigil_not_in_toc">Specification 7: Sender cannot be null</h3>
 
   <p>Also, this one is analogous to the two previous ones, only this time we'll be checking for null instead of a numeric boundary:</p>
   <pre class="brush: csharp">
@@ -372,7 +372,7 @@ public class SanityValidation : Validation
 
   <p>...and the last validation:</p>
 
-  <h3>Specification 8: Sender cannot be empty</h3>
+  <h3 class="sigil_not_in_toc">Specification 8: Sender cannot be empty</h3>
 
   <p>Almost exactly the same as the previous one. Comments are not needed. Here's the spec:</p>
   <pre class="brush: csharp">
@@ -415,7 +415,7 @@ public class SanityValidation : Validation
 
   <p>and that's it for the validation logic - we've got all the behaviors nailed. The only thing left to do before I explain where (and why) I failed, is a specification for the constant that pollutes our TODO list:</p>
 
-  <h3>Specification 9: Minimum Valid Integer for validations should be 1</h3>
+  <h3 class="sigil_not_in_toc">Specification 9: Minimum Valid Integer for validations should be 1</h3>
 
   <p>The spec is really simple:</p>
   <pre class="brush: csharp">
@@ -446,7 +446,7 @@ public class SanityValidation : Validation
 
   <p>Ok, all behaviors nailed down, all specifications written, now it's time for a short retrospective.</p>
 
-  <h3>Where (and why) did I go wrong?</h3>
+  <h3 class="sigil_not_in_toc">Where (and why) did I go wrong?</h3>
 
   <p>The first mistake I made was in <strong>Specification 2</strong>. I just passed the whole frame to validation. What's wrong with that? By doing this, I failed to encapsulate the knowledge about the structure of the frame and eventually led to coupling all objects of the application to the Frame type. The frame is a third party class (you can't control how it changes), plus it's a data class (and <a href="http://www.codinghorror.com/blog/2006/05/code-smells.html">data classes are code smells</a>) - never couple your application to something as horrible as this!. Imagine the next version of the module would introduce compression and we'd handle this by introducing another class called Compression, then pass whole frame to it. Now every change to the Frame would impact both Validation and Compression object in the same way, introducing redundancy in dependencies and a maintainability pain - stronger with each new class that would need to operate on the frame. One of the goals of object oriented design is to keep data together with behaviors related to that data and that's exactly what I failed to achieve.</p>
 

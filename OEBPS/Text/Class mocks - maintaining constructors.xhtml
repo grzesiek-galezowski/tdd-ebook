@@ -12,7 +12,7 @@
 
   <p>My plan is as follows: first, I'll introduce the general pattern and describe its canonical use in unit testing. Then I'll show you how adding one teeny tiny method drives us to the solution to our mock constructor issue.</p>
 
-  <h3>The builder to the rescue!</h3>
+  <h3 class="sigil_not_in_toc">The builder to the rescue!</h3>
 
   <p>Before we jump into creating mocks, let's note that there are many unit tests where we create the specified object (e.g. in class X specifications, we create new object of class X in every spec/unit test, at least that's what I do, since I strongly believe that Setup/Teardown are last resort mechanisms).</p>
 
@@ -108,7 +108,7 @@ public class CopyOperationBuilder()
 
   <p>OK, now that I introduced the pattern and its usual usage in unit testing, let's see how we can benefit from it in case of mocking.</p>
 
-  <h3>Mock builder</h3>
+  <h3 class="sigil_not_in_toc">Mock builder</h3>
 
   <p>Now, time for a trick. We can just add another method in the builder, that will build a mock for us:</p>
   <pre class="brush: csharp">

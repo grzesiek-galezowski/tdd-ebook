@@ -14,13 +14,13 @@
 
   <p>Until I realized it's the wrong question to ask. So let's rephrase the question a little, rewind and start over:</p>
 
-  <h3 class="post-title entry-title">What to do when you feel you need to test private methods?</h3>
+  <h3 class="post-title entry-title sigil_not_in_toc">What to do when you feel you need to test private methods?</h3>
 
   <p>Now, that's better :-)</p>
 
   <p>Basically there are few ways to tackle this issue, depending on circumstances. I'll try to point them out starting from simplest.</p>
 
-  <h3>1. Don't do it.</h3>
+  <h3 class="sigil_not_in_toc">1. Don't do it.</h3>
 
   <p>As <a href="http://lizkeogh.com/2012/05/30/showcasing-the-language-of-bdd/">Liz Keogh pointed out (using BDD language, but it applies to TDD as well)</a>, unit tests in TDD or BDD are <strong>examples</strong> of how to use objects of the class and how is this class valuable to other classes. As such, unit test (or unit-level specifications if you will) should go through the public interface only (with an exception, that I'm going to introduce later).</p>
 
@@ -66,7 +66,7 @@ public class DishWasher
 
   <p>However, let's look at what I did with the actual washing - I made it a separate class and passed its instance to the washer. That's interesting - why isn't washing just a private method of the DishWasher class?</p>
 
-  <h3>2. Move a responsibility by Introducing a collaborator (TDD) or moving method (Refactoring)</h3>
+  <h3 class="sigil_not_in_toc">2. Move a responsibility by Introducing a collaborator (TDD) or moving method (Refactoring)</h3>
 
   <p><strong>First, let's look at it from TDD (and Test-First) point of view.</strong></p>
 
@@ -88,7 +88,7 @@ public class DishWasher
 
   <p>Now, these two patterns (not testing and moving responsibilities) cover about 90% of cases. There is, however, a third case when you really want to test/specify private methods. Let's take a look at it now.</p>
 
-  <h3>3. Use inheritance</h3>
+  <h3 class="sigil_not_in_toc">3. Use inheritance</h3>
 
   <p>(First, a disclaimer - I find this case very rare and usualy never run into it, so it was hard for me to find a good example. Please don't shout "hey, I can solve it by delegation instead of inheritance" - just bear with me :-)).</p>
 
@@ -171,7 +171,7 @@ public class SmallDishWasherSpecification : SmallDishWasher
 
   <p>But what if something is private? Just make it protected - maybe shed a small tear, but in the long run, it's no big deal.</p>
 
-  <h3>The last 1%</h3>
+  <h3 class="sigil_not_in_toc">The last 1%</h3>
 
   <p>This covers 99% of cases where you "need to" test the private method. The last 1% are some corner cases that are hard for me to even imagine. You can then use some of the "last resort techniques", like friends (C++), InternalsVisibleTo (C#), instrumentation/profiling API, reflection etc. but I really advise you to strongly consider the three options mentioned above before going that far.</p>
 

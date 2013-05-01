@@ -10,7 +10,7 @@
 <body>
   <p>This post is mostly C#-specific, although Java guys can make some use of the ideas presented here.</p>
 
-  <h3>Simplest attributes</h3>
+  <h3 class="sigil_not_in_toc">Simplest attributes</h3>
 
   <p>Sometimes, especially when dealing with third-party frameworks such as WCF, you scratch your head for how far can you really go with unit tests to specify that "method X should be a remote operation?". As we all know, firing up a WCF server just to make a call inside unit test is unacceptable. What do we have left?</p>
 
@@ -79,7 +79,7 @@ public void ShouldContainRemoteOperationForDoingSomething()
 
   <p>Easy, right? Ok, but what if we have an attribute that takes a constructor parameter and some properties?</p>
 
-  <h3>Attributes with properties and constructor parameters</h3>
+  <h3 class="sigil_not_in_toc">Attributes with properties and constructor parameters</h3>
 
   <p>Consider this:</p>
   <pre class="brush: c#">
@@ -147,7 +147,7 @@ private static bool AreEqual&lt;T_Attribute&gt;
 
   <p>Why is it reasonable to compare two attributes by their "likeness"? It's because attributes are mostly used as containers for the information. So, any information you put into the attribute by setting its properties and passing parameters to a constructor, you sooner or later want to get back from it and that's usually achieved by properties.</p>
 
-  <h3>What about class attributes?</h3>
+  <h3 class="sigil_not_in_toc">What about class attributes?</h3>
 
   <p>So, what about classes and their attributes? Luckily, nUnit has a decent support for these - just look it up in the documentation! Also, if you dig deep enough into the mentioned topic on nunit discussion list, you'll reach a way to achieve the same end result as this article shows by using extension methods to plug into nUnit's objects used for fluent assertions. It's a good idea to use what I've shown you as a building block for that if you decide to perform this exercise.</p>
 </body>

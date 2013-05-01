@@ -10,7 +10,7 @@
 <body>
   <p>Hi, today we're gonna talk a little bit about test driving decorators. In particular I'm going to take on a case where we are wrapping all methods of decorated object with the same logic (a good example is synchronization or tracing).</p>
 
-  <h3>Synchronized decorator - a simple example</h3>
+  <h3 class="sigil_not_in_toc">Synchronized decorator - a simple example</h3>
 
   <p>The example I'm gonna give is very simplistic, however, there's no need to complicate it, since all more complex objects follow the same pattern.</p>
 
@@ -46,7 +46,7 @@ public interface Stack&lt;T&gt;
 
   <p>How do we do it?</p>
 
-  <h3>First, classify the operations</h3>
+  <h3 class="sigil_not_in_toc">First, classify the operations</h3>
 
   <p>Looking at the method names, it's pretty evident which are "write" operations and should be guarded by writer lock and which are "read" operations and should be guarded by reader lock.</p>
 
@@ -70,7 +70,7 @@ public interface Stack&lt;T&gt;
 
   <p>Ok, done. What's the next step?</p>
 
-  <h3>Remember - no redundancy.</h3>
+  <h3 class="sigil_not_in_toc">Remember - no redundancy.</h3>
 
   <p>What we'd like to be able to do is to write the result of this analysis in the form of executable specifications AKA unit tests. So, for example, such specification would say: "putting an element on top of a stack should perform the same operation of wrapped object, with write access acquired". The same would go for all other "write" operations. So, not to be redundant, we'd like to encapsulate the "write access acquired" into its own method (and maybe in its own object, but let's leave that alone for now).</p>
 
@@ -211,7 +211,7 @@ ShouldReleaseWriteLockWhenAWrappedCallExecutionEndsWithException()
 }
 </pre>
 
-  <h3>Is it worth the hassle?</h3>
+  <h3 class="sigil_not_in_toc">Is it worth the hassle?</h3>
 
   <p>"Well", you might say, "it's two specs for each InXContext() plus two per each wrapped method. Isn't it too much for a wrapper that's implemented almost mechanically?". And you might be right. This is a case where I'd weigh pros against cons - you might decide not to test-drive this code, since the only value added by such tests is of the "living documentation" sort. I usually do it, but if you decide it's stupid, I won't blame you (much :-)). Another reason why I decided it's a good blog post is that it provides one way of specifying that something goes through lambda, which are a real horror for mock frameworks to match (you can't just say: match every method with argument being a lambda like THIS, at least not always). You could decide to go another way: take the specs we've written for InWriterContext() as a template, and use it for every method, just ignoring the existence of lambda and InXContext() methods and focus on the synchronization in each spec, but that would be <strong>potentially</strong> harder to maintain.</p>
 

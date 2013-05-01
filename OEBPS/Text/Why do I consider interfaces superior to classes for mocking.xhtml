@@ -20,7 +20,7 @@
 
   <p>Personally, I myself use class mocks very rarely. For the following reasons:</p>
 
-  <h3>1. Trouble overriding the implementation.</h3>
+  <h3 class="sigil_not_in_toc">1. Trouble overriding the implementation.</h3>
 
   <p>When you intend to mock a class, you have to watch out how you implement it. There are parts of class implementation that cannot be overridden, and these parts, when done wrong, may affect your specs/Unit tests in an unexpected way. Let's examine the following, bad from mocking perspective, example of a class:</p>
   <pre class="brush: c#">
@@ -53,11 +53,11 @@ public class PersonDao
 
   <p>There's only one way to deal effectively with issues described above - we have to change the design to allow dependency injection, plus, such design has to be maintained as the code evolves. My practical experience says it's unrealistic to expect every programmer that works with you to understand design guidelines that apply to mockable classes. Even if you train every developer in your team, sooner or later someone new will come and make changes against those guidelines. So, either turn into a policeman or give up.</p>
 
-  <h3>2. Maintaining virtuality</h3>
+  <h3 class="sigil_not_in_toc">2. Maintaining virtuality</h3>
 
   <p>In order to be able to mock a method inside a class, the method has to be virtual. It's best to keep all methods virtual in order to keep the mocks maintainable - when some of the methods are virtual and some of them not, it's hard to actually figure out what actually gets called in given circumstances and hard to read specifications that use such mocks - each time you read a spec, you have to go to the class definition to check whether the method in question will be mocked or not. Again, all of this requires everyone to follow strict class design guidelines, which is troublesome to enforce.</p>
 
-  <h3>3. Constructor maintenance</h3>
+  <h3 class="sigil_not_in_toc">3. Constructor maintenance</h3>
 
   <p>Given such class:</p>
   <pre class="brush: c#">

@@ -10,7 +10,7 @@
 <body>
   <p>Today I'd like to start discussing mocking of sequences of method call chains. This discussion will be split in two parts, part two coming soon.</p>
 
-  <h3>The basics of call chains</h3>
+  <h3 class="sigil_not_in_toc">The basics of call chains</h3>
 
   <p>When I say "call chain", I mean something like this:</p>
   <pre class="brush: csharp">
@@ -19,7 +19,7 @@ a.X().Y().Z().V();
 
   <p>So basically we're just invoking methods on a result of another method. This is a construct that probably everyone programming in an object oriented language have come across, so I'll only note that I don't mean "call chain" merely as a synonym of invoking method on returned object (because it would be plain silly to make up a name for something that obvious), but rather the style of invoking methods "in a chain" as seen in the example above.</p>
 
-  <h3>Call chains may be a design smell</h3>
+  <h3 class="sigil_not_in_toc">Call chains may be a design smell</h3>
 
   <p>Now, one thing I want to make clear is that there's a point in mocking method chains only in specific situations. This is because call chains can be either a design smell or a sophisticated API design technique. Today, I'm gonna talk a little bit about the first case, leaving the latter for part two.</p>
 
@@ -66,7 +66,7 @@ var wasWrittenInAmericanEnglish = locale == "en-US";
 
   <p>So the chain in such smelly situations is rather a workaround than an API design technique. The workaround is for typing too much and dealing with too many variables that are only used to obtain other variables.</p>
 
-  <h3>The diagnosis and the cure</h3>
+  <h3 class="sigil_not_in_toc">The diagnosis and the cure</h3>
 
   <p>We mainly run into this kind of code in four situations:</p>
 

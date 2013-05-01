@@ -12,13 +12,13 @@
 
   <p>This is a follow up post to the <a href="http://feelings-erased.blogspot.com/2012/05/tdd-is-good-teacher-both-demanding-and.html">TDD is a good teacher - both demanding and supportive</a> and discusses the second argument from my recent debate.</p>
 
-  <h3>Everything or nothing.</h3>
+  <h3 class="sigil_not_in_toc">Everything or nothing.</h3>
 
   <p>This argument states that you have to be "perfect from the start" or you die. Either you take everything or nothing. It's impossible for someone to take just a part of the benefits TDD has to offer.</p>
 
   <p>Here's my opinion on the topic: what executable specifications (AKA unit tests) bring you is never for free. Unit tests are additional code and like every code, it must be added, removed and changed to reach its target. Moreover, judging from static code analysis of a piece of code I did once, the unit tests code has often the highest coupling, so it's likely to change often. It's just that doing "full" TDD gets you the most. Below is the summary of different levels of TDD adoption (how I describe "progress towards full TDD" is of course arbitrary, so bear with me :-)), together with some rating based solely on my experience. By the way, when I say "isolation", I mean breaking dependencies between tested object and its collaborators, not between tests.</p>
 
-  <h3>1. No unit tests at all</h3><!--
+  <h3 class="sigil_not_in_toc">1. No unit tests at all</h3><!--
 Benefits:
 - ability to write new code quickly (just "code and ship it") 
 - model and remodel the code any way you want instantly
@@ -182,7 +182,7 @@ Cost:
     </tr>
   </table>
 
-  <h3>2. Some poorly-isolated "unit" tests (or rather integration tests, as they're sometimes called)</h3>
+  <h3 class="sigil_not_in_toc">2. Some poorly-isolated "unit" tests (or rather integration tests, as they're sometimes called)</h3>
 
   <p>This level is usually attained when some of the rebellious developers are angry with both time for setting up the environment necessary to perform box level tests and the time of execution of such tests. The idea is to write some of the scenarios dependent directly on entities in the code, to bypass mechanisms such as web or database, still exercising the domain logic. This makes sense when the domain logic is complex of its own.</p>
 
@@ -347,7 +347,7 @@ Cost:
 - ability to write a test that will never fail
 -->
 
-  <h3>3. Many poorly-isolated (coarse-grained) "unit" tests</h3>
+  <h3 class="sigil_not_in_toc">3. Many poorly-isolated (coarse-grained) "unit" tests</h3>
 
   <p>This is what many projects end with. We have many tests exercising most of the scenarios in the code. It is safe to refactor, it is easier to see some intent documented by the tests. Because the tests are so many, the relative cost of writing helper fixtures and mini-frameworks to help us is relatively small.</p>
 
@@ -511,7 +511,7 @@ Cost:
 - ability to write a test that will never fail
 -->
 
-  <h3>4. Many well isolated unit tests (first real unit tests)</h3>
+  <h3 class="sigil_not_in_toc">4. Many well isolated unit tests (first real unit tests)</h3>
 
   <p>Someone joins our team who really knows what unit tests are about. Usually this is a person practicing TDD, but is unsuccessful to convince the whole team to use it. Anyway, the person teaches us how to use mock objects and usually introduces some kind of mocking framework. Also, we learn about dependency injection and something about <a href="http://pragprog.com/magazines/2012-01/unit-tests-are-first">FIRST</a> or <a href="http://artofunittesting.com/">FICC</a> properties. With isolation rising, the test suite becomes increasingly maintainable - a situation when two tests fail for the same reason is quite rare, so we have less tests to correct and less debugging to do (because fine-grained test failure brings us to the failure reason without a need to debug).</p>
 
@@ -676,7 +676,7 @@ Cost:
 - ability to write a test that will never fail
 -->
 
-  <h3>5. Test Driven Development (with all the "bundled" tools)</h3>
+  <h3 class="sigil_not_in_toc">5. Test Driven Development (with all the "bundled" tools)</h3>
 
   <p>This is the sweetest spot. The "testing" part is treated as a side effect of performing analysis and design with all the powerful techniques TDD brings. The code quality is superb (my experience is that code written using good TDD has often the best quality analysis results of all the code in the product). Code is written with testability in mind, so we don't pointlessly waste time reworking code we have already written just to enable isolation (we DO refactor sometimes, especially when we're doing triangulations, but this is not a waste - this is learning).</p>
 
@@ -826,7 +826,7 @@ Cost:
     </tr>
   </table>
 
-  <h3>Wrapping it up.</h3>
+  <h3 class="sigil_not_in_toc">Wrapping it up.</h3>
 
   <p>TDD is the most effective of all processes described above. It does not require perfection from the start, however, if you choose to forgo some of the practices and techniques, you obviously have to pay the price. What I try to teach people when I talk about TDD is that it is unnecessary to pay this price and by doing this, we introduce a waste. Which is what we'd like to avoid, right?</p>
 

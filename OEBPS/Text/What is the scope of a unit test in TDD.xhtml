@@ -12,7 +12,7 @@
 
   <p>Let's try to answer the question by examining some TDD "unit tests":</p>
 
-  <h3>Is it class scope?</h3>
+  <h3 class="sigil_not_in_toc">Is it class scope?</h3>
 
   <p>Let's see the first example and try to answer this question:</p>
   <pre class="brush: csharp">
@@ -32,7 +32,7 @@ ShouldThrowValidationExceptionWithFatalErrorLevelWhenPassedStringIsEmpty()
 
   <p>Ok, so let's see... how many real classes take part in this spec? Three: a string, an exception and the validation. So the class scope is not the most accurate description.</p>
 
-  <h3>Or a method scope?</h3>
+  <h3 class="sigil_not_in_toc">Or a method scope?</h3>
 
   <p>So, maybe the scope covers a single method, meaning a spec always exercises one method of a specified object?</p>
 
@@ -51,7 +51,7 @@ ShouldBeFulfilledWhenEventOccursThreeTimes()
 
   <p>Count with me: how many methods are called? Depending on how we count, it's two (Queued() and IsFulfilled) or four (Queued(), Queued(), Queued(), IsFulfilled). In any case, not one. So it's not method scope either.</p>
 
-  <h3>It's the scope of class behavior!</h3>
+  <h3 class="sigil_not_in_toc">It's the scope of class behavior!</h3>
 
   <p>The proper answer is: behavior! Each TDD test specifies a single behavior. <a href="sustainabletdd.com">Amir Kolsky and Scott Bain</a> even teach that each TDD test should "introduce a behavioral distinction not existing before".</p>
 

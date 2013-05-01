@@ -39,18 +39,18 @@
         <item href="Text/The%20Two%20Main%20Techniques%20in%20Test-Driven%20development%20part%202.xhtml" id="The_Two_Main_Techniques_in_Test-Driven_development_part_2.xhtml" media-type="application/xhtml+xml"/>
         <item href="Text/Implementation%20Readability%20vs%20Design%20Readability%20and%20what%20TDD%20has%20to%20do%20with%20it.xhtml" id="Implementation_Readability_vs_Design_Readability_and_what_TDD_has_to_do_with_it.xhtml" media-type="application/xhtml+xml"/>
         <item href="Text/Don%27t%20use%20setup%20and%20teardown%20or%20I%20will....xhtml" id="Don_t_use_setup_and_teardown_or_I_will....xhtml" media-type="application/xhtml+xml"/>
-        <item href="Text/01%20-%20Motivations.xhtml" id="x01_-_Motivations.xhtml" media-type="application/xhtml+xml"/>
+        <item href="Text/_Motivations.xhtml" id="_Motivations.xhtml" media-type="application/xhtml+xml"/>
         <item href="Text/TODO.xhtml" id="TODO.xhtml" media-type="application/xhtml+xml"/>
-        <item href="Text/02%20-%20Basic%20tools%20and%20their%20features.xhtml" id="x02_-_Basic_tools_and_their_features.xhtml" media-type="application/xhtml+xml"/>
+        <item href="Text/_Three%20Essential%20Tools.xhtml" id="_Three_Essential_Tools.xhtml" media-type="application/xhtml+xml"/>
         <item href="Images/XUnit.NET.Window.png" id="XUnit.NET.Window.png" media-type="image/png"/>
         <item href="Images/Tekken3.png" id="Tekken3.png" media-type="image/png"/>
-        <item href="Text/03%20-%20It%20is%20not%20a%20test.xhtml" id="x03_-_It_is_not_a_test.xhtml" media-type="application/xhtml+xml"/>
+        <item href="Text/_It%27s%20Not%20a%20Test.xhtml" id="_It_s_Not_a_Test.xhtml" media-type="application/xhtml+xml"/>
         <item href="Styles/Global.css" id="Global.css" media-type="text/css"/>
     </manifest>
     <spine toc="ncx">
-        <itemref idref="x01_-_Motivations.xhtml"/>
-        <itemref idref="x02_-_Basic_tools_and_their_features.xhtml"/>
-        <itemref idref="x03_-_It_is_not_a_test.xhtml"/>
+        <itemref idref="_Motivations.xhtml"/>
+        <itemref idref="_Three_Essential_Tools.xhtml"/>
+        <itemref idref="_It_s_Not_a_Test.xhtml"/>
         <itemref idref="We_are_in_need_of_feedback.xhtml"/>
         <itemref idref="Test_Driven_Development_-_objections_part_1.xhtml"/>
         <itemref idref="Test_Driven_Development_-_objections_part_2.xhtml"/>
@@ -87,5 +87,6 @@
     </spine>
     <guide>
         <reference href="Text/TODO.xhtml" title="Przedmowa" type="notes"/>
+        <reference href="Text/_Three%20Essential%20Tools.xhtml" title="Tekst" type="text"/>
     </guide>
 </package>
