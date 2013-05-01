@@ -16,3 +16,7 @@ div.achievement
 .achievement p {
   font-style: italic;
 }
+
+pre {
+  font-size: small;
+}
