@@ -52,6 +52,7 @@
         <item href="Styles/Global.css" id="Global.css" media-type="text/css"/>
         <item href="Text/Cover.xhtml" id="Cover.xhtml" media-type="application/xhtml+xml"/>
         <item href="Images/cover.png" id="cover.png" media-type="image/png"/>
+        <item href="Images/Tekken3-gray.png" id="Tekken3-gray.png" media-type="image/png"/>
     </manifest>
     <spine toc="ncx">
         <itemref idref="Cover.xhtml"/>
