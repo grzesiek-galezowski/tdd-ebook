@@ -1,11 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN" "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN"
+ "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
 <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
     <head>
-        <meta name="dtb:uid" content="urn:uuid:6d00fb77-2111-4dd8-bba0-36b822fd09b2"/>
-        <meta name="dtb:depth" content="2"/>
-        <meta name="dtb:totalPageCount" content="0"/>
-        <meta name="dtb:maxPageNumber" content="0"/>
+        <meta content="urn:uuid:6d00fb77-2111-4dd8-bba0-36b822fd09b2" name="dtb:uid"/>
+        <meta content="2" name="dtb:depth"/>
+        <meta content="0" name="dtb:totalPageCount"/>
+        <meta content="0" name="dtb:maxPageNumber"/>
     </head>
     <docTitle>
         <text>Unknown</text>
