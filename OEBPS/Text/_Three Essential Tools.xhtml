@@ -257,12 +257,12 @@ public void ShouldInsertNewOrderToDatabase()
 
     <li>Everyone running this test will have to set up a local database on their machine. What if their setup is slightly different than yours? What if the schema gets outdated - will everyone manage to notice it and update schema of their local databases accordingly? Will you re-run your database creation script only to ensure you've got the latest schema available to run your tests against?</li>
 
-    <li>There may not be an implementation of a specified database engine for the operating system running on your development machine if your target platform is an exotic or mobile platform.</li>
+    <li>There may not be an implementation of the database engine for the operating system running on your development machine if your target is an exotic or mobile platform.</li>
 
-    <li>Note that this test you've written is only the out of two. You'll have to write another one for the scenario where inserting an order ends with exception. How do you setup your database in a state where it throws an exception? It's possible, but requires significant effort (e.g. deleting a table and recreating it later for other tests to run correctly), which may lead you to a conclusion that it's not worth to write such tests at all.</li>
+    <li>Note that this test you've written is only one out of two. You'll have to write another one for the scenario where inserting an order ends with exception. How do you setup your database in a state where it throws an exception? It's possible, but requires significant effort (e.g. deleting a table and recreating it after the test for other tests that might need the table to run correctly), which may lead you to a conclusion that it's not worth to write such tests at all.</li>
   </ol>
 
-  <p>Now, let's try something else. Let's assume that our database works OK (or will be tested by black-box tests) and the only thing we want to test is our implementation. In this situation, we can create a fake object that implements the same interface as MySqlOrderDatabase, but does not write to a database at all - it only stores the inserted records in a list:</p>
+  <p>Now, let's try something else. Let's assume that our database works OK (or will be tested by black-box tests) and the only thing we want to test is our implementation. In this situation, we can create fake object, which is an instance of another custom class that implements the same interface as MySqlOrderDatabase, but does not write to a database at all - it only stores the inserted records in a list:</p>
   <pre>
 public class FakeOrderDatabase : OrderDatabase
 {
