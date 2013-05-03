@@ -1,4 +1,4 @@
-![Cover](https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/cover.png)
+![Cover](https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/cover-small.png)
 
 This ebook is an attempt to create open-source extended tutorial on Test-Driven Development. It's work in progress and any contribution is welcome.
 
