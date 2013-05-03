@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Specification Goes First</title>
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+  <h1 id="sigil_toc_id_9">Specification Goes First</h1>
+
+  <h2>What's The Point of Writing Specification After The Fact?</h2>
+
+  <p>In the last chapter, I said that a test is in reality a statement of a specification. If so, then it's really a matter of consistency to specify what we're going to write before we attempt to write it. Does the other way round even make sense? A specification written after the implementation is complete is just a matter of documenting existing solution. Sure, it can be valuable when the effort is done as a kind of reverse-engineering (i.e. writing specification for something that was implemented long ago and we don't really know the exact business rules or policies, which we discover as we document the existing solution), but doing it just after we made all the decisions seems like a waste of time, not to mention that it's dead boring (Don't believe me? Try to implement a simple calculator app and the write specification for it as soon as it's implemented and working).</p>
+
+  <p>Oh, and did I tell you that without a specification of some kind we don't really know whether we're done or not (because in order to know it, we need to compare the implemented functionality to 'something', even if this 'something' is only in the customer's head).</p>
+
+  <p>In the previous chapter, I told you that one of the differences between usual textual specification and our Specification consisting of executable Statements is that we don't write our Specification fully up-front. The usual sequence is to specify a bit and code a bit, then repeat. When doing TDD, we're going in cycles. We like these cycles to be short, so that we can get a quick feedback. Being able to get this quick feedback is essential, because it allows us to move forward with confidence that what we already have works as we intended.</p>
+
+  <p>Talking about cycles, it's no surprise that the traditional illustration of the TDD process is modeled visually as a circle-like flow:</p>
+
+  <p><img alt="Traditional_TDD_cycle" src="../Images/Traditional_TDD_cycle.png" /></p>
+
+  <p>Note that this form uses the traditional terminology, so I'll translate it to use our terms of Specification and Statements:</p>
+
+  <p><img alt="Modern_TDD_cycle" src="../Images/Modern_TDD_cycle.png" /></p>
+</body>
+</html>

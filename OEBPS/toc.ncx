@@ -9,7 +9,7 @@
         <meta content="0" name="dtb:maxPageNumber"/>
     </head>
     <docTitle>
-        <text>Unknown</text>
+        <text>Test-Driven Development - Extensive Tutorial</text>
     </docTitle>
     <navMap>
         <navPoint id="navPoint-1" playOrder="1">
@@ -47,6 +47,24 @@
                 </navLabel>
                 <content src="Text/_It%27s%20Not%20a%20Test.xhtml#sigil_toc_id_6"/>
             </navPoint>
+            <navPoint id="navPoint-7" playOrder="7">
+                <navLabel>
+                    <text>Taking It To The Software Development Land</text>
+                </navLabel>
+                <content src="Text/_It%27s%20Not%20a%20Test.xhtml#sigil_toc_id_7"/>
+            </navPoint>
+            <navPoint id="navPoint-8" playOrder="8">
+                <navLabel>
+                    <text>A Specification Instead of a Test Suite</text>
+                </navLabel>
+                <content src="Text/_It%27s%20Not%20a%20Test.xhtml#sigil_toc_id_8"/>
+            </navPoint>
+        </navPoint>
+        <navPoint id="navPoint-9" playOrder="9">
+            <navLabel>
+                <text>Specification And Then What?</text>
+            </navLabel>
+            <content src="Text/_Specification%20Goes%20First.xhtml"/>
         </navPoint>
     </navMap>
 </ncx>
