@@ -17,3 +17,6 @@ div.achievement
   font-style: italic;
 }
 
+dt {
+  padding-top: 0.2em;
+}
