@@ -1,6 +1,6 @@
-![Cover](https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/cover.png)
+![Cover](https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/cover-small.png)
 
-This ebook is an attempt to create open-source extended tutorial on Test-Driven Development. It's work in progress and any contribution is welcome.
+This ebook is an attempt to create open-source extensive tutorial on Test-Driven Development. It's work in progress and any contribution is welcome.
 
 The main destination format is epub, conversion to mobi is done using calibre's ebook-convert utility'. Both formats are readily available dow download, so please feel free to do so.
 
