@@ -17,14 +17,34 @@
 
   <p>Oh, and did I tell you that without a specification of some kind we don't really know whether we're done or not (because in order to know it, we need to compare the implemented functionality to 'something', even if this 'something' is only in the customer's head).</p>
 
-  <p>In the previous chapter, I told you that one of the differences between usual textual specification and our Specification consisting of executable Statements is that we don't write our Specification fully up-front. The usual sequence is to specify a bit and code a bit, then repeat. When doing TDD, we're going in cycles. We like these cycles to be short, so that we can get a quick feedback. Being able to get this quick feedback is essential, because it allows us to move forward with confidence that what we already have works as we intended.</p>
+  <p>In the previous chapter, I told you that one of the differences between usual textual specification and our Specification consisting of executable Statements is that we don't write our Specification fully up-front. The usual sequence is to specify a bit and code a bit, then repeat. When doing TDD, we're going repeatedly through few phases in cycles. We like these cycles to be short, so that we can get a quick feedback. Being able to get this quick feedback is essential, because it allows us to move forward with confidence that what we already have works as we intended. Also, it allows us to use the knowledge we gained in the previous cycle to make the next cycle more efficient.</p>
 
   <p>Talking about cycles, it's no surprise that the traditional illustration of the TDD process is modeled visually as a circle-like flow:</p>
 
   <p><img alt="Traditional_TDD_cycle" src="../Images/Traditional_TDD_cycle.png" /></p>
 
-  <p>Note that this form uses the traditional terminology, so I'll translate it to use our terms of Specification and Statements:</p>
+  <p>Note that this form uses the traditional terminology, so before I explain the steps, I'll translate it to use our terms of Specification and Statements:</p>
 
   <p><img alt="Modern_TDD_cycle" src="../Images/Modern_TDD_cycle.png" /></p>
+
+  <p>Now it seems more in place - specifying how something should behave before putting that behavior in place is way more intuitive than testing something that does not exist.</p>
+
+  <p>Anyway, these three steps demand some explanations. In the coming chapters, I'll give you some examples of how this process works in practice and introduce an expanded version, but in the meantime, its sufficient to say that:</p>
+
+  <dl>
+    <dt>Write an unfulfilled Statement</dt>
+
+    <dd>means that the statement shows on the test list as unfulfilled (in most xUnit frameworks, it will be marked with red color)</dd>
+
+    <dt>Fulfill it</dt>
+
+    <dd>means that we write just enough code to fulfill the Statement (in most xUnit frameworks, the fulfilled Statement will be marked with green color)</dd>
+
+    <dt>Refactor</dt>
+
+    <dd>is a step that I have silently discarded so far (and will do so for at least few next chapters. Don't worry, we'll get back to it). Basically, it boils down to using the coverage of executable specification we already have in place to safely enhance the quality of the covered code.</dd>
+  </dl>
+
+  <p>This process is sometimes refered to as "Red-Green-Refactor".</p>
 </body>
 </html>
