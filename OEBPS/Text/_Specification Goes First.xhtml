@@ -51,30 +51,20 @@
 
   <p>I'd like to use it to elaborate on the few reasons I consider Test First to be an essential practice:</p>
 
-  <h3>You don't know whether the test can ever fail</h3>
+  <h3>You don't know whether the Statement can ever be false</h3>
 
   <p>Accurate Statement fails when it isn't fulfilled and passes when it is. Also, it stays in place and starts failing as soon as the code stops fulfilling this Statement (e.g. as a result of mistake made during refactoring). When your run a Statement after it's implemented, you don't even know whether it really describes a need accurately? You didn't ever watch it fail, so how do you know it ever will?</p>
 
   <p>The first time I encountered this argument (it was before I started thinking of unit tests as executable specification), it quickly raised my self-defense mechanism: "But how can it be?" - I thought - "I'm a wise person, I know what code I'm writing. If I make my unit tests small enough, it's self-evident that I'm describing the correct behavior. This is paranoid". However, this turned out not to be true. Let me describe, from my experience, just three ways (there are more, I just forgot the rest :-D) one can really put in a Statement that is false-positive (i.e. it cheats you into thinking it's fulfilled even when it's not):</p>
 
-  <h4>Accidentally skipping of adding Statement to Specification.</h4><!-- TODO -->
+  <h4>Accidentally skipping of adding Statement to Specification.</h4>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    However funny this may sound, it happens. The example I'm going to give is from C#, but almost every unit testing framework in almost every language has some kind of machanism of marking methods as "tests", whether by attributes (C#) or annotations (Java) or with macros (C and C++) or by inheriting from common class, or just a naming convention.
-  </div>
+  <p>However funny this may sound, it happens. The example I'm going to give is from C#, but almost every xUnit framework in almost every language has some kind of mechanism of marking methods as Statements, whether by attributes (C#, e.g. xUnit.Net's <code>Fact</code> attribute) or annotations (Java) or with macros (C and C++) or by inheriting from common class, or just a naming convention.</p>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <br />
-  </div>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    So, in my example, I'm using nUnit. In nUnit, to make a method "a test", you mark its class with <span style="font-family: &quot;Courier New&quot;,Courier,monospace;">[TestFixture]</span> attribute, and every test must be marked with <span style="font-family: &quot;Courier New&quot;,Courier,monospace;">[Test]</span> attribute in the following way:
-  </div>
-  <pre class="brush:csharp;">
-[TestFixture]
-public class CalculatorSpecification
+  <p>Let's take xUnit.Net as an example. As I stated previously, In xUnit.Net, to make a method a Statement, you mark with <code>[Fact]</code> attribute in the following way:</p>
+  <pre class="brush:csharp;">public class CalculatorSpecification
 {
-  [Test]
+  [Fact]
   public void ShouldDisplayAdditionResultAsSumOfArguments() 
   {
     //... 
@@ -82,14 +72,11 @@ public class CalculatorSpecification
 }
 </pre>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    Now, imagine that you're doing post-factum unit testing in an environment that has, let's say, more than thirty unit tests - you've written the code, now you're just making test after test "to ensure" (as you see, this is not my favourite reason for writing unit tests) the code works.Test - pass, test - pass, test-pass. You almost always launch the whole suite, since it's usually painful to point out each time, which test you wanna run, plus, you don't want to introduce a regression. So, this is really: Test - all pass, test - all pass, test - all pass... Hopefully, you use some kind of snippets mechanism for creating new unit tests, but if not (and many don't actually do this, myself included :-( ), once in a while, you do something like this:
-  </div>
+  <p>Now, imagine that you're writing this Statement post-factum as a unit test in an environment that has, let's say, more than thirty Statements - you've written the code, now you're just creating a test after test "to ensure" (as you see, this is not my favourite reason for writing unit tests) the code works. Code, test - pass, test - pass, test - pass. You almost always launch the whole Specification, since it's usually painful to point out each time, which Statement you wanna evaluate, plus, you don't want to introduce regression. So, this is really: Code, Test - all pass, test - all pass, test - all pass... Hopefully, you use some kind of snippets mechanism for creating new Statements, but if not (and many don't actually do this), once in a while, you do something like this:</p>
   <pre class="brush:csharp;">
-[TestFixture]
 public class CalculatorSpecification
 {
-  //... some unit tests here
+  //... some Statements here
 
   public void ShouldDisplayZeroWhenResetIsPerformed()
   {
@@ -98,67 +85,35 @@ public class CalculatorSpecification
 }
 </pre>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    And you don't even notice that this is not added to your test suite, because there are so many unit tests already that it's almost irrational to search for your new test in the test list. Also, this fact that you have omitted the addition, does not disturb your work flow: test - all pass, test all pass, test - all pass... So, what you end up is a test that not only will never fail - <b>it will never be executed</b>.
-  </div>
+  <p>And you don't even notice that this will not be run with the rest of the Specification, because there are so many Statements already that it's almost irrational to search for your each added Statement in the list and make sure it's there. Also, this fact that you have omitted the addition, does not disturb your work flow: test - all pass, test - all pass, test - all pass... So, what you end up is a Statement that not only will never be false - <strong>it will never be executed</strong>.</p>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <br />
-  </div>
+  <p>So, why does treating tests as Statements and writing them first help here?&nbsp; <strong>Because then, a Statement that starts off as being evaluated as true is what DOES disturb your work flow.</strong> In TDD, the work flow is: Statement - unfulfilled - fulfilled (ok, and refactor, but for the sake of THIS discussion, it doesn't matter so much), Statement - unfulfilled - fulfilled, Statement - unfulfilled - fulfilled...&nbsp;</p>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    So, why does Test First help here?&nbsp; <b>Because, in Test First, a test passing right away is what DOES disturb your work flow.</b> In TDD, the work flow is: test - fail - pass (ok, and refactor, but for the sake of THIS discussion, it doesn't matter so much), test - fail - pass, test - fail - pass...&nbsp;
-  </div>
+  <h4>Misplacing mock setup</h4>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <br />
-  </div>
+  <p>Ok, this may sound even funnier (well, honestly, most mistakes sound funny), but it happened to me a couple of times, so makes sense to mention. The example I'm going to show uses manual mocks, but this can happen with dynamic mocks as well, especially if you're in a hurry.</p>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    Once in a while, I stumble upon a situation where Test First saves me from this trap.
-  </div>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <br />
-  </div>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <b>b) Misplacing mock setup</b>
-  </div>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <br />
-  </div>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    Ok, this may sound even funnier (well, honestly, every mistake sounds funny), but it happened to me a couple of times, so it's beneficial to mention this. The example I'm going to show uses manual mocks, but, just not to jump into "dynamic vs handmade mocks" discussion here, this can happen with dynamic mocks as well, especially if you're in a hurry.
-  </div>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <br />
-  </div>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    So, without further ado, the code (yes, this is a stupid example I made up in two minutes, so don't criticize the design here, please ;-):
-  </div>
-  <pre class="brush:csharp;">
-[Test]
+  <p>Let's take a look at the following Statement saying that setting a value higher than allowed to a field of a frame should produce error result:</p>
+  <pre class="brush:csharp;">[Fact]
 public void ShouldRecognizeTimeSlotAboveMaximumAllowedAsInvalid()
 {
-  var frame = new FrameMock();
-
+  //GIVEN
+  var frame = new FrameMock(); //manual
   var validation = new Validation();
   var timeSlotAboveMaximumAllowed = TimeSlot.MaxAllowed + 1;
 
+  //WHEN
   var result = validation.PerformForTimeSlotIn(frame);
-  frame.GetTimeSlot_Returns = timeSlotAboveMaximumAllowed;
+  frame.GetTimeSlot_Returns 
+    = timeSlotAboveMaximumAllowed;
 
-  Assert.IsFalse(result.Passed);
-  Assert.AreEqual(
+  //THEN
+  Assert.False(result.Passed);
+  Assert.Equal(
     ValidationFailureReasons.AboveAcceptableLimit, 
     result.Reason);
 }
-</pre>
+</pre><!-- TODO -->
 
   <div style="font-family: Arial,Helvetica,sans-serif;">
     Note how the tested method (which is PerformForTimeSlotIn()) is called BEFORE the mock is actually set up and the set up return value is never taken into account. So, how did it happen that, despite this fact, the call yielded correct result? This sometimes happens, and it happens most often in case of various boundary values (nulls etc.).
