@@ -113,74 +113,31 @@ public void ShouldRecognizeTimeSlotAboveMaximumAllowedAsInvalid()
     ValidationFailureReasons.AboveAcceptableLimit, 
     result.Reason);
 }
-</pre><!-- TODO -->
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    Note how the tested method (which is PerformForTimeSlotIn()) is called BEFORE the mock is actually set up and the set up return value is never taken into account. So, how did it happen that, despite this fact, the call yielded correct result? This sometimes happens, and it happens most often in case of various boundary values (nulls etc.).
-  </div>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <br />
-  </div>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <b>c) Using static data inside production code.</b>
-  </div>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <br />
-  </div>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    Once in a while, you have to jump in and add some tests and logic to code that's written by someone else. Imagine this code is a wrapper around your product XML configuration file. You decide to write your unit tests after applying the changes ("well", you can say, "I'm all protected by the suite that's already in place, so I can make my change without risking regression, then just test my changes and it's all good...").&nbsp;
-  </div>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <br />
-  </div>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    So, you start writing a test. The test suite class contains a member like this:
-  </div>
-  <pre class="brush:csharp;">
-XmlConfiguration config = new XmlConfiguration(xmlFixtureString);
 </pre>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    What it does is to set up a global object used by all the tests. BUT, what you can also see, it uses the same <span style="font-family: &quot;Courier New&quot;,Courier,monospace;">fixture</span> object every time. What you need to write tests for is a little corner case that does not need all this crap that already got into the global fixture. So, you decide to start fresh and write your own fixture. Your test begins like this:
-  </div>
-  <pre class="brush:csharp;">
-string customFixture = CreateMyOwnFixtureForThisTestOnly();
+  <p>Note how the method <code>PerformForTimeSlotIn()</code>, which triggers the specified behavior is accidentally called BEFORE the mock is actually set up and the set up return value is never taken into account, which is not uncommon in the heat of the battle. By the way, how did it happen that, despite this fact of messing up the mock setup, the end result was still correct? Well, it sometimes turns out like this, most often in case of various boundary values (nulls etc.).</p>
+
+  <h4>Using static data inside production code</h4>
+
+  <p>Once in a while, you have to jump in and add some new Statements to some class Specification and some logic to the class itself. Let's assume that the class and its existing specification was written by someone else. Imagine this code is a wrapper around your product XML configuration file. You decide to write your Statements AFTER applying the changes ("well", you can say, "I'm all protected by the suite that's already in place, so I can make my change without risking regression, then just test my changes and it's all good...").</p>
+
+  <p>So, you start writing the new Statement. The Specification class already contains a field member like this:</p>
+  <pre class="brush:csharp;">XmlConfiguration config = new XmlConfiguration(xmlFixtureString);
+</pre>
+
+  <p>What it does is to set up a single object used by all the Statements. So, each Statement uses the same <code>config</code> object initialized with the same <code>xmlConfiguration</code> string. The string is already pretty huge and messy, since it was made to contain what's required by all existing Statements. What you need to write tests for is a little corner case that does not need all this crap that's in this string. So, you decide to start fresh and create a separate object of <code>XmlConfiguration</code> class with your own, minimal string. Your Statement begins like this:</p>
+  <pre class="brush:csharp;">string customFixture = CreateMyOwnFixtureForThisTestOnly();
 var configuration = new XmlConfiguration(customFixture);
 ...
 </pre>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    And it passes. Ok, what's wrong with this? Nothing big, unless you read the source code of XmlConfiguration class carefully. Inside, you can see, where the xml string is stored:
-  </div>
-  <pre class="brush:csharp;">
-private static string xmlText; //note the static keyword!
+  <p>And it passes - cool... not. Ok, what's wrong with this? Nothing big, unless you read the source code of XmlConfiguration class carefully. Inside, you can see, how the xml string is stored:</p>
+  <pre class="brush:csharp;">private static string xmlText; //note the static keyword!
 </pre>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    What the...? Well, well, here's what happened: the author of this class coded in a small little optimization. He thought: "The configuration is only changed by the field group and to do it, they have to shut down the system, so, there is no need to read the XML file every time an XmlConfiguration object is created. I can save some cycles and I/O operations by reading it only once when the first object is created. Another created object will just use the same XML!". Good for him, not so good for you. Why? <b>Because (unless your test runs first), your custom fixture will never be used!</b>
-  </div>
+  <p>What the...? Well, well, here's what happened: the author of this class coded in a small little optimization. He thought: "The configuration is only changed by members of the support staff and to do it, they have to shut down the system, so, there is no need to read the XML file every time an XmlConfiguration object is created. I can save some CPU cycles and I/O operations by reading it only once when the first object is created. Another created object will just use the same XML!". Good for him, not so good for you. Why? Because (unless your test runs first), your custom xml string will never actually be used!</p>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <br />
-  </div>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    This was the last way I wanted to mention, now to the second point.
-  </div>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <br />
-  </div>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <b>2) "Test After" ends up as "Test Never"</b>
-  </div>
+  <h3>"Test-After" ends up as "Test-Never"</h3><!-- TODO -->
 
   <div style="font-family: Arial,Helvetica,sans-serif;">
     <br />
