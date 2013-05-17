@@ -137,25 +137,13 @@ var configuration = new XmlConfiguration(customFixture);
 
   <p>What the...? Well, well, here's what happened: the author of this class coded in a small little optimization. He thought: "The configuration is only changed by members of the support staff and to do it, they have to shut down the system, so, there is no need to read the XML file every time an XmlConfiguration object is created. I can save some CPU cycles and I/O operations by reading it only once when the first object is created. Another created object will just use the same XML!". Good for him, not so good for you. Why? Because (unless your test runs first), your custom xml string will never actually be used!</p>
 
-  <h3>"Test-After" ends up as "Test-Never"</h3><!-- TODO -->
+  <h3>"Test-After" ends up as "Test-Never"</h3>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <br />
-  </div>
+  <p>Ever had to write a requirement or design document for something that you already implemented? Was it fun? Was it valuable? Was it creative? No, I don't think so. The same is with our executable specification. After we write the code, we have little motivation to specify them - some of the pieces of code "we can just see are correct", other pieces "we already saw working" when we copied our code over to our deployment machine... The design is ready... Specification? Maybe next time...</p>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    Once in a while, I come into argument with a coworker of mine. What those guys usually say is: "Ok, I know that unit testing is good, I just don't buy the Test First part". When I raise the argument mentioned in point 1, they say: "I can make it without Test First - after I write each unit test, I modify production code on purpose to make sure this test fails - then I get the same value as you do, without the Test First absurd". What I usually do then is to take them to my desk and show them a code coverage report for a single file. All of the methods are covered in green as covered, and one single method is in red as not covered. Then I say: "Guess which parts of this code was written Test First and which is written Test After". I like it when they discover (or I tell them) that this uncovered code is Test After that ended up as <i>Test Never</i>.
-  </div>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    Let's be honest - we're all in a hurry, we're all under pressure and when this pressure is too high, it triggers heroic behaviors in us, especially when there's a risk of not making it with the iteration commitment. <b>Such heroic behavior usually goes by the following rules: drop all the "baggage", stop learning and experimenting, revert to all of the old "safe" behaviors and "save what we can!"</b>. If tests are written last, they're considered "baggage", since the code is already written, "and it will be tested anyway" by real tests (box testing, smoke testing, sanity testing etc. comes into play). It is quite the contrary when using Test First, <b>where failing test is a reason to write any code</b>. To write the code, you need the reason and thus, unit tests become irremovable part of your development. By the way, I bet in big corporations no one sane ever thinks they can abandon checking in the code to source control, at the same time treating unit tests as "an optional addition", but that's a topic for another post.
-  </div>
+  <p>Another reason might be time pressure. Let's be honest - we're all in a hurry, we're all under pressure and when this pressure is too high, it triggers heroic behaviors in us, especially when there's a risk of not making it with the sprint commitment. Such heroic behavior usually goes by the following rules: drop all the "baggage", stop learning and experimenting, revert to all of the old "safe" behaviors and "save what we can!". If Specification is written at the end, it is often sacrificed, since the code is already written, "and it will be tested anyway by real tests" (box tests, smoke tests, sanity tests etc.). It is quite the contrary when starting with a Statement, where the Statement evaluating to false is a reason to write any code. Thus, if we want to write code, Specification become irremovable part of your development. By the way, I bet in big corporations no one sane ever thinks they can abandon checking in the code to source control, at the same time treating Specification as "an optional addition".</p><!-- TODO -->
 
   <p><b style="font-family: Arial, Helvetica, sans-serif;">3) Not doing Test First is a waste of time.</b><br /></p>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <br />
-  </div>
 
   <div style="font-family: Arial,Helvetica,sans-serif;">
     One day, I was listening to <a href="http://www.confreaks.com/videos/759-rubymidwest2011-keynote-architecture-the-lost-years" target="_blank">Robert C. Martin's keynote at Ruby Midwest 2011, called Architecture The Lost Years</a>. At the end, Robert made some digressions, one of them being about TDD. He said that writing unit tests after the code is not TDD. It is a waste of time.&nbsp;
