@@ -72,7 +72,7 @@
 }
 </pre>
 
-  <p>Now, imagine that you're writing this Statement post-factum as a unit test in an environment that has, let's say, more than thirty Statements - you've written the code, now you're just creating a test after test "to ensure" (as you see, this is not my favourite reason for writing unit tests) the code works. Code, test - pass, test - pass, test - pass. You almost always launch the whole Specification, since it's usually painful to point out each time, which Statement you wanna evaluate, plus, you don't want to introduce regression. So, this is really: Code, Test - all pass, test - all pass, test - all pass... Hopefully, you use some kind of snippets mechanism for creating new Statements, but if not (and many don't actually do this), once in a while, you do something like this:</p>
+  <p>Now, imagine that you're writing this Statement post-factum as a unit test in an environment that has, let's say, more than thirty Statements - you've written the code, now you're just creating a test after test "to ensure" (as you see, this is not my favorite reason for writing unit tests) the code works. Code, test - pass, test - pass, test - pass. You almost always launch the whole Specification, since it's usually painful to point out each time, which Statement you wanna evaluate, plus, you don't want to introduce regression. So, this is really: Code, Test - all pass, test - all pass, test - all pass... Hopefully, you use some kind of snippets mechanism for creating new Statements, but if not (and many don't actually do this), once in a while, you do something like this:</p>
   <pre class="brush:csharp;">
 public class CalculatorSpecification
 {
@@ -143,77 +143,32 @@ var configuration = new XmlConfiguration(customFixture);
 
   <p>Another reason might be time pressure. Let's be honest - we're all in a hurry, we're all under pressure and when this pressure is too high, it triggers heroic behaviors in us, especially when there's a risk of not making it with the sprint commitment. Such heroic behavior usually goes by the following rules: drop all the "baggage", stop learning and experimenting, revert to all of the old "safe" behaviors and "save what we can!". If Specification is written at the end, it is often sacrificed, since the code is already written, "and it will be tested anyway by real tests" (box tests, smoke tests, sanity tests etc.). It is quite the contrary when starting with a Statement, where the Statement evaluating to false is a reason to write any code. Thus, if we want to write code, Specification become irremovable part of your development. By the way, I bet in big corporations no one sane ever thinks they can abandon checking in the code to source control, at the same time treating Specification as "an optional addition".</p><!-- TODO -->
 
-  <p><b style="font-family: Arial, Helvetica, sans-serif;">3) Not doing Test First is a waste of time.</b><br /></p>
+  <h4>Not starting from specification leads to waste of time on redesign</h4>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    One day, I was listening to <a href="http://www.confreaks.com/videos/759-rubymidwest2011-keynote-architecture-the-lost-years" target="_blank">Robert C. Martin's keynote at Ruby Midwest 2011, called Architecture The Lost Years</a>. At the end, Robert made some digressions, one of them being about TDD. He said that writing unit tests after the code is not TDD. It is a waste of time.&nbsp;
-  </div>
+  <p>It so happens, that I like watching and reading Uncle Bob. One day, I was listening to <a href="http://www.confreaks.com/videos/759-rubymidwest2011-keynote-architecture-the-lost-years" target="_blank">his keynote at Ruby Midwest 2011, called Architecture The Lost Years</a>. At the end, Robert made some digressions, one of them being about TDD. He said that writing unit tests after the code is not TDD. It is a waste of time.</p>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <br />
-  </div>
+  <p>My initial thought was that it was only about missing all the benefits that starting with false Statement brings you: the ability to see the Statement fail, the ability to do a clean-sheet analysis etc., however, now I'm of opinion that there is more to it. It's something I got from Amir Kolsky and Scott Bain - in order to be able to write maintainable Specification for a piece of code, it has to have a high degree of quality called <strong>testability</strong> (we'll talk about testability later on, don't worry - for now let's assume that the easier it is to write a Statement for a behavior of a class, the higher testability it has). That doesn't tell us much about where's the waste I mentioned, does it? To see it, let's see how testability looks like in Statement-first workflow (let's assume that we're creating new code, not adding stuff to dirty, ugly legacy code):</p>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    The first time I thought about it, I thought it was only about missing all the benefits that Test First brings you: the ability for a test to fail, ability to do a clean-sheet analysis, ability to do Need Driven Design etc., however, now I think there is more to it. If you're reading the <a href="http://sustainabletdd.com/" target="_blank">Sustainable Test Driven Development</a> blog regularly, you know that Amir and Scott value <i>testability</i> as design quality, along with cohesion, encapsulation and others. Also, they state that in order to make TDD (and even plain unit testing for that matter) sustainable, the code must have this testability quality on a very high level. How can we use this valuable insight to identify the waste? Let's see how testability looks like in Test First workflow (let's assume that we're creating new code, not adding stuff to dirty, ugly legacy code):
-  </div>
+  <ol>
+    <li>Write false Statement (this step ensures that code has high testability)</li>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <br />
-  </div>
+    <li>Write code to make the Statement true</li>
+  </ol>
 
-  <div style="font-family: Verdana,sans-serif;">
-    - Write unit test that fails <b><span style="color: #274e13;">(</span></b><i><b><span style="color: #274e13;">The code has high testability</span></b></i><b><span style="color: #274e13;">)&nbsp;</span></b>
-  </div>
+  <p>Now, how does it usually look like when we write the code first (extra steps marked with <strong>strong text</strong>:</p>
 
-  <div style="font-family: Verdana,sans-serif;">
-    - Write code that satisfies the test
-  </div>
+  <ol>
+    <li>Write some code (probably spans few classes until we're satisfied)</li>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <br />
-  </div>
+    <li><strong>Start writing unit tests</strong></li>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    Now, how does it usually look like in Test After approach (from what I saw in various situations):
-  </div>
+    <li><strong>Notice that unit testing the whole set of classes is cumbersome and unsustainable and contains high redundancy.</strong></li>
 
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <br />
-  </div>
+    <li><strong>Restructure the code to be able to isolate objects and use mocks (this step ensures that code has high testability)</strong></li>
 
-  <div style="font-family: Verdana,sans-serif;">
-    - Write some code (probably spans few classes until we're satisfied).
-  </div>
+    <li>Write unit tests</li>
+  </ol>
 
-  <div style="font-family: Verdana,sans-serif;">
-    <i><b>- Start writing unit tests</b></i>
-  </div>
-
-  <div style="font-family: Verdana,sans-serif;">
-    <i><b>- Notice that unit testing the whole set of classes is cumbersome and unsustainable and contains high redundancy.</b></i>
-  </div>
-
-  <div style="font-family: Verdana,sans-serif;">
-    <i><b>- Refactor the code to be able to isolate objects and inject some mocks <span style="color: #274e13;">(The code has high testability)</span></b></i>
-  </div>
-
-  <div style="font-family: Verdana,sans-serif;">
-    - Write proper unit tests.
-  </div>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <br />
-  </div>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    As you may have noticed, I emphasized few steps that are additional in Test After approach. What's their equivalent in Test First? <b>Nothing!</b> Doing these things is a waste of time! And, this is a waste of time I'm seeing done over and over again!
-  </div>
-
-  <div style="font-family: Arial,Helvetica,sans-serif;">
-    <br />
-  </div>
-
-  <p><span style="font-family: Arial,Helvetica,sans-serif;">Anyway, because of this, let me say it clearly: if you've got a guy in your team that's doing TDD and he's the only one, and you're just "coding and shipping" carelessly even without unit tests, be informed, that this guy will ALWAYS have to corect your code to make it testable and, for that matter, better designed. So, if you really wanna stay on the dark side and not do what's right and ethical (which is to do TDD), at least buy him a soft drink from time to time.</span><br />
-  <br /></p>
+  <p>What's the equivalent of the marked steps in Statement-First approach? Nothing! Doing these things is a waste of time! Sadly, this is a waste I see done over and over again.</p>
 </body>
 </html>

@@ -5,7 +5,7 @@
     <dc:title>Test-Driven Development - Extensive Tutorial</dc:title>
     <dc:creator opf:role="aut">Grzegorz Gałęzowski</dc:creator>
     <dc:language>en</dc:language>
-    <dc:date opf:event="modification">2013-05-17</dc:date>
+    <dc:date opf:event="modification">2013-05-19</dc:date>
     <meta content="0.7.2" name="Sigil version" />
     <meta name="cover" content="cover.png" />
   </metadata>
@@ -63,8 +63,8 @@
     <itemref idref="_Motivations.xhtml" />
     <itemref idref="_Three_Essential_Tools.xhtml" />
     <itemref idref="_It_s_Not_a_Test.xhtml" />
-    <itemref idref="End.xhtml" />
     <itemref idref="_Specification_Goes_First.xhtml" />
+    <itemref idref="End.xhtml" />
     <itemref idref="We_are_in_need_of_feedback.xhtml" />
     <itemref idref="Test_Driven_Development_-_objections_part_1.xhtml" />
     <itemref idref="Test_Driven_Development_-_objections_part_2.xhtml" />
