@@ -13,28 +13,28 @@
 
   <h2>What's The Point of Writing Specification After The Fact?</h2>
 
-  <p>In the last chapter, I said that a test is in reality a statement of a specification. If so, then it's really a matter of consistency to specify what we're going to write before we attempt to write it. Does the other way round even make sense? A specification written after the implementation is complete is just a matter of documenting existing solution. Sure, it can be valuable when the effort is done as a kind of reverse-engineering (i.e. writing specification for something that was implemented long ago and we don't really know the exact business rules or policies, which we discover as we document the existing solution), but doing it just after we made all the decisions seems like a waste of time, not to mention that it's dead boring (Don't believe me? Try to implement a simple calculator app and the write specification for it as soon as it's implemented and working).</p>
+  <p>In the last chapter, I said that in TDD a 'test' takes another role - one of a single statement of specification. If we put things this way, then the whole controversial concept of "writing a test before the code" does not pose a problem at all. Quite the contrary - it only seems natural to specify what we're going to write before we attempt to write it. Does the other way round even make sense? A specification written after completing the implementation is nothing more than an attempt at documenting the existing solution. Sure, such attempts can provide some value when done as a kind of reverse-engineering (i.e. writing specification for something that was implemented long ago and we don't really know the exact business rules or policies, which we discover as we document the existing solution) - it has an excitement of discovery in it, but doing it just after we ourselves made all the decisions seems like a waste of time, not to mention that it's dead boring (Don't believe me? Try to implement a simple calculator app and the write specification for it as soon as it's implemented and working). Anyway, writing specification after the fact can hadly be considered "creative".</p>
 
-  <p>Oh, and did I tell you that without a specification of some kind we don't really know whether we're done or not (because in order to know it, we need to compare the implemented functionality to 'something', even if this 'something' is only in the customer's head).</p>
+  <p>Oh, and did I tell you that without a specification of some kind we don't really know whether we're done implementing our changes or not (because in order to know it, we need to compare the implemented functionality to 'something', even if this 'something' is only in the customer's head).</p>
 
-  <p>In the previous chapter, I told you that one of the differences between usual textual specification and our Specification consisting of executable Statements is that we don't write our Specification fully up-front. The usual sequence is to specify a bit and code a bit, then repeat. When doing TDD, we're going repeatedly through few phases in cycles. We like these cycles to be short, so that we can get a quick feedback. Being able to get this quick feedback is essential, because it allows us to move forward with confidence that what we already have works as we intended. Also, it allows us to use the knowledge we gained in the previous cycle to make the next cycle more efficient.</p>
+  <p>Another thing I told you In the previous chapter was that one of the differences between a textual specification and our Specification consisting of executable Statements is that we don't write our Specification fully up-front. The usual sequence is to specify a bit first and then code a bit, then repeat. When doing TDD, we're traversing repeatedly through few phases that make up a cycle. We like these cycles to be short, so that we can get a quick feedback. Being able to get this quick feedback is essential, because it allows us to move forward with confidence that what we already have works as we intended. Also, it allows us to use the knowledge we gained in the previous cycle to make the next cycle more efficient.</p>
 
-  <p>Talking about cycles, it's no surprise that the traditional illustration of the TDD process is modeled visually as a circle-like flow:</p>
+  <p>reading so much about cycles, it's probably no surprise to you that the traditional illustration of the TDD process is modeled visually as a circle-like flow:</p>
 
   <p><img alt="Traditional_TDD_cycle" src="../Images/Traditional_TDD_cycle.png" /></p>
 
-  <p>Note that this form uses the traditional terminology, so before I explain the steps, I'll translate it to use our terms of Specification and Statements:</p>
+  <p>Note that the above form uses the traditional terminology of TDD, so before I explain the steps, I'll translate it to use our terms of Specification and Statements:</p>
 
   <p><img alt="Modern_TDD_cycle" src="../Images/Modern_TDD_cycle.png" /></p>
 
   <p>Now it seems more in place - specifying how something should behave before putting that behavior in place is way more intuitive than testing something that does not exist.</p>
 
-  <p>Anyway, these three steps demand some explanations. In the coming chapters, I'll give you some examples of how this process works in practice and introduce an expanded version, but in the meantime, its sufficient to say that:</p>
+  <p>Anyway, these three steps demand some explanation. In the coming chapters, I'll give you some examples of how this process works in practice and introduce an expanded version, but in the meantime, its sufficient to say that:</p>
 
   <dl>
     <dt>Write an unfulfilled Statement</dt>
 
-    <dd>means that the statement shows on the test list as unfulfilled (in most xUnit frameworks, it will be marked with red color)</dd>
+    <dd>means that the Statement evaluates to false (it shows on the test list as unfulfilled - in most xUnit frameworks, it will be marked with red color)</dd>
 
     <dt>Fulfill it</dt>
 
@@ -45,15 +45,15 @@
     <dd>is a step that I have silently discarded so far (and will do so for at least few next chapters. Don't worry, we'll get back to it). Basically, it boils down to using the coverage of executable specification we already have in place to safely enhance the quality of the covered code.</dd>
   </dl>
 
-  <p>By the way, this process is sometimes refered to as "Red-Green-Refactor". I'm just mentioning it here for the record - I don't plan on using this term further in the book.</p>
+  <p>By the way, this process is sometimes refered to as "Red-Green-Refactor". I'm just mentioning it here for the record - I'm not planning to use this term further in the book.</p>
 
-  <p>Anyway, try to look at the drawing with TDD process again - can you spot a single word I underlined? Yes, it's <strong>unfulfilled</strong>. It means that when you write a Statement, you have to run it and watch it fail its assertions before fulfilling it. Why is that so important? Isn't it just enough to write the specification first? Why run it and watch it fail?</p>
+  <p>Anyway, try to look at the drawing with TDD process again - can you spot a single word I underlined? Yes, it's <strong>unfulfilled</strong>. It means that when you write a Statement, you have to evaluate it (i.e. run it) and watch it fail its assertions before providing implementation that makes this Statement true. Why is that so important? Isn't it just enough to write the specification first? Why run it and watch it fail?</p>
 
-  <p>I'd like to use it to elaborate on the few reasons I consider Test First to be an essential practice:</p>
+  <p>I'd like to use it to elaborate on the few reasons I consider this Statement-First practice to be essential:</p>
 
-  <h3>You don't know whether the Statement can ever be false</h3>
+  <h3>You don't know whether the Statement can ever be fals until you see it evaluate to false</h3>
 
-  <p>Accurate Statement fails when it isn't fulfilled and passes when it is. Also, it stays in place and starts failing as soon as the code stops fulfilling this Statement (e.g. as a result of mistake made during refactoring). When your run a Statement after it's implemented, you don't even know whether it really describes a need accurately? You didn't ever watch it fail, so how do you know it ever will?</p>
+  <p>Every accurate Statement (do I have to tell you that such Statements are what we're interested in?) fails when it isn't fulfilled and passes when it is. Also, after being fulfilled, it stays as a part of the executable specification and starts failing as soon as the code stops fulfilling it (e.g. as a result of mistake made during code rework). When your run a Statement after it's implemented, you don't even know whether it really describes a need accurately? You didn't ever watch it fail, so how do you know it ever will?</p>
 
   <p>The first time I encountered this argument (it was before I started thinking of unit tests as executable specification), it quickly raised my self-defense mechanism: "But how can it be?" - I thought - "I'm a wise person, I know what code I'm writing. If I make my unit tests small enough, it's self-evident that I'm describing the correct behavior. This is paranoid". However, this turned out not to be true. Let me describe, from my experience, just three ways (there are more, I just forgot the rest :-D) one can really put in a Statement that is false-positive (i.e. it cheats you into thinking it's fulfilled even when it's not):</p>
 
