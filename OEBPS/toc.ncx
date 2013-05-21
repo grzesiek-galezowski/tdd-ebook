@@ -64,7 +64,7 @@
             <navLabel>
                 <text>Specification And Then What?</text>
             </navLabel>
-            <content src="Text/_Specification%20Goes%20First.xhtml"/>
+            <content src="Text/_Statement-First%20Programming.xhtml"/>
         </navPoint>
     </navMap>
 </ncx>
