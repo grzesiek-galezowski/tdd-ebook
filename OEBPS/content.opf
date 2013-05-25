@@ -5,7 +5,7 @@
     <dc:title>Test-Driven Development - Extensive Tutorial</dc:title>
     <dc:creator opf:role="aut">Grzegorz Gałęzowski</dc:creator>
     <dc:language>en</dc:language>
-    <dc:date opf:event="modification">2013-05-21</dc:date>
+    <dc:date opf:event="modification">2013-05-25</dc:date>
     <meta content="0.7.2" name="Sigil version" />
   </metadata>
   <manifest>
@@ -57,6 +57,7 @@
     <item href="Text/End.xhtml" id="End.xhtml" media-type="application/xhtml+xml" />
     <item href="Images/cover.png" id="cover.png" media-type="image/png" />
     <item href="Text/_What%20Exactly%20Do%20We%20Specify.xhtml" id="_What_Exactly_Do_We_Specify.xhtml" media-type="application/xhtml+xml" />
+    <item href="Text/_Practicing%20What%20We%20Already%20Learned.xhtml" id="_Practicing_What_We_Already_Learned.xhtml" media-type="application/xhtml+xml" />
   </manifest>
   <spine toc="ncx">
     <itemref idref="Cover.xhtml" />
@@ -65,6 +66,7 @@
     <itemref idref="_It_s_Not_a_Test.xhtml" />
     <itemref idref="_Statement-First_Programming.xhtml" />
     <itemref idref="End.xhtml" />
+    <itemref idref="_Practicing_What_We_Already_Learned.xhtml" />
     <itemref idref="_What_Exactly_Do_We_Specify.xhtml" />
     <itemref idref="We_are_in_need_of_feedback.xhtml" />
     <itemref idref="Test_Driven_Development_-_objections_part_1.xhtml" />
