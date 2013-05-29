@@ -41,5 +41,451 @@
   <h2>A TODO list</h2>
 
   <p>One interesting thing to note when we look at the steps above is that we'll be maintaining a TODO list. What is it for? You'll have to see for yourself! The only thing that I'd like to tell you up-front is that the process above doesn't include a step where you add something to the TODO list. This is because you're free to expand your TODO list anytime. This can even be halfway writing your current Statement that an idea or a new behavior occurs to you. In such situation, not get distracted from your current task, you add the new item to the TODO list and get back to it later (hence the step 1 of this process).</p>
+
+  <h2>Let me tell you a story</h2>
+
+  <p>Meet Johnny and Benjamin, two developers from Buthig Company. Johnny is quite fluent in programming and Test-Driven Development, while Benjamin is an intern under Johnny's mentorship. They're on their way to their customer, Jane, who requested their presence as she wants them to do write a small program for her.</p>
+
+  <h2>Act 1: The Car</h2>
+
+  <p>Johnny: How do you feel on your first assignment?</p>
+
+  <p>Benjamin: I'm pretty excited! I hope I can learn some of the TDD stuff you promised to teach me.</p>
+
+  <p>Johnny: Not only TDD, but we're also gonna use some of the practices associated with a process called Acceptance Test Driven Development, albeit in a simplified form.</p>
+
+  <p>Benjamin: Acceptance Test-Driven Development? What is that?</p>
+
+  <p>Johnny: While TDD is usually referred to as a development technique, ATDD is something more of a collaboration method. Both ATDD and TDD have a bit of analysis in them and work very well together as both use the same underlying principles, just on different levels. We'll need only a small subset of what ATDD has to offer, so don't get over-excited.</p>
+
+  <p>Benjamin: Sure.</p>
+
+  <h2>Act 2: The Customer</h2>
+
+  <p>Johnny: Hi, Jane, how are you?</p>
+
+  <p>Jane: Thanks, I'm fine, how about you?</p>
+
+  <p>Johnny: Same here, thanks. So, can you tell us a bit about the software you need us to write?</p>
+
+  <p>Jane: Sure. Recently, I bought a new smartphone, that replaced my old one. The thing is, I'm really used to the calculator application that was running on the previous phone and I can't find it for my current device.</p>
+
+  <p>Benjamin: Can't you just use another calculator app? There are plenty of them on the web.</p>
+
+  <p>Jane: That's right. I checked them all and none has exactly the same behavior as the one I was using for my tax calculations. You know, the program was like right hand to me and it had some really nice shortcuts that made my life easier.</p>
+
+  <p>Johnny: So you want us to reproduce the application to run on your new device?</p>
+
+  <p>Jane: Yes.</p>
+
+  <p>Johnny: Are you aware that apart from the fancy features that you were using we'll have to allocate some effort to implement the basics that all the calculators have?</p>
+
+  <p>Jane: Sure, I'm OK with that. I'm so used to my calculator application that if I use something else for more than few months, I'll have to pay psychotherapist instead of you guys.</p>
+
+  <p>Johnny: I think I get it. Let's get it going then. We'll be implementing the functionality incrementally, starting with the most essential ones. Which feature of the calculator would you consider the most essential?</p>
+
+  <p>Jane: That would be addition, I guess.</p>
+
+  <p>Johnny: Ok, that will be our target for the first iteration. After the iteration, we'll deliver this part of functionality for you to try out and give us some feedback. However, before we can even implement addition, we'll have to implement displaying digits on the screen as you enter them and turning the calculator on and off. Is that correct?</p>
+
+  <p>Jane: yes, I want the display stuff to work as well - it's the most basic feature, so...</p>
+
+  <p>Johnny: Ok then, this is a simple functionality, so let me suggest some user stories from my understanding of what you already said and you'll correct me where I'm wrong. Here we go:</p>
+
+  <ol>
+    <li><strong>In order to</strong> know that the calculator is turned on, <strong>As a</strong> tax payer <strong>I want</strong> to see "0" on the screen as soon as I turn it on.</li>
+
+    <li><strong>In order to</strong> see what numbers I'm currently operating on, <strong>As a</strong> tax payer, <strong>I want</strong> the calculator to display the values I enter</li>
+
+    <li><strong>In order to</strong> calculate sum of my different incomes, <strong>As a</strong> tax payer <strong>I want</strong> the calculator to enable addition of multiple numbers</li>
+  </ol>
+
+  <p>What do you think?</p>
+
+  <p><strong>Jane</strong>: The stories pretty much reflect what I want for the first iteration. I don't think I have any corrections to make.</p>
+
+  <p>Johnny: Now we'll take each story and collect some examples of how it should work.</p>
+
+  <p>Benjamin: Johnny, don't you think it's obvious enough to proceed with implementation straight away?</p>
+
+  <p>Johnny: If there's one word I fear most in communication, it's "obvious". Miscommunication happens most often around things that people consider obvious, simply because other people don't.</p>
+
+  <p>Jane: Ok, I'm in. What do I do?</p>
+
+  <p>Johnny: Let's go through stories one by one and see if we can find some key examples of how the features work. The first story is...</p>
+
+  <h3><strong>In order to</strong> know that the calculator is turned on, <strong>As a</strong> tax payer <strong>I want</strong> to see "0" on the screen as soon as I turn it on.</h3>
+
+  <p>Jane: I don't think there's much to talk about. If you display "0", I'll be happy. That's all.</p>
+
+  <p>Johnny: Let's write down this example:</p>
+
+  <table>
+    <tr>
+      <th>key sequence</th>
+
+      <th>Displayed output</th>
+
+      <th>Notes</th>
+    </tr>
+
+    <tr>
+      <td>N/A</td>
+
+      <td>0</td>
+
+      <td>Initial displayed value</td>
+    </tr>
+  </table>
+
+  <p>Benjamin: That makes me wonder... what should happen when I press "0" again at this stage?</p>
+
+  <p>Johnny: Good catch, that's what these examples are for - they make us thinking concrete. As Ken Pugh says: "Often the complete understanding of a concept does not occur until someone tries to use the concept". We'd normally put it on a TODO list, because it's part of a different story, but we're actually done with this one, so let's move straight to the story about displaying entered digits.</p>
+
+  <p>Jane: Agree.</p>
+
+  <h3><strong>In order to</strong> see what numbers I'm currently operating on, <strong>As a</strong> tax payer, <strong>I want</strong> the calculator to display the values I enter</h3>
+
+  <p>Johnny: Let's begin with the case raised by Benjamin. What should happen when I input "0" multiple times after I have only "0" on the display?</p>
+
+  <p>Jane: Just one "0" should be displayed</p>
+
+  <p>Johnny: Do you mean this?</p>
+
+  <table>
+    <tr>
+      <th>key sequence</th>
+
+      <th>Displayed output</th>
+
+      <th>Notes</th>
+    </tr>
+
+    <tr>
+      <td>0,0,0</td>
+
+      <td>0</td>
+
+      <td>Zero is a special case – it is displayed only once</td>
+    </tr>
+  </table>
+
+  <p>Jane: That's right. Other than this, the digits should just show on the screen, like this:</p>
+
+  <table>
+    <tr>
+      <th>key sequence</th>
+
+      <th>Displayed output</th>
+
+      <th>Notes</th>
+    </tr>
+
+    <tr>
+      <td>1,2,3</td>
+
+      <td>123</td>
+
+      <td>Entered digits are displayed</td>
+    </tr>
+  </table>
+
+  <p>Benjamin: How about this:</p>
+
+  <table>
+    <tr>
+      <th>key sequence</th>
+
+      <th>Displayed output</th>
+
+      <th>Notes</th>
+    </tr>
+
+    <tr>
+      <td>1,2,3,4,5,6,7,1,2,3,4,5,6</td>
+
+      <td>1234567123456 ???</td>
+
+      <td>Entered digits are displayed ???</td>
+    </tr>
+  </table>
+
+  <p>Jane: Actually, no. My old calculator app has a limit of six digits that I can enter, so it should be:</p>
+
+  <table>
+    <tr>
+      <th>key sequence</th>
+
+      <th>Displayed output</th>
+
+      <th>Notes</th>
+    </tr>
+
+    <tr>
+      <td>1,2,3,4,5,6,7,1,2,3,4,5,6</td>
+
+      <td>123456</td>
+
+      <td>Display limited to six digits</td>
+    </tr>
+  </table>
+
+  <p>Johnny: another good catch, Benjamin!</p>
+
+  <p>Benjamin: I think I'm beginning to understand why you like working with examples!</p>
+
+  <p>Johnny: Good. Is there anything else, Jane?</p>
+
+  <p>Jane: No, that's pretty much it. Let's take another story.</p>
+
+  <h3><strong>In order to</strong> calculate sum of my different incomes, <strong>As a</strong> tax payer <strong>I want</strong> the calculator to enable addition of multiple numbers</h3>
+
+  <p>Johnny: Is the following all we have to support?</p>
+
+  <table>
+    <tr>
+      <th>key sequence</th>
+
+      <th>Displayed output</th>
+
+      <th>Notes</th>
+    </tr>
+
+    <tr>
+      <td>2,+,3,+,4,=</td>
+
+      <td>9</td>
+
+      <td>Simple addition of numbers</td>
+    </tr>
+  </table>
+
+  <p>Jane: This scenario is correct, however, there's also a case when I start with "+" without inputting any number before. This should be treated as adding to zero:</p>
+
+  <table>
+    <tr>
+      <th>key sequence</th>
+
+      <th>Displayed output</th>
+
+      <th>Notes</th>
+    </tr>
+
+    <tr>
+      <td>+,1,=</td>
+
+      <td>1</td>
+
+      <td>Addition shortcut – treated as 0+1</td>
+    </tr>
+  </table>
+
+  <p>Benjamin: How about when the output is a number longer than six digits limit? Is it OK that we truncate it like this?</p>
+
+  <table>
+    <tr>
+      <th>key sequence</th>
+
+      <th>Displayed output</th>
+
+      <th>Notes</th>
+    </tr>
+
+    <tr>
+      <td>9,9,9,9,9,9,+,9,9,9,9,9,9,=</td>
+
+      <td>199999</td>
+
+      <td>Our display is limited to six digits only</td>
+    </tr>
+  </table>
+
+  <p>Jane: Sure, I don't mind. I don't add such big numbers anyway.</p>
+
+  <p>Johnny: There's still one question we missed. Let's say that I input a number, then press "+" and then another number without asking for result with "=". What should I see?</p>
+
+  <p>Jane: Every time you press "+", the calculator should consider the entering current number finished and overwrite it as soon as you press any other digit:</p>
+
+  <table>
+    <tr>
+      <th>key sequence</th>
+
+      <th>Displayed output</th>
+
+      <th>Notes</th>
+    </tr>
+
+    <tr>
+      <td>2,+,3</td>
+
+      <td>3</td>
+
+      <td>Digits entered after + operator are treated as digits of a new number, the previous one is stored</td>
+    </tr>
+  </table>
+
+  <p>Jane: Oh, and just asking for result after the calculator is turned on should result in "0".</p>
+
+  <table>
+    <tr>
+      <th>key sequence</th>
+
+      <th>Displayed output</th>
+
+      <th>Notes</th>
+    </tr>
+
+    <tr>
+      <td>=</td>
+
+      <td>0</td>
+
+      <td>Result key in itself does nothing</td>
+    </tr>
+  </table>
+
+  <p>Johnny: Let's sum up our discoveries:</p>
+
+  <table>
+    <tr>
+      <th>key sequence</th>
+
+      <th>Displayed output</th>
+
+      <th>Notes</th>
+    </tr>
+
+    <tr>
+      <td>N/A</td>
+
+      <td>0</td>
+
+      <td>Initial displayed value</td>
+    </tr>
+
+    <tr>
+      <td>1,2,3</td>
+
+      <td>123</td>
+
+      <td>Entered digits are displayed</td>
+    </tr>
+
+    <tr>
+      <td>0,0,0</td>
+
+      <td>0</td>
+
+      <td>Zero is a special case – it is displayed only once</td>
+    </tr>
+
+    <tr>
+      <td>1,2,3,4,5,6,7</td>
+
+      <td>123456</td>
+
+      <td>Our display is limited to six digits only</td>
+    </tr>
+
+    <tr>
+      <td>2,+,3</td>
+
+      <td>3</td>
+
+      <td>Digits entered after + operator are treated as digits of a new number, the previous one is stored</td>
+    </tr>
+
+    <tr>
+      <td>=</td>
+
+      <td>0</td>
+
+      <td>Result key in itself does nothing</td>
+    </tr>
+
+    <tr>
+      <td>+,1,=</td>
+
+      <td>1</td>
+
+      <td>Addition shortcut – treated as 0+1</td>
+    </tr>
+
+    <tr>
+      <td>2,+,3,+,4,=</td>
+
+      <td>9</td>
+
+      <td>Simple addition of numbers</td>
+    </tr>
+
+    <tr>
+      <td>9,9,9,9,9,9,+,9,9,9,9,9,9,=</td>
+
+      <td>199999</td>
+
+      <td>Our display is limited to six digits only</td>
+    </tr>
+  </table>
+
+  <p>Johnny: The limiting of digits displayed looks like a whole new feature, so I suggest we add it to the backlog and do it in another sprint. In this sprint, we won't handle such situation at all. How about that, Jane?</p>
+
+  <p>Jane: Fine with me. Looks like a lot of work. Nice that we discovered it up-front. For me, the limiting capability seemed so obvious that I didn't even think it would be worth mentioning.</p>
+
+  <p>Johnny: That's why I don't like the word "obvious"! Jane, we'll get back to you if any more questions arise. For now, II think we know enough to implement these three stories for you.</p>
+
+  <p>Jane: good luck!</p>
+
+  <h2>Act 3: Test-Driven Development</h2>
+
+  <p>Benjamin: Wow, that was cool. Was that Acceptance Test-Driven Development?</p>
+
+  <p>Johnny: In a greatly simplified version, yes. The reason I took you with me was to show you the similarities between working with customer the way we did and working with the code using TDD process. They're both applying the same set of principles, just on different levels.</p>
+
+  <p>Benjamin: I'm dying to see it with my own eyes. Shall we start?</p>
+
+  <p>Johnny: Sure. If we followed the ATDD process, we'd start writing what we call acceptance-level specification. In our case, however, a unit-level specification will be enough. Let's take the first example:</p>
+
+  <table>
+    <tr>
+      <th>key sequence</th>
+
+      <th>Displayed output</th>
+
+      <th>Notes</th>
+    </tr>
+
+    <tr>
+      <td>N/A</td>
+
+      <td>0</td>
+
+      <td>Initial displayed value</td>
+    </tr>
+  </table>
+
+  <p>Johnny: Benjamin, try to write the first Statement.</p>
+
+  <p>Benjamin: Boy, I don't know how to start.</p>
+
+  <p>Johnny: start by writing the statement in a plain English. What should the calculator do?</p>
+
+  <p>Benjamin: It should display "0" when I turn the application on.</p>
+
+  <p>Johnny: In our case, "turning on" is creating a calculator. Let's write it down as a method name:</p>
+  <pre>
+public class CalculatorSpecification
+{
+
+[Fact] public void
+ShouldDisplay0WhenCreated()
+{
+
+}
+
+}
+</pre>
+
+  <p>Benjamin: Why is the name of the class <code>CalculatorSpecification</code> and the name of the method <code>ShouldDisplay0WhenCreated</code>?</p>
 </body>
 </html>
