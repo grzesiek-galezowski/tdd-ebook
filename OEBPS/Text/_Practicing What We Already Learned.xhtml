@@ -487,5 +487,115 @@ ShouldDisplay0WhenCreated()
 </pre>
 
   <p>Benjamin: Why is the name of the class <code>CalculatorSpecification</code> and the name of the method <code>ShouldDisplay0WhenCreated</code>?</p>
+
+  <p>Johnny: It's a naming convention. There are many others, but this is the one that I like. The rule is that when you take the name of the class without the <code>Specification</code> part followed by the name of the method, it should form a legit sentence. For instance, if I apply it to what we wrote, it would make a sentence: "Calculator should display 0 when created".</p>
+
+  <p>Benjamin: Ah, I see now. So it's a statement of behavior, isn't it?</p>
+
+  <p>Johnny: That's right. Now, the second trick I can sell to you is that if you don't know what code to start with, start with the expected result. In our case, we're expecting that the behavior will end up as displaying "0", right? So let's just write it in form of an assertion.</p>
+
+  <p>Benjamin: You mean something like this?</p>
+  <pre>
+public class CalculatorSpecification
+{
+
+[Fact] public void
+ShouldDisplay0WhenCreated()
+{
+ Assert.Equal("0", displayedResult); //+
+}
+
+}
+</pre>
+
+  <p>Johnny: Precisely.</p>
+
+  <p>Benjamin: But that doesn't even compile. What use is it?</p>
+
+  <p>Johnny: the code not compiling is the feedback that you needed to proceed. While previously you didn't know where to start, now you have a clear goal - make this code compile. Firstly, whre do you get the displayed value?</p>
+
+  <p>Benjamin: From the calculator display, of course!</p>
+
+  <p>Johnny: Then write it down how you get the value form the display.</p>
+
+  <p>Benjamin: like how?</p>
+
+  <p>Johnny: like this:</p>
+  <pre>public class CalculatorSpecification
+{
+
+[Fact] public void
+ShouldDisplay0WhenCreated()
+{
+ var displayedResult = calculator.Display(); //+
+
+ Assert.Equal("0", displayedResult);
+}
+
+}
+</pre>
+
+  <p>Benjamin: I see. Now the calculator is not created anywhere. I need to create it or it won't compile. Is this how it works?</p>
+
+  <p>Johnny: Yes, you're catching on quickly.</p>
+
+  <p>Benjamin: Ok then, here goes:</p>
+  <pre>public class CalculatorSpecification
+{
+
+[Fact] public void
+ShouldDisplay0WhenCreated()
+{
+ var calculator = new Calculator();
+
+ var displayedResult = calculator.Display(); //+
+
+ Assert.Equal("0", displayedResult);
+}
+
+}
+</pre>
+
+  <p>Johnny: Bravo!</p>
+
+  <p>Benjamin: Now the code still does not compile, because I don't have the <code>Calculator</code> class at all...</p>
+
+  <p>Johnny: sounds like a good reason to create it.</p>
+
+  <p>Benjamin: OK.</p>
+  <pre>public class Calculator
+{
+}
+</pre>
+
+  <p>Benjamin: Looks like the <code>Display()</code> method is missing too. I'll add it.</p>
+  <pre>public class Calculator
+{
+  public string Display()
+  {
+    return "0";
+  } 
+}
+</pre>
+
+  <p>Johnny: Hey hey, not so fast!</p>
+
+  <p>Benjamin: What?</p>
+
+  <p>Johnny: You already provided an implementation that will make the Statement true. First, let's make sure it can ever be false. So for now, let's change it to this:</p>
+  <pre>public class Calculator
+{
+  public string Display()
+  {
+    return "Once upon a time in Africa...";
+  } 
+}
+</pre>
+
+  <p>Johnny: Look, now we can run the Specification and watch that Statement evaluate to false, because it expects "0", but gets "Once upon a time in Africa...".</p>
+
+  <p>Benjamin: Running... Ok, it's false. By the way, do you always use such silly values to make Statements false?</p>
+
+  <p>Johnny: Hahaha, no, I just did it to emphasize the point. Normally, I'd write <code>return "";</code> or something similarly simple.</p>
 </body>
 </html>
