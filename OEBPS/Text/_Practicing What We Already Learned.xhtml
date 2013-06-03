@@ -502,7 +502,7 @@ public class CalculatorSpecification
 [Fact] public void
 ShouldDisplay0WhenCreated()
 {
- Assert.Equal("0", displayedResult); //+
+ Assert.Equal("0", displayedResult);
 }
 
 }
@@ -527,7 +527,7 @@ ShouldDisplay0WhenCreated()
 [Fact] public void
 ShouldDisplay0WhenCreated()
 {
- var displayedResult = calculator.Display(); //+
+ var displayedResult = calculator.Display();
 
  Assert.Equal("0", displayedResult);
 }
@@ -548,7 +548,7 @@ ShouldDisplay0WhenCreated()
 {
  var calculator = new Calculator();
 
- var displayedResult = calculator.Display(); //+
+ var displayedResult = calculator.Display();
 
  Assert.Equal("0", displayedResult);
 }
@@ -596,6 +596,202 @@ ShouldDisplay0WhenCreated()
 
   <p>Benjamin: Running... Ok, it's false. By the way, do you always use such silly values to make Statements false?</p>
 
-  <p>Johnny: Hahaha, no, I just did it to emphasize the point. Normally, I'd write <code>return "";</code> or something similarly simple.</p>
+  <p>Johnny: Hahaha, no, I just did it to emphasize the point. Normally, I'd write <code>return "";</code> or something similarly simple. Now we can evaluate the Statement and see it evaluate to false. Now we are sure that we have not yet implemented what is required for the Statement to be true.</p>
+
+  <p>Benjamin: I think I get it. So what do we do now?</p>
+
+  <p>Johnny: Write the simplest thing that makes this Statement true.</p>
+
+  <p>Benjamin: like this?</p>
+  <pre>public class Calculator
+{
+  public string Display()
+  {
+    return "0";
+  } 
+}
+</pre>
+
+  <p>Johnny: Yes.</p>
+
+  <p>Benjamin: But that's not a real implementation. What's the value behind putting in a hardcoded string? The final implementation is not going to be like this for sure!</p>
+
+  <p>Johnny: You're right. The final implementation is most probably going to be different. What we did, however, is still valuable because:</p>
+
+  <ol>
+    <li>You're one step closer to implementing the final solution</li>
+
+    <li>This feeling that this is not the final implementation points you towards writing more Statements. When there is enough Statements to make your implementation complete, it also means that you have complete Specification.</li>
+
+    <li>If you treat every Statement that you make evaluate to true as an achievement, this practice allows you to evolve your code without losing what you already achieved. If by accident you break any of the behaviors you've already implemented, the Specification is going to tell you because one of the existing Statements will evaluate to false. You can then either fix it or undo your changes using version control and start over from the point where all existing Statements are true.</li>
+  </ol>
+
+  <p>Benjamin: looks like quite a few benefits. Still, I'll have to get used to this kind of working.</p>
+
+  <p>Johnny: don't worry, this kind of thinking is central to TDD, so you'll grasp it in no time. Now, before we proceed to the next Statement, let's look at what we already achieved. First, we wrote aStatement that was evaluating to false. Then, we wrote just enough code to make the Statement true. Time for a step called Refactoring. In this step, we'll take a look at the Statement and the code and remove duplication. Can you see what's duplicated between the Statement and the code?</p>
+
+  <p>Benjamin: both of them contain the literal "0". The Statement has it here:</p>
+  <pre>Assert.Equal("0", displayedResult);</pre>
+
+  <p>and the implementation here:</p>
+  <pre>return "0";</pre>
+
+  <p>Johnny: Good, let's eliminate this duplication by introducing a constant called <code>InitialValue</code>. The Statement will now look like this:</p>
+  <pre>[Fact] public void
+ShouldDisplayInitialValueWhenCreated()
+{
+ var calculator = new Calculator();
+
+ var displayedResult = calculator.Display();
+
+ Assert.Equal(Calculator.InitialValue, displayedResult);
+}
+</pre>
+
+  <p>and the implementation:</p>
+  <pre>public class Calculator
+{
+  public const string InitialValue = "0";
+  public string Display()
+  {
+    return InitialValue;
+  } 
+}
+</pre>
+
+  <p>Benjamin: The code looks better and having the constant in one place will make it more maintainable, but I think the Statement in its current form is weaker than before. We could change the <code>InitialValue</code> to anything and the Statement would still be true, since it does not force this constant to be "0".</p>
+
+  <p>That's right. We need to add it to our TODO list to handle this case. Can you write it down?</p>
+
+  <p>Benjamin: Sure. I'll write it as "TODO: 0 should be used as an initial value."</p>
+
+  <p>Johnny: Ok. We should handle it now, especially that it's part of the story we're currently implementing, but I'll leave it for later just to show you the power of TODO list in TDD - whatever is on the list, we can forget and get back to when we have nothing better to do. Our next item from the list is this:</p>
+
+  <table>
+    <tr>
+      <th>key sequence</th>
+
+      <th>Displayed output</th>
+
+      <th>Notes</th>
+    </tr>
+
+    <tr>
+      <td>1,2,3</td>
+
+      <td>123</td>
+
+      <td>Entered digits are displayed</td>
+    </tr>
+  </table>
+
+  <p>Johnny: Benjamin, can you come up with a Statement for this behavior?</p>
+
+  <p>Benjamin: I'll try. Here goes:</p>
+  <pre>public void [Fact]
+ShouldDisplayEnteredDigits()
+{
+  var calculator = new Calculator();
+  
+  calculator.Enter(1);
+  calculator.Enter(2);
+  calculator.Enter(3);
+  var displayedValue = calculator.Display();
+
+  Assert.Equal("123", displayedValue);
+}
+</pre>
+
+  <p>Johnny: I'm glad that you got the part about naming and writing a Statement. One thing we'll have to work on here though.</p>
+
+  <p>Benjamin: what is it?</p>
+
+  <p>Johnny: When we talked to Jane, we used examples with real values. These real values were extremely helpful in pinning down the corner cases and uncovering missing scenarios. They were easier to imagine as well, so they were a perfect suit for conversation. If we were automating these examples on acceptance level, we'd use those real values as well. When we write unit-level Statements, however, we use a different technique to get this kind of specification more abstract. First of all, let me enumerate the weaknesses of the approach you just used:</p>
+
+  <ol>
+    <li>Making a method <code>Enter()</code> accept an integer value suggests that one can enter more than one digit at once, e.g. <code>calculator.Enter(123)</code>, which is not what we want. We could detect such cases and throw exceptions, but there are better ways when we know we'll only be supporting ten digits (0,1,2,3,4,5,6,7,8,9).</li>
+
+    <li>The Statement does not clearly show the relationship between input and output. Of course, in this simple case it's pretty self-evident that the sum is a concatenation of entered digits, we don't want anyone who will be reading this Specification in the future to have to guess.</li>
+
+    <li>The Statement suggests that what you wrote is sufficient for any value, which isn't true, since the behavior for "0" is different (no matter how many times we enter "0", the result is just "0")</li>
+  </ol>
+
+  <p>Hence, I propose the following:</p>
+  <pre>public void [Fact]
+ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
+{
+ //GIVEN
+ var calculator = new Calculator();
+ var nonZeroDigit = Any.Besides(DigitKeys.Zero);
+ var anyDigit1 = Any.Of&lt;DigitKeys&gt;();
+ var anyDigit2 = Any.Of&lt;DigitKeys&gt;();
+          
+ //WHEN
+ calculator.Enter(nonZeroDigit);
+ calculator.Enter(anyDigit1);
+ calculator.Enter(anyDigit2);
+          
+ //THEN
+ Assert.AreEqual(
+  string.Format("{0}{1}{2}", 
+   (int)nonZeroDigit, 
+   (int)anyDigit1, 
+   (int)anyDigit2
+  ),
+  calculator.Display()
+ );
+}
+</pre>
+
+  <p>Benjamin: Johnny, I'm lost! Can you explain what's going on here?</p>
+
+  <p>Johnny: Sure, what do you want to know?</p>
+
+  <p>Benjamin: For instance, what is this <code>DigitKeys</code> type doing here?</p>
+
+  <p>Johnny: It's supposed to be an enumeration (note that it does not exist yet, we just assume that we have it) to hold all the possible digits user can enter, which are 0-9. This is to ensure that user will not write <code>calculator.Enter(123)</code>. Instead of allowing to enter any number and then detecting errors, we're giving our users a choice from among only the valid values.</p>
+
+  <p>Benjamin: Now I get it. So how about the <code>Any.Besides()</code> and <code>Any.Of()</code>? What do they do?</p>
+
+  <p>Johnny: They're methods from a small utility library I'm using when writing unit-level Specifications. <code>Any.Besides()</code> returns any value from enumeration besides the one supplied as an argument. Hence, the call <code>Any.Besides(DigitKeys.Zero)</code> means "any of the values contained in DigitKeys enumeration, but not DigitKeys.Zero".</p>
+
+  <p>The <code>Any.Of()</code> is simpler - it just returns any value in an enumeration. Note that when I create the values this way, I state explicitly that this behavior occurs when first digit is non-zero. This technique of using generated values instead of literals has its own principles, but let's leave it for later. I promise to give you a detailed lecture on it later. Agree?</p>
+
+  <p>Benjamin: You better do, because for now, I feel a bit uneasy with generating the values - it seems like the Statement we're writing is getting less deterministic this way. The last question - what about those weird comments you put in the code? Given? When? Then?</p>
+
+  <p>Johnny: Yes, this is a convention that I use, not only in writing, but in thinking as well. I like to think about every behavior in terms of three elements: assumptions (given), trigger (when) and expected result (then). Using the words, we can summarize the Statement we're writing in the following way: "<strong>Given</strong> a calculator, <strong>when</strong> I enter some digits first one being other than zero, <strong>then</strong> they should all be displayed in order they were entered". This is also something that I'll tell you more about later.</p>
+
+  <p>Benjamin: Sure, for now I need just enough detail to understand what's going on - we can talk about the principles, pros and cons later. By the way, the following sequence of casts looks a little bit ugly:</p>
+  <pre>  string.Format("{0}{1}{2}", 
+   (int)nonZeroDigit, 
+   (int)anyDigit1, 
+   (int)anyDigit2
+  )
+</pre>
+
+  <p>Johnny: We'll get back to it and make it more "smarter" in a second after we make this statement true. For now, we need something obvious. Something we know works. Let's evaluate this Statement. What's the result?</p>
+
+  <p>Benjamin: Failed, expected "331", but was "0".</p>
+
+  <p>Johnny: Good, now let's write some code to make this Statement true.</p>
+
+  <h1>TODO introduce an enum!</h1>
+  <pre>
+public class Calculator
+{
+ private int _result = 0;
+      
+ public void Enter(DigitKeys digit)
+ {
+  _result *= 10;
+  _result += (int)digit; 
+ }
+
+ public string Display()
+ {
+  return _result.ToString();
+ }
+}
+</pre>
 </body>
 </html>
