@@ -446,6 +446,8 @@
 
   <p>Johnny: Sure. If we followed the ATDD process, we'd start writing what we call acceptance-level specification. In our case, however, a unit-level specification will be enough. Let's take the first example:</p>
 
+  <h3>Statement 1: Calculator should display 0 on creation</h3>
+
   <table>
     <tr>
       <th>key sequence</th>
@@ -667,6 +669,8 @@ ShouldDisplayInitialValueWhenCreated()
 
   <p>Johnny: Ok. We should handle it now, especially that it's part of the story we're currently implementing, but I'll leave it for later just to show you the power of TODO list in TDD - whatever is on the list, we can forget and get back to when we have nothing better to do. Our next item from the list is this:</p>
 
+  <h3>Statement 2: Calculator should display entered digits</h3>
+
   <table>
     <tr>
       <th>key sequence</th>
@@ -732,7 +736,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
  calculator.Enter(anyDigit2);
           
  //THEN
- Assert.AreEqual(
+ Assert.Equal(
   string.Format("{0}{1}{2}", 
    (int)nonZeroDigit, 
    (int)anyDigit1, 
@@ -773,11 +777,43 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 
   <p>Benjamin: Failed, expected "331", but was "0".</p>
 
-  <p>Johnny: Good, now let's write some code to make this Statement true.</p>
+  <p>Johnny: Good, now let's write some code to make this Statement true. First, let's introduce an enumeration of digits:</p>
+  <pre>public enum DigitKeys
+{
+ Zero = 0,
+ TODO1, //TODO
+ TODO2, //TODO
+ TODO3, //TODO
+ TODO4, //TODO
+}</pre>
 
-  <h1>TODO introduce an enum!</h1>
-  <pre>
-public class Calculator
+  <p>Benjamin: What's with all those bogus values? Shouldn't we just enter all the digits?</p>
+
+  <p>Johnny: Nope, not yet. We still don't have a Statement that all the digits should be present.</p>
+
+  <p>Benjamin: You say you need a Statement for an element to be in an enum??</p>
+
+  <p>Johnny: This is a specification we're writing, remember? It should say somewhere which digits we support, shouldn't it?</p>
+
+  <p>Benjamin: It's difficult to agree with, especially that I'm used to write unit tests, not Statements and in unit tests, I wanted to verify what I was unsure of.</p>
+
+  <p>Johnny: I'll try to give you more arguments later. For now, just bear with me.</p>
+
+  <p>Benjamin: OK.</p>
+
+  <p>Johnny: Now for the implementation. Just to remind you - up to now, it looked like this:</p>
+  <pre>public class Calculator
+{
+  public const string InitialValue = "0";
+  public string Display()
+  {
+    return InitialValue;
+  } 
+}
+</pre>
+
+  <p>This is not enough to support displaying multiple digits (as we saw, because the Statement saying they should be supported was evaluated to false). So let's evolve the code to handle this case:</p>
+  <pre>public class Calculator
 {
  private int _result = 0;
       
@@ -793,5 +829,149 @@ public class Calculator
  }
 }
 </pre>
+
+  <p>Johnny: Now the Statement is true so we can go back to it and make it a little bit prettier. Let's take a second look at it:</p>
+  <pre>public void [Fact]
+ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
+{
+ //GIVEN
+ var calculator = new Calculator();
+ var nonZeroDigit = Any.Besides(DigitKeys.Zero);
+ var anyDigit1 = Any.Of&lt;DigitKeys&gt;();
+ var anyDigit2 = Any.Of&lt;DigitKeys&gt;();
+          
+ //WHEN
+ calculator.Enter(nonZeroDigit);
+ calculator.Enter(anyDigit1);
+ calculator.Enter(anyDigit2);
+          
+ //THEN
+ Assert.Equal(
+  string.Format("{0}{1}{2}", 
+   (int)nonZeroDigit, 
+   (int)anyDigit1, 
+   (int)anyDigit2
+  ),
+  calculator.Display()
+ );
+}
+</pre>
+
+  <p>Johnny: Remember you said that you don't like the part where <code>string.Format()</code> is used?</p>
+
+  <p>Benjamin: Yeah, it seems a bit unreadable.</p>
+
+  <p>Johnny: Let's extract this part into a utility method and make it more general - we'll need a way of constructing expected displayed output in many of our future Statements. Here's my go at this helper method:</p>
+  <pre>string StringConsistingOf(params DigitKeys[] digits)
+{
+ var result = string.Empty;
+      
+ foreach(var digit in digits) 
+ {
+  result += (int)digit;
+ }
+ return result;
+}</pre>
+
+  <p>Note that this is more general as it supports any number of parameters. And the Statement after this extraction looks like this:</p>
+  <pre>
+public void [Fact]
+ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
+{
+ //GIVEN
+ var calculator = new Calculator();
+ var nonZeroDigit = Any.Besides(DigitKeys.Zero);
+ var anyDigit1 = Any.Of&lt;DigitKeys&gt;();
+ var anyDigit2 = Any.Of&lt;DigitKeys&gt;();
+          
+ //WHEN
+ calculator.Enter(nonZeroDigit);
+ calculator.Enter(anyDigit1);
+ calculator.Enter(anyDigit2);
+          
+ //THEN
+ Assert.AreEqual(
+  StringConsistingOf(nonZeroDigit, anyDigit1, anyDigit2),
+  calculator.Display()
+ );
+}
+</pre>
+
+  <p>Benjamin: Looks better to me. The Statement is still evaluated as true, which means we got it right, didn't we?</p>
+
+  <p>Johnny: Not exactly. With such moves as this one, I like to be extra careful. Let's comment out the body of the <code>Enter()</code> method and see if this Statement can still be made false by the implementation:</p>
+  <pre>public void Enter(DigitKeys digit)
+ {
+  //_result *= 10;
+  //_result += (int)digit; 
+ }
+</pre>
+
+  <p>Benjamin: Running... Ok, it is false now. Expected "243", got "0".</p>
+
+  <p>Johnny: good, now we're pretty sure that it works OK. Let's uncomment the lines we just commented out and move forward.</p>
+
+  <h3>Statement 3: Calculator should display only one zero digit if it's the only entered digit even if it is entered multiple times</h3>
+
+  <p>Johnny: Benjamin, this should be easy for you, so go ahead and try it. It's really a variation of previous Statement.</p>
+
+  <p>Benjamin: Let me try... ok, here it is:</p>
+  <pre>[Fact] public void 
+ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipleTimes()
+{
+ var zero = DigitKeys.Zero;
+ var calculator = new Calculator();
+      
+ calculator.Enter(zero);
+ calculator.Enter(zero);      
+ calculator.Enter(zero);
+      
+ Assert.Equal(
+  StringConsistingOf(DigitKeys.Zero), 
+  calculator.Display()
+ );
+}</pre>
+
+  <p>Johnny: Good, you're learning fast! Let's evaluate this Statement.</p>
+
+  <p>Benjamin: It seems that our current code already fulfills the Statement. Should I try to comment some code to make sure this Statement can fail just like you did in the previous Statement?</p>
+
+  <p>Johnny: That would be wise thing to do. When a Statement is true without requiring you to change any production code, it's always suspicious. Just like you said, we have to modify production code for a second to force this Statement to be false, then undo this modification to make it true again. This isn't as obvious as previously, so let me do it. I'll mark all the added lines with <code>//+</code> comment so that you can see them easily:</p>
+  <pre>public class Calculator
+{
+ int _result = 0;
+ string fakeResult = "0"; //+
+      
+ public void Enter(DigitKeys digit)
+ {
+  _result *= 10;
+  _result += (int)digit; 
+  if(digit == DigitKeys.Zero) //+
+  {  //+
+    fakeResult += "0";  //+
+  } //+
+ }
+
+ public string Display()
+ {
+  if(_result == 0)  //+
+  {  //+
+   return fakeResult;  //+
+  }  //+
+  return _result.ToString();
+ }
+}</pre>
+
+  <p>Benjamin: Wow, looks like a lot of code just to make the Statement false! Is it worth the hassle? We'll undo this whole modification in a second anyway</p>
+
+  <p>Johnny: It's usually worth it, at least you know that you got everything right. It might seem like a lot of work, but it actually took me about a minute to add this code and imagine you got it wrong and had to debug it on a production environment. _That_ would be a waste of time.</p>
+
+  <p>Benjamin: Ok, I think I get it. Since we saw this Statement turn false, I'll undo this modification to make it true again.</p>
+
+  <p>Johnny: Sure.</p>
+
+  <h2>Epilogue</h2>
+
+  <p>Let's leave. I actually planned to make this chapter longer, and cover all the other operations, but I fear I'll make this too long and get you bored. You should have a feel of how the TDD cycle looks like, especially that Johnny and Benjamin had a lot of conversations on many other topics in the meantime. I'll be revisiting these topics later in the book. For now, so if you felt lost or unconvinced on any of the topics mentioned by Johnny, don't worry - I don't expect you to be proficient with any of the techniques shown in this chapter. Time will come for that.</p>
 </body>
 </html>
