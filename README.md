@@ -4,9 +4,9 @@ This ebook is an attempt to create open-source extensive tutorial on Test-Driven
 
 The main destination format is epub, conversion to mobi is done using calibre's 'ebook-convert' utility. Both formats are readily available for download, so please feel free to do so.
 
-EPUB version can be downloaded at: http://ubuntuone.com/5LaFN3KjCoHds8UM5hGHyL
-
-MOBI version can be downloaded at: http://ubuntuone.com/0IJEF0YFAnM4GniIJsb4UC
+Download: 
+[EPUB](http://ubuntuone.com/5LaFN3KjCoHds8UM5hGHyL) 
+[MOBI](http://ubuntuone.com/0IJEF0YFAnM4GniIJsb4UC)
 
 So far the following chapters are considered ready for reading:
 
