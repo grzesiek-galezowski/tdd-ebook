@@ -4,12 +4,13 @@ This ebook is an attempt to create open-source extensive tutorial on Test-Driven
 
 The main destination format is epub, conversion to mobi is done using calibre's 'ebook-convert' utility. Both formats are readily available for download, so please feel free to do so.
 
-So far the following chapters are considered ready to be read:
+So far the following chapters are considered ready for reading:
 
 1. Motivation - the first step to learning TDD
 2. The three most essential tools
 3. It's not a test
 4. Statement-First programming
+5. Practicing what we already learned
 
 At least four or five more chapters are planned
 
