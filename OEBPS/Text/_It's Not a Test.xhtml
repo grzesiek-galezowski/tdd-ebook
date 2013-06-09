@@ -9,11 +9,11 @@
 </head>
 
 <body>
-  <h1 id="sigil_toc_id_5">It's not a test</h1>
+  <h1>It's not a test</h1>
 
   <p>Up to now, I was cheating on you. I told you that the little executable snippets of code are 'tests' and that they're here to 'check' or 'verify' something. Now it's time to reveal the truth.</p>
 
-  <h2 id="sigil_toc_id_6">When a test becomes something else</h2>
+  <h2 id="sigil_toc_id_3">When a test becomes something else</h2>
 
   <p>I studied in Łódź, a large city in the center of Poland. As probably all other students in all other countries, we've had lectures, exercises and exams. The exams were pretty hard, especially considered that my computer science group was on the faculty of electronic and electric engineering, so we had to grasp a lot of classes that didn't have anything to do with programming, for instance electrotechnics, solid-state physics or electronic and electrical metrology.</p>
 
@@ -35,7 +35,7 @@
 
   <p>That was the value of a test before learning. Note that the tests we would usually receive were not exactly what we'd encounter at the time of exam, so we still had to guess. Still, the role of a <strong>test as specification of a need</strong> was already visible.</p>
 
-  <h2 id="sigil_toc_id_7">Taking It To The Software Development Land</h2>
+  <h2 id="sigil_toc_id_4">Taking It To The Software Development Land</h2>
 
   <p>I chose this lengthy metaphor to show you that 'test' is really another way of specifying a requirement or a need and that it's not something that's counter-intuitive - it occurs in our everyday lives. This is also true in software development. Let's take the following 'test' and see what kind of needs it specifies:</p>
   <pre>var reporting = new ReportingFeature();
@@ -65,7 +65,7 @@ Assert.True(reporting.CanBePerformedBy(anyPowerUser));
     <p>You now see some connotations between Test-Driven Development and Lean movement. There are more if you're interested, so be sure to pick up a good read bout lean software development!</p>
   </div>
 
-  <h2 id="sigil_toc_id_8">A Specification Instead of a Test Suite</h2>
+  <h2 id="sigil_toc_id_5">A Specification Instead of a Test Suite</h2>
 
   <p>I hope that you can see now that what we called 'a test' is really a kind of specification. The discovery is very recent, so there isn't a clear terminology on it yet. Some like to call the process of using tests as specifications: Specification By Example, to say that the tests are really examples that help specify and clarify the behavior of developed part of functionality. The terminology is still not rock-solid, so you might encounter different naming for different things. For example, a 'test' is often referred to as 'spec', or an 'example', or a 'behavior description', or a 'specification statement' or a 'fact about the developed system' (the xUnit.NET framework marks each 'test' with a <code>[Fact]</code> attribute, suggesting that by writing it, we're stating a single fact about developed code. By the way, xUnit.NET also allows us to state 'theories' about our code, but let's leave it for now).</p>
 
