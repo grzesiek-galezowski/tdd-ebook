@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>How to start?</title>
+</head>
+
+<body>
+  <h1>How to start?</h1>
+
+  <p>Whenever I sat down with a person that was about to write their first code in a Statement-first manner, the person would first stare at the screen, then at me, then would say: "what now?". It's easy to say: "You know how to write code, you know how to write a unit test for it, just this time start with the latter rather than the first", but for many people, this is something that blocks them completely. If you're one of them, don't worry - you're not alone. I decided to dedicate this chapter solely to techniques for starting to write a Statement when there's no code.</p>
+
+  <h2>Start with a good name</h2>
+
+  <p>It may sound obvious, but really some people are having trouble describing the behavior they expect from their code. If you can name such behavior, it's a great starting point.</p>
+
+  <h3>What's in a good name?</h3>
+
+  <p>I know some people don't pay attention to naming their Statements, mainly because they're considered as tests and second-level citizens - as long as they run and "prove the code does not contain defects", they're considered sufficient. We'll take a look later at some examples of bad names, but first, I'd like to introduce to you some rules of good naming.</p>
+
+  <p>For the name of the Statement to be of any use, it has to describe the expected behavior. At minimum, it should describe what happens at what circumstances. Let's take a look at one of the names Steve freeman and Nat Pryce came up in their great book Growing Object Oriented Software Guided By Tests:</p>
+  <pre>notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort()</pre>
+
+  <p>Note few things about the name of the Statement:</p>
+
+  <ol>
+    <li>It describes a behavior of an instance of a specified class. Note that it does not contain method name, because what is specified is not a method, but a behavior that has its entry point and expected result. The name simply tells that what an instance does (notifies listeners that server is unavailable) under certain circumstances (when cannot connect to its monitoring port). It's important because such description is what you can derive from thinking about responsibilities of a class, so you don't need to know any of its methods signatures or the code that's inside of the class. Hence, this is something you can come up without before implementing - you just need to know why you created this class and feed on it.</li>
+
+    <li>
+      <p>The name is long. Really, really, <strong>really</strong> don't worry about it. As long as you're describing a single behavior, it's alright. I know usually people are hesitant to give long names to the Statements, because they try to apply the same rules to those names as method names in production code. Let me make it clear - these two cases are different. In case of Statements, they're not invoked by anyone besides the automatic runner applications, so they won't obfuscate any code that would need to call them. Sure, we could put all the information in the comment instead of Statement name and leave the name short, like this:</p>
+      <pre>[Fact]
+//Notifies listeners that server 
+//is unavailable when cannot connect
+//to its monitoring port
+public void Statement_002()
+{
+ //...
+}
+</pre>
+
+      <p>There are two downsides of this solution: one is that we now have to put extra information (<code>Statement_002</code>) which is required only by compiler, because every method needs to have a name - there's usually no value a human could derive from such a name. The second downside is that when the Statement is evaluated to false, the automated runner shows you the following line: <code>Statement_002: FAILED</code> - note that all the information included in the comment isn't present in the failure report. It's really better to receive a report such as: <code>notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort: FAILED</code>, because all the information about the Statement that fails is present in the runner window.</p>
+    </li>
+
+    <li>Using a name that describes a (single) behavior allows you to track quickly why the Statement is false when it is. Suppose a Statement is true when you start refactoring, but in the meantime it turns out to be false and the report in the runner looks like this: <code>TrySendingHttpRequest: FAILED</code> - it doesn't really tell you anything more than an attempt is made to send a HTTP request, but, for instance, does not tell you whether your specified object is the sender (that should try to send this request under some circumstances) or the receiver (that should handle such request properly). To actually know what went wrong, you have to go to the code to scan its source code. Now compare it to the following name: <code>ShouldRespondWithAnAckWheneverItReceivedAHttpRequest</code>. Now when it evaluates to false, you can tell that what is broken is that the object no longer responds with an ACK to HTTP request. Sometimes this is enough to deduct which part of the code is in fault of this evaluation failure.</li>
+  </ol>
+
+  <h3>Consequences of bad naming</h3>
+
+  <p>As I said, many people don't really care how their Statements are named. This is a symptom of treating the Specification as garbage or leftovers - such situation is dangerous, because as soon as this kind of thinking is established, it leads to bad, unmaintainable Specification that looks more like lumps of accidental code put together in a haste than a living documentation. Bad names pose the following difficulties:</p>
+
+  <ol>
+    <li>It's difficult to find out which situation the Statement describes.</li>
+
+    <li>It's difficult to find out whether the Statement describes a single situation, or few of them at the same time.</li>
+
+    <li>It's difficult to make sure the assertions are really the right ones when looking at a Statement that was written by someone else or one that was written a long time ago.</li>
+
+    <li>It's difficult to find out whether the Statement should stay or be removed when you modify the functionality specified by the it.</li>
+
+    <li>If your changes in production code make a Statement evaluate to false, It's difficult to find out whether the Statement is no longer correct or the production code is wrong.</li>
+
+    <li>It's difficult to check whether you will not introduce a duplicate Statement for a behavior that's already specified by another Statement when adding to Specification originally created by another team member.</li>
+
+    <li>It's difficult to estimate, by looking at the runner tool report, whether the fix for failing Statement will be easy or not.</li>
+
+    <li>It's difficult to give an answer to a new developer in your team who asks you &quot;what is this Statement for?&quot;</li>
+
+    <li>It's difficult to keep track of the Statements already made about the specified class vs those that still need to be made.</li>
+  </ol>
+
+  <h1>TODO TODO</h1>
+
+  <h3>My favourite convention</h3>
+
+  <p>1. ShouldReportAllErrorsSortedAlphabeticallyWhenItEncountersErrorsDuringSearch(), 2. bad: test1(), TrySendingHttpRequest(), ??</p>
+
+  <h3>Example</h3>
+
+  <h2>Start at the end</h2>
+
+  <h2>Start by filling the GIVEN-WHEN-THEN structure with obvious</h2>
+
+  <h2>Start by invoking a method when you have one</h2>
+</body>
+</html>
