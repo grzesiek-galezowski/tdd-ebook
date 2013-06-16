@@ -48,33 +48,55 @@ public void Statement_002()
 
   <h3>Consequences of bad naming</h3>
 
-  <p>As I said, many people don't really care how their Statements are named. This is a symptom of treating the Specification as garbage or leftovers - such situation is dangerous, because as soon as this kind of thinking is established, it leads to bad, unmaintainable Specification that looks more like lumps of accidental code put together in a haste than a living documentation. Bad names pose the following difficulties:</p>
+  <p>As I said, many people don't really care how their Statements are named. This is a symptom of treating the Specification as garbage or leftovers - such situation is dangerous, because as soon as this kind of thinking is established, it leads to bad, unmaintainable Specification that looks more like lumps of accidental code put together in a haste than a living documentation. Imagine that your Specification consists of names like this:</p>
+
+  <ul>
+    <li><code>TrySendPacket()</code></li>
+
+    <li><code>TrySendPacket2()</code></li>
+
+    <li><code>testSendingManyPackets()</code></li>
+
+    <li><code>testWrongPacketOrder1()</code></li>
+
+    <li><code>testWrongPacketOrder2()</code></li>
+  </ul>
+
+  <p>and try for yourself how difficult it is to answer the following questions:</p>
 
   <ol>
-    <li>It's difficult to find out which situation the Statement describes.</li>
+    <li>How do you know what situation each Statement describes?</li>
 
-    <li>It's difficult to find out whether the Statement describes a single situation, or few of them at the same time.</li>
+    <li>How do you know whether the Statement describes a single situation, or few of them at the same time?</li>
 
-    <li>It's difficult to make sure the assertions are really the right ones when looking at a Statement that was written by someone else or one that was written a long time ago.</li>
+    <li>How do you know whether the assertions inside those Statements are really the right ones assuming each Statement was written by someone else or was written a long time ago?</li>
 
-    <li>It's difficult to find out whether the Statement should stay or be removed when you modify the functionality specified by the it.</li>
+    <li>How do you know whether the Statement should stay or be removed when you modify the functionality specified by the it?</li>
 
-    <li>If your changes in production code make a Statement evaluate to false, It's difficult to find out whether the Statement is no longer correct or the production code is wrong.</li>
+    <li>If your changes in production code make a Statement evaluate to false, how do you know whether the Statement is no longer correct or the production code is wrong?</li>
 
-    <li>It's difficult to check whether you will not introduce a duplicate Statement for a behavior that's already specified by another Statement when adding to Specification originally created by another team member.</li>
+    <li>How do you know whether you will not introduce a duplicate Statement for a behavior that's already specified by another Statement when adding to Specification originally created by another team member?</li>
 
-    <li>It's difficult to estimate, by looking at the runner tool report, whether the fix for failing Statement will be easy or not.</li>
+    <li>How do you estimate, by looking at the runner tool report, whether the fix for failing Statement will be easy or not?</li>
 
-    <li>It's difficult to give an answer to a new developer in your team who asks you &quot;what is this Statement for?&quot;</li>
+    <li>How do you answer a new developer in your team when they ask you &quot;what is this Statement for?&quot;</li>
 
-    <li>It's difficult to keep track of the Statements already made about the specified class vs those that still need to be made.</li>
+    <li>How can you keep track of the Statements already made about the specified class vs those that still need to be made?</li>
   </ol>
-
-  <h1>TODO TODO</h1>
 
   <h3>My favourite convention</h3>
 
-  <p>1. ShouldReportAllErrorsSortedAlphabeticallyWhenItEncountersErrorsDuringSearch(), 2. bad: test1(), TrySendingHttpRequest(), ??</p>
+  <p>There are many conventions for naming Statements appropriately. My favorite is the one developed by Dan North, which makes each Statement name begin with the word <code>Should</code>. So for example, I'd name a Statement: <code>ShouldReportAllErrorsSortedAlphabeticallyWhenItEncountersErrorsDuringSearch()</code>. The name of the Specification (i.e. class name) answers the question "who should do it?", i.e. when I have a class names <code>SortingOperation</code> and want to say that it "should sort all items in ascending order when performed", I say it like this:</p>
+  <pre>public class SortingOperationSpecification
+{
+ [Fact] public void
+ ShouldSortAllItemsInAscendingOrderWhenPerformed()
+ {
+ }
+}
+</pre>
+
+  <p>It's important to focus on what result is expected from an object when writing names along this convention. If you don't, you quickly find it troublesome. As an example, one of my colleague was specifying a class <code>UserId</code> and wrote the following name for the Statement about comparison of two identifiers: <code>EqualOperationShouldPassForTwoInstancesWithTheSameUserName()</code>. Note that this is not from the perspective of a single object, but rather from the perspective of an operation that's executed on it, which means that we stopped thinking in an object oriented way and started thinking in a way common for procedural programming. This name should be changed to: <code>ShouldReportThatItIsEqualToAnotherObjectWhenItHasTheSameUserName()</code>.</p>
 
   <h3>Example</h3>
 
