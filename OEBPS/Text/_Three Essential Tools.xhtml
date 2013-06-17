@@ -30,8 +30,7 @@
   <p>Let's assume that our application looks like this:<br /></p>
 
   <div style="text-align: center;"></div>
-  <pre>
-public static void Main(string[] args) 
+  <pre>public static void Main(string[] args) 
 {
   try
   {
@@ -51,8 +50,7 @@ public static void Main(string[] args)
 </pre>
 
   <p>Now, let's assume we want to check whether is produces correct results. The most obvious way would be to invoke the application from commandline with some exemplary arguments, check the output to the console and compare it with what we expect to see. Such session could look like this:</p>
-  <pre>
-C:\MultiplicationApp\MultiplicationApp.exe 3 7
+  <pre>C:\MultiplicationApp\MultiplicationApp.exe 3 7
 21
 C:\MultiplicationApp\
 </pre>
@@ -60,8 +58,7 @@ C:\MultiplicationApp\
   <p>As you can see, the application produced a result of 21 for multiplication of 7 by 3. This is correct, so we assume the test is passed. But what if we produced an application that additionally does addition, subtraction, division, calculus etc.? How many times would we have to invoke the application to make sure every operation works correct?</p>
 
   <p>But wait, we're programmers, right? So we can write programs that can do this for us! In order to do this, we'll create a second application that will also use the Multiplication class, but in a little different way:</p>
-  <pre>
-public static void Main(string[] args) 
+  <pre>public static void Main(string[] args) 
 {
   var multiplication = new Multiplication(3,7);
   
@@ -75,8 +72,7 @@ public static void Main(string[] args)
 </pre>
 
   <p>Sounds easy, right? Let's take another step and extract the result check into something more reusable - after all, we'll be adding division in a second, remember? So here goes:</p>
-  <pre>
-public static void Main(string[] args) 
+  <pre>public static void Main(string[] args) 
 {
   var multiplication = new Multiplication(3,7);
   
@@ -97,8 +93,7 @@ public static void AssertTwoIntegersAreEqual(
 </pre>
 
   <p>Note that I started the name of the method with "Assert" - we'll get back to the naming soon, for now just assume that this is just a good name for the method. Let's take one last round and put the test into its own method:</p>
-  <pre>
-public static void Main(string[] args) 
+  <pre>public static void Main(string[] args) 
 {
   Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers();
 }
@@ -154,9 +149,7 @@ public static void AssertTwoIntegersAreEqual(
   </ol>
 
   <p>Quite to our joy, those three elements are present in xUnit frameworks as well. To illustrate it, here's (finally!) the same test we wrote, but with an xUnit framework (this one is called XUnit.Net):</p>
-  <pre>
-[Fact]
-public void 
+  <pre>[Fact] public void 
 Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
 {
   //Assuming...
@@ -199,8 +192,7 @@ Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
   <p>For now, however, let's try to keep things easy. I'll defer explaining the actual rationale for mocking frameworks until later and instead give you a quick example where you can see them in action. Ready? Let's go!</p>
 
   <p>Let's pretend that we have the following code for adding new set of orders for products to a database and handling exceptions (by writing a message to a log) when it fails:</p>
-  <pre>
-public class OrderProcessing
+  <pre>public class OrderProcessing
 {
   //other code...
 
@@ -263,8 +255,7 @@ public void ShouldInsertNewOrderToDatabase()
   </ol>
 
   <p>Now, let's try something else. Let's assume that our database works OK (or will be tested by black-box tests) and the only thing we want to test is our implementation. In this situation, we can create fake object, which is an instance of another custom class that implements the same interface as MySqlOrderDatabase, but does not write to a database at all - it only stores the inserted records in a list:</p>
-  <pre>
-public class FakeOrderDatabase : OrderDatabase
+  <pre>public class FakeOrderDatabase : OrderDatabase
 {
   public Order _receivedArgument;
 
@@ -281,9 +272,8 @@ public class FakeOrderDatabase : OrderDatabase
 </pre>
 
   <p>Now, we can substitute the real implementation of order database by the fake instance:</p>
-  <pre>
-[Fact]
-public void ShouldInsertNewOrderToDatabase()
+  <pre>[Fact] public void 
+ShouldInsertNewOrderToDatabase()
 {
   //GIVEN
   var orderDatabase = new FakeOrderDatabase();
@@ -305,8 +295,7 @@ public void ShouldInsertNewOrderToDatabase()
 </pre>
 
   <p>Note that we don't clean the fake database object, since we create it as fresh each time the test is run. Also, the test is going to be much quicker now. But, that's not the end! We can easily write a test for an exception situation. How do we do it? Just make another fake object implemented like this:</p>
-  <pre>
-public class ExplodingOrderDatabase : OrderDatabase
+  <pre>public class ExplodingOrderDatabase : OrderDatabase
 {
   public void Insert(Order order)
   {
@@ -320,8 +309,7 @@ public class ExplodingOrderDatabase : OrderDatabase
 </pre>
 
   <p>Ok, so far so good, but the bad is that now we've got two classes of fake objects to maintain (and chances are we'll need even more). Any method or argument added will need to be propagated to all these objects. We can spare some coding by making our mocks a little more generic so their behavior can be configured using lambda expressions:</p>
-  <pre>
-public class ConfigurableOrderDatabase : OrderDatabase
+  <pre>public class ConfigurableOrderDatabase : OrderDatabase
 {
   public Action&lt;Order&gt; doWhenInsertCalled;
   public Func&lt;List&lt;Order&gt;&gt; doWhenSelectAllOrdersCalled;
@@ -339,25 +327,22 @@ public class ConfigurableOrderDatabase : OrderDatabase
 </pre>
 
   <p>Now, we don't have to create additional classes for new scenarios, but our syntax gets awkward. See for yourself how we configure the fake order database to remember and yield the inserted order:</p>
-  <pre>
-var db = new ConfigurableOrderDatabase();
+  <pre>var db = new ConfigurableOrderDatabase();
 Order gotOrder = null;
 db.doWhenInsertCalled = o =&gt; {gotOrder = o;};
 db.doWhenSelectAllOrdersCalled = () =&gt; new List&lt;Order&gt;() { gotOrder };
 </pre>
 
   <p>And if we want it to throw an exception when anything is inserted:</p>
-  <pre>
-var db = new ConfigurableOrderDatabase();
+  <pre>var db = new ConfigurableOrderDatabase();
 db.doWhenInsertCalled = o =&gt; {throw new Exception();};
   </pre>
 
   <p>Thankfully, some smart programmers created frameworks that provide further automation in such scenarios. One of them is called <strong>NSubstitute</strong> and provides an API in a form of extension methods (that's why it might seem a bit magical at first. Don't worry, you'll get used to it).</p>
 
   <p>Using NSubstitute, out first test can be rewritten as such:</p>
-  <pre>
-[Fact]
-public void ShouldInsertNewOrderToDatabase()
+  <pre>[Fact] public void 
+ShouldInsertNewOrderToDatabase()
 {
   //GIVEN
   var orderDatabase = new Substitute.For&lt;OrderDatabase&gt;();
@@ -390,9 +375,8 @@ public void ShouldInsertNewOrderToDatabase()
   <h3 class="sigil_not_in_toc">Anonymous values generator</h3>
 
   <p>Look at the test in the previous section. Doesn't it trouble you that we fill the order object with so many values that are totally irrelevant to the test logic itself? They actually hinder readability of the test. Also, they make us believe that the tested object really cares what these values are, although it doesn't (the database does, but we already got rid of it from the test). Let's move it to a method with descriptive name:</p>
-  <pre>
-[Fact]
-public void ShouldInsertNewOrderToDatabase()
+  <pre>[Fact] public void 
+ShouldInsertNewOrderToDatabase()
 {
   //GIVEN
   var orderDatabase = new Substitute.For&lt;OrderDatabase&gt;();
@@ -420,9 +404,8 @@ public Order AnonymousOrder()
   <p>Now that's better. Not only did we make the test shorter, we also provided a hint to the test reader that the actual values used to create an order don't matter from the perspective of tested order processing logic, hence the name <code>AnonymousOrder()</code>.</p>
 
   <p>By the way, wouldn't it be nice if we didn't have to provide the anonymous objects ourselves, but rely on another library to generate them for us? Susprise, surprise, there is one! It's called <strong>Autofixture</strong>. It's an example of an anonymous values generator (although its creator likes to say that it's an implementation of Test Data Builder pattern, but let's skip this discussion here). After refactoring our test to use AutoFixture, we arrive at the following:</p>
-  <pre>
-[Fact]
-public void ShouldInsertNewOrderToDatabase()
+  <pre>[Fact] public void 
+ShouldInsertNewOrderToDatabase()
 {
   //GIVEN
   var orderDatabase = new Substitute.For&lt;OrderDatabase&gt;();

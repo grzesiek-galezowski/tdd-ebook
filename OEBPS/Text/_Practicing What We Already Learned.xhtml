@@ -5,6 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>Practicing what we already learned</title>
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -26,49 +27,49 @@
 
   <h2 id="sigil_toc_id_15">Act 1: The Car</h2>
 
-  <p>Johnny: How do you feel on your first assignment?</p>
+  <p><strong>Johnny:</strong> How do you feel on your first assignment?</p>
 
-  <p>Benjamin: I'm pretty excited! I hope I can learn some of the TDD stuff you promised to teach me.</p>
+  <p><strong>Benjamin:</strong> I'm pretty excited! I hope I can learn some of the TDD stuff you promised to teach me.</p>
 
-  <p>Johnny: Not only TDD, but we're also gonna use some of the practices associated with a process called Acceptance Test Driven Development, albeit in a simplified form.</p>
+  <p><strong>Johnny:</strong> Not only TDD, but we're also gonna use some of the practices associated with a process called Acceptance Test Driven Development, albeit in a simplified form.</p>
 
-  <p>Benjamin: Acceptance Test-Driven Development? What is that?</p>
+  <p><strong>Benjamin:</strong> Acceptance Test-Driven Development? What is that?</p>
 
-  <p>Johnny: While TDD is usually referred to as a development technique, ATDD is something more of a collaboration method. Both ATDD and TDD have a bit of analysis in them and work very well together as both use the same underlying principles, just on different levels. We'll need only a small subset of what ATDD has to offer, so don't get over-excited.</p>
+  <p><strong>Johnny:</strong> While TDD is usually referred to as a development technique, ATDD is something more of a collaboration method. Both ATDD and TDD have a bit of analysis in them and work very well together as both use the same underlying principles, just on different levels. We'll need only a small subset of what ATDD has to offer, so don't get over-excited.</p>
 
-  <p>Benjamin: Sure.</p>
+  <p><strong>Benjamin:</strong> Sure.</p>
 
   <h2 id="sigil_toc_id_16">Act 2: The Customer</h2>
 
-  <p>Johnny: Hi, Jane, how are you?</p>
+  <p><strong>Johnny:</strong> Hi, Jane, how are you?</p>
 
-  <p>Jane: Thanks, I'm fine, how about you?</p>
+  <p><strong>Jane:</strong> Thanks, I'm fine, how about you?</p>
 
-  <p>Johnny: Same here, thanks. So, can you tell us a bit about the software you need us to write?</p>
+  <p><strong>Johnny:</strong> Same here, thanks. So, can you tell us a bit about the software you need us to write?</p>
 
-  <p>Jane: Sure. Recently, I bought a new smartphone as a replacement for my old one. The thing is, I'm really used to the calculator application that was running on the previous phone and I can't find it for my current device.</p>
+  <p><strong>Jane:</strong> Sure. Recently, I bought a new smartphone as a replacement for my old one. The thing is, I'm really used to the calculator application that was running on the previous phone and I can't find it for my current device.</p>
 
-  <p>Benjamin: Can't you just use another calculator app? There are plenty of them available to download from the web.</p>
+  <p><strong>Benjamin:</strong> Can't you just use another calculator app? There are plenty of them available to download from the web.</p>
 
-  <p>Jane: That's right. I checked them all and none has exactly the same behavior as the one I was using for my tax calculations. You know, the program was like right hand to me and it had some really nice shortcuts that made my life easier.</p>
+  <p><strong>Jane:</strong> That's right. I checked them all and none has exactly the same behavior as the one I was using for my tax calculations. You know, the program was like right hand to me and it had some really nice shortcuts that made my life easier.</p>
 
-  <p>Johnny: So you want us to reproduce the application to run on your new device?</p>
+  <p><strong>Johnny:</strong> So you want us to reproduce the application to run on your new device?</p>
 
-  <p>Jane: Yes.</p>
+  <p><strong>Jane:</strong> Yes.</p>
 
-  <p>Johnny: Are you aware that apart from the fancy features that you were using we'll have to allocate some effort to implement the basics that all the calculators have?</p>
+  <p><strong>Johnny:</strong> Are you aware that apart from the fancy features that you were using we'll have to allocate some effort to implement the basics that all the calculators have?</p>
 
-  <p>Jane: Sure, I'm OK with that. I'm so used to my calculator application so much that if I use something else for more than few months, I'll have to pay psychotherapist instead of you guys. Apart from that, writing a calculator app seems like a simple task in my mind, so the cost isn't going to be overwhelming, right?</p>
+  <p><strong>Jane:</strong> Sure, I'm OK with that. I'm so used to my calculator application so much that if I use something else for more than few months, I'll have to pay psychotherapist instead of you guys. Apart from that, writing a calculator app seems like a simple task in my mind, so the cost isn't going to be overwhelming, right?</p>
 
-  <p>Johnny: I think I get it. Let's get it going then. We'll be implementing the functionality incrementally, starting with the most essential ones. Which feature of the calculator would you consider the most essential?</p>
+  <p><strong>Johnny:</strong> I think I get it. Let's get it going then. We'll be implementing the functionality incrementally, starting with the most essential ones. Which feature of the calculator would you consider the most essential?</p>
 
-  <p>Jane: That would be addition of numbers, I guess.</p>
+  <p><strong>Jane:</strong> That would be addition of numbers, I guess.</p>
 
-  <p>Johnny: Ok, that will be our target for the first iteration. After the iteration, we'll deliver this part of functionality for you to try out and give us some feedback. However, before we can even implement addition, we'll have to implement displaying digits on the screen as you enter them. Is that correct?</p>
+  <p><strong>Johnny:</strong> Ok, that will be our target for the first iteration. After the iteration, we'll deliver this part of functionality for you to try out and give us some feedback. However, before we can even implement addition, we'll have to implement displaying digits on the screen as you enter them. Is that correct?</p>
 
-  <p>Jane: yes, I want the display stuff to work as well - it's the most basic feature, so...</p>
+  <p><strong>Jane:</strong> yes, I want the display stuff to work as well - it's the most basic feature, so...</p>
 
-  <p>Johnny: Ok then, this is a simple functionality, so let me suggest some user stories as I understand what you already said and you'll correct me where I'm wrong. Here we go:</p>
+  <p><strong>Johnny:</strong> Ok then, this is a simple functionality, so let me suggest some user stories as I understand what you already said and you'll correct me where I'm wrong. Here we go:</p>
 
   <ol>
     <li><strong>In order to</strong> know that the calculator is turned on, <strong>As a</strong> tax payer <strong>I want</strong> to see "0" on the screen as soon as I turn it on.</li>
@@ -82,21 +83,21 @@
 
   <p><strong>Jane</strong>: The stories pretty much reflect what I want for the first iteration. I don't think I have any corrections to make.</p>
 
-  <p>Johnny: Now we'll take each story and collect some examples of how it should work.</p>
+  <p><strong>Johnny:</strong> Now we'll take each story and collect some examples of how it should work.</p>
 
-  <p>Benjamin: Johnny, don't you think it's obvious enough to proceed with implementation straight away?</p>
+  <p><strong>Benjamin:</strong> Johnny, don't you think it's obvious enough to proceed with implementation straight away?</p>
 
-  <p>Johnny: Trust me, Benjamin, if there's one word I fear most in communication, it's "obvious". Miscommunication happens most often around things that people consider obvious, simply because other people don't.</p>
+  <p><strong>Johnny:</strong> Trust me, Benjamin, if there's one word I fear most in communication, it's "obvious". Miscommunication happens most often around things that people consider obvious, simply because other people don't.</p>
 
-  <p>Jane: Ok, I'm in. What do I do?</p>
+  <p><strong>Jane:</strong> Ok, I'm in. What do I do?</p>
 
-  <p>Johnny: Let's go through stories one by one and see if we can find some key examples of how the features work. The first story is...</p>
+  <p><strong>Johnny:</strong> Let's go through stories one by one and see if we can find some key examples of how the features work. The first story is...</p>
 
   <h3 id="sigil_toc_id_17"><strong>In order to</strong> know that the calculator is turned on, <strong>As a</strong> tax payer <strong>I want</strong> to see "0" on the screen as soon as I turn it on.</h3>
 
-  <p>Jane: I don't think there's much to talk about. If you display "0", I'll be happy. That's all.</p>
+  <p><strong>Jane:</strong> I don't think there's much to talk about. If you display "0", I'll be happy. That's all.</p>
 
-  <p>Johnny: Let's write down this example:</p>
+  <p><strong>Johnny:</strong> Let's write down this example:</p>
 
   <table>
     <tr>
@@ -116,19 +117,19 @@
     </tr>
   </table>
 
-  <p>Benjamin: That makes me wonder... what should happen when I press "0" again at this stage?</p>
+  <p><strong>Benjamin:</strong> That makes me wonder... what should happen when I press "0" again at this stage?</p>
 
-  <p>Johnny: Good catch, that's what these examples are for - they make our thinking concrete. As Ken Pugh says: "Often the complete understanding of a concept does not occur until someone tries to use the concept". We'd normally put it on a TODO list, because it's part of a different story, but we're actually done with this one, so let's move straight to the story about displaying entered digits. How about it, Jane?</p>
+  <p><strong>Johnny:</strong> Good catch, that's what these examples are for - they make our thinking concrete. As Ken Pugh says: "Often the complete understanding of a concept does not occur until someone tries to use the concept". We'd normally put it on a TODO list, because it's part of a different story, but we're actually done with this one, so let's move straight to the story about displaying entered digits. How about it, Jane?</p>
 
-  <p>Jane: Agree.</p>
+  <p><strong>Jane:</strong> Agree.</p>
 
   <h3 id="sigil_toc_id_18"><strong>In order to</strong> see what numbers I'm currently operating on, <strong>As a</strong> tax payer, <strong>I want</strong> the calculator to display the values I enter</h3>
 
-  <p>Johnny: Let's begin with the case raised by Benjamin. What should happen when I input "0" multiple times after I have only "0" on the display?</p>
+  <p><strong>Johnny:</strong> Let's begin with the case raised by Benjamin. What should happen when I input "0" multiple times after I have only "0" on the display?</p>
 
-  <p>Jane: Just one "0" should be displayed</p>
+  <p><strong>Jane:</strong> Just one "0" should be displayed</p>
 
-  <p>Johnny: Do you mean this?</p>
+  <p><strong>Johnny:</strong> Do you mean this?</p>
 
   <table>
     <tr>
@@ -148,7 +149,7 @@
     </tr>
   </table>
 
-  <p>Jane: That's right. Other than this, the digits should just show on the screen, like this:</p>
+  <p><strong>Jane:</strong> That's right. Other than this, the digits should just show on the screen, like this:</p>
 
   <table>
     <tr>
@@ -168,7 +169,7 @@
     </tr>
   </table>
 
-  <p>Benjamin: How about this:</p>
+  <p><strong>Benjamin:</strong> How about this:</p>
 
   <table>
     <tr>
@@ -188,7 +189,7 @@
     </tr>
   </table>
 
-  <p>Jane: Actually, no. My old calculator app has a limit of six digits that I can enter, so it should be:</p>
+  <p><strong>Jane:</strong> Actually, no. My old calculator app has a limit of six digits that I can enter, so it should be:</p>
 
   <table>
     <tr>
@@ -208,17 +209,17 @@
     </tr>
   </table>
 
-  <p>Johnny: another good catch, Benjamin!</p>
+  <p><strong>Johnny:</strong> another good catch, Benjamin!</p>
 
-  <p>Benjamin: I think I'm beginning to understand why you like working with examples!</p>
+  <p><strong>Benjamin:</strong> I think I'm beginning to understand why you like working with examples!</p>
 
-  <p>Johnny: Good. Is there anything else, Jane?</p>
+  <p><strong>Johnny:</strong> Good. Is there anything else, Jane?</p>
 
-  <p>Jane: No, that's pretty much it. Let's take another story.</p>
+  <p><strong>Jane:</strong> No, that's pretty much it. Let's take another story.</p>
 
   <h3 id="sigil_toc_id_19"><strong>In order to</strong> calculate sum of my different incomes, <strong>As a</strong> tax payer <strong>I want</strong> the calculator to enable addition of multiple numbers</h3>
 
-  <p>Johnny: Is the following all we have to support?</p>
+  <p><strong>Johnny:</strong> Is the following all we have to support?</p>
 
   <table>
     <tr>
@@ -238,7 +239,7 @@
     </tr>
   </table>
 
-  <p>Jane: This scenario is correct, however, there's also a case when I start with "+" without inputting any number before. This should be treated as adding to zero:</p>
+  <p><strong>Jane:</strong> This scenario is correct, however, there's also a case when I start with "+" without inputting any number before. This should be treated as adding to zero:</p>
 
   <table>
     <tr>
@@ -258,7 +259,7 @@
     </tr>
   </table>
 
-  <p>Benjamin: How about when the output is a number longer than six digits limit? Is it OK that we truncate it like this?</p>
+  <p><strong>Benjamin:</strong> How about when the output is a number longer than six digits limit? Is it OK that we truncate it like this?</p>
 
   <table>
     <tr>
@@ -278,11 +279,11 @@
     </tr>
   </table>
 
-  <p>Jane: Sure, I don't mind. I don't add such big numbers anyway.</p>
+  <p><strong>Jane:</strong> Sure, I don't mind. I don't add such big numbers anyway.</p>
 
-  <p>Johnny: There's still one question we missed. Let's say that I input a number, then press "+" and then another number without asking for result with "=". What should I see?</p>
+  <p><strong>Johnny:</strong> There's still one question we missed. Let's say that I input a number, then press "+" and then another number without asking for result with "=". What should I see?</p>
 
-  <p>Jane: Every time you press "+", the calculator should consider entering current number finished and overwrite it as soon as you press any other digit:</p>
+  <p><strong>Jane:</strong> Every time you press "+", the calculator should consider entering current number finished and overwrite it as soon as you press any other digit:</p>
 
   <table>
     <tr>
@@ -302,7 +303,7 @@
     </tr>
   </table>
 
-  <p>Jane: Oh, and just asking for result after the calculator is turned on should result in "0".</p>
+  <p><strong>Jane:</strong> Oh, and just asking for result after the calculator is turned on should result in "0".</p>
 
   <table>
     <tr>
@@ -322,7 +323,7 @@
     </tr>
   </table>
 
-  <p>Johnny: Let's sum up our discoveries:</p>
+  <p><strong>Johnny:</strong> Let's sum up our discoveries:</p>
 
   <table>
     <tr>
@@ -406,23 +407,23 @@
     </tr>
   </table>
 
-  <p>Johnny: The limiting of digits displayed looks like a whole new feature, so I suggest we add it to the backlog and do it in another sprint. In this sprint, we won't handle such situation at all. How about that, Jane?</p>
+  <p><strong>Johnny:</strong> The limiting of digits displayed looks like a whole new feature, so I suggest we add it to the backlog and do it in another sprint. In this sprint, we won't handle such situation at all. How about that, Jane?</p>
 
-  <p>Jane: Fine with me. Looks like a lot of work. Nice that we discovered it up-front. For me, the limiting capability seemed so obvious that I didn't even think it would be worth mentioning.</p>
+  <p><strong>Jane:</strong> Fine with me. Looks like a lot of work. Nice that we discovered it up-front. For me, the limiting capability seemed so obvious that I didn't even think it would be worth mentioning.</p>
 
-  <p>Johnny: See? That's why I don't like the word "obvious". Jane, we'll get back to you if any more questions arise. For now, II think we know enough to implement these three stories for you.</p>
+  <p><strong>Johnny:</strong> See? That's why I don't like the word "obvious". Jane, we'll get back to you if any more questions arise. For now, II think we know enough to implement these three stories for you.</p>
 
-  <p>Jane: good luck!</p>
+  <p><strong>Jane:</strong> good luck!</p>
 
   <h2 id="sigil_toc_id_20">Act 3: Test-Driven Development</h2>
 
-  <p>Benjamin: Wow, that was cool. Was that Acceptance Test-Driven Development?</p>
+  <p><strong>Benjamin:</strong> Wow, that was cool. Was that Acceptance Test-Driven Development?</p>
 
-  <p>Johnny: In a greatly simplified version, yes. The reason I took you with me was to show you the similarities between working with customer the way we did and working with the code using TDD process. They're both applying the same set of principles, just on different levels.</p>
+  <p><strong>Johnny:</strong> In a greatly simplified version, yes. The reason I took you with me was to show you the similarities between working with customer the way we did and working with the code using TDD process. They're both applying the same set of principles, just on different levels.</p>
 
-  <p>Benjamin: I'm dying to see it with my own eyes. Shall we start?</p>
+  <p><strong>Benjamin:</strong> I'm dying to see it with my own eyes. Shall we start?</p>
 
-  <p>Johnny: Sure. If we followed the ATDD process, we'd start writing what we call acceptance-level specification. In our case, however, a unit-level specification will be enough. Let's take the first example:</p>
+  <p><strong>Johnny:</strong> Sure. If we followed the ATDD process, we'd start writing what we call acceptance-level specification. In our case, however, a unit-level specification will be enough. Let's take the first example:</p>
 
   <h3 id="sigil_toc_id_21">Statement 1: Calculator should display 0 on creation</h3>
 
@@ -444,17 +445,16 @@
     </tr>
   </table>
 
-  <p>Johnny: Benjamin, try to write the first Statement.</p>
+  <p><strong>Johnny:</strong> Benjamin, try to write the first Statement.</p>
 
-  <p>Benjamin: Boy, I don't know how to start.</p>
+  <p><strong>Benjamin:</strong> Boy, I don't know how to start.</p>
 
-  <p>Johnny: start by writing the statement in a plain English. What should the calculator do?</p>
+  <p><strong>Johnny:</strong> start by writing the statement in a plain English. What should the calculator do?</p>
 
-  <p>Benjamin: It should display "0" when I turn the application on.</p>
+  <p><strong>Benjamin:</strong> It should display "0" when I turn the application on.</p>
 
-  <p>Johnny: In our case, "turning on" is creating a calculator. Let's write it down as a method name:</p>
-  <pre>
-public class CalculatorSpecification
+  <p><strong>Johnny:</strong> In our case, "turning on" is creating a calculator. Let's write it down as a method name:</p>
+  <pre>public class CalculatorSpecification
 {
 
 [Fact] public void
@@ -466,15 +466,15 @@ ShouldDisplay0WhenCreated()
 }
 </pre>
 
-  <p>Benjamin: Why is the name of the class <code>CalculatorSpecification</code> and the name of the method <code>ShouldDisplay0WhenCreated</code>?</p>
+  <p><strong>Benjamin:</strong> Why is the name of the class <code>CalculatorSpecification</code> and the name of the method <code>ShouldDisplay0WhenCreated</code>?</p>
 
-  <p>Johnny: It's a naming convention. There are many others, but this is the one that I like. The rule is that when you take the name of the class without the <code>Specification</code> part followed by the name of the method, it should form a legit sentence. For instance, if I apply it to what we wrote, it would make a sentence: "Calculator should display 0 when created".</p>
+  <p><strong>Johnny:</strong> It's a naming convention. There are many others, but this is the one that I like. The rule is that when you take the name of the class without the <code>Specification</code> part followed by the name of the method, it should form a legit sentence. For instance, if I apply it to what we wrote, it would make a sentence: "Calculator should display 0 when created".</p>
 
-  <p>Benjamin: Ah, I see now. So it's a statement of behavior, isn't it?</p>
+  <p><strong>Benjamin:</strong> Ah, I see now. So it's a statement of behavior, isn't it?</p>
 
-  <p>Johnny: That's right. Now, the second trick I can sell to you is that if you don't know what code to start with, start with the expected result. In our case, we're expecting that the behavior will end up as displaying "0", right? So let's just write it in form of an assertion.</p>
+  <p><strong>Johnny:</strong> That's right. Now, the second trick I can sell to you is that if you don't know what code to start with, start with the expected result. In our case, we're expecting that the behavior will end up as displaying "0", right? So let's just write it in form of an assertion.</p>
 
-  <p>Benjamin: You mean something like this?</p>
+  <p><strong>Benjamin:</strong> You mean something like this?</p>
   <pre>public class CalculatorSpecification
 {
 
@@ -486,19 +486,19 @@ ShouldDisplay0WhenCreated()
 
 }</pre>
 
-  <p>Johnny: Precisely.</p>
+  <p><strong>Johnny:</strong> Precisely.</p>
 
-  <p>Benjamin: But that doesn't even compile. What use is it?</p>
+  <p><strong>Benjamin:</strong> But that doesn't even compile. What use is it?</p>
 
-  <p>Johnny: the code not compiling is the feedback that you needed to proceed. While previously you didn't know where to start, now you have a clear goal - make this code compile. Firstly, whre do you get the displayed value?</p>
+  <p><strong>Johnny:</strong> the code not compiling is the feedback that you needed to proceed. While previously you didn't know where to start, now you have a clear goal - make this code compile. Firstly, whre do you get the displayed value?</p>
 
-  <p>Benjamin: From the calculator display, of course!</p>
+  <p><strong>Benjamin:</strong> From the calculator display, of course!</p>
 
-  <p>Johnny: Then write it down how you get the value form the display.</p>
+  <p><strong>Johnny:</strong> Then write it down how you get the value form the display.</p>
 
-  <p>Benjamin: like how?</p>
+  <p><strong>Benjamin:</strong> like how?</p>
 
-  <p>Johnny: like this:</p>
+  <p><strong>Johnny:</strong> like this:</p>
   <pre>public class CalculatorSpecification
 {
 
@@ -513,11 +513,11 @@ ShouldDisplay0WhenCreated()
 }
 </pre>
 
-  <p>Benjamin: I see. Now the calculator is not created anywhere. I need to create it somewhere now or it won't compile and this is my next step. Is this how it works?</p>
+  <p><strong>Benjamin:</strong> I see. Now the calculator is not created anywhere. I need to create it somewhere now or it won't compile and this is my next step. Is this how it works?</p>
 
-  <p>Johnny: Yes, you're catching on quickly.</p>
+  <p><strong>Johnny:</strong> Yes, you're catching on quickly.</p>
 
-  <p>Benjamin: Ok then, here goes:</p>
+  <p><strong>Benjamin:</strong> Ok then, here goes:</p>
   <pre>public class CalculatorSpecification
 {
 
@@ -534,19 +534,19 @@ ShouldDisplay0WhenCreated()
 }
 </pre>
 
-  <p>Johnny: Bravo!</p>
+  <p><strong>Johnny:</strong> Bravo!</p>
 
-  <p>Benjamin: Now the code still does not compile, because I don't have the <code>Calculator</code> class at all...</p>
+  <p><strong>Benjamin:</strong> Now the code still does not compile, because I don't have the <code>Calculator</code> class at all...</p>
 
-  <p>Johnny: sounds like a good reason to create it.</p>
+  <p><strong>Johnny:</strong> sounds like a good reason to create it.</p>
 
-  <p>Benjamin: OK.</p>
+  <p><strong>Benjamin:</strong> OK.</p>
   <pre>public class Calculator
 {
 }
 </pre>
 
-  <p>Benjamin: Looks like the <code>Display()</code> method is missing too. I'll add it.</p>
+  <p><strong>Benjamin:</strong> Looks like the <code>Display()</code> method is missing too. I'll add it.</p>
   <pre>public class Calculator
 {
   public string Display()
@@ -556,11 +556,11 @@ ShouldDisplay0WhenCreated()
 }
 </pre>
 
-  <p>Johnny: Hey hey, not so fast!</p>
+  <p><strong>Johnny:</strong> Hey hey, not so fast!</p>
 
-  <p>Benjamin: What?</p>
+  <p><strong>Benjamin:</strong> What?</p>
 
-  <p>Johnny: You already provided an implementation that will make our current Statement true. Remember its name? <code>ShouldDisplay0WhenCreated</code> - and that's exactly what the code you wrote does. Before we arrive at this point, let's make sure this Statement can ever be evaluates as false. So for now, let's change it to this:</p>
+  <p><strong>Johnny:</strong> You already provided an implementation that will make our current Statement true. Remember its name? <code>ShouldDisplay0WhenCreated</code> - and that's exactly what the code you wrote does. Before we arrive at this point, let's make sure this Statement can ever be evaluates as false. So for now, let's change it to this:</p>
   <pre>public class Calculator
 {
   public string Display()
@@ -570,17 +570,17 @@ ShouldDisplay0WhenCreated()
 }
 </pre>
 
-  <p>Johnny: Look, now we can run the Specification and watch that Statement evaluate to false, because it expects "0", but gets "Once upon a time in Africa...".</p>
+  <p><strong>Johnny:</strong> Look, now we can run the Specification and watch that Statement evaluate to false, because it expects "0", but gets "Once upon a time in Africa...".</p>
 
-  <p>Benjamin: Running... Ok, it's false. By the way, do you always use such silly values to make Statements false?</p>
+  <p><strong>Benjamin:</strong> Running... Ok, it's false. By the way, do you always use such silly values to make Statements false?</p>
 
-  <p>Johnny: Hahaha, no, I just did it to emphasize the point. Normally, I'd write <code>return "";</code> or something similarly simple. Now we can evaluate the Statement and see it evaluate to false. Now we are sure that we have not yet implemented what is required for the Statement to be true.</p>
+  <p><strong>Johnny:</strong> Hahaha, no, I just did it to emphasize the point. Normally, I'd write <code>return "";</code> or something similarly simple. Now we can evaluate the Statement and see it evaluate to false. Now we are sure that we have not yet implemented what is required for the Statement to be true.</p>
 
-  <p>Benjamin: I think I get it. For now, the Statement shows that we don't have something we need and gives us a reason to add this "thing". When we do so, this Statement will show that we do have what we need. So what do we do now?</p>
+  <p><strong>Benjamin:</strong> I think I get it. For now, the Statement shows that we don't have something we need and gives us a reason to add this "thing". When we do so, this Statement will show that we do have what we need. So what do we do now?</p>
 
-  <p>Johnny: Write the simplest thing that makes this Statement true.</p>
+  <p><strong>Johnny:</strong> Write the simplest thing that makes this Statement true.</p>
 
-  <p>Benjamin: like this?</p>
+  <p><strong>Benjamin:</strong> like this?</p>
   <pre>public class Calculator
 {
   public string Display()
@@ -590,11 +590,11 @@ ShouldDisplay0WhenCreated()
 }
 </pre>
 
-  <p>Johnny: Yes.</p>
+  <p><strong>Johnny:</strong> Yes.</p>
 
-  <p>Benjamin: But that's not a real implementation. What's the value behind putting in a hardcoded string? The final implementation is not going to be like this for sure!</p>
+  <p><strong>Benjamin:</strong> But that's not a real implementation. What's the value behind putting in a hardcoded string? The final implementation is not going to be like this for sure!</p>
 
-  <p>Johnny: You're right. The final implementation is most probably going to be different. What we did, however, is still valuable because:</p>
+  <p><strong>Johnny:</strong> You're right. The final implementation is most probably going to be different. What we did, however, is still valuable because:</p>
 
   <ol>
     <li>You're one step closer to implementing the final solution</li>
@@ -604,17 +604,17 @@ ShouldDisplay0WhenCreated()
     <li>If you treat making every Statement true as an achievement, this practice allows you to evolve your code without losing what you already achieved. If by accident you break any of the behaviors you've already implemented, the Specification is going to tell you because one of the existing Statements that were previously true will then evaluate to false. You can then either fix it or undo your changes using version control and start over from the point where all existing Statements were true.</li>
   </ol>
 
-  <p>Benjamin: looks like quite a few benefits. Still, I'll have to get used to this kind of working.</p>
+  <p><strong>Benjamin:</strong> looks like quite a few benefits. Still, I'll have to get used to this kind of working.</p>
 
-  <p>Johnny: don't worry, it is central to TDD, so you'll grasp it in no time. Now, before we proceed to the next Statement, let's look at what we already achieved. First, we wrote a Statement that turned out false. Then, we wrote just enough code to make the Statement true. Time for a step called Refactoring. In this step, we'll take a look at the Statement and the code and remove duplication. Can you see what's duplicated between the Statement and the code?</p>
+  <p><strong>Johnny:</strong> don't worry, it is central to TDD, so you'll grasp it in no time. Now, before we proceed to the next Statement, let's look at what we already achieved. First, we wrote a Statement that turned out false. Then, we wrote just enough code to make the Statement true. Time for a step called Refactoring. In this step, we'll take a look at the Statement and the code and remove duplication. Can you see what's duplicated between the Statement and the code?</p>
 
-  <p>Benjamin: both of them contain the literal "0". The Statement has it here:</p>
+  <p><strong>Benjamin:</strong> both of them contain the literal "0". The Statement has it here:</p>
   <pre>Assert.Equal("0", displayedResult);</pre>
 
   <p>and the implementation here:</p>
   <pre>return "0";</pre>
 
-  <p>Johnny: Good, let's eliminate this duplication by introducing a constant called <code>InitialValue</code>. The Statement will now look like this:</p>
+  <p><strong>Johnny:</strong> Good, let's eliminate this duplication by introducing a constant called <code>InitialValue</code>. The Statement will now look like this:</p>
   <pre>[Fact] public void
 ShouldDisplayInitialValueWhenCreated()
 {
@@ -637,13 +637,13 @@ ShouldDisplayInitialValueWhenCreated()
 }
 </pre>
 
-  <p>Benjamin: The code looks better and having the constant in one place will make it more maintainable, but I think the Statement in its current form is weaker than before. We could change the <code>InitialValue</code> to anything and the Statement would still be true, since it does not force this constant to be "0".</p>
+  <p><strong>Benjamin:</strong> The code looks better and having the constant in one place will make it more maintainable, but I think the Statement in its current form is weaker than before. We could change the <code>InitialValue</code> to anything and the Statement would still be true, since it does not force this constant to be "0".</p>
 
   <p>That's right. We need to add it to our TODO list to handle this case. Can you write it down?</p>
 
-  <p>Benjamin: Sure. I'll write it as "TODO: 0 should be used as an initial value."</p>
+  <p><strong>Benjamin:</strong> Sure. I'll write it as "TODO: 0 should be used as an initial value."</p>
 
-  <p>Johnny: Ok. We should handle it now, especially that it's part of the story we're currently implementing, but I'll leave it for later just to show you the power of TODO list in TDD - whatever is on the list, we can forget and get back to when we have nothing better to do. Our next item from the list is this:</p>
+  <p><strong>Johnny:</strong> Ok. We should handle it now, especially that it's part of the story we're currently implementing, but I'll leave it for later just to show you the power of TODO list in TDD - whatever is on the list, we can forget and get back to when we have nothing better to do. Our next item from the list is this:</p>
 
   <h3 id="sigil_toc_id_22">Statement 2: Calculator should display entered digits</h3>
 
@@ -665,9 +665,9 @@ ShouldDisplayInitialValueWhenCreated()
     </tr>
   </table>
 
-  <p>Johnny: Benjamin, can you come up with a Statement for this behavior?</p>
+  <p><strong>Johnny:</strong> Benjamin, can you come up with a Statement for this behavior?</p>
 
-  <p>Benjamin: I'll try. Here goes:</p>
+  <p><strong>Benjamin:</strong> I'll try. Here goes:</p>
   <pre>public void [Fact]
 ShouldDisplayEnteredDigits()
 {
@@ -682,11 +682,11 @@ ShouldDisplayEnteredDigits()
 }
 </pre>
 
-  <p>Johnny: I'm glad that you got the part about naming and writing a Statement. One thing we'll have to work on here though.</p>
+  <p><strong>Johnny:</strong> I'm glad that you got the part about naming and writing a Statement. One thing we'll have to work on here though.</p>
 
-  <p>Benjamin: what is it?</p>
+  <p><strong>Benjamin:</strong> what is it?</p>
 
-  <p>Johnny: When we talked to Jane, we used examples with real values. These real values were extremely helpful in pinning down the corner cases and uncovering missing scenarios. They were easier to imagine as well, so they were a perfect suit for conversation. If we were automating these examples on acceptance level, we'd use those real values as well. When we write unit-level Statements, however, we use a different technique to get this kind of specification more abstract. First of all, let me enumerate the weaknesses of the approach you just used:</p>
+  <p><strong>Johnny:</strong> When we talked to Jane, we used examples with real values. These real values were extremely helpful in pinning down the corner cases and uncovering missing scenarios. They were easier to imagine as well, so they were a perfect suit for conversation. If we were automating these examples on acceptance level, we'd use those real values as well. When we write unit-level Statements, however, we use a different technique to get this kind of specification more abstract. First of all, let me enumerate the weaknesses of the approach you just used:</p>
 
   <ol>
     <li>Making a method <code>Enter()</code> accept an integer value suggests that one can enter more than one digit at once, e.g. <code>calculator.Enter(123)</code>, which is not what we want. We could detect such cases and throw exceptions if the value is outside the 0-9 range, but there are better ways when we know we'll only be supporting ten digits (0,1,2,3,4,5,6,7,8,9).</li>
@@ -723,25 +723,25 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 }
 </pre>
 
-  <p>Benjamin: Johnny, I'm lost! Can you explain what's going on here?</p>
+  <p><strong>Benjamin:</strong> Johnny, I'm lost! Can you explain what's going on here?</p>
 
-  <p>Johnny: Sure, what do you want to know?</p>
+  <p><strong>Johnny:</strong> Sure, what do you want to know?</p>
 
-  <p>Benjamin: For instance, what is this <code>DigitKeys</code> type doing here?</p>
+  <p><strong>Benjamin:</strong> For instance, what is this <code>DigitKeys</code> type doing here?</p>
 
-  <p>Johnny: It's supposed to be an enumeration (note that it does not exist yet, we just assume that we have it) to hold all the possible digits user can enter, which are 0-9. This is to ensure that user will not write <code>calculator.Enter(123)</code>. Instead of allowing to enter any number and then detecting errors, we're giving our users a choice from among only the valid values.</p>
+  <p><strong>Johnny:</strong> It's supposed to be an enumeration (note that it does not exist yet, we just assume that we have it) to hold all the possible digits user can enter, which are 0-9. This is to ensure that user will not write <code>calculator.Enter(123)</code>. Instead of allowing to enter any number and then detecting errors, we're giving our users a choice from among only the valid values.</p>
 
-  <p>Benjamin: Now I get it. So how about the <code>Any.Besides()</code> and <code>Any.Of()</code>? What do they do?</p>
+  <p><strong>Benjamin:</strong> Now I get it. So how about the <code>Any.Besides()</code> and <code>Any.Of()</code>? What do they do?</p>
 
-  <p>Johnny: They're methods from a small utility library I'm using when writing unit-level Specifications. <code>Any.Besides()</code> returns any value from enumeration besides the one supplied as an argument. Hence, the call <code>Any.Besides(DigitKeys.Zero)</code> means "any of the values contained in DigitKeys enumeration, but not DigitKeys.Zero".</p>
+  <p><strong>Johnny:</strong> They're methods from a small utility library I'm using when writing unit-level Specifications. <code>Any.Besides()</code> returns any value from enumeration besides the one supplied as an argument. Hence, the call <code>Any.Besides(DigitKeys.Zero)</code> means "any of the values contained in DigitKeys enumeration, but not DigitKeys.Zero".</p>
 
   <p>The <code>Any.Of()</code> is simpler - it just returns any value in an enumeration. Note that when I create the values this way, I state explicitly that this behavior occurs when first digit is non-zero. This technique of using generated values instead of literals has its own principles, but let's leave it for later. I promise to give you a detailed lecture on it. Agree?</p>
 
-  <p>Benjamin: You better do, because for now, I feel a bit uneasy with generating the values - it seems like the Statement we're writing is getting less deterministic this way. The last question - what about those weird comments you put in the code? Given? When? Then?</p>
+  <p><strong>Benjamin:</strong> You better do, because for now, I feel a bit uneasy with generating the values - it seems like the Statement we're writing is getting less deterministic this way. The last question - what about those weird comments you put in the code? Given? When? Then?</p>
 
-  <p>Johnny: Yes, this is a convention that I use, not only in writing, but in thinking as well. I like to think about every behavior in terms of three elements: assumptions (given), trigger (when) and expected result (then). Using the words, we can summarize the Statement we're writing in the following way: "<strong>Given</strong> a calculator, <strong>when</strong> I enter some digits first one being other than zero, <strong>then</strong> they should all be displayed in order they were entered". This is also something that I'll tell you more about later.</p>
+  <p><strong>Johnny:</strong> Yes, this is a convention that I use, not only in writing, but in thinking as well. I like to think about every behavior in terms of three elements: assumptions (given), trigger (when) and expected result (then). Using the words, we can summarize the Statement we're writing in the following way: "<strong>Given</strong> a calculator, <strong>when</strong> I enter some digits first one being other than zero, <strong>then</strong> they should all be displayed in order they were entered". This is also something that I'll tell you more about later.</p>
 
-  <p>Benjamin: Sure, for now I need just enough detail to understand what's going on - we can talk about the principles, pros and cons later. By the way, the following sequence of casts looks a little bit ugly:</p>
+  <p><strong>Benjamin:</strong> Sure, for now I need just enough detail to understand what's going on - we can talk about the principles, pros and cons later. By the way, the following sequence of casts looks a little bit ugly:</p>
   <pre>  string.Format("{0}{1}{2}", 
    (int)nonZeroDigit, 
    (int)anyDigit1, 
@@ -749,11 +749,11 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
   )
 </pre>
 
-  <p>Johnny: We'll get back to it and make it more "smarter" in a second after we make this statement true. For now, we need something obvious. Something we know works. Let's evaluate this Statement. What's the result?</p>
+  <p><strong>Johnny:</strong> We'll get back to it and make it more "smarter" in a second after we make this statement true. For now, we need something obvious. Something we know works. Let's evaluate this Statement. What's the result?</p>
 
-  <p>Benjamin: Failed, expected "331", but was "0".</p>
+  <p><strong>Benjamin:</strong> Failed, expected "331", but was "0".</p>
 
-  <p>Johnny: Good, now let's write some code to make this Statement true. First, let's introduce an enumeration of digits:</p>
+  <p><strong>Johnny:</strong> Good, now let's write some code to make this Statement true. First, let's introduce an enumeration of digits:</p>
   <pre>public enum DigitKeys
 {
  Zero = 0,
@@ -763,21 +763,21 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
  TODO4, //TODO
 }</pre>
 
-  <p>Benjamin: What's with all those bogus values? Shouldn't we just enter all the digits we support?</p>
+  <p><strong>Benjamin:</strong> What's with all those bogus values? Shouldn't we just enter all the digits we support?</p>
 
-  <p>Johnny: Nope, not yet. We still don't have a Statement which would say what digits are supported and thus make us add them, right?.</p>
+  <p><strong>Johnny:</strong> Nope, not yet. We still don't have a Statement which would say what digits are supported and thus make us add them, right?.</p>
 
-  <p>Benjamin: You say you need a Statement for an element to be in an enum??</p>
+  <p><strong>Benjamin:</strong> You say you need a Statement for an element to be in an enum??</p>
 
-  <p>Johnny: This is a specification we're writing, remember? It should say somewhere which digits we support, shouldn't it?</p>
+  <p><strong>Johnny:</strong> This is a specification we're writing, remember? It should say somewhere which digits we support, shouldn't it?</p>
 
-  <p>Benjamin: It's difficult to agree with, especially that I'm used to write unit tests, not Statements and in unit tests, I wanted to verify what I was unsure of.</p>
+  <p><strong>Benjamin:</strong> It's difficult to agree with, especially that I'm used to write unit tests, not Statements and in unit tests, I wanted to verify what I was unsure of.</p>
 
-  <p>Johnny: I'll try to give you more arguments later. For now, just bear with me and note that adding such Statement will be almost effortless.</p>
+  <p><strong>Johnny:</strong> I'll try to give you more arguments later. For now, just bear with me and note that adding such Statement will be almost effortless.</p>
 
-  <p>Benjamin: OK.</p>
+  <p><strong>Benjamin:</strong> OK.</p>
 
-  <p>Johnny: Now for the implementation. Just to remind you - up to now, it looked like this:</p>
+  <p><strong>Johnny:</strong> Now for the implementation. Just to remind you - up to now, it looked like this:</p>
   <pre>public class Calculator
 {
   public const string InitialValue = "0";
@@ -806,7 +806,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 }
 </pre>
 
-  <p>Johnny: Now the Statement is true so we can go back to it and make it a little bit prettier. Let's take a second look at it:</p>
+  <p><strong>Johnny:</strong> Now the Statement is true so we can go back to it and make it a little bit prettier. Let's take a second look at it:</p>
   <pre>public void [Fact]
 ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 {
@@ -833,11 +833,11 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 }
 </pre>
 
-  <p>Johnny: Remember you said that you don't like the part where <code>string.Format()</code> is used?</p>
+  <p><strong>Johnny:</strong> Remember you said that you don't like the part where <code>string.Format()</code> is used?</p>
 
-  <p>Benjamin: Yeah, it seems a bit unreadable.</p>
+  <p><strong>Benjamin:</strong> Yeah, it seems a bit unreadable.</p>
 
-  <p>Johnny: Let's extract this part into a utility method and make it more general - we'll need a way of constructing expected displayed output in many of our future Statements. Here's my go at this helper method:</p>
+  <p><strong>Johnny:</strong> Let's extract this part into a utility method and make it more general - we'll need a way of constructing expected displayed output in many of our future Statements. Here's my go at this helper method:</p>
   <pre>string StringConsistingOf(params DigitKeys[] digits)
 {
  var result = string.Empty;
@@ -850,8 +850,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 }</pre>
 
   <p>Note that this is more general as it supports any number of parameters. And the Statement after this extraction looks like this:</p>
-  <pre>
-public void [Fact]
+  <pre>public void [Fact]
 ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 {
  //GIVEN
@@ -873,9 +872,9 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 }
 </pre>
 
-  <p>Benjamin: Looks better to me. The Statement is still evaluated as true, which means we got it right, didn't we?</p>
+  <p><strong>Benjamin:</strong> Looks better to me. The Statement is still evaluated as true, which means we got it right, didn't we?</p>
 
-  <p>Johnny: Not exactly. With such moves such as this one, I like to be extra careful. Let's comment out the body of the <code>Enter()</code> method and see if this Statement can still be made false by the implementation:</p>
+  <p><strong>Johnny:</strong> Not exactly. With such moves such as this one, I like to be extra careful. Let's comment out the body of the <code>Enter()</code> method and see if this Statement can still be made false by the implementation:</p>
   <pre>public void Enter(DigitKeys digit)
  {
   //_result *= 10;
@@ -883,15 +882,15 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
  }
 </pre>
 
-  <p>Benjamin: Running... Ok, it is false now. Expected "243", got "0".</p>
+  <p><strong>Benjamin:</strong> Running... Ok, it is false now. Expected "243", got "0".</p>
 
-  <p>Johnny: good, now we're pretty sure that it works OK. Let's uncomment the lines we just commented out and move forward.</p>
+  <p><strong>Johnny:</strong> good, now we're pretty sure that it works OK. Let's uncomment the lines we just commented out and move forward.</p>
 
   <h3 id="sigil_toc_id_23">Statement 3: Calculator should display only one zero digit if it's the only entered digit even if it is entered multiple times</h3>
 
-  <p>Johnny: Benjamin, this should be easy for you, so go ahead and try it. It's really a variation of previous Statement.</p>
+  <p><strong>Johnny:</strong> Benjamin, this should be easy for you, so go ahead and try it. It's really a variation of previous Statement.</p>
 
-  <p>Benjamin: Let me try... ok, here it is:</p>
+  <p><strong>Benjamin:</strong> Let me try... ok, here it is:</p>
   <pre>[Fact] public void 
 ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipleTimes()
 {
@@ -908,11 +907,11 @@ ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipl
  );
 }</pre>
 
-  <p>Johnny: Good, you're learning fast! Let's evaluate this Statement.</p>
+  <p><strong>Johnny:</strong> Good, you're learning fast! Let's evaluate this Statement.</p>
 
-  <p>Benjamin: It seems that our current code already fulfills the Statement. Should I try to comment some code to make sure this Statement can fail just like you did in the previous Statement?</p>
+  <p><strong>Benjamin:</strong> It seems that our current code already fulfills the Statement. Should I try to comment some code to make sure this Statement can fail just like you did in the previous Statement?</p>
 
-  <p>Johnny: That would be wise thing to do. When a Statement is true without requiring you to change any production code, it's always suspicious. Just like you said, we have to modify production code for a second to force this Statement to be false, then undo this modification to make it true again. This isn't as obvious as previously, so let me do it. I'll mark all the added lines with <code>//+</code> comment so that you can see them easily:</p>
+  <p><strong>Johnny:</strong> That would be wise thing to do. When a Statement is true without requiring you to change any production code, it's always suspicious. Just like you said, we have to modify production code for a second to force this Statement to be false, then undo this modification to make it true again. This isn't as obvious as previously, so let me do it. I'll mark all the added lines with <code>//+</code> comment so that you can see them easily:</p>
   <pre>public class Calculator
 {
  int _result = 0;
@@ -938,13 +937,13 @@ ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipl
  }
 }</pre>
 
-  <p>Benjamin: Wow, looks like a lot of code just to make the Statement false! Is it worth the hassle? We'll undo this whole modification in a second anyway</p>
+  <p><strong>Benjamin:</strong> Wow, looks like a lot of code just to make the Statement false! Is it worth the hassle? We'll undo this whole modification in a second anyway</p>
 
-  <p>Johnny: Depends on how confident you want to feel. I'd say that it's usually worth it - at least you know that you got everything right. It might seem like a lot of work, but it actually took me about a minute to add this code and imagine you got it wrong and had to debug it on a production environment. _That_ would be a waste of time.</p>
+  <p><strong>Johnny:</strong> Depends on how confident you want to feel. I'd say that it's usually worth it - at least you know that you got everything right. It might seem like a lot of work, but it actually took me about a minute to add this code and imagine you got it wrong and had to debug it on a production environment. _That_ would be a waste of time.</p>
 
-  <p>Benjamin: Ok, I think I get it. Since we saw this Statement turn false, I'll undo this modification to make it true again.</p>
+  <p><strong>Benjamin:</strong> Ok, I think I get it. Since we saw this Statement turn false, I'll undo this modification to make it true again.</p>
 
-  <p>Johnny: Sure.</p>
+  <p><strong>Johnny:</strong> Sure.</p>
 
   <h2 id="sigil_toc_id_24">Epilogue</h2>
 

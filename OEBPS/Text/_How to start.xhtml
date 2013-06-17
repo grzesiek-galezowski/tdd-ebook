@@ -5,6 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>How to start?</title>
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -12,11 +13,11 @@
 
   <p>Whenever I sat down with a person that was about to write their first code in a Statement-first manner, the person would first stare at the screen, then at me, then would say: "what now?". It's easy to say: "You know how to write code, you know how to write a unit test for it, just this time start with the latter rather than the first", but for many people, this is something that blocks them completely. If you're one of them, don't worry - you're not alone. I decided to dedicate this chapter solely to techniques for starting to write a Statement when there's no code.</p>
 
-  <h2>Start with a good name</h2>
+  <h2 id="sigil_toc_id_25">Start with a good name</h2>
 
   <p>It may sound obvious, but really some people are having trouble describing the behavior they expect from their code. If you can name such behavior, it's a great starting point.</p>
 
-  <h3>What's in a good name?</h3>
+  <h3 id="sigil_toc_id_26">What's in a good name?</h3>
 
   <p>I know some people don't pay attention to naming their Statements, mainly because they're considered as tests and second-level citizens - as long as they run and "prove the code does not contain defects", they're considered sufficient. We'll take a look later at some examples of bad names, but first, I'd like to introduce to you some rules of good naming.</p>
 
@@ -46,7 +47,7 @@ public void Statement_002()
     <li>Using a name that describes a (single) behavior allows you to track quickly why the Statement is false when it is. Suppose a Statement is true when you start refactoring, but in the meantime it turns out to be false and the report in the runner looks like this: <code>TrySendingHttpRequest: FAILED</code> - it doesn't really tell you anything more than an attempt is made to send a HTTP request, but, for instance, does not tell you whether your specified object is the sender (that should try to send this request under some circumstances) or the receiver (that should handle such request properly). To actually know what went wrong, you have to go to the code to scan its source code. Now compare it to the following name: <code>ShouldRespondWithAnAckWheneverItReceivedAHttpRequest</code>. Now when it evaluates to false, you can tell that what is broken is that the object no longer responds with an ACK to HTTP request. Sometimes this is enough to deduct which part of the code is in fault of this evaluation failure.</li>
   </ol>
 
-  <h3>Consequences of bad naming</h3>
+  <h3 id="sigil_toc_id_27">Consequences of bad naming</h3>
 
   <p>As I said, many people don't really care how their Statements are named. This is a symptom of treating the Specification as garbage or leftovers - such situation is dangerous, because as soon as this kind of thinking is established, it leads to bad, unmaintainable Specification that looks more like lumps of accidental code put together in a haste than a living documentation. Imagine that your Specification consists of names like this:</p>
 
@@ -79,12 +80,12 @@ public void Statement_002()
 
     <li>How do you estimate, by looking at the runner tool report, whether the fix for failing Statement will be easy or not?</li>
 
-    <li>How do you answer a new developer in your team when they ask you &quot;what is this Statement for?&quot;</li>
+    <li>How do you answer a new developer in your team when they ask you "what is this Statement for?"</li>
 
     <li>How can you keep track of the Statements already made about the specified class vs those that still need to be made?</li>
   </ol>
 
-  <h3>My favourite convention</h3>
+  <h3 id="sigil_toc_id_28">My favourite convention</h3>
 
   <p>There are many conventions for naming Statements appropriately. My favorite is the one developed by Dan North, which makes each Statement name begin with the word <code>Should</code>. So for example, I'd name a Statement: <code>ShouldReportAllErrorsSortedAlphabeticallyWhenItEncountersErrorsDuringSearch()</code>. The name of the Specification (i.e. class name) answers the question "who should do it?", i.e. when I have a class names <code>SortingOperation</code> and want to say that it "should sort all items in ascending order when performed", I say it like this:</p>
   <pre>public class SortingOperationSpecification
@@ -98,12 +99,12 @@ public void Statement_002()
 
   <p>It's important to focus on what result is expected from an object when writing names along this convention. If you don't, you quickly find it troublesome. As an example, one of my colleague was specifying a class <code>UserId</code> and wrote the following name for the Statement about comparison of two identifiers: <code>EqualOperationShouldPassForTwoInstancesWithTheSameUserName()</code>. Note that this is not from the perspective of a single object, but rather from the perspective of an operation that's executed on it, which means that we stopped thinking in an object oriented way and started thinking in a way common for procedural programming. This name should be changed to: <code>ShouldReportThatItIsEqualToAnotherObjectWhenItHasTheSameUserName()</code>.</p>
 
-  <h3>Example</h3>
+  <h3 id="sigil_toc_id_29">Example</h3>
 
-  <h2>Start at the end</h2>
+  <h2 id="sigil_toc_id_30">Start at the end</h2>
 
-  <h2>Start by filling the GIVEN-WHEN-THEN structure with obvious</h2>
+  <h2 id="sigil_toc_id_31">Start by filling the GIVEN-WHEN-THEN structure with obvious</h2>
 
-  <h2>Start by invoking a method when you have one</h2>
+  <h2 id="sigil_toc_id_32">Start by invoking a method when you have one</h2>
 </body>
 </html>

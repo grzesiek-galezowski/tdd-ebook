@@ -20,3 +20,12 @@ div.achievement
 dt {
   padding-top: 0.2em;
 }
+
+td, th {
+  border: solid thin #C0C0C0;
+  padding: 4px;
+}
+
+table {
+  width: 70%;
+}
