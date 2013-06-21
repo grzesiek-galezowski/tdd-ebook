@@ -101,94 +101,93 @@ public void Statement_002()
 
   <h2>A structure of a Statement</h2>
 
-  <p>It often helps to think about each Statement of behavior in terms of its assumptions, a trigger for the behavior, and the expected result. TODO: write about gherkin</p>
+  <p>It often helps to think about each Statement of behavior in terms of its assumptions, a trigger for the behavior, and the expected result. <b>TODO: write about gherkin</b></p>
 
-  <h2 id="sigil_toc_id_31">Start by filling the GIVEN-WHEN-THEN structure with obvious</h2>
+  <h2 id="sigil_toc_id_31">Start by filling the GIVEN-WHEN-THEN structure with the obvious</h2>
 
   <p>This is applicable when you come up with a GIVEN-WHEN-THEN structure for the Statement or a good name for it (GIVEN-WHEN-THEN structure can be easily derived from a good name and vice versa). Anyway, this method is about taking the GIVEN-WHEN-THEN parts and translating them into code in almost brute-force way, then add all the missing pieces that are required for the code to compile and run.</p>
 
   <h3>An example speaks for thousand words</h3>
 
-  <p>Poprawić poniższe, żeby nie korzystało z mocków:</p>
-
-  <p>After giving it a short thought, we can come up with this obvious behavior description:</p>
-  <pre style="padding: 1em; border: dashed thin gray;">
-GIVEN any frame
-WHEN message processing is performed for it
-THEN it should submit the frame to validation
+  <p>Let's take a simple example of sorting numbers of comparing two users. We assume that a user should be equal to another when it has the same name as the other one:</p>
+  <pre style="padding: 1em; border: dashed thin gray;">GIVEN a user with any name
+WHEN I compare it to another user with the same name
+THEN it should appear equal to this other user
 </pre>
 
-  <p>Cool, let's get to implementing it. The first thing we want to do is to just translate the behavior description above to the code and see which abstractions and methods are missing - then supply them.</p>
+  <p>Let's start with the translation</p>
 
   <p>The first line:</p>
-  <pre style="padding: 1em; border: dashed thin gray;">
-GIVEN any frame
-</pre>
+  <pre style="padding: 1em; border: dashed thin gray;">GIVEN a user with any name</pre>
 
-  <p>can be translated to code like this:</p>
-  <pre class="brush: csharp">
-var anyFrame = Any.InstanceOf&lt;Frame&gt;();
-</pre>
+  <p>can be translated literally to code like this:</p>
+  <pre class="brush: csharp">var user = new User(anyName);</pre>
 
   <p>Then the second line:</p>
-  <pre style="padding: 1em; border: dashed thin gray;">
-WHEN message processing is performed for it
-</pre>
+  <pre style="padding: 1em; border: dashed thin gray;">WHEN I compare it to another user with the same name</pre>
 
   <p>can be written as:</p>
-  <pre class="brush: csharp">
-var messageProcessing = new MessageProcessing();
-messageProcessing.PerformFor(frame);
-</pre>
+  <pre class="brush: csharp">user.Equals(anotherUserWithTheSameName);</pre>
 
   <p>Great! Now the last line:</p>
-  <pre style="padding: 1em; border: dashed thin gray;">
-THEN it should submit the frame to validation
-</pre>
+  <pre style="padding: 1em; border: dashed thin gray;">THEN it should appear equal to this other user</pre>
 
-  <p>and its translation into the code (note the Received() extension method, which is an NSubstitute construct):</p>
-  <pre class="brush: csharp">
-validation.Received().PerformFor(anyFrame);
-</pre>
+  <p>and its translation into the code:</p>
+  <pre class="brush: csharp">Assert.True(areUsersEqual);</pre>
 
   <p>Ok, so we've made the translation, now let's summarize this and see what's missing to make this code compile:</p>
-  <pre class="brush: csharp">
-[Fact] public void 
-ShouldSubmitFrameToValidationWhenPerformedForThatFrame()
+  <pre class="brush: csharp">[Fact] public void 
+ShouldAppearEqualToAnotherUserWithTheSameName()
 {
   //GIVEN
-  var anyFrame = Any.InstanceOf&lt;Frame&gt;();
+  var user = new User(anyName);
 
   //WHEN
-  var messageProcessing = new MessageProcessing();
-  messageProcessing.PerformFor(frame);
+  user.Equals(anotherUserWithTheSameName);
 
   //THEN
-  validation.Received().PerformFor(anyFrame);
+  Assert.True(areUsersEqual);
 }
 </pre>
 
-  <p>What's missing? We have to somehow create the validation and pass it to MessageProcessing, since it's the entity responsible for performing the validation. And so, the corrected version looks like this.</p>
-  <pre class="brush: csharp">
-[Fact] public void 
-ShouldSubmitFrameToValidationWhenPerformedForThatFrame()
+  <p>As we expected, this will not compile. Notably, the following is missing:</p>
+
+  <ol>
+    <li>A declaration of <code>anyName</code> variable</li>
+
+    <li>A declaration of <code>anyUserWithTheSameName</code> object</li>
+
+    <li>The variable <code>areUsersEqual</code> is both not declared and it does not hold the comparison result</li>
+  </ol>
+
+  <p>So note that while we don't have full compiling code filling the gaps boils down to making a few declarations and assignments:</p>
+
+  <ol>
+    <li><code>anyName</code> can be declared as <code>var anyName = Any.String();</code></li>
+
+    <li><code>anotherUserWithTheSameName</code> can be declared as <code>var anotherUserWithTheSameName = new User(anyName);</code></li>
+
+    <li><code>areUsersEqual</code> can be declared and assigned this way: <code>var areUsersEqual = user.Equals(anotherUserWithTheSameName);</code></li>
+  </ol>
+
+  <p>Putting it all together:</p>
+  <pre class="brush: csharp">[Fact] public void 
+ShouldAppearEqualToAnotherUserWithTheSameName()
 {
   //GIVEN
-  var anyFrame = Any.InstanceOf&lt;Frame&gt;();
-  var validation = Substitute.For&lt;Validation&gt;();  
+  var anyName = Any.String();
+  var user = new User(anyName);
+  var anotherUserWithTheSameName = new User(anyName);
 
   //WHEN
-  var messageProcessing = new MessageProcessing(validation);
-  messageProcessing.PerformFor(frame);
+  var areUsersEqual = user.Equals(anotherUserWithTheSameName);
 
   //THEN
-  validation.Received().PerformFor(anyFrame);
+  Assert.True(areUsersEqual);
 }
 </pre>
 
-  <p>As you can see, we've discovered one new abstraction - a validation, and two new methods: one for message processing and one for validation (accidentially, both named PerformFor()). Thus, we have <strong>created a need</strong> for all this new stuff to exist. Additionally, <strong>we made a mistake</strong> when dividing responsibilities between classes, and we'll see why later.</p>
-
-  <p>By the way, this is what's called a <a href="http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html">Work-Flow Specification</a>. Our workflow is very primitive, since it consists of forwarding a method call to another object. In real-world scenarios (and in the correct solution to this kata) workflows are more worthwile.</p>
+  <p>And that's it - the Statement is complete!</p>
 
   <h2 id="sigil_toc_id_30">Start at the end</h2>
 
