@@ -5,7 +5,7 @@
     <dc:title>Test-Driven Development - Extensive Tutorial</dc:title>
     <dc:creator opf:role="aut">Grzegorz Gałęzowski</dc:creator>
     <dc:language>en</dc:language>
-    <dc:date opf:event="modification">2013-06-22</dc:date>
+    <dc:date opf:event="modification">2013-06-26</dc:date>
     <meta content="0.7.2" name="Sigil version" />
   </metadata>
   <manifest>
@@ -59,7 +59,7 @@
     <item href="Text/_What%20Exactly%20Do%20We%20Specify.xhtml" id="_What_Exactly_Do_We_Specify.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/_Practicing%20What%20We%20Already%20Learned.xhtml" id="_Practicing_What_We_Already_Learned.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/_Sorting%20out%20the%20bits.xhtml" id="_Sorting_out_the_bits.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/_Anaysis%20In%20TDD.xhtml" id="_Anaysis_In_TDD.xhtml" media-type="application/xhtml+xml" />
+    <item href="Text/_Analysis%20In%20TDD.xhtml" id="_Analysis_In_TDD.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/_How%20to%20start.xhtml" id="_How_to_start.xhtml" media-type="application/xhtml+xml" />
   </manifest>
   <spine toc="ncx">
@@ -72,7 +72,7 @@
     <itemref idref="_Sorting_out_the_bits.xhtml" />
     <itemref idref="End.xhtml" />
     <itemref idref="_How_to_start.xhtml" />
-    <itemref idref="_Anaysis_In_TDD.xhtml" />
+    <itemref idref="_Analysis_In_TDD.xhtml" />
     <itemref idref="_What_Exactly_Do_We_Specify.xhtml" />
     <itemref idref="If_you_treat_your_unit_tests_like_garbage__they_ll_eventually_become_just_that._And_they_will_smell_bad....xhtml" />
     <itemref idref="We_are_in_need_of_feedback.xhtml" />

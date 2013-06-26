@@ -256,7 +256,7 @@
       <navLabel>
         <text>How is TDD about analysis and what's with the GIVEN-WHEN-THEN mantra?</text>
       </navLabel>
-      <content src="Text/_Anaysis%20In%20TDD.xhtml"/>
+      <content src="Text/_Analysis%20In%20TDD.xhtml"/>
       <navPoint id="navPoint-42" playOrder="42">
         <navLabel>
           <text>How is TDD about analysis and what's with the GIVEN-WHEN-THEN mantra?</text>

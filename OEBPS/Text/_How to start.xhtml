@@ -44,7 +44,7 @@
 
     <li>How do you know whether the assertions inside those Statements are really the right ones assuming each Statement was written by someone else or was written a long time ago?</li>
 
-    <li>How do you know whether the Statement should stay or be removed when you modify the functionality specified by the it?</li>
+    <li>How do you know whether the Statement should stay or be removed when you modify the functionality it specifies?</li>
 
     <li>If your changes in production code make a Statement evaluate to false, how do you know whether the Statement is no longer correct or the production code is wrong?</li>
 
@@ -79,7 +79,7 @@ public void Statement_002()
 }
 </pre>
 
-      <p>There are two downsides of this solution: one is that we now have to put extra information (<code>Statement_002</code>) which is required only by compiler, because every method needs to have a name - there's usually no value a human could derive from such a name. The second downside is that when the Statement is evaluated to false, the automated runner shows you the following line: <code>Statement_002: FAILED</code> - note that all the information included in the comment isn't present in the failure report. It's really better to receive a report such as: <code>notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort: FAILED</code>, because all the information about the Statement that fails is present in the runner window.</p>
+      <p>There are two downsides to this solution: one is that we now have to put extra information (<code>Statement_002</code>) which is required only by compiler, because every method needs to have a name - there's usually no value a human could derive from such a name. The second downside is that when the Statement is evaluated to false, the automated runner shows you the following line: <code>Statement_002: FAILED</code> - note that all the information included in the comment isn't present in the failure report. It's really better to receive a report such as: <code>notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort: FAILED</code>, because all the information about the Statement that fails is present in the runner window.</p>
     </li>
 
     <li>Using a name that describes a (single) behavior allows you to track quickly why the Statement is false when it is. Suppose a Statement is true when you start refactoring, but in the meantime it turns out to be false and the report in the runner looks like this: <code>TrySendingHttpRequest: FAILED</code> - it doesn't really tell you anything more than an attempt is made to send a HTTP request, but, for instance, does not tell you whether your specified object is the sender (that should try to send this request under some circumstances) or the receiver (that should handle such request properly). To actually know what went wrong, you have to go to the code to scan its source code. Now compare it to the following name: <code>ShouldRespondWithAnAckWheneverItReceivedAHttpRequest</code>. Now when it evaluates to false, you can tell that what is broken is that the object no longer responds with an ACK to HTTP request. Sometimes this is enough to deduct which part of the code is in fault of this evaluation failure.</li>
@@ -101,13 +101,11 @@ public void Statement_002()
 
   <h2>A structure of a Statement</h2>
 
-  <p>It often helps to think about each Statement of behavior in terms of its assumptions, a trigger for the behavior, and the expected result. <b>TODO: write about gherkin</b></p>
-
   <h2 id="sigil_toc_id_31">Start by filling the GIVEN-WHEN-THEN structure with the obvious</h2>
 
   <p>This is applicable when you come up with a GIVEN-WHEN-THEN structure for the Statement or a good name for it (GIVEN-WHEN-THEN structure can be easily derived from a good name and vice versa). Anyway, this method is about taking the GIVEN-WHEN-THEN parts and translating them into code in almost brute-force way, then add all the missing pieces that are required for the code to compile and run.</p>
 
-  <h3>An example speaks a thousand words</h3>
+  <h3>A simple example</h3>
 
   <p>Let's take a simple example of sorting numbers of comparing two users. We assume that a user should be equal to another when it has the same name as the other one:</p>
   <pre style="padding: 1em; border: dashed thin gray;">GIVEN a user with any name
@@ -208,8 +206,8 @@ Assert.True(accessGranted);</pre>
   <p>Ok, that part was easy, but did we make any progress with that? Of course we did - we now have a non-compiling code and the compilation error is because of the <code>accessGranted</code> variable. Now, in contrast to the previous approach (with translating our GIVEN-WHEN-THEN structure into a Statement), our goal is not to make this compile. The goal is to answer ourselves a question: how do I know whether the access is granted or not? The answer: we know it as soon as we authorize the allowed role. Ok, so let's just write it down, ignoring everything that stands in our way (I know that most of us have a habit to add a class or a variable as soon as we find out that we need it. If you're like that, then please turn off this habit while writing Statements - it will only throw you out of the track and steal your focus from what's important. The key to doing TDD successfully is to learn to use something that does not exist yet like it exists):</p>
   <pre>//WHEN
 var accessGranted 
-  = authorization.IsAccessToReportingGrantedTo(
-     roleAllowedToUseReporting);
+ = authorization.IsAccessToReportingGrantedTo(
+  roleAllowedToUseReporting);
 </pre>
 
   <p>Note that we do not know what <code>roleAllowedToUseReporting</code> is, neither do we know what's <code>authorization</code>, but that didn't stop us from writing this line. Also, the <code>IsAccessToReportingGrantedTo()</code> method is just taken from the top of our head. It's not defined anywhere, it just made sense to write it like this, because it's the most direct translation of what we had in mind.</p>
@@ -227,8 +225,115 @@ var accessGranted
 var authorization = new Authorization();
 </pre>
 
-  <p>Now for the <code>roleAllowedToUseReporting</code>. TODO</p>
+  <p>Now for the <code>roleAllowedToUseReporting</code>. The first question that comes to mind when looking at this is: which roles are allowed to use reporting? Let's assume that in our domain, this is either an Administrator or an Auditor. Thus, we know what's going to be the value of this variable. As for the type, there are various ways we can model a role, but the most obvious one is an enum. So:</p>
+  <pre>//GIVEN
+var roleAllowedToUseReporting = Any.Of(Roles.Admin, Roles.Auditor);
+</pre>
+
+  <p>And so, working our way backwards, we have arrived at the final solution (we still need to give this Statement a name, but, provided what we already know, this is an easy task):</p>
+  <pre>[Fact] public void
+ShouldAllowAccessToReportingWhenAskedForEitherAdministratorOrAuditor()
+{
+ //GIVEN
+ var roleAllowedToUseReporting = Any.Of(Roles.Admin, Roles.Auditor);
+ var authorization = new Authorization();
+
+ //WHEN
+ var accessGranted = authorization
+  .IsAccessToReportingGrantedTo(roleAllowedToUseReporting);
+
+ //THEN
+ Assert.True(accessGranted);
+}</pre>
 
   <h2 id="sigil_toc_id_32">Start by invoking a method when you have one</h2>
+
+  <p>Sometimes, we have to add a new class that implements an existing interface required by another class. The fact of implementing an interface imposes what methods should the new class support. If this point is already decided, we can start our Statement by first calling the method and then discovering what we need to supply.</p>
+
+  <h3>A simple example</h3>
+
+  <p>Suppose we have an application holding a lot of data that, among other things, handles importing am existing database from another instance of the application. As importing a database can be a lengthy process, a message box is displayed each time when user chooses to perform the import and this message box displays the following message: &quot;Johnny, please sit down and enjoy your coffee for a few minutes as we take time to import your database&quot;. The class that implements it looks like this:</p>
+  <pre>public class FriendlyMessages
+{
+ public string HoldOnASecondWhileWeImportYourDatabase(string userName)
+ {
+   return string.Format("{0}, "
+     + "please sit down and enjoy your coffee "
+     + "for a few minutes as we take time "
+     + "to import your database",
+     userName);
+ }
+}</pre>
+
+  <p>Now, imagine that our management told us that they need to ship a trial version with some features disabled, including importing an existing database. Among all the things we need to do to make it happen, we also need to display a different string with message saying that this is a trial version and the feature is locked. We can do it by extracting an interface from the <code>FriendlyMessages</code> class and using it to put in an instance of another class when the application discovers that it is being run as a trial version. The extracted interface looks like this:</p>
+  <pre>public interface Messages
+{
+  string HoldOnASecondWhileWeImportYourDatabase(string userName);
+}</pre>
+
+  <p>So our new implementation is forced to support the <code>HoldOnASecondWhileWeImportYourDatabase</code> method. Thus, we when implementing the class, we start with the following:</p>
+  <pre>public class TrialVersionMessages : Messages
+{
+ public string HoldOnASecondWhileWeImportYourDatabase(string userName)
+ {
+   throw new NotImplementedException();
+ }
+}</pre>
+
+  <p>Now, we're ready to start writing a Statement. Assuming we don't know where to start, we just start with creating an object and invoking the method that needs to be implemented:</p>
+  <pre>[Fact] 
+public void TODO()
+{
+ //GIVEN
+ var trialMessages = new TrialVersionMessages();
+ 
+ //WHEN
+ trialMessages.HoldOnASecondWhileWeImportYourDatabase();
+
+ //THEN
+ Assert.True(false); //to remember about it
+}</pre>
+
+  <p>As you can see, we added an assertion that always fails at the end because we don't have any assertions yet and the Statement would otherwise be already evaluated as true and we'd rather have it remind ourselves that it is not finished. Other than this, the Statement does not compile anyway, because the method <code>HoldOnASecondWhileWeImportYourDatabase</code> takes a string argument and we passed none. This makes us ask the question what is this argument and what's its role in the behavior triggered by the <code>HoldOnASecondWhileWeImportYourDatabase</code> method. Seems like it is a user name and we want it to be somewhere in the result of the method. Thus, we can add it to the Statement like this:</p>
+  <pre>[Fact] 
+public void TODO()
+{
+ //GIVEN
+ var trialMessages = new TrialVersionMessages();
+ var userName = Any.String();
+ 
+ //WHEN
+ trialMessages.
+  HoldOnASecondWhileWeImportYourDatabase(userName);
+
+ //THEN
+ Assert.True(false); //to remember about it
+}</pre>
+
+  <p>Now, this compiles but is evaluated as false because of the guard assertion that we put at the end. Our goal is to substitute it with a real assertion for a real expected result. The return value of the <code>HoldOnASecondWhileWeImportYourDatabase</code> is a string message, so all we need to do is to come up with the message that we expect in case of trial version:</p>
+  <pre>[Fact] 
+public void TODO()
+{
+ //GIVEN
+ var trialMessages = new TrialVersionMessages();
+ var userName = Any.String();
+ 
+ //WHEN
+ var message = trialMessages.
+  HoldOnASecondWhileWeImportYourDatabase(userName);
+
+ //THEN
+ var expectedMessage = 
+  string.Format("{0}, better get some pocket money!", userName);
+
+ Assert.Equal(expectedMessage, message);
+}
+</pre>
+
+  <p>and all that is left is to find a good name for the Statement. This isn't an issue since we already specified the desired behavior in the code, so we can just summarize it as something like <code>ShouldYieldAMessageSayingThatFeatureIsLockedWhenAskedForImportDatabaseMessage</code>.</p>
+
+  <h2>Summary</h2>
+
+  <p>These few techniques can be useful when you're stuck and don't know how to start. Note that the examples given are simplistic and assume that there is one object that takes some kind of input parameter and returns a well defined result. This is not how most of the object-oriented world is built. In object oriented world, we have a lot of objects communicating with other objects, sending messages, invoking methods on each other and often having no return values. Don't worry, all of these techniques work in this concept and we'll be revisiting them as soon as we learn how to do TDD in fully object-oriented world (that is, after we introduce a concept of mock objects). For now, I'm trying to keep it simple.</p>
 </body>
 </html>
