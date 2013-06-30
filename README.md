@@ -16,6 +16,8 @@ So far the following chapters are considered ready for reading:
 3. It's not a test
 4. Statement-First programming
 5. Practicing what we already learned
+6. Sorting out the bits
+7. How to start?
 
 At least four or five more chapters are planned
 
