@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title></title>
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+  <h1>How is TDD about analysis and what's with the GIVEN-WHEN-THEN structure?</h1>
+
+  <h2>Is there really a connotation between analysis and TDD?</h2>
+
+  <p>From Wikipedia:</p>
+
+  <blockquote cite="https://en.wikipedia.org/wiki/Analysis">
+    Analysis is the process of breaking a complex topic or substance into smaller parts to gain a better understanding of it.
+  </blockquote>
+
+  <p>Thus, in order for TDD to be about analysis, it has to fulfill two conditions:</p>
+
+  <ol>
+    <li>Be a process of breaking a complex topic into smaller parts</li>
+
+    <li>Allow gaining a better understanding of such topics</li>
+  </ol>
+
+  <p>In the story about Johnny, Benjamin and Jane, I included a part where they analyze requirements using concrete examples. Johnny explained that this is a part of a technique called Acceptance Test-Driven Development. The process followed by the three characters fulfilled both mentioned conditions for a process to be analytical. But what about TDD itself?</p>
+
+  <p>Actually, I used parts of ATDD process to make the analysis part more obvious, but similar things happen at pure technical levels. For example, when starting development from failing application-wide Statement (we'll talk about levels of granularity of Statements later. For now the only thing you need to know is that the so called "unit tests level" is not the only level we write Statements on), we may encounter a situation where we need to call a web method. This makes us think: what should this method be called? What are the scenarios supported? What do I need to get out of it? How should its user be notified about errors? Many times, this leads us to either a conversation (if there's another stakeholder that needs to be involved in the decision) or rethinking our assumptions. This is how we gain a better understanding of the topic we're analyzing.</p>
+
+  <p>But what about the first condition? What about breaking a complex logic into smaller parts?</p>
+
+  <p>If you go back to our example, you'll note that both when talking to a customer and when writing code, Johnny and Benjamin used a TODO list. This list was first filled with whatever scenarios they came up with, but later, they would add a smaller unit of work. This is one way complex topics are decomposed into smaller items that all land on the TODO list (the other way is mocking, but we won't get into that yet). Thanks to this, we can focus on one thing at a time, crossing off item after item from the list after it's done. If we learn something new or encounter new issue that needs our attention, we can add it to the TODO list and continue with our current point of focus.</p>
+
+  <p>An example TODO list from the middle of implementation may look like this (don't read trough it, I put it here only to give you a glimpse):</p>
+
+  <ol>
+    <li>
+      <del>Create entry point to the module (top-level abstraction)</del>
+    </li>
+
+    <li>
+      <del>Implement main workflow of the module</del>
+    </li>
+
+    <li>
+      <del>Implement Message interface</del>
+    </li>
+
+    <li>
+      <del>Implement MessageFactory interface</del>
+    </li>
+
+    <li>Implement ValidationRules interface</li>
+
+    <li>
+      <del>Implement behavior required from Wrap method in LocationMessageFactory class</del>
+    </li>
+
+    <li>Implement behavior required from ValidateWith method in LocationMessage class for Speed field</li>
+
+    <li>Implement behavior required from ValidateWith method in LocationMessage class for Age field</li>
+
+    <li>Implement behavior required from ValidateWith method in LocationMessage class for Sender field</li>
+  </ol>
+
+  <p>Note that some items are already crossed out as done, while other remain undone and waiting to be addressed.</p>
+
+  <p>Ok, That's it for the discussion. Now that we're sure that TDD is about analysis, let's focus on the tools can use to aid and inform it. You already saw both of them in this book, now we're going to have a closer look.</p>
+
+  <h2>Gherkin</h2>
+
+  <p>Hungry? Too bad, because the Gkerkin I'm gonna talk about is not edible. It's a notation and a way of thinking about behaviors of the specified piece of code. It can be applied on different levels of granularity - any behavior, whether of a whole system or a single class, may be described using it.</p>
+
+  <p>We actually talked about Gherkin before in this book, just did not name it. It's the GIVEN-WHEN-THEN structure that you can see everywhere, even in code samples as comments. This time, we're stamping a name on it and analyzing it further.</p>
+
+  <p>In Gherkin, a behavior description consists of three parts:</p>
+
+  <ol>
+    <li>Given - a context</li>
+
+    <li>When - a cause</li>
+
+    <li>Then - a effect</li>
+  </ol>
+
+  <p>In other words, the emphasis is on causality in a given context.</p>
+
+  <p>As I said, there are different levels you can apply this. Here's an example for such a behavior description from the perspective of its end user (this is called acceptance-level Statement):</p>
+  <pre>Given a bag of tea costs $20
+When I buy two of them
+Then I pay 30$ due to promotion</pre>
+
+  <p>And here's one for unit-level:</p>
+  <pre>Given a list with 2 items
+When I add another item
+And check count of items
+Then the count should be 3</pre>
+
+  <p>While on acceptance level we put such behavior descriptions together with code as the same artifact (there are tools for this, e.g. SpecFlow or Cucumber), on the unit level the description is usually not written down literally, in form of code. Still, this structure is useful when thinking about behaviors required from an object or objects, as we saw when we talked about starting from Statement rather than code.</p>
+
+  <p>By thinking in terms of these three parts of behavior, we may arrive at different circumstances (GIVEN) at which the behavior takes place, or additional ones that are needed. The same goes for triggers (WHEN) and effects (THEN). If anything like this comes to our mind, we add it to the TODO list.</p>
+
+  <h2>TODO list... again!</h2>
+
+  <p>As we said previously, a TODO list is a repository for anything that comes to our mind when writing or thinking about a Statement. Let's take a quick example. Suppose we're creating a Statement for .................................... and then X comes into our mind.</p>
+
+  <p>TODO - - - - the task is done when there's nothing on the todo list</p>
+
+  <h3>Where to put a TODO list?</h3>
+
+  <p>There are two ways of maintaining a TODO list. The first one is on a card of paper, which is nice, but requires you to take your hands off the keyboard, grab a pen or pencil and then get back to coding. Also, the only way a TODO item can tell you which place in code it points to is (obviously) by its text.</p>
+
+  <p>Another alternative is to use a TODO list functionality built-in</p>
+
+  <p>kartka, IDE, TODO/bug/NotImplementedException</p>
+</body>
+</html>
