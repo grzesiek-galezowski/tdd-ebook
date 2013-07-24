@@ -100,15 +100,23 @@ When I add another item
 And check count of items
 Then the count should be 3</pre>
 
-  <p>While on acceptance level we put such behavior descriptions together with code as the same artifact (there are tools for this, e.g. SpecFlow or Cucumber), on the unit level the description is usually not written down literally, in form of code. Still, this structure is useful when thinking about behaviors required from an object or objects, as we saw when we talked about starting from Statement rather than code.</p>
+  <p>While on acceptance level we put such behavior descriptions together with code as the same artifact (there are tools for this, e.g. SpecFlow or Cucumber), on the unit level the description is usually not written down literally, but in form of code only. Still, this structure is useful when thinking about behaviors required from an object or objects, as we saw when we talked about starting from Statement rather than code.</p>
 
   <p>By thinking in terms of these three parts of behavior, we may arrive at different circumstances (GIVEN) at which the behavior takes place, or additional ones that are needed. The same goes for triggers (WHEN) and effects (THEN). If anything like this comes to our mind, we add it to the TODO list.</p>
 
   <h2>TODO list... again!</h2>
 
-  <p>As we said previously, a TODO list is a repository for anything that comes to our mind when writing or thinking about a Statement. Let's take a quick example. Suppose we're creating a Statement for .................................... and then X comes into our mind.</p>
+  <p>As we said previously, a TODO list is a repository for anything that comes to our mind when writing or thinking about a Statement. Suppose you're writing a piece of small logic that authorizes user when he's an employee of a zoo, but does not permit access if he's a guest. Then, after starting a Statement it gets to you that actually an employee can be a guest as well when he's on vacation. Still, the two previous rules hold, so you quickly add an item to the TODO list and finish the current Statement. When you're finished, you can always come back to the list and pick item to do next.</p>
 
-  <p>TODO - - - - the task is done when there's nothing on the todo list</p>
+  <p>Which item to choose from the TODO list when you have several? I have no clear rule, although I tend to take into account the following factors:</p>
+
+  <ol>
+    <li>Risk - if what I learn by implementing or discussing a particular item from the list can have big impact on design or behavior of the system, I tend to pick such items first. An example of such item is that you start implementing validation of a request that arrives to your application and want to return different error depending on which part of the request is wrong. Then, during the development, you discover that more than one part of the request can be wrong and you have to answer yourself a question: which error code should be returned in such case? Or maybe the return codes should be accumulated for all validations and then returned as a list?</li>
+
+    <li>Difficulty - depending on my psychical condition (how tired I am, how much noise is currently around my desk etc.), I tend to pick items with difficulty that best matches. For example, After an item that requires a lot of thinking and figuring out things, I tend to take on some small and easy items to feel wind blowing in my sails and to rest a little bit.</li>
+
+    <li>Completeness - in simplest words, when I finish test-driving an "if" case, I pick up the "else" next. For example, after I finish implementing a Statement saying that something should return true for values less than 50, then the next item to pick up is the "greater or equal to 50" case.</li>
+  </ol>
 
   <h3>Where to put a TODO list?</h3>
 
