@@ -108,6 +108,12 @@ Then the count should be 3</pre>
 
   <p>As we said previously, a TODO list is a repository for anything that comes to our mind when writing or thinking about a Statement. Suppose you're writing a piece of small logic that authorizes user when he's an employee of a zoo, but does not permit access if he's a guest. Then, after starting a Statement it gets to you that actually an employee can be a guest as well when he's on vacation. Still, the two previous rules hold, so you quickly add an item to the TODO list and finish the current Statement. When you're finished, you can always come back to the list and pick item to do next.</p>
 
+  <h3>What to put on the TODO list?</h3>
+
+  <h3>How to pick items from TODO list?</h3>
+
+  <p>Everything that you need addressed but is not part of the current Statement. Those items may be related to implementing unimplemented methods, to add whole functionalities (such items are usually followed my more fine-grained sub tasks as soon as you start implementing the item), there might be reminders to take a better look at something (e.g. "investigate what is this component's policy for logging errors") or questions about the domain that need to get answered</p>
+
   <p>Which item to choose from the TODO list when you have several? I have no clear rule, although I tend to take into account the following factors:</p>
 
   <ol>
@@ -115,14 +121,24 @@ Then the count should be 3</pre>
 
     <li>Difficulty - depending on my psychical condition (how tired I am, how much noise is currently around my desk etc.), I tend to pick items with difficulty that best matches. For example, After an item that requires a lot of thinking and figuring out things, I tend to take on some small and easy items to feel wind blowing in my sails and to rest a little bit.</li>
 
-    <li>Completeness - in simplest words, when I finish test-driving an "if" case, I pick up the "else" next. For example, after I finish implementing a Statement saying that something should return true for values less than 50, then the next item to pick up is the "greater or equal to 50" case.</li>
+    <li>Completeness - in simplest words, when I finish test-driving an "if" case, I usually pick up the "else" next. For example, after I finish implementing a Statement saying that something should return true for values less than 50, then the next item to pick up is the "greater or equal to 50" case.</li>
   </ol>
 
   <h3>Where to put a TODO list?</h3>
 
   <p>There are two ways of maintaining a TODO list. The first one is on a card of paper, which is nice, but requires you to take your hands off the keyboard, grab a pen or pencil and then get back to coding. Also, the only way a TODO item can tell you which place in code it points to is (obviously) by its text.</p>
 
-  <p>Another alternative is to use a TODO list functionality built-in</p>
+  <p>Another alternative is to use a TODO list functionality built-in into an IDE. Most IDEs, such as Visual Studio (and Resharper plugin has its own enhanced version), Xamarin Studio or eclipse-based IDEs have such functionality. The rules are simple - you put special comments in the code and a special view in your IDE aggregates then for you, allowing you to navigate to each. Such lists are great because:</p>
+
+  <ol>
+    <li>They don't force you to take your hands off keyboard to add an item to the list</li>
+
+    <li>You can put such item in a certain place in the code where is makes sense and then navigate back to it with a click of a mouse. This, apart from other advantages, lets you write shorter notes than if you had to do it on paper. For example, a TODO item saying "TODO: what if it throws an exception?" looks out of place on the paper, but when added as a comment to your code in the right place, it's mighty sufficient.</li>
+
+    <li>Many TODO lists automatically add items for certain things. E.g. in C#, when you are yet to implement a method, it is usually filled with a line that throws a NotImplementedException exception. Guess what - NotImplementedException occurences are added to the TODO list automatically, so don't have to manually add notes to implement the methods where they occur.</li>
+  </ol>
+
+  <p>Also, there are some downsides of such lists</p>
 
   <p>kartka, IDE, TODO/bug/NotImplementedException</p>
 </body>
