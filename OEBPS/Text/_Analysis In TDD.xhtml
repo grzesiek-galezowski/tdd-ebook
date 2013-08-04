@@ -11,7 +11,7 @@
 <body>
   <h1>How is TDD about analysis and what's with the GIVEN-WHEN-THEN structure?</h1>
 
-  <h2>Is there really a connotation between analysis and TDD?</h2>
+  <h2>Is there really a commonality between analysis and TDD?</h2>
 
   <p>From Wikipedia:</p>
 
@@ -24,20 +24,20 @@
   <ol>
     <li>Be a process of breaking a complex topic into smaller parts</li>
 
-    <li>Allow gaining a better understanding of such topics</li>
+    <li>Allow gaining a better understanding of such broken topics</li>
   </ol>
 
   <p>In the story about Johnny, Benjamin and Jane, I included a part where they analyze requirements using concrete examples. Johnny explained that this is a part of a technique called Acceptance Test-Driven Development. The process followed by the three characters fulfilled both mentioned conditions for a process to be analytical. But what about TDD itself?</p>
 
-  <p>Actually, I used parts of ATDD process to make the analysis part more obvious, but similar things happen at pure technical levels. For example, when starting development from failing application-wide Statement (we'll talk about levels of granularity of Statements later. For now the only thing you need to know is that the so called "unit tests level" is not the only level we write Statements on), we may encounter a situation where we need to call a web method. This makes us think: what should this method be called? What are the scenarios supported? What do I need to get out of it? How should its user be notified about errors? Many times, this leads us to either a conversation (if there's another stakeholder that needs to be involved in the decision) or rethinking our assumptions. This is how we gain a better understanding of the topic we're analyzing.</p>
+  <p>Actually, I used parts of ATDD process in the story to make the analysis part more obvious, but similar things happen at pure technical levels. For example, when starting development with a failing application-wide Statement (we'll talk about levels of granularity of Statements later. For now the only thing you need to know is that the so called "unit tests level" is not the only level of granularity we write Statements on), we may encounter a situation where we need to call a web method and assert its result. This makes us think: what should this method be called? What are the scenarios supported? What do I need to get out of it? How should its user be notified about errors? Many times, this leads us to either a conversation (if there's another stakeholder that needs to be involved in the decision) or rethinking our assumptions. This is how we gain a better understanding of the topic we're analyzing, which makes TDD fulfill the first of the two requirements for it to be an analysis method.</p>
 
-  <p>But what about the first condition? What about breaking a complex logic into smaller parts?</p>
+  <p>But what about the first requirement? What about breaking a complex logic into smaller parts?</p>
 
-  <p>If you go back to our example, you'll note that both when talking to a customer and when writing code, Johnny and Benjamin used a TODO list. This list was first filled with whatever scenarios they came up with, but later, they would add a smaller unit of work. This is one way complex topics are decomposed into smaller items that all land on the TODO list (the other way is mocking, but we won't get into that yet). Thanks to this, we can focus on one thing at a time, crossing off item after item from the list after it's done. If we learn something new or encounter new issue that needs our attention, we can add it to the TODO list and continue with our current point of focus.</p>
+  <p>If you go back to our example, you'll note that both when talking to a customer and when writing code, Johnny and Benjamin used a TODO list. This list was first filled with whatever scenarios they came up with, but later, they would add a smaller unit of work. This is one way complex topics are decomposed into smaller items that all land on the TODO list (the other way is mocking, but we won't get into that yet). Thanks to this, we can focus on one thing at a time, crossing off item after item from the list after it's done. If we learn something new or encounter new issue that needs our attention, we can add it to the TODO list and get back to it later, for now continuing our work on the current point of focus.</p>
 
   <p>An example TODO list from the middle of implementation may look like this (don't read trough it, I put it here only to give you a glimpse):</p>
 
-  <ol>
+  <ol style="font-style: italic;">
     <li>
       <del>Create entry point to the module (top-level abstraction)</del>
     </li>
@@ -94,25 +94,56 @@
 When I buy two of them
 Then I pay 30$ due to promotion</pre>
 
-  <p>And here's one for unit-level:</p>
+  <p>And here's one for unit-level (note the line starting with "And" that adds to the context):</p>
   <pre>Given a list with 2 items
 When I add another item
 And check count of items
 Then the count should be 3</pre>
 
-  <p>While on acceptance level we put such behavior descriptions together with code as the same artifact (there are tools for this, e.g. SpecFlow or Cucumber), on the unit level the description is usually not written down literally, but in form of code only. Still, this structure is useful when thinking about behaviors required from an object or objects, as we saw when we talked about starting from Statement rather than code.</p>
+  <p>While on acceptance level we put such behavior descriptions together with code as the same artifact (If this doesn't ring a bell, look at tools like SpecFlow or Cucumber or FIT to get some examples), on the unit level the description is usually not written down literally, but in form of code only. Still, this structure is useful when thinking about behaviors required from an object or objects, as we saw when we talked about starting from Statement rather than code. I like to put the structure explicitly in my Statements - I find that it makes them more readable. So most of my unit-level Statements follow this template:</p>
+  <pre>[Fact]
+public void Should__BEHAVIOR__()
+{
+  //GIVEN
+  ...context...
+
+  //WHEN
+  ...trigger...
+
+  //THEN
+  ...assertions etc....
+}
+</pre>
+
+  <p>Sometimes the WHEN and THEN sections are not so easily separable - then I join them, like in case of the following Statement specifying thatan object throws an exception when asked to store null:</p>
+  <pre>[Fact]
+public void ShouldThrowExceptionWhenAskedToStoreNull()
+{
+  //GIVEN
+  var safeList = new SafeList();
+
+  //WHEN - THEN
+  Assert.Throws&lt;Exception&gt;(
+    () =&gt; safeList.Store(null)
+  );
+}
+</pre>
 
   <p>By thinking in terms of these three parts of behavior, we may arrive at different circumstances (GIVEN) at which the behavior takes place, or additional ones that are needed. The same goes for triggers (WHEN) and effects (THEN). If anything like this comes to our mind, we add it to the TODO list.</p>
 
   <h2>TODO list... again!</h2>
 
-  <p>As we said previously, a TODO list is a repository for anything that comes to our mind when writing or thinking about a Statement. Suppose you're writing a piece of small logic that authorizes user when he's an employee of a zoo, but does not permit access if he's a guest. Then, after starting a Statement it gets to you that actually an employee can be a guest as well when he's on vacation. Still, the two previous rules hold, so you quickly add an item to the TODO list and finish the current Statement. When you're finished, you can always come back to the list and pick item to do next.</p>
+  <p>As we said previously, a TODO list is a repository for anything that comes to our mind when writing or thinking about a Statement, but is not a part o the current Statement we're writing. We don't want to forget it, neither do we want it to haunt us and distract us from our current task.</p>
+
+  <p>Suppose you're writing a piece of small logic that allows user access when he's an employee of a zoo, but denies access if he's a guest of the zoo. Then, after starting writing a Statement it gets to you that actually any employee can be a guest as well - for example, he might choose to visit the zoo with his family during his vacation. Still, the two previous rules hold, so not to allow this case to distract you, you quickly add an item to the TODO list (like "TODO: what if someone is an employee, but comes to the zoo as a guest?") and finish the current Statement. When you're finished, you can always come back to the list and pick item to do next.</p>
+
+  <p>There are two important questions related to TODO lists: "what exactly should we add as a TODO list item?" and "How to efficiently manage the TODO list?". We'll take care of these two questions now.</p>
 
   <h3>What to put on the TODO list?</h3>
 
-  <h3>How to pick items from TODO list?</h3>
+  <p>Everything that you need addressed but is not part of the current Statement. Those items may be related to implementing unimplemented methods, to add whole functionalities (such items are usually followed my more fine-grained sub tasks as soon as you start implementing the item), there might be reminders to take a better look at something (e.g. "investigate what is this component's policy for logging errors") or questions about the domain that need to get answered. If you get carried away too much in coding that you forget to eat, you can even add this ("TODO: get something to eat!"). The list is yours!</p>
 
-  <p>Everything that you need addressed but is not part of the current Statement. Those items may be related to implementing unimplemented methods, to add whole functionalities (such items are usually followed my more fine-grained sub tasks as soon as you start implementing the item), there might be reminders to take a better look at something (e.g. "investigate what is this component's policy for logging errors") or questions about the domain that need to get answered</p>
+  <h3>How to pick items from TODO list?</h3>
 
   <p>Which item to choose from the TODO list when you have several? I have no clear rule, although I tend to take into account the following factors:</p>
 
