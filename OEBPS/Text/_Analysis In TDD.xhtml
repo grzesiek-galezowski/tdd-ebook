@@ -115,7 +115,7 @@ public void Should__BEHAVIOR__()
 }
 </pre>
 
-  <p>Sometimes the WHEN and THEN sections are not so easily separable - then I join them, like in case of the following Statement specifying thatan object throws an exception when asked to store null:</p>
+  <p>Sometimes the WHEN and THEN sections are not so easily separable - then I join them, like in case of the following Statement specifying that an object throws an exception when asked to store null:</p>
   <pre>[Fact]
 public void ShouldThrowExceptionWhenAskedToStoreNull()
 {
@@ -133,7 +133,7 @@ public void ShouldThrowExceptionWhenAskedToStoreNull()
 
   <h2>TODO list... again!</h2>
 
-  <p>As we said previously, a TODO list is a repository for anything that comes to our mind when writing or thinking about a Statement, but is not a part o the current Statement we're writing. We don't want to forget it, neither do we want it to haunt us and distract us from our current task.</p>
+  <p>As we said previously, a TODO list is a repository for anything that comes to our mind when writing or thinking about a Statement, but is not a part o the current Statement we're writing. We don't want to forget it, neither do we want it to haunt us and distract us from our current task, so we write it down as soon as possible and continue with our current task.</p>
 
   <p>Suppose you're writing a piece of small logic that allows user access when he's an employee of a zoo, but denies access if he's a guest of the zoo. Then, after starting writing a Statement it gets to you that actually any employee can be a guest as well - for example, he might choose to visit the zoo with his family during his vacation. Still, the two previous rules hold, so not to allow this case to distract you, you quickly add an item to the TODO list (like "TODO: what if someone is an employee, but comes to the zoo as a guest?") and finish the current Statement. When you're finished, you can always come back to the list and pick item to do next.</p>
 
@@ -141,36 +141,36 @@ public void ShouldThrowExceptionWhenAskedToStoreNull()
 
   <h3>What to put on the TODO list?</h3>
 
-  <p>Everything that you need addressed but is not part of the current Statement. Those items may be related to implementing unimplemented methods, to add whole functionalities (such items are usually followed my more fine-grained sub tasks as soon as you start implementing the item), there might be reminders to take a better look at something (e.g. "investigate what is this component's policy for logging errors") or questions about the domain that need to get answered. If you get carried away too much in coding that you forget to eat, you can even add this ("TODO: get something to eat!"). The list is yours!</p>
+  <p>Everything that you need addressed but is not part of the current Statement. Those items may be related to implementing unimplemented methods, to add whole functionalities (such items are usually followed my more fine-grained sub tasks as soon as you start implementing the item), there might be reminders to take a better look at something (e.g. "investigate what is this component's policy for logging errors") or questions about the domain that need to get answered. If you get carried away too much in coding that you forget to eat, you can even add a reminder ("TODO: get something to eat!"). The list is yours!</p>
 
   <h3>How to pick items from TODO list?</h3>
 
   <p>Which item to choose from the TODO list when you have several? I have no clear rule, although I tend to take into account the following factors:</p>
 
   <ol>
-    <li>Risk - if what I learn by implementing or discussing a particular item from the list can have big impact on design or behavior of the system, I tend to pick such items first. An example of such item is that you start implementing validation of a request that arrives to your application and want to return different error depending on which part of the request is wrong. Then, during the development, you discover that more than one part of the request can be wrong and you have to answer yourself a question: which error code should be returned in such case? Or maybe the return codes should be accumulated for all validations and then returned as a list?</li>
+    <li>Risk - if what I learn by implementing or discussing a particular item from the list can have big impact on design or behavior of the system, I tend to pick such items first. An example of such item is that you start implementing validation of a request that arrives to your application and want to return different error depending on which part of the request is wrong. Then, during the development, you discover that more than one part of the request can be wrong at a time and you have to answer yourself a question: which error code should be returned in such case? Or maybe the return codes should be accumulated for all validations and then returned as a list?</li>
 
-    <li>Difficulty - depending on my psychical condition (how tired I am, how much noise is currently around my desk etc.), I tend to pick items with difficulty that best matches. For example, After an item that requires a lot of thinking and figuring out things, I tend to take on some small and easy items to feel wind blowing in my sails and to rest a little bit.</li>
+    <li>Difficulty - depending on my mental condition (how tired I am, how much noise is currently around my desk etc.), I tend to pick items with difficulty that best matches this condition. For example, after finishing an item that requires a lot of thinking and figuring out things, I tend to take on some small and easy items to feel wind blowing in my sails and to rest a little bit.</li>
 
-    <li>Completeness - in simplest words, when I finish test-driving an "if" case, I usually pick up the "else" next. For example, after I finish implementing a Statement saying that something should return true for values less than 50, then the next item to pick up is the "greater or equal to 50" case.</li>
+    <li>Completeness - in simplest words, when I finish test-driving an "if" case, I usually pick up the "else" next. For example, after I finish implementing a Statement saying that something should return true for values less than 50, then the next item to pick up is the "greater or equal to 50" case. Usually, when I start test-driving a class, I take items related to this class until I run out of them, then go on to another one.</li>
   </ol>
 
   <h3>Where to put a TODO list?</h3>
 
-  <p>There are two ways of maintaining a TODO list. The first one is on a card of paper, which is nice, but requires you to take your hands off the keyboard, grab a pen or pencil and then get back to coding. Also, the only way a TODO item can tell you which place in code it points to is (obviously) by its text.</p>
+  <p>There are two ways of maintaining a TODO list. The first one is on a sheet of paper, which is nice, but requires you to take your hands off the keyboard, grab a pen or pencil and then get back to coding every time you think of something. Also, the only way a TODO item written on a sheet of paper can tell you which place in code it is related to, is (obviously) by its text.</p>
 
-  <p>Another alternative is to use a TODO list functionality built-in into an IDE. Most IDEs, such as Visual Studio (and Resharper plugin has its own enhanced version), Xamarin Studio or eclipse-based IDEs have such functionality. The rules are simple - you put special comments in the code and a special view in your IDE aggregates then for you, allowing you to navigate to each. Such lists are great because:</p>
+  <p>Another alternative is to use a TODO list functionality built-in into an IDE. Most IDEs, such as Visual Studio (and Resharper plugin has its own enhanced version), Xamarin Studio or eclipse-based IDEs have such functionality. The rules are simple - you put special comments in the code and a special view in your IDE aggregates them for you, allowing you to navigate to each. Such lists are great because:</p>
 
   <ol>
-    <li>They don't force you to take your hands off keyboard to add an item to the list</li>
+    <li>They don't force you to take your hands off keyboard to add an item to the list.</li>
 
     <li>You can put such item in a certain place in the code where is makes sense and then navigate back to it with a click of a mouse. This, apart from other advantages, lets you write shorter notes than if you had to do it on paper. For example, a TODO item saying "TODO: what if it throws an exception?" looks out of place on the paper, but when added as a comment to your code in the right place, it's mighty sufficient.</li>
 
     <li>Many TODO lists automatically add items for certain things. E.g. in C#, when you are yet to implement a method that was automatically generated by a tool, its body usually consists of a line that throws a NotImplementedException exception. Guess what - NotImplementedException occurences are added to the TODO list automatically, so don't have to manually add notes to implement the methods where they occur.</li>
   </ol>
 
-  <p>There are also some downsides. The biggest is that people often add TODO items for other meant than to support TDD and they never go back to it. Some people joke that a TODO left in the code means "Once I wanted to...". Anyway, such items may pollute your TDD-related TODO list with so much cruft that your own items are barely findable. To work around it, I tend to use a different tag than TODO (many IDEs let you define your own tags, or support multiple tag types out of the box. E.g. with Resharper, I like to use "bug" tag, because this is something no one would leave in the code) and filter by it.</p>
+  <p>There are also some downsides. The biggest is that people often add TODO items for other means than to support TDD and they never go back to such items. Some people joke that a TODO left in the code means "Once, I wanted to...". Anyway, such items may pollute your TDD-related TODO list with so much cruft that your own items are barely findable. To work around it, I tend to use a different tag than TODO (many IDEs let you define your own tags, or support multiple tag types out of the box. E.g. with Resharper, I like to use "bug" tag, because this is something no one would leave in the code) and filter by it. Another options is, of course, getting rid of the leftover TODO items - if no one addressed it for a year, then probably no one ever will.</p>
 
-  <p>Another downside is that when you work with multiple workspaces/solutions, your IDE will gather TODO items only from current solution, so you'll have few TODO lists - one per workspace or solution. Fortunately, this isn't usually a big deal.</p>
+  <p>Another downside is that when you work with multiple workspaces/solutions, your IDE will gather TODO items only from current solution/workspace, so you'll have few TODO lists - one per workspace or solution. Fortunately, this isn't usually a big deal.</p>
 </body>
 </html>

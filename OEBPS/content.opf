@@ -5,7 +5,7 @@
     <dc:title>Test-Driven Development - Extensive Tutorial</dc:title>
     <dc:creator opf:role="aut">Grzegorz Gałęzowski</dc:creator>
     <dc:language>en</dc:language>
-    <dc:date opf:event="modification">2013-08-04</dc:date>
+    <dc:date opf:event="modification">2013-08-07</dc:date>
     <meta content="0.7.2" name="Sigil version" />
   </metadata>
   <manifest>
@@ -71,8 +71,8 @@
     <itemref idref="_Practicing_What_We_Already_Learned.xhtml" />
     <itemref idref="_Sorting_out_the_bits.xhtml" />
     <itemref idref="_How_to_start.xhtml" />
-    <itemref idref="End.xhtml" />
     <itemref idref="_Analysis_In_TDD.xhtml" />
+    <itemref idref="End.xhtml" />
     <itemref idref="_What_Exactly_Do_We_Specify.xhtml" />
     <itemref idref="If_you_treat_your_unit_tests_like_garbage__they_ll_eventually_become_just_that._And_they_will_smell_bad....xhtml" />
     <itemref idref="We_are_in_need_of_feedback.xhtml" />
