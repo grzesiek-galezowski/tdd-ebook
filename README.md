@@ -18,6 +18,7 @@ So far the following chapters are considered ready for reading:
 5. Practicing what we already learned
 6. Sorting out the bits
 7. How to start?
+8. How is TDD about analysis and what's with the GIVEN-WHEN-THEN structure?
 
 At least four or five more chapters are planned
 
