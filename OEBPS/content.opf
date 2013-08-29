@@ -5,7 +5,7 @@
     <dc:title>Test-Driven Development - Extensive Tutorial</dc:title>
     <dc:creator opf:role="aut">Grzegorz Gałęzowski</dc:creator>
     <dc:language>en</dc:language>
-    <dc:date opf:event="modification">2013-08-07</dc:date>
+    <dc:date opf:event="modification">2013-08-29</dc:date>
     <meta content="0.7.2" name="Sigil version" />
   </metadata>
   <manifest>
@@ -61,9 +61,12 @@
     <item href="Text/_Sorting%20out%20the%20bits.xhtml" id="_Sorting_out_the_bits.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/_Analysis%20In%20TDD.xhtml" id="_Analysis_In_TDD.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/_How%20to%20start.xhtml" id="_How_to_start.xhtml" media-type="application/xhtml+xml" />
+    <item href="Text/_Part1Marker.xhtml" id="_Part1Marker.xhtml" media-type="application/xhtml+xml" />
+    <item href="Text/_Constrained%20Non%20Determinism.xhtml" id="_Constrained_Non_Determinism.xhtml" media-type="application/xhtml+xml" />
   </manifest>
   <spine toc="ncx">
     <itemref idref="Cover.xhtml" />
+    <itemref idref="_Part1Marker.xhtml" />
     <itemref idref="_Motivations.xhtml" />
     <itemref idref="_Three_Essential_Tools.xhtml" />
     <itemref idref="_It_s_Not_a_Test.xhtml" />
@@ -73,6 +76,7 @@
     <itemref idref="_How_to_start.xhtml" />
     <itemref idref="_Analysis_In_TDD.xhtml" />
     <itemref idref="End.xhtml" />
+    <itemref idref="_Constrained_Non_Determinism.xhtml" />
     <itemref idref="_What_Exactly_Do_We_Specify.xhtml" />
     <itemref idref="If_you_treat_your_unit_tests_like_garbage__they_ll_eventually_become_just_that._And_they_will_smell_bad....xhtml" />
     <itemref idref="We_are_in_need_of_feedback.xhtml" />
