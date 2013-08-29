@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title></title>
+</head>
+
+<body>
+  <p>In one of the introductory chapters, I introduced to you the idea of anonymous values generator, which I wrapped in a static class called <code>Any</code>. Throughout the previous chapters I used it quite extensively in many of the Statements I wrote.</p>
+
+  <p>The time has come to explain a little bit more carefully what principles lie under this technique and tool.</p>
+  <pre>[Fact] public void 
+ShouldCreateBackupFileNameContainingPassedHostName()
+{
+  //GIVEN
+  var fileNamePattern = new BackupFileNamePattern();
+  
+  //WHEN
+  var name = fileNamePattern.ApplyTo("MY_HOST_NAME");
+  
+  //THEN
+  Assert.Equal("backup_MY_HOST_NAME.zip");
+}</pre>
+  <pre>[Fact] public void 
+ShouldCreateBackupFileNameContainingPassedHostName()
+{
+  //GIVEN
+  var hostName = AnyString();
+  var fileNamePattern = new BackupFileNamePattern();
+  
+  //WHEN
+  var name = fileNamePattern.ApplyTo(hostName);
+  
+  //THEN
+  Assert.Equal("backup_MY_HOST_NAME.zip");
+}
+
+public string AnyString()
+{
+  return "MY_HOST_NAME";
+}
+</pre>
+  <pre>[Fact] public void 
+ShouldCreateBackupFileNameContainingPassedHostName()
+{
+  //GIVEN
+  var hostName = AnyString();
+  var fileNamePattern = new BackupFileNamePattern();
+  
+  //WHEN
+  var name = fileNamePattern.ApplyTo(hostName);
+  
+  //THEN
+  Assert.Equal("backup_MY_HOST_NAME.zip");
+}
+
+public string AnyString()
+{
+  return "MY_HOST_NAME";
+}
+</pre>
+  <pre>[Fact] public void 
+ShouldCreateBackupFileNameContainingPassedHostName()
+{
+  //GIVEN
+  var hostName = AnyString();
+  var fileNamePattern = new BackupFileNamePattern();
+  
+  //WHEN
+  var name = fileNamePattern.ApplyTo(hostName);
+  
+  //THEN
+  Assert.Equal(string.Format("backup_{0}.zip", hostName);
+}
+
+public string AnyString()
+{
+  return "MY_HOST_NAME";
+}
+</pre>
+  <pre>[Fact] public void 
+ShouldCreateBackupFileNameContainingPassedHostName()
+{
+  //GIVEN
+  var hostName = AnyString();
+  var userName = AnyString();
+  var fileNamePattern = new BackupFileNamePattern();
+  
+  //WHEN
+  var name = fileNamePattern.ApplyTo(hostName, userName);
+  
+  //THEN
+  Assert.Equal(string.Format(
+    "backup_{0}_{1}.zip", hostName, userName);
+}
+
+public string AnyString()
+{
+  return "MY_HOST_NAME";
+}
+</pre>
+  <pre>[Fact] public void 
+ShouldCreateBackupFileNameContainingPassedHostName()
+{
+  //GIVEN
+  var hostName = AnyString();
+  var userName = AnyString();
+  var fileNamePattern = new BackupFileNamePattern();
+  
+  //WHEN
+  var name = fileNamePattern.ApplyTo(hostName, userName);
+  
+  //THEN
+  Assert.Equal(string.Format(
+    "backup_{0}_{1}.zip", hostName, userName);
+}
+
+public string AnyString()
+{
+  return Guid.NewGuid.ToString();
+}
+</pre>
+
+  <h2>Distinct values</h2>
+
+  <h2>Helps in specification rather than testing.</h2>
+
+  <h2>emphasis on specification and derived values</h2>
+
+  <h2>Don't care values</h2>
+
+  <h2>Documentation on constraints</h2>
+
+  <p>Any can be understood as just one of the possible ways to implement what Gerard Meszaros calls Anonymous Creation Method (http://xunitpatterns.com/Creation%20Method.html#Anonymous%20Creation%20Method). AutoFixture may be used as another, although it's far more powerful (and its author suggests that it's an implementation of Test Data Builder pattern: http://nat.truemesh.com/archives/000714.html although the API of AutoFixture is quite different than what you can find in hand-written Test Data Builder - it relies more on reflection and automation). Understood as such, the goal of the Any is a creation of distinct value and free us from thinking what values to give to our variables. For example, let's say that we invoke in test a method that takes three integers and specify that it should call a method of another object with the third of the integers as parameters. Using Any, I don't have to think about the values, just type:</p>
+  <pre>var int1 = Any.Integer();
+var int2 = Any.Integer();
+var int3 = Any.Integer();</pre>
+
+  <p>and I know the values are distinct (note that "distinct" does not exactly mean "random" - AutoFixture for example applies certain algorithms for generating different data types). It isn't as good for booleans, of course :-), but what can one do...</p>
+
+  <p>On the other hand, Any can be understood as just one of the possible implementations of Constrained Non-Determinism principle (see http://blog.ploeh.dk/2009/03/05/ConstrainedNon-Determinism/). As such, one of its purposes is to think on a little bit higher level of abstraction and avoid too much triangulation where it isn't necessary, Also, it helps use derived values as an alternative to hardcoded values. for simplest example, let's assume that we're test-driving a logic to merge two segments of a file path, e.g. "C:" and "Windows" becomes "C:\\Windows". It's tempting to write:</p>
+  <pre>var segment1 = "C:";
+var segment2 = "Windows";
+var expectedPath = "C:\\Windows";
+
+Assert.AreEqual(expectedPath, MyPath.Combine(segment1, segment2));
+</pre>
+
+  <p>Here, it's quite simple, however the point is that the relationship between input and output is not clear, hence the value of the test as living documentation is a little bit lower. Thus, we may choose to do the following:</p>
+  <pre>var segment1 = Any.String();
+var segment2 = Any.String();
+var expectedPath = segment1 + "\\" + segment2;
+
+Assert.AreEqual(expectedPath, MyPath.Combine(segment1, segment2));</pre>
+
+  <p>Here, not only do we document the relationship between input and output, we also document the constraints on the input. Note that by stating that segment can be any string, I indirectly state that there are no constraints on the value - method does not check whether the segments are correct in terms of this or that filesystem. This is useful in documenting how much domain-related cohesion does the object itself enforce on its arguments.</p>
+
+  <p>Thinking in terms of constraints is also useful when doing the analysis step of TDD. Let's say that we need an integer variable and assign Any.Integer() to it. Then, we hesitate for a second and think: "well, actually, this can't be any integer, because when I enter 0, the behavior is going to be different... That leads us to the conclusion that we might have a missing test to write. In other words, it's useful to think of the range of the values a behavior should support to find out missing behaviors. As funny as it is, it's precisely opposite to what we do on acceptance level. Ken Pugh, Gojko Adzic, Dan North, Liz Keogh all suggest that when we're specifying on acceptance level, we should use real values and these values should come from the domain (i.e. be values that a real user could use) - then, scenarios with such real values are also more readable to the customer. I don't know why I like "Any" better on the unit level - maybe because on acceptance level I try more to understand the world of my customers and how they use the system and real values help me with that. On the other hand, on unit level I test-drive the design and there, thinking in terms of abstract "classes of equivalence" helps me identify paths through methods and objects? I don't know, gotta think about it :-).</p>
+</body>
+</html>
