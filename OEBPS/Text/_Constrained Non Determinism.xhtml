@@ -8,9 +8,23 @@
 </head>
 
 <body>
+  <h1>Developing TDD style - Constrained Non-Determinism</h1>
+
   <p>In one of the introductory chapters, I introduced to you the idea of anonymous values generator, which I wrapped in a static class called <code>Any</code>. Throughout the previous chapters I used it quite extensively in many of the Statements I wrote.</p>
 
-  <p>The time has come to explain a little bit more carefully what principles lie under this technique and tool.</p>
+  <p>The time has come to explain a little bit more carefully what principles lie under this technique and tool. I'll also use this technique as a case study to show you how one develops a style of Test-Driven Development.</p>
+
+  <h2>A style?</h2>
+
+  <p>Yep. Why am I wasting your time writing about style instead of giving you the hardcore technical details? The answer is simple. Before I started writing this tutorial, I read four or five books solely on TDD and maybe two that contained chapters on TDD. All of this gives about two or three thousands of paper pages, plus numerous posts on many blogs. And you know what I noticed? No two authors use exactly the same sets of techniques for test-driving their code! I mean, sometimes, when you look techniques they're suggesting, the suggestions from two authorities are in contradiction. As each authority has their followers, it's not uncommon to observe and take part in discussions about whether this or that technique is better or leads to trouble.</p>
+
+  <p>I did this, too. I also tried to understand how come people praise techniques I KNEW were wrong and led to disaster. Then, Finally, I got it. I understood that it's not a "technique A vs. technique B" debate. There are certain sets of techniques that work together and choosing one technique leaves us with issues we have to resolve by adopting other techniques. This is how a style is created.</p>
+
+  <p>Developing a style starts with underlying set of principles. These principles lead us to adopt our first technique, which makes us adopt another one and, ultimately, a coherent style emerges. Using Constrained Non-Determinism as an example, I'll try to show you how part of a style gets derived from a technique that is derived from a principle.</p>
+
+  <h2>Principle: tests as specification</h2>
+
+  <p>As I already stressed, I strongly believe that unit tests form a specification. Thus, they should not only pass input values to an object and assert on the output, they should also convey to their reader the rules according to which objects and functions work. The following oversimplified example shows a Statement where it's not explicitly stated what's the relationship between input and output:</p>
   <pre>[Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostName()
 {
@@ -23,6 +37,14 @@ ShouldCreateBackupFileNameContainingPassedHostName()
   //THEN
   Assert.Equal("backup_MY_HOST_NAME.zip");
 }</pre>
+
+  <p>Although the relationship can be guessed quite easily, remember it's just an example. Also, seing code like that makes me ask questions like: is the "backup_" prefix always applied? What if I actually pass "backup_" instead of "MY_HOST_NAME"? Will the name be "backup_backup_.zip", or "backup_.zip"? Also, is this object responsible for any validation of passed string?</p>
+
+  <p>This makes me invent a first technique to provide my Statements with better support for the principle I believe in.</p>
+
+  <h2>First technique: Anonymous Input</h2>
+
+  <p>I can wrap the actual value "MY_HOST_NAME" with a method hat better documents the constraints required from it by the specified functionality. In our case, we can pass whatever string we want (the object is not responsible for input validation), so we'll name our method <code>AnyString()</code>:</p>
   <pre>[Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostName()
 {
@@ -42,25 +64,12 @@ public string AnyString()
   return "MY_HOST_NAME";
 }
 </pre>
-  <pre>[Fact] public void 
-ShouldCreateBackupFileNameContainingPassedHostName()
-{
-  //GIVEN
-  var hostName = AnyString();
-  var fileNamePattern = new BackupFileNamePattern();
-  
-  //WHEN
-  var name = fileNamePattern.ApplyTo(hostName);
-  
-  //THEN
-  Assert.Equal("backup_MY_HOST_NAME.zip");
-}
 
-public string AnyString()
-{
-  return "MY_HOST_NAME";
-}
-</pre>
+  <p>By doing so, we provide a better documentation of the input value. However, now that the Statement itself is freed from the knowledge of the concrete value of <code>hostName</code> variable, the cocrete value of "backup_MY_HOST_NAME.zip" looks kinda weird. There's no clear indication of the relationship between input and output. This leads us to another technique.</p>
+
+  <h2>Second Technique: Derived Values</h2>
+
+  <p>TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO</p>
   <pre>[Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostName()
 {
