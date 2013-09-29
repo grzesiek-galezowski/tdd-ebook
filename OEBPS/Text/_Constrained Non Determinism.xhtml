@@ -38,7 +38,7 @@ ShouldCreateBackupFileNameContainingPassedHostName()
   Assert.Equal("backup_MY_HOST_NAME.zip");
 }</pre>
 
-  <p>Although the relationship can be guessed quite easily, remember it's just an example. Also, seing code like that makes me ask questions like: is the "backup_" prefix always applied? What if I actually pass "backup_" instead of "MY_HOST_NAME"? Will the name be "backup_backup_.zip", or "backup_.zip"? Also, is this object responsible for any validation of passed string?</p>
+  <p>Although the relationship can be guessed quite easily, remember it's just an example. Also, seeing code like that makes me ask questions like: is the "backup_" prefix always applied? What if I actually pass "backup_" instead of "MY_HOST_NAME"? Will the name be "backup_backup_.zip", or "backup_.zip"? Also, is this object responsible for any validation of passed string?</p>
 
   <p>This makes me invent a first technique to provide my Statements with better support for the principle I believe in.</p>
 
@@ -65,11 +65,11 @@ public string AnyString()
 }
 </pre>
 
-  <p>By doing so, we provide a better documentation of the input value. However, now that the Statement itself is freed from the knowledge of the concrete value of <code>hostName</code> variable, the cocrete value of "backup_MY_HOST_NAME.zip" looks kinda weird. There's no clear indication of the relationship between input and output. This leads us to another technique.</p>
+  <p>By doing so, we provide a better documentation of the input value. However, now that the Statement itself is freed from the knowledge of the concrete value of <code>hostName</code> variable, the cocrete value of "backup_MY_HOST_NAME.zip" looks kinda weird. There's no clear indication of the relationship between input and output (one may reason whether the output is always the same string or maybe it depends on the string length). It is unclear which part is added by the code and which one depends on what we pass to the method. This leads us to another technique.</p>
 
   <h2>Second Technique: Derived Values</h2>
 
-  <p>TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO</p>
+  <p>To better document the relationship between input and output, we have to simply derive the expected value we assert on from the input value. Here's the same Statement with the assertion changed:</p>
   <pre>[Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostName()
 {
@@ -83,12 +83,17 @@ ShouldCreateBackupFileNameContainingPassedHostName()
   //THEN
   Assert.Equal(string.Format("backup_{0}.zip", hostName);
 }
-
 public string AnyString()
 {
   return "MY_HOST_NAME";
 }
 </pre>
+
+  <p>This looks more like specification, because we're documenting the format of the backup file name and show which part of the format is variable. This is something you'd probably find documented in a paper specification for the application you're writing - there would probably exist a sentence saying: "The format of a backup file should be <strong>backup_H.zip</strong>, where H is the current local host name".</p>
+
+  <h3>Third technique: Distinct generated values</h3>
+
+  <p>Let's assume that some time after our initial version is shipped</p>
   <pre>[Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostName()
 {
