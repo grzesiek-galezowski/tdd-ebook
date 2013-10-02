@@ -22,7 +22,7 @@
 
   <p>Developing a style starts with underlying set of principles. These principles lead us to adopt our first technique, which makes us adopt another one and, ultimately, a coherent style emerges. Using Constrained Non-Determinism as an example, I'll try to show you how part of a style gets derived from a technique that is derived from a principle.</p>
 
-  <h2>Principle: tests as specification</h2>
+  <h2>Principle: Tests As Specification</h2>
 
   <p>As I already stressed, I strongly believe that unit tests form a specification. Thus, they should not only pass input values to an object and assert on the output, they should also convey to their reader the rules according to which objects and functions work. The following oversimplified example shows a Statement where it's not explicitly stated what's the relationship between input and output:</p>
   <pre>[Fact] public void 
@@ -89,7 +89,7 @@ public string AnyString()
 
   <p>This looks more like specification, because we're documenting the format of the backup file name and show which part of the format is variable. This is something you'd probably find documented in a paper specification for the application you're writing - there would probably exist a sentence saying: "The format of a backup file should be <strong>backup_H.zip</strong>, where H is the current local host name".</p>
 
-  <h2>Third technique: Distinct generated values</h2>
+  <h2>Third technique: Distinct Generated Values</h2>
 
   <p>Let's assume that some time after our initial version is shipped, we're asked to make the backup feature selective and applied to a single user only. As the customer doesn't want to confuse files from different users, we're asked to add name of the user doing backup to the backup file name. Thus, the new format is "backup_H_U.zip", where H is still the host name and U is the user name. Our Statement for the pattern must change as well to include this information:</p>
   <pre>[Fact] public void 
@@ -164,7 +164,7 @@ public string AnyString()
 
   <p>As you can see, we're not returning an understandable string, but rather a guid, which gives us the fairly strong guarantee of generating distinct value each time. The string not being understandable (such as MY_HOST_NAME) may leave you worried that maybe we're losing something, but hey, didn't we say <strong>Any</strong>String()?</p>
 
-  <h2>Fourth technique: constant specification</h2>
+  <h2>Fourth technique: Constant Specification</h2>
 
   <p>Let us consider another modification that we're requested to make - this time, the backup file name needs to contain version number of our application as well. Remembering that we want to use Derived Values, we won't hardcode the version number into our Statement. Instead, we're going to use a constant that's already defined somewhere else in the application (this way we also avoid duplication of this number across the application):</p>
   <pre>[Fact] public void 
@@ -198,7 +198,37 @@ ShouldContainNumberEqualTo1_0()
   Assert.Equal("1.0", Version.Number);
 }</pre>
 
-  <p>By doing so, we make the value in the production code just a consequence of what's in our executable Specification, which we can fully trust</p>
+  <p>By doing so, we make the value in the production code just echo what's in our executable Specification, which we can fully trust.</p>
+
+  <h2>Summary</h2>
+
+  <p>In this chapter, I tried to show you how a style can evolve from the principles you value when doing TDD. I did so for two reasons:</p>
+
+  <ol>
+    <li>To introduce to you a set of techniques I personally use and recommend and to do it in a fluent and logical way.</li>
+
+    <li>To help you better communicate with people that are using different styles. Instead of just throwing "you're doing it wrong" at them, try to understand their principles and how their techniques of choice support them.</li>
+  </ol>
+
+  <p>Now, let's take a quick summary of all the techniques introduced in this chapter:</p>
+
+  <dl>
+    <dt>Anonymous Input</dt>
+
+    <dd>moving the output out of the Statement code and hide it behind a method that describes what's the constrain of the data used instead of what's its value</dd>
+
+    <dt>Derived Values</dt>
+
+    <dd>defining expected output relative to the input in order to document the relationship between input and output</dd>
+
+    <dt>Distinct Generated Values</dt>
+
+    <dd>When using Anonymous Input, generate a distinct value each time (in case of types that have very few values, like boolean, try at least not to generate the same value twice in a row) in order to make the Statement more reliable.</dd>
+
+    <dt>Constant Specification</dt>
+
+    <dd>Write a separate Statement for a constant and use the constant instead of its literal value in all other Statements to create a Derived Value.</dd>
+  </dl>
 
   <p><br />
   <br />
@@ -209,7 +239,7 @@ ShouldContainNumberEqualTo1_0()
   <br />
   <br /></p>
 
-  <p>TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO</p>
+  <p>TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO MENTION ANY!!!!!!!!!!!!!!!!!!!!</p>
 
   <h2><br /></h2>
 </body>
