@@ -64,7 +64,9 @@ public string AnyString()
   return "MY_HOST_NAME";
 }</pre>
 
-  <p>By doing so, we provide a better documentation of the input value. However, now that the Statement itself is freed from the knowledge of the concrete value of <code>hostName</code> variable, the cocrete value of "backup_MY_HOST_NAME.zip" looks kinda weird. There's no clear indication of the relationship between input and output (one may reason whether the output is always the same string or maybe it depends on the string length). It is unclear which part is added by the code and which one depends on what we pass to the method. This leads us to another technique.</p>
+  <p>By using <strong>anonymous input</strong>, we provide a better documentation of the input value. Here, I wrote <code>AnyString()</code>, but of course, there can be a situation where I use <code>AnyAlphaNumericString()</code> when I need a string that does not contain any characters other than letters and digits. Note that this technique <strong>is applicable only when the particular value of the variable is not important, but rather its "trait"</strong>. For example, when a certain behavior occurs only when the input value is <code>Users.Admin</code>, there's <strong>no sense</strong> making it anonymous. On the other hand, for a behavior that occurs for all values other than <code>Users.Admin</code>, then is makes sense to use a method like <code>AnyUserOtherThan(Users.Admin)</code> or even <code>AnyNonAdminUser()</code>.</p>
+
+  <p>Now that the Statement itself is freed from the knowledge of the concrete value of <code>hostName</code> variable, the concrete value of "backup_MY_HOST_NAME.zip" looks kinda weird. There's no clear indication of the kind of relationship between input and output and whether there is any at all (one may reason whether the output is always the same string or maybe it depends on the string length). It is unclear which part is added by the code and which one depends on what we pass to the method. This leads us to another technique.</p>
 
   <h2>Second Technique: Derived Values</h2>
 
@@ -88,6 +90,8 @@ public string AnyString()
 }</pre>
 
   <p>This looks more like specification, because we're documenting the format of the backup file name and show which part of the format is variable. This is something you'd probably find documented in a paper specification for the application you're writing - there would probably exist a sentence saying: "The format of a backup file should be <strong>backup_H.zip</strong>, where H is the current local host name".</p>
+
+  <p><strong>Derived values</strong> are about defining expected output in terms of the input that was passed to provide a clear indication on what is the "transformation" of the input required of the specified production code.</p>
 
   <h2>Third technique: Distinct Generated Values</h2>
 
@@ -164,6 +168,8 @@ public string AnyString()
 
   <p>As you can see, we're not returning an understandable string, but rather a guid, which gives us the fairly strong guarantee of generating distinct value each time. The string not being understandable (such as MY_HOST_NAME) may leave you worried that maybe we're losing something, but hey, didn't we say <strong>Any</strong>String()?</p>
 
+  <p><strong>Distinct generated values</strong> means that each time we need a value of a particular type, we get something different than the last time and the value is generated automatically using some kind of heuristics.</p>
+
   <h2>Fourth technique: Constant Specification</h2>
 
   <p>Let us consider another modification that we're requested to make - this time, the backup file name needs to contain version number of our application as well. Remembering that we want to use Derived Values, we won't hardcode the version number into our Statement. Instead, we're going to use a constant that's already defined somewhere else in the application (this way we also avoid duplication of this number across the application):</p>
@@ -200,17 +206,17 @@ ShouldContainNumberEqualTo1_0()
 
   <p>By doing so, we make the value in the production code just echo what's in our executable Specification, which we can fully trust.</p>
 
-  <h2>Summary</h2>
+  <h2>Summary of the example</h2>
 
-  <p>In this chapter, I tried to show you how a style can evolve from the principles you value when doing TDD. I did so for two reasons:</p>
+  <p>In this example, I tried to show you how a style can evolve from the principles you value when doing TDD. I did so for two reasons:</p>
 
   <ol>
     <li>To introduce to you a set of techniques I personally use and recommend and to do it in a fluent and logical way.</li>
 
-    <li>To help you better communicate with people that are using different styles. Instead of just throwing "you're doing it wrong" at them, try to understand their principles and how their techniques of choice support them.</li>
+    <li>To help you better communicate with people that are using different styles. Instead of just throwing "you're doing it wrong" at them, try to understand their principles and how their techniques of choice support those principles.</li>
   </ol>
 
-  <p>Now, let's take a quick summary of all the techniques introduced in this chapter:</p>
+  <p>Now, let's take a quick summary of all the techniques introduced in example:</p>
 
   <dl>
     <dt>Anonymous Input</dt>
@@ -230,7 +236,19 @@ ShouldContainNumberEqualTo1_0()
     <dd>Write a separate Statement for a constant and use the constant instead of its literal value in all other Statements to create a Derived Value.</dd>
   </dl>
 
-  <p><br />
+  <h2>Constrained non-determinism</h2>
+
+  <p>When we combine anonymous input together with distinct generated values, we get something that's called <strong>Constrained Non-Determinism</strong>. This is a term coined by Mark Seemann and basically means three things:</p>
+
+  <ol>
+    <li>Values are anonymous i.e. we don't know the actual value we're using</li>
+
+    <li>The values are generated in as distinct as possible sequence (which means that, whenever possible, no two values generated in after another hold the same value)</li>
+
+    <li>The non-determinism in generation of the values is constrained, which means that the algorithms for generating values are carefully picked in order to provide values that are not special in any way (e.g. when generating integers, we don't allow generating '0' as it's usually a special-case-value)) and that are not "evil" (e.g. for integers, we generate small positive values first and go with bigger numbers only when we run out of those small ones).</li>
+  </ol>
+
+  <p>TODO write about how to implement it and the Any class<br />
   <br />
   <br />
   <br />
