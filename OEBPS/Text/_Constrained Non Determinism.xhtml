@@ -248,17 +248,14 @@ ShouldContainNumberEqualTo1_0()
     <li>The non-determinism in generation of the values is constrained, which means that the algorithms for generating values are carefully picked in order to provide values that are not special in any way (e.g. when generating integers, we don't allow generating '0' as it's usually a special-case-value)) and that are not "evil" (e.g. for integers, we generate small positive values first and go with bigger numbers only when we run out of those small ones).</li>
   </ol>
 
-  <p>TODO write about how to implement it and the Any class<br />
-  <br />
-  <br />
-  <br />
-  <br />
-  <br />
-  <br />
-  <br /></p>
+  <p>There are multiple ways to implement constrained non-determinism. Mark Seemann himself invented the AutoFixture library for C# that's freely available to download by anyone (the home is at https://github.com/AutoFixture/AutoFixture). Here's a snippet to generate an anonymous integer using AutoFixture:</p>
+  <pre>Fixture fixture = new Fixture();
+var anonymousInteger = fixture.Create&lt;int&gt;();</pre>
 
-  <p>TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO MENTION ANY!!!!!!!!!!!!!!!!!!!!</p>
+  <p>I, after Amir Kolsky and Scott Bain, like to use Any class as seen in the previous chapters of this book. Any takes a slightly different approach than AutoFixture (although it uses AutoFixture internally). My implementation of Any class is available to download as well from https://github.com/grzesiek-galezowski/tdd-toolkit.</p>
 
-  <h2><br /></h2>
+  <h2>Summary</h2>
+
+  <p>That was a long ride, wasn't it? I hope that this chapter, gave you some understanding of how different TDD styles came into existence and why I use the techniques I do (and how these techniques are not just a series of random choices). In the next chapters, I'll try to introduce some more techniques to help you grow a bag of neat tricks - a coherent style.</p>
 </body>
 </html>
