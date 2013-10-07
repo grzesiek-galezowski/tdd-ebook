@@ -219,16 +219,14 @@ ShouldContainNumberEqualTo1_0()
 
   <p>Now, let's take a quick summary of all the techniques introduced in example:</p>
 
-  <p><strong>TOOOOOOOOOOOOODOOOOOOOOOOOOOOOOOOOOOOOO - review ends here</strong></p>
-
   <dl>
     <dt>Anonymous Input</dt>
 
-    <dd>moving the output out of the Statement code and hide it behind a method that describes what's the constrain of the data used instead of what's its value</dd>
+    <dd>moving the output out of the Statement code and hide it behind a method that to emphasize the constrain on the data used rather than what's its value</dd>
 
     <dt>Derived Values</dt>
 
-    <dd>defining expected output relative to the input in order to document the relationship between input and output</dd>
+    <dd>defining expected output in terms of the input in order to document the relationship between input and output</dd>
 
     <dt>Distinct Generated Values</dt>
 
@@ -246,12 +244,12 @@ ShouldContainNumberEqualTo1_0()
   <ol>
     <li>Values are anonymous i.e. we don't know the actual value we're using</li>
 
-    <li>The values are generated in as distinct as possible sequence (which means that, whenever possible, no two values generated in after another hold the same value)</li>
+    <li>The values are generated in as distinct as possible sequence (which means that, whenever possible, no two values generated one after another hold the same value)</li>
 
     <li>The non-determinism in generation of the values is constrained, which means that the algorithms for generating values are carefully picked in order to provide values that are not special in any way (e.g. when generating integers, we don't allow generating '0' as it's usually a special-case-value)) and that are not "evil" (e.g. for integers, we generate small positive values first and go with bigger numbers only when we run out of those small ones).</li>
   </ol>
 
-  <p>There are multiple ways to implement constrained non-determinism. Mark Seemann himself invented the AutoFixture library for C# that's freely available to download by anyone (the home is at https://github.com/AutoFixture/AutoFixture). Here's a snippet to generate an anonymous integer using AutoFixture:</p>
+  <p>There are multiple ways to implement constrained non-determinism. Mark Seemann himself invented the AutoFixture library for C# that's freely available to download by anyone (the home is at https://github.com/AutoFixture/AutoFixture). Here's a shortest possible snippet to generate an anonymous integer using AutoFixture:</p>
   <pre>Fixture fixture = new Fixture();
 var anonymousInteger = fixture.Create&lt;int&gt;();</pre>
 
@@ -259,6 +257,6 @@ var anonymousInteger = fixture.Create&lt;int&gt;();</pre>
 
   <h2>Summary</h2>
 
-  <p>That was a long ride, wasn't it? I hope that this chapter, gave you some understanding of how different TDD styles came into existence and why I use the techniques I do (and how these techniques are not just a series of random choices). In the next chapters, I'll try to introduce some more techniques to help you grow a bag of neat tricks - a coherent style.</p>
+  <p>That was a long ride, wasn't it? I hope that this chapter, gave you some understanding of how different TDD styles came into existence and why I use some of the techniques I do (and how these techniques are not just a series of random choices). In the next chapters, I'll try to introduce some more techniques to help you grow a bag of neat tricks - a coherent style.</p>
 </body>
 </html>
