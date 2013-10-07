@@ -15,7 +15,7 @@
 
   <p>The time has come to explain a little bit more carefully what principles lie under this technique and tool. I'll also use this technique as a case study to show you how one develops a style of Test-Driven Development.</p>
 
-  <h2>A style?</h2>
+  <h2 id="sigil_toc_id_42">A style?</h2>
 
   <p>Yep. Why am I wasting your time writing about style instead of giving you the hardcore technical details? The answer is simple. Before I started writing this tutorial, I read four or five books solely on TDD and maybe two others that contain chapters on TDD. All of this sums up to about two or three thousands of paper pages, plus numerous posts on many blogs. And you know what I noticed? No two authors use exactly the same sets of techniques for test-driving their code! I mean, sometimes, when you look techniques they're suggesting, the suggestions from two authorities contradict each other. As each authority has their followers, it's not uncommon to observe and take part in discussions about whether this or that technique is better than a competing one or which one leads to trouble in the long run.</p>
 
@@ -23,7 +23,7 @@
 
   <p>Developing a style starts with underlying set of principles. These principles lead us to adopt our first technique, which makes us adopt another one and, ultimately, a coherent style emerges. Using Constrained Non-Determinism as an example, I'll try to show you how part of a style gets derived from a technique that is derived from a principle.</p>
 
-  <h2>Principle: Tests As Specification</h2>
+  <h2 id="sigil_toc_id_43">Principle: Tests As Specification</h2>
 
   <p>As I already stressed, I strongly believe that unit tests constitute an executable specification. Thus, they should not only pass input values to an object and assert on the output, they should also convey to their reader the rules according to which objects and functions work. The following oversimplified example shows a Statement where it's not explicitly stated what's the relationship between input and output:</p>
   <pre>[Fact] public void 
@@ -43,7 +43,7 @@ ShouldCreateBackupFileNameContainingPassedHostName()
 
   <p>This makes me invent a first technique to provide my Statements with better support for the principle I believe in.</p>
 
-  <h2>First technique: Anonymous Input</h2>
+  <h2 id="sigil_toc_id_44">First technique: Anonymous Input</h2>
 
   <p>I can wrap the actual value "MY_HOST_NAME" with a method and give it a name that better documents the constraints imposed on it by the specified functionality. In our case, we can pass whatever string we want (the object is not responsible for input validation), so we'll name our method <code>AnyString()</code>:</p>
   <pre>[Fact] public void 
@@ -69,7 +69,7 @@ public string AnyString()
 
   <p>Now that the Statement itself is freed from the knowledge of the concrete value of <code>hostName</code> variable, the concrete value of "backup_MY_HOST_NAME.zip" looks kinda weird. There's no clear indication of the kind of relationship between input and output and whether there is any at all (one may reason whether the output is always the same string or maybe it depends on the string length). It is unclear which part is added by the production code and which part depends on the input we pass to the method. This leads us to another technique.</p>
 
-  <h2>Second Technique: Derived Values</h2>
+  <h2 id="sigil_toc_id_45">Second Technique: Derived Values</h2>
 
   <p>To better document the relationship between input and output, we have to simply derive the expected value we assert on from the input value. Here's the same Statement with the assertion changed:</p>
   <pre>[Fact] public void 
@@ -94,7 +94,7 @@ public string AnyString()
 
   <p><strong>Derived values</strong> are about defining expected output in terms of the input that was passed to provide a clear indication on what is the "transformation" of the input required of the specified production code.</p>
 
-  <h2>Third technique: Distinct Generated Values</h2>
+  <h2 id="sigil_toc_id_46">Third technique: Distinct Generated Values</h2>
 
   <p>Let's assume that some time after our initial version is shipped, we're asked to make the backup feature applied locally per user only for this user's data. As the customer doesn't want to confuse files from different users, we're asked to add name of the user doing backup to the backup file name. Thus, the new format is "backup_H_U.zip", where H is still the host name and U is the user name. Our Statement for the pattern must change as well to include this information. Of course, we're trying to use the anonymous input again as a proven technique and we end up with:</p>
   <pre>[Fact] public void 
@@ -171,7 +171,7 @@ public string AnyString()
 
   <p><strong>Distinct generated values</strong> means that each time we need a value of a particular type, we get something different (if possible) than the last time and each value is generated automatically using some kind of heuristics.</p>
 
-  <h2>Fourth technique: Constant Specification</h2>
+  <h2 id="sigil_toc_id_47">Fourth technique: Constant Specification</h2>
 
   <p>Let us consider another modification that we're requested to make - this time, the backup file name needs to contain version number of our application as well. Remembering that we want to use Derived Values, we won't hardcode the version number into our Statement. Instead, we're going to use a constant that's already defined somewhere else in the application (this way we also avoid duplication of this version number across the application):</p>
   <pre>[Fact] public void 
@@ -207,7 +207,7 @@ ShouldContainNumberEqualTo1_0()
 
   <p>By doing so, we make the value in the production code just echo what's in our executable Specification, which we can fully trust.</p>
 
-  <h2>Summary of the example</h2>
+  <h2 id="sigil_toc_id_48">Summary of the example</h2>
 
   <p>In this example, I tried to show you how a style can evolve from the principles you value when doing TDD. I did so for two reasons:</p>
 
@@ -237,7 +237,7 @@ ShouldContainNumberEqualTo1_0()
     <dd>Write a separate Statement for a constant and use the constant instead of its literal value in all other Statements to create a Derived Value.</dd>
   </dl>
 
-  <h2>Constrained non-determinism</h2>
+  <h2 id="sigil_toc_id_49">Constrained non-determinism</h2>
 
   <p>When we combine anonymous input together with distinct generated values, we get something that's called <strong>Constrained Non-Determinism</strong>. This is a term coined by Mark Seemann and basically means three things:</p>
 
@@ -255,7 +255,7 @@ var anonymousInteger = fixture.Create&lt;int&gt;();</pre>
 
   <p>I, after Amir Kolsky and Scott Bain, like to use Any class as seen in the previous chapters of this book. Any takes a slightly different approach than AutoFixture (although it uses AutoFixture internally). My implementation of Any class is available to download as well from https://github.com/grzesiek-galezowski/tdd-toolkit.</p>
 
-  <h2>Summary</h2>
+  <h2 id="sigil_toc_id_50">Summary</h2>
 
   <p>That was a long ride, wasn't it? I hope that this chapter, gave you some understanding of how different TDD styles came into existence and why I use some of the techniques I do (and how these techniques are not just a series of random choices). In the next chapters, I'll try to introduce some more techniques to help you grow a bag of neat tricks - a coherent style.</p>
 </body>

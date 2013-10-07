@@ -11,7 +11,7 @@
 <body>
   <h1>How is TDD about analysis and what's with the GIVEN-WHEN-THEN structure?</h1>
 
-  <h2>Is there really a commonality between analysis and TDD?</h2>
+  <h2 id="sigil_toc_id_36">Is there really a commonality between analysis and TDD?</h2>
 
   <p>From Wikipedia:</p>
 
@@ -71,7 +71,7 @@
 
   <p>Ok, That's it for the discussion. Now that we're sure that TDD is about analysis, let's focus on the tools can use to aid and inform it. You already saw both of them in this book, now we're going to have a closer look.</p>
 
-  <h2>Gherkin</h2>
+  <h2 id="sigil_toc_id_37">Gherkin</h2>
 
   <p>Hungry? Too bad, because the Gkerkin I'm gonna talk about is not edible. It's a notation and a way of thinking about behaviors of the specified piece of code. It can be applied on different levels of granularity - any behavior, whether of a whole system or a single class, may be described using it.</p>
 
@@ -131,7 +131,7 @@ public void ShouldThrowExceptionWhenAskedToStoreNull()
 
   <p>By thinking in terms of these three parts of behavior, we may arrive at different circumstances (GIVEN) at which the behavior takes place, or additional ones that are needed. The same goes for triggers (WHEN) and effects (THEN). If anything like this comes to our mind, we add it to the TODO list.</p>
 
-  <h2>TODO list... again!</h2>
+  <h2 id="sigil_toc_id_38">TODO list... again!</h2>
 
   <p>As we said previously, a TODO list is a repository for anything that comes to our mind when writing or thinking about a Statement, but is not a part o the current Statement we're writing. We don't want to forget it, neither do we want it to haunt us and distract us from our current task, so we write it down as soon as possible and continue with our current task.</p>
 
@@ -139,11 +139,11 @@ public void ShouldThrowExceptionWhenAskedToStoreNull()
 
   <p>There are two important questions related to TODO lists: "what exactly should we add as a TODO list item?" and "How to efficiently manage the TODO list?". We'll take care of these two questions now.</p>
 
-  <h3>What to put on the TODO list?</h3>
+  <h3 id="sigil_toc_id_39">What to put on the TODO list?</h3>
 
   <p>Everything that you need addressed but is not part of the current Statement. Those items may be related to implementing unimplemented methods, to add whole functionalities (such items are usually followed my more fine-grained sub tasks as soon as you start implementing the item), there might be reminders to take a better look at something (e.g. "investigate what is this component's policy for logging errors") or questions about the domain that need to get answered. If you get carried away too much in coding that you forget to eat, you can even add a reminder ("TODO: get something to eat!"). The list is yours!</p>
 
-  <h3>How to pick items from TODO list?</h3>
+  <h3 id="sigil_toc_id_40">How to pick items from TODO list?</h3>
 
   <p>Which item to choose from the TODO list when you have several? I have no clear rule, although I tend to take into account the following factors:</p>
 
@@ -155,7 +155,7 @@ public void ShouldThrowExceptionWhenAskedToStoreNull()
     <li>Completeness - in simplest words, when I finish test-driving an "if" case, I usually pick up the "else" next. For example, after I finish implementing a Statement saying that something should return true for values less than 50, then the next item to pick up is the "greater or equal to 50" case. Usually, when I start test-driving a class, I take items related to this class until I run out of them, then go on to another one.</li>
   </ol>
 
-  <h3>Where to put a TODO list?</h3>
+  <h3 id="sigil_toc_id_41">Where to put a TODO list?</h3>
 
   <p>There are two ways of maintaining a TODO list. The first one is on a sheet of paper, which is nice, but requires you to take your hands off the keyboard, grab a pen or pencil and then get back to coding every time you think of something. Also, the only way a TODO item written on a sheet of paper can tell you which place in code it is related to, is (obviously) by its text.</p>
 
