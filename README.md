@@ -20,6 +20,7 @@ So far the following chapters are considered ready for reading:
 6. Sorting out the bits
 7. How to start?
 8. How is TDD about analysis and what's with the GIVEN-WHEN-THEN structure?
+9. Developing TDD style and Constrained Non-Determinism
 
 At least four or five more chapters are planned
 
