@@ -5,15 +5,13 @@
     <dc:title>Test-Driven Development - Extensive Tutorial</dc:title>
     <dc:creator opf:role="aut">Grzegorz Gałęzowski</dc:creator>
     <dc:language>en</dc:language>
-    <dc:date opf:event="modification">2013-10-07</dc:date>
+    <dc:date opf:event="modification">2013-10-16</dc:date>
     <meta content="0.7.2" name="Sigil version" />
   </metadata>
   <manifest>
     <item href="toc.ncx" id="ncx" media-type="application/x-dtbncx+xml" />
-    <item href="Text/Test-First.xhtml" id="Test-First.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/TDD%20is%20a%20good%20teacher.xhtml" id="TDD_is_a_good_teacher.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/We%20are%20in%20need%20of%20feedback.xhtml" id="We_are_in_need_of_feedback.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/Perfect%20From%20The%20Start.xhtml" id="Perfect_From_The_Start.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/Given%20When%20Then%20Negation.xhtml" id="Given_When_Then_Negation.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/How%20to%20test%20private%20methods.xhtml" id="How_to_test_private_methods.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/Null%20object%20specifications%20-%20Booby%20Trap%20pattern.xhtml" id="Null_object_specifications_-_Booby_Trap_pattern.xhtml" media-type="application/xhtml+xml" />
@@ -27,7 +25,7 @@
     <item href="Text/If%20you%20treat%20your%20unit%20tests%20like%20garbage%2C%20they%27ll%20eventually%20become%20just%20that.%20And%20they%20will%20smell%20bad....xhtml" id="If_you_treat_your_unit_tests_like_garbage__they_ll_eventually_become_just_that._And_they_will_smell_bad....xhtml" media-type="application/xhtml+xml" />
     <item href="Text/Mocking%20method%20chains%20part%201%20-%20When%20not%20to.%20Coupling%2C%20encapsulation%2C%20redundancy%20and%20the%20Law%20of%20Demeter..xhtml" id="Mocking_method_chains_part_1_-_When_not_to._Coupling__encapsulation__redundancy_and_the_Law_of_Demeter..xhtml" media-type="application/xhtml+xml" />
     <item href="Text/Mocking%20method%20chains%20part%202%20-%20types%20of%20chains%20and%20fluent%20interfaces.xhtml" id="Mocking_method_chains_part_2_-_types_of_chains_and_fluent_interfaces.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/What%20is%20the%20scope%20of%20a%20unit%20test%20in%20TDD.xhtml" id="What_is_the_scope_of_a_unit_test_in_TDD.xhtml" media-type="application/xhtml+xml" />
+    <item href="Text/_What%20is%20the%20scope%20of%20a%20Statement%20in%20TDD.xhtml" id="_What_is_the_scope_of_a_Statement_in_TDD.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/Does%20TDD%20lead%20to%20explosion%20of%20unnecessary%20abstractions%20and%20bad%20readability.xhtml" id="Does_TDD_lead_to_explosion_of_unnecessary_abstractions_and_bad_readability.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/A%20kata%20challenge%20to%20try%20your%20TDD%20skills%20on.xhtml" id="A_kata_challenge_to_try_your_TDD_skills_on.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/A%20kata%20challenge%20to%20try%20your%20TDD%20skills%20on%20-%20failure%20and%20what%20we%20can%20learn%20from%20it.xhtml" id="A_kata_challenge_to_try_your_TDD_skills_on_-_failure_and_what_we_can_learn_from_it.xhtml" media-type="application/xhtml+xml" />
@@ -77,6 +75,7 @@
     <itemref idref="_Analysis_In_TDD.xhtml" />
     <itemref idref="_Constrained_Non_Determinism.xhtml" />
     <itemref idref="End.xhtml" />
+    <itemref idref="_What_is_the_scope_of_a_Statement_in_TDD.xhtml" />
     <itemref idref="_What_Exactly_Do_We_Specify.xhtml" />
     <itemref idref="If_you_treat_your_unit_tests_like_garbage__they_ll_eventually_become_just_that._And_they_will_smell_bad....xhtml" />
     <itemref idref="We_are_in_need_of_feedback.xhtml" />
@@ -84,12 +83,9 @@
     <itemref idref="Test_Driven_Development_-_objections_part_1.xhtml" />
     <itemref idref="Test_Driven_Development_-_objections_part_2.xhtml" />
     <itemref idref="Test_Driven_Development_-_objections_part_3.xhtml" />
-    <itemref idref="Perfect_From_The_Start.xhtml" />
     <itemref idref="TDD_is_a_good_teacher.xhtml" />
     <itemref idref="You_may_have_been_practicing_test-first_without_knowing_it.xhtml" />
     <itemref idref="Starting_off_with_unit_testing_and_TDD_-_here_s_my_advice....xhtml" />
-    <itemref idref="Test-First.xhtml" />
-    <itemref idref="What_is_the_scope_of_a_unit_test_in_TDD.xhtml" />
     <itemref idref="Single_method_perspective_vs_single_behavior_perspective.xhtml" />
     <itemref idref="Given_When_Then_Negation.xhtml" />
     <itemref idref="The_Two_Main_Techniques_in_Test-Driven_development_part_1.xhtml" />
