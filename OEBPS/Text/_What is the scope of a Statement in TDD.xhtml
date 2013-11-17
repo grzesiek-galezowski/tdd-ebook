@@ -40,7 +40,7 @@ ShouldThrowValidationExceptionWithFatalErrorLevelWhenValidatedStringIsEmpty()
 
   <h3 class="sigil_not_in_toc">Or a method scope?</h3>
 
-  <p>So, maybe the scope covers a single method, meaning a spec always exercises one method of a specified object?</p>
+  <p>So, maybe the scope covers a single method, meaning a Statement always exercises one method of a specified object?</p>
 
   <p>Let's consider the following example:</p>
   <pre class="brush: csharp">[Fact] public void 
@@ -59,13 +59,13 @@ ShouldBeFulfilledWhenEventOccursThreeTimes()
 }
 </pre>
 
-  <p>Count with me: how many methods are called? Depending on how we count, it's two (Queued() and IsFulfilled) or four (Queued(), Queued(), Queued(), IsFulfilled). In any case, not one. So it's not method scope either.</p>
+  <p>Count with me: how many methods are called? Depending on how we count, it's two (<code>Queued()</code> and <code>IsFulfilled()</code>) or four (<code>Queued(), Queued(), Queued(), IsFulfilled()</code>). In any case, not one. So it's not method scope either.</p>
 
   <h3 class="sigil_not_in_toc">It's the scope of class behavior!</h3>
 
-  <p>The proper answer is: behavior! Each TDD test specifies a single behavior. <a href="sustainabletdd.com">Amir Kolsky and Scott Bain</a> even teach that each unit-level Statement should "introduce a behavioral distinction not existing before".</p>
+  <p>The proper answer is: behavior! Each TDD Statement specifies a single behavior. <a href="http://sustainabletdd.com">Amir Kolsky and Scott Bain</a> even teach that each unit-level Statement should "introduce a behavioral distinction not existing before".</p>
 
-  <p>It may look that "behavior" scope is actually broader than method or class levels, since such Statement can span multiple classes and multiple methods. This is only partially true. That's because e.g. Statements with method scope can span multiple behaviors (which, by the way, is not a sign of a well written Statement). Let's take a look at an example:</p>
+  <p>It may look that "behavior" scope is actually broader than method or class levels, since such Statement can span multiple classes and multiple methods. This is only partially true. That's because e.g. Statements with method scope can span multiple behaviors (which, by the way, is a sign of poorly written Statement). Let's take a look at an example:</p>
   <pre class="brush: csharp">[Fact] public void 
 ShouldReportItCanHandleStringWithLengthOf3ButNotOf4AndNotNullString()
 {
@@ -89,7 +89,7 @@ ShouldReportItCanHandleStringWithLengthOf3ButNotOf4AndNotNullString()
   Assert.False(resultForNull);
 }</pre>
 
-  <p>Note that it specifies three (or two - depending on how you count) behaviors: acceptance of string of allowed size, refusal of handling string above the allowed size and a special case of null string. As I said - this is an antipattern and is sometimes called a "check-it-all test". The issue with this kind of test is that it can fail for at least two reasons - when the allowed string size changed and when null handling is done in another way. Also, xUnit tools by default stop execution on first error, so, assuming that the first assertion fails, we won't know the outcome of the next assertion unless we fix the previous one.</p>
+  <p>Note that it specifies three (or two - depending on how you count) behaviors: acceptance of string of allowed size, refusal of handling string above the allowed size and a special case of null string. As I said - this is an antipattern and is sometimes called a "check-it-all test". The issue with this kind of Statement is that it can be evaluated to false for at least two reasons - when the allowed string size changes and when null handling is done in another way. Also, xUnit tools by default stop execution on first error, so, assuming that the first assertion fails, we won't know the outcome of the next assertion unless we fix the previous one.</p>
 
   <p>On the other hand, Statements with behavior scope don't necessary have to be broader than those with class scope. Let's take the following example:</p>
   <pre class="brush: csharp">[Fact] public void
@@ -110,8 +110,6 @@ ShouldReportItIsStartedAndItDoesNotYetTransmitVoiceWhenItStarts()
     () =&gt; call.Transmit(Any.InstanceOf&lt;Frame&gt;()));
 }
 </pre>
-
-  <p>TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT</p>
 
   <p>Again, there are two behaviors here: reporting the call status after start and not being able to transmit frames after start. That's why this test should be split into two.</p>
 
