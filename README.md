@@ -12,15 +12,16 @@ Download:
 
 So far the following chapters are considered ready for reading:
 
-1. Motivation - the first step to learning TDD
-2. The three most essential tools
-3. It's not a test
-4. Statement-First programming
-5. Practicing what we already learned
-6. Sorting out the bits
-7. How to start?
-8. How is TDD about analysis and what's with the GIVEN-WHEN-THEN structure?
-9. Developing TDD style and Constrained Non-Determinism
+ 1. Motivation - the first step to learning TDD
+ 2. The three most essential tools
+ 3. It's not a test
+ 4. Statement-First programming
+ 5. Practicing what we already learned
+ 6. Sorting out the bits
+ 7. How to start?
+ 8. How is TDD about analysis and what's with the GIVEN-WHEN-THEN structure?
+ 9. Developing TDD style and Constrained Non-Determinism
+10. What is the scope of a unit-level Statement in TDD?
 
 At least four or five more chapters are planned
 
