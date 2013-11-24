@@ -5,7 +5,7 @@
     <dc:title>Test-Driven Development - Extensive Tutorial</dc:title>
     <dc:creator opf:role="aut">Grzegorz Gałęzowski</dc:creator>
     <dc:language>en</dc:language>
-    <dc:date opf:event="modification">2013-11-23</dc:date>
+    <dc:date opf:event="modification">2013-11-24</dc:date>
     <meta content="0.7.2" name="Sigil version" />
   </metadata>
   <manifest>
@@ -22,7 +22,6 @@
     <item href="Text/Class%20mocks%20-%20maintaining%20constructors.xhtml" id="Class_mocks_-_maintaining_constructors.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/You%20may%20have%20been%20practicing%20test-first%20without%20knowing%20it.xhtml" id="You_may_have_been_practicing_test-first_without_knowing_it.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/TDD%20and%20Single%20Responsibility%20Principle%20violation%20-%20a%20simple%20example.xhtml" id="TDD_and_Single_Responsibility_Principle_violation_-_a_simple_example.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/If%20you%20treat%20your%20unit%20tests%20like%20garbage%2C%20they%27ll%20eventually%20become%20just%20that.%20And%20they%20will%20smell%20bad....xhtml" id="If_you_treat_your_unit_tests_like_garbage__they_ll_eventually_become_just_that._And_they_will_smell_bad....xhtml" media-type="application/xhtml+xml" />
     <item href="Text/Mocking%20method%20chains%20part%201%20-%20When%20not%20to.%20Coupling%2C%20encapsulation%2C%20redundancy%20and%20the%20Law%20of%20Demeter..xhtml" id="Mocking_method_chains_part_1_-_When_not_to._Coupling__encapsulation__redundancy_and_the_Law_of_Demeter..xhtml" media-type="application/xhtml+xml" />
     <item href="Text/Mocking%20method%20chains%20part%202%20-%20types%20of%20chains%20and%20fluent%20interfaces.xhtml" id="Mocking_method_chains_part_2_-_types_of_chains_and_fluent_interfaces.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/_What%20is%20the%20scope%20of%20a%20Statement%20in%20TDD.xhtml" id="_What_is_the_scope_of_a_Statement_in_TDD.xhtml" media-type="application/xhtml+xml" />
@@ -77,7 +76,6 @@
     <itemref idref="_What_is_the_scope_of_a_Statement_in_TDD.xhtml" />
     <itemref idref="End.xhtml" />
     <itemref idref="_What_Exactly_Do_We_Specify.xhtml" />
-    <itemref idref="If_you_treat_your_unit_tests_like_garbage__they_ll_eventually_become_just_that._And_they_will_smell_bad....xhtml" />
     <itemref idref="We_are_in_need_of_feedback.xhtml" />
     <itemref idref="The_Two_Main_Techniques_in_Test-Driven_development_part_2.xhtml" />
     <itemref idref="Test_Driven_Development_-_objections_part_1.xhtml" />
