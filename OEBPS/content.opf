@@ -60,9 +60,11 @@
     <item href="Text/_How%20to%20start.xhtml" id="_How_to_start.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/_Part1Marker.xhtml" id="_Part1Marker.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/_Constrained%20Non%20Determinism.xhtml" id="_Constrained_Non_Determinism.xhtml" media-type="application/xhtml+xml" />
+    <item href="Text/_Dedication.xhtml" id="_Dedication.xhtml" media-type="application/xhtml+xml" />
   </manifest>
   <spine toc="ncx">
     <itemref idref="Cover.xhtml" />
+    <itemref idref="_Dedication.xhtml" />
     <itemref idref="_Part1Marker.xhtml" />
     <itemref idref="_Motivations.xhtml" />
     <itemref idref="_Three_Essential_Tools.xhtml" />
