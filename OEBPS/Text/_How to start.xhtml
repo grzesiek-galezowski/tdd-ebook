@@ -13,13 +13,13 @@
 
   <p>Whenever I sat down with a person that was about to write their first code in a Statement-first manner, the person would first stare at the screen, then at me, then would say: "what now?". It's easy to say: "You know how to write code, you know how to write a unit test for it, just this time start with the latter rather than the first", but for many people, this is something that blocks them completely. If you're one of them, don't worry - you're not alone. I decided to dedicate this chapter solely to techniques for kicking off a Statement when there's no code.</p>
 
-  <h2 id="sigil_toc_id_25">Start with a good name</h2>
+  <h2 id="sigil_toc_id_13">Start with a good name</h2>
 
   <p>It may sound obvious, but some people are having serious trouble describing the behavior they expect from their code. If you can name such behavior, it's a great starting point.</p>
 
   <p>I know not everybody pays attention to naming their Statements, mainly because the Statements are considered as tests and second-level citizens - as long as they run and "prove the code does not contain defects", they're considered sufficient. We'll take a look at some examples of bad names and then I'll introduce to you some rules of good naming.</p>
 
-  <h3 id="sigil_toc_id_26">Consequences of bad naming</h3>
+  <h3 class="sigil_not_in_toc">Consequences of bad naming</h3>
 
   <p>As I said, many people don't really care how their Statements are named. This is a symptom of treating the Specification as garbage or leftovers - such situation is dangerous, because as soon as this kind of thinking is established, it leads to bad, unmaintainable Specification that looks more like lumps of accidental code put together in a haste than a living documentation. Imagine that your Specification consists of names like this:</p>
 
@@ -57,7 +57,7 @@
     <li>How can you keep track of the Statements already made about the specified class vs those that still need to be made?</li>
   </ol>
 
-  <h3 id="sigil_toc_id_27">What's in a good name?</h3>
+  <h3 class="sigil_not_in_toc">What's in a good name?</h3>
 
   <p>For the name of the Statement to be of any use, it has to describe the expected behavior. At minimum, it should describe what happens under what circumstances. Let's take a look at one of the names Steve freeman and Nat Pryce came up in their great book Growing Object Oriented Software Guided By Tests:</p>
   <pre>notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort()</pre>
@@ -85,7 +85,7 @@ public void Statement_002()
     <li>Using a name that describes a (single) behavior allows you to track quickly why the Statement is false when it is. Suppose a Statement is true when you start refactoring, but at one point it starts being evaluated as false and the report in the runner looks like this: <code>TrySendingHttpRequest: FAILED</code> - it doesn't really tell you anything more than that an attempt is made to send a HTTP request, but, for instance, does not tell you whether your specified object is the sender (that should try to send this request under some circumstances) or the receiver (that should handle such request properly). To actually know what went wrong, you have to go Statement body and scan its source code. Now compare it to the following name: <code>ShouldRespondWithAnAckWheneverItReceivesAHttpRequest</code>. Now when it evaluates to false, you can tell what is broken - the object no longer responds with an ACK to HTTP request. Sometimes this is enough to identify which part of the code is in fault of this evaluation failure.</li>
   </ol>
 
-  <h3 id="sigil_toc_id_28">My favourite convention</h3>
+  <h3 class="sigil_not_in_toc">My favourite convention</h3>
 
   <p>There are many conventions for naming Statements appropriately. My favorite is the one developed by Dan North, which makes each Statement name begin with the word <code>Should</code>. So for example, I'd name a Statement: <code>ShouldReportAllErrorsSortedAlphabeticallyWhenItEncountersErrorsDuringSearch()</code>. The name of the Specification (i.e. class name) answers the question "who should do it?", i.e. when I have a class names <code>SortingOperation</code> and want to say that it "should sort all items in ascending order when performed", I say it like this:</p>
   <pre>public class SortingOperationSpecification
@@ -101,11 +101,11 @@ public void Statement_002()
 
   <p>When inventing a name, It's important to put the main focus on what result or action is expected from an object. If you don't, you quickly find it troublesome. As an example, one of my colleagues was specifying a class <code>UserId</code> and wrote the following name for the Statement about comparison of two identifiers: <code>EqualOperationShouldPassForTwoInstancesWithTheSameUserName()</code>. Note that this is not from the perspective of a single object, but rather from the perspective of an operation that's executed on it, which means that we stopped thinking in terms of object responsibilities and started thinking in terms of operation correctness, which is farther away from our assumption that we're writing a Specification consisting o Statements. This name should be something more like: <code>ShouldReportThatItIsEqualToAnotherIdThatHasTheSameUserName()</code>.</p>
 
-  <h2 id="sigil_toc_id_29">Start by filling the GIVEN-WHEN-THEN structure with the obvious<br /></h2>
+  <h2 id="sigil_toc_id_14">Start by filling the GIVEN-WHEN-THEN structure with the obvious<br /></h2>
 
   <p>This is a technique that's applicable when you come up with a GIVEN-WHEN-THEN structure for the Statement or a good name for it (GIVEN-WHEN-THEN structure can be easily derived from a good name and vice versa). Anyway, this technique is about taking the GIVEN, WHEN and THEN parts and translating them into code in almost literal, brute-force way, then add all the missing pieces that are required for the code to compile and run.</p>
 
-  <h3 id="sigil_toc_id_30">A simple example</h3>
+  <h3 class="sigil_not_in_toc">A simple example</h3>
 
   <p>Let's take a simple example of comparing two users. We assume that a user should be equal to another when it has the same name as the other one:</p>
   <pre style="padding: 1em; border: dashed thin gray;">GIVEN a user with any name
@@ -191,13 +191,13 @@ ShouldAppearEqualToAnotherUserWithTheSameName()
 
   <p>And that's it - the Statement is complete!</p>
 
-  <h2 id="sigil_toc_id_31">Start from the end</h2>
+  <h2 id="sigil_toc_id_15">Start from the end</h2>
 
   <p>This is a technique that I suggest to people that seem to have absolutely no idea how to start. I got it from Kent Beck's book Test Driven Development by Example. It seems funny at start, but is quite powerful. The trick is to write the Statement 'backwards', i.e. starting with what the Statement asserts to be true (in terms of the GIVEN-WHEN-THEN structure, we'd say that we start with our THEN).</p>
 
   <p>This works because, while we're many times quite sure of our goal (i.e. what the outcome of the behavior should be), but are unsure of how to get there.</p>
 
-  <h3 id="sigil_toc_id_32">A simple example</h3>
+  <h3 class="sigil_not_in_toc">A simple example</h3>
 
   <p>Imagine we're writing a class for granting access to a reporting functionality based on roles. We don't have any idea what the API should look like and how to write our Statement, but we know one thing: in our domain the access can be either granted or denied. Let's take the successful case (just because it's the first one we can think of) and, starting backwards, start with the following assertion:</p>
   <pre>//THEN
@@ -246,11 +246,11 @@ ShouldAllowAccessToReportingWhenAskedForEitherAdministratorOrAuditor()
  Assert.True(accessGranted);
 }</pre>
 
-  <h2 id="sigil_toc_id_33">Start by invoking a method when you have one</h2>
+  <h2 id="sigil_toc_id_16">Start by invoking a method when you have one</h2>
 
   <p>Sometimes, we have to add a new class that implements an existing interface required by another class. The fact of implementing an interface imposes what methods should the new class support. If this point is already decided, we can start our Statement by first calling the method and then discovering what we need to supply.</p>
 
-  <h3 id="sigil_toc_id_34">A simple example</h3>
+  <h3 class="sigil_not_in_toc">A simple example</h3>
 
   <p>Suppose we have an application holding a lot of data that, among other things, handles importing am existing database from another instance of the application. As importing a database can be a lengthy process, a message box is displayed each time when user chooses to perform the import and this message box displays the following message: "Johnny, please sit down and enjoy your coffee for a few minutes as we take time to import your database" (given user name is Johnny). The class that implements it looks like this:</p>
   <pre>public class FriendlyMessages
@@ -333,7 +333,7 @@ public void TODO()
 
   <p>and all that is left is to find a good name for the Statement. This isn't an issue since we already specified the desired behavior in the code, so we can just summarize it as something like <code>ShouldYieldAMessageSayingThatFeatureIsLockedWhenAskedForImportDatabaseMessage</code>.</p>
 
-  <h2 id="sigil_toc_id_35">Summary</h2>
+  <h2 id="sigil_toc_id_17">Summary</h2>
 
   <p>These few techniques can be useful when you're stuck and don't know how to start. Note that the examples given are simplistic and assume that there is one object that takes some kind of input parameter and returns a well defined result. This is not how most of the object-oriented world is built. In object oriented world, we have a lot of objects communicating with other objects, sending messages, invoking methods on each other and often having no return values. Don't worry, all of these techniques work in this concept and we'll be revisiting them as soon as we learn how to do TDD in fully object-oriented world (that is, after we introduce a concept of mock objects). For now, I'm trying to keep it simple.</p>
 </body>

@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN"
  "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
 <ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
   <head>
-    <meta content="urn:uuid:6d00fb77-2111-4dd8-bba0-36b822fd09b2" name="dtb:uid"/>
-    <meta content="4" name="dtb:depth"/>
-    <meta content="0" name="dtb:totalPageCount"/>
-    <meta content="0" name="dtb:maxPageNumber"/>
+    <meta name="dtb:uid" content="urn:uuid:6d00fb77-2111-4dd8-bba0-36b822fd09b2" />
+    <meta name="dtb:depth" content="2" />
+    <meta name="dtb:totalPageCount" content="0" />
+    <meta name="dtb:maxPageNumber" content="0" />
   </head>
   <docTitle>
     <text>Test-Driven Development - Extensive Tutorial</text>
@@ -14,434 +14,296 @@
   <navMap>
     <navPoint id="navPoint-1" playOrder="1">
       <navLabel>
-        <text>Part 1: Just the basics</text>
+        <text>Cover</text>
       </navLabel>
-      <content src="Text/_Part1Marker.xhtml"/>
+      <content src="Text/Cover.xhtml" />
     </navPoint>
     <navPoint id="navPoint-2" playOrder="2">
       <navLabel>
-        <text>Motivation - the first step to learning TDD</text>
+        <text>Dedications</text>
       </navLabel>
-      <content src="Text/_Motivations.xhtml"/>
-      <navPoint id="navPoint-3" playOrder="3">
-        <navLabel>
-          <text>How TDD feels like</text>
-        </navLabel>
-        <content src="Text/_Motivations.xhtml#sigil_toc_id_1"/>
-      </navPoint>
+      <content src="Text/_Dedication.xhtml" />
+    </navPoint>
+    <navPoint id="navPoint-3" playOrder="3">
+      <navLabel>
+        <text>Part 1: Just the basics</text>
+      </navLabel>
+      <content src="Text/_Part1Marker.xhtml" />
     </navPoint>
     <navPoint id="navPoint-4" playOrder="4">
       <navLabel>
-        <text>The three most essential tools</text>
+        <text>Motivation - the first step to learning TDD</text>
       </navLabel>
-      <content src="Text/_Three%20Essential%20Tools.xhtml"/>
+      <content src="Text/_Motivations.xhtml" />
       <navPoint id="navPoint-5" playOrder="5">
         <navLabel>
-          <text>Our shiny tools</text>
+          <text>How TDD feels like</text>
         </navLabel>
-        <content src="Text/_Three%20Essential%20Tools.xhtml#sigil_toc_id_2"/>
+        <content src="Text/_Motivations.xhtml#sigil_toc_id_1" />
       </navPoint>
     </navPoint>
     <navPoint id="navPoint-6" playOrder="6">
       <navLabel>
+        <text>The three most essential tools</text>
+      </navLabel>
+      <content src="Text/_Three%20Essential%20Tools.xhtml" />
+      <navPoint id="navPoint-7" playOrder="7">
+        <navLabel>
+          <text>Our shiny tools</text>
+        </navLabel>
+        <content src="Text/_Three%20Essential%20Tools.xhtml#sigil_toc_id_2" />
+      </navPoint>
+    </navPoint>
+    <navPoint id="navPoint-8" playOrder="8">
+      <navLabel>
         <text>It's not a test</text>
       </navLabel>
-      <content src="Text/_It%27s%20Not%20a%20Test.xhtml"/>
-      <navPoint id="navPoint-7" playOrder="7">
+      <content src="Text/_It%27s%20Not%20a%20Test.xhtml" />
+      <navPoint id="navPoint-9" playOrder="9">
         <navLabel>
           <text>When a test becomes something else</text>
         </navLabel>
-        <content src="Text/_It%27s%20Not%20a%20Test.xhtml#sigil_toc_id_3"/>
+        <content src="Text/_It%27s%20Not%20a%20Test.xhtml#sigil_toc_id_3" />
       </navPoint>
-      <navPoint id="navPoint-8" playOrder="8">
+      <navPoint id="navPoint-10" playOrder="10">
         <navLabel>
           <text>Taking It To The Software Development Land</text>
         </navLabel>
-        <content src="Text/_It%27s%20Not%20a%20Test.xhtml#sigil_toc_id_4"/>
+        <content src="Text/_It%27s%20Not%20a%20Test.xhtml#sigil_toc_id_4" />
       </navPoint>
-      <navPoint id="navPoint-9" playOrder="9">
+      <navPoint id="navPoint-11" playOrder="11">
         <navLabel>
           <text>A Specification Instead of a Test Suite</text>
         </navLabel>
-        <content src="Text/_It%27s%20Not%20a%20Test.xhtml#sigil_toc_id_5"/>
+        <content src="Text/_It%27s%20Not%20a%20Test.xhtml#sigil_toc_id_5" />
       </navPoint>
     </navPoint>
-    <navPoint id="navPoint-10" playOrder="10">
+    <navPoint id="navPoint-12" playOrder="12">
       <navLabel>
         <text>Statement-First programming</text>
       </navLabel>
-      <content src="Text/_Statement-First%20Programming.xhtml"/>
-      <navPoint id="navPoint-11" playOrder="11">
+      <content src="Text/_Statement-First%20Programming.xhtml" />
+      <navPoint id="navPoint-13" playOrder="13">
         <navLabel>
           <text>What's The Point of Writing Specification After The Fact?</text>
         </navLabel>
-        <content src="Text/_Statement-First%20Programming.xhtml#sigil_toc_id_6"/>
+        <content src="Text/_Statement-First%20Programming.xhtml#sigil_toc_id_6" />
       </navPoint>
-      <navPoint id="navPoint-12" playOrder="12">
+      <navPoint id="navPoint-14" playOrder="14">
         <navLabel>
           <text>The Benefit of Failure</text>
         </navLabel>
-        <content src="Text/_Statement-First%20Programming.xhtml#sigil_toc_id_7"/>
-        <navPoint id="navPoint-13" playOrder="13">
-          <navLabel>
-            <text>You don't know whether the Statement can ever be false until you see it evaluate to false</text>
-          </navLabel>
-          <content src="Text/_Statement-First%20Programming.xhtml#sigil_toc_id_8"/>
-          <navPoint id="navPoint-14" playOrder="14">
-            <navLabel>
-              <text>1. Accidental omission of adding a Statement to Specification.</text>
-            </navLabel>
-            <content src="Text/_Statement-First%20Programming.xhtml#sigil_toc_id_9"/>
-          </navPoint>
-          <navPoint id="navPoint-15" playOrder="15">
-            <navLabel>
-              <text>2. Misplacing mock setup</text>
-            </navLabel>
-            <content src="Text/_Statement-First%20Programming.xhtml#sigil_toc_id_10"/>
-          </navPoint>
-          <navPoint id="navPoint-16" playOrder="16">
-            <navLabel>
-              <text>3. Using static data inside production code</text>
-            </navLabel>
-            <content src="Text/_Statement-First%20Programming.xhtml#sigil_toc_id_11"/>
-          </navPoint>
-        </navPoint>
-        <navPoint id="navPoint-17" playOrder="17">
-          <navLabel>
-            <text>"Test-After" ends up as "Test-Never"</text>
-          </navLabel>
-          <content src="Text/_Statement-First%20Programming.xhtml#sigil_toc_id_12"/>
-        </navPoint>
-        <navPoint id="navPoint-18" playOrder="18">
-          <navLabel>
-            <text>Not starting from specification leads to waste of time on making objects testable</text>
-          </navLabel>
-          <content src="Text/_Statement-First%20Programming.xhtml#sigil_toc_id_13"/>
-        </navPoint>
+        <content src="Text/_Statement-First%20Programming.xhtml#sigil_toc_id_7" />
       </navPoint>
     </navPoint>
-    <navPoint id="navPoint-19" playOrder="19">
+    <navPoint id="navPoint-15" playOrder="15">
       <navLabel>
         <text>Practicing what we already learned</text>
       </navLabel>
-      <content src="Text/_Practicing%20What%20We%20Already%20Learned.xhtml"/>
-      <navPoint id="navPoint-20" playOrder="20">
+      <content src="Text/_Practicing%20What%20We%20Already%20Learned.xhtml" />
+      <navPoint id="navPoint-16" playOrder="16">
         <navLabel>
           <text>Let me tell you a story</text>
         </navLabel>
-        <content src="Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_14"/>
+        <content src="Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_8" />
       </navPoint>
-      <navPoint id="navPoint-21" playOrder="21">
+      <navPoint id="navPoint-17" playOrder="17">
         <navLabel>
           <text>Act 1: The Car</text>
         </navLabel>
-        <content src="Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_15"/>
+        <content src="Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_9" />
       </navPoint>
-      <navPoint id="navPoint-22" playOrder="22">
+      <navPoint id="navPoint-18" playOrder="18">
         <navLabel>
           <text>Act 2: The Customer</text>
         </navLabel>
-        <content src="Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_16"/>
-        <navPoint id="navPoint-23" playOrder="23">
-          <navLabel>
-            <text>In order to know that the calculator is turned on, As a tax payer I want to see "0" on the screen as soon as I turn it on.</text>
-          </navLabel>
-          <content src="Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_17"/>
-        </navPoint>
-        <navPoint id="navPoint-24" playOrder="24">
-          <navLabel>
-            <text>In order to see what numbers I'm currently operating on, As a tax payer, I want the calculator to display the values I enter</text>
-          </navLabel>
-          <content src="Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_18"/>
-        </navPoint>
-        <navPoint id="navPoint-25" playOrder="25">
-          <navLabel>
-            <text>In order to calculate sum of my different incomes, As a tax payer I want the calculator to enable addition of multiple numbers</text>
-          </navLabel>
-          <content src="Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_19"/>
-        </navPoint>
+        <content src="Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_10" />
       </navPoint>
-      <navPoint id="navPoint-26" playOrder="26">
+      <navPoint id="navPoint-19" playOrder="19">
         <navLabel>
           <text>Act 3: Test-Driven Development</text>
         </navLabel>
-        <content src="Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_20"/>
-        <navPoint id="navPoint-27" playOrder="27">
-          <navLabel>
-            <text>Statement 1: Calculator should display 0 on creation</text>
-          </navLabel>
-          <content src="Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_21"/>
-        </navPoint>
-        <navPoint id="navPoint-28" playOrder="28">
-          <navLabel>
-            <text>Statement 2: Calculator should display entered digits</text>
-          </navLabel>
-          <content src="Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_22"/>
-        </navPoint>
-        <navPoint id="navPoint-29" playOrder="29">
-          <navLabel>
-            <text>Statement 3: Calculator should display only one zero digit if it's the only entered digit even if it is entered multiple times</text>
-          </navLabel>
-          <content src="Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_23"/>
-        </navPoint>
+        <content src="Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_11" />
       </navPoint>
-      <navPoint id="navPoint-30" playOrder="30">
+      <navPoint id="navPoint-20" playOrder="20">
         <navLabel>
           <text>Epilogue</text>
         </navLabel>
-        <content src="Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_24"/>
+        <content src="Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_12" />
       </navPoint>
     </navPoint>
-    <navPoint id="navPoint-31" playOrder="31">
+    <navPoint id="navPoint-21" playOrder="21">
       <navLabel>
         <text>Sorting out the bits</text>
       </navLabel>
-      <content src="Text/_Sorting%20out%20the%20bits.xhtml"/>
+      <content src="Text/_Sorting%20out%20the%20bits.xhtml" />
     </navPoint>
-    <navPoint id="navPoint-32" playOrder="32">
+    <navPoint id="navPoint-22" playOrder="22">
       <navLabel>
         <text>How to start?</text>
       </navLabel>
-      <content src="Text/_How%20to%20start.xhtml"/>
-      <navPoint id="navPoint-33" playOrder="33">
+      <content src="Text/_How%20to%20start.xhtml" />
+      <navPoint id="navPoint-23" playOrder="23">
         <navLabel>
           <text>Start with a good name</text>
         </navLabel>
-        <content src="Text/_How%20to%20start.xhtml#sigil_toc_id_25"/>
-        <navPoint id="navPoint-34" playOrder="34">
-          <navLabel>
-            <text>Consequences of bad naming</text>
-          </navLabel>
-          <content src="Text/_How%20to%20start.xhtml#sigil_toc_id_26"/>
-        </navPoint>
-        <navPoint id="navPoint-35" playOrder="35">
-          <navLabel>
-            <text>What's in a good name?</text>
-          </navLabel>
-          <content src="Text/_How%20to%20start.xhtml#sigil_toc_id_27"/>
-        </navPoint>
-        <navPoint id="navPoint-36" playOrder="36">
-          <navLabel>
-            <text>My favourite convention</text>
-          </navLabel>
-          <content src="Text/_How%20to%20start.xhtml#sigil_toc_id_28"/>
-        </navPoint>
+        <content src="Text/_How%20to%20start.xhtml#sigil_toc_id_13" />
       </navPoint>
-      <navPoint id="navPoint-37" playOrder="37">
+      <navPoint id="navPoint-24" playOrder="24">
         <navLabel>
           <text>Start by filling the GIVEN-WHEN-THEN structure with the obvious</text>
         </navLabel>
-        <content src="Text/_How%20to%20start.xhtml#sigil_toc_id_29"/>
-        <navPoint id="navPoint-38" playOrder="38">
-          <navLabel>
-            <text>A simple example</text>
-          </navLabel>
-          <content src="Text/_How%20to%20start.xhtml#sigil_toc_id_30"/>
-        </navPoint>
+        <content src="Text/_How%20to%20start.xhtml#sigil_toc_id_14" />
       </navPoint>
-      <navPoint id="navPoint-39" playOrder="39">
+      <navPoint id="navPoint-25" playOrder="25">
         <navLabel>
           <text>Start from the end</text>
         </navLabel>
-        <content src="Text/_How%20to%20start.xhtml#sigil_toc_id_31"/>
-        <navPoint id="navPoint-40" playOrder="40">
-          <navLabel>
-            <text>A simple example</text>
-          </navLabel>
-          <content src="Text/_How%20to%20start.xhtml#sigil_toc_id_32"/>
-        </navPoint>
+        <content src="Text/_How%20to%20start.xhtml#sigil_toc_id_15" />
       </navPoint>
-      <navPoint id="navPoint-41" playOrder="41">
+      <navPoint id="navPoint-26" playOrder="26">
         <navLabel>
           <text>Start by invoking a method when you have one</text>
         </navLabel>
-        <content src="Text/_How%20to%20start.xhtml#sigil_toc_id_33"/>
-        <navPoint id="navPoint-42" playOrder="42">
-          <navLabel>
-            <text>A simple example</text>
-          </navLabel>
-          <content src="Text/_How%20to%20start.xhtml#sigil_toc_id_34"/>
-        </navPoint>
+        <content src="Text/_How%20to%20start.xhtml#sigil_toc_id_16" />
       </navPoint>
-      <navPoint id="navPoint-43" playOrder="43">
+      <navPoint id="navPoint-27" playOrder="27">
         <navLabel>
           <text>Summary</text>
         </navLabel>
-        <content src="Text/_How%20to%20start.xhtml#sigil_toc_id_35"/>
+        <content src="Text/_How%20to%20start.xhtml#sigil_toc_id_17" />
       </navPoint>
     </navPoint>
-    <navPoint id="navPoint-44" playOrder="44">
+    <navPoint id="navPoint-28" playOrder="28">
       <navLabel>
         <text>How is TDD about analysis and what's with the GIVEN-WHEN-THEN structure?</text>
       </navLabel>
-      <content src="Text/_Analysis%20In%20TDD.xhtml"/>
-      <navPoint id="navPoint-45" playOrder="45">
+      <content src="Text/_Analysis%20In%20TDD.xhtml" />
+      <navPoint id="navPoint-29" playOrder="29">
         <navLabel>
           <text>Is there really a commonality between analysis and TDD?</text>
         </navLabel>
-        <content src="Text/_Analysis%20In%20TDD.xhtml#sigil_toc_id_36"/>
+        <content src="Text/_Analysis%20In%20TDD.xhtml#sigil_toc_id_18" />
       </navPoint>
-      <navPoint id="navPoint-46" playOrder="46">
+      <navPoint id="navPoint-30" playOrder="30">
         <navLabel>
           <text>Gherkin</text>
         </navLabel>
-        <content src="Text/_Analysis%20In%20TDD.xhtml#sigil_toc_id_37"/>
+        <content src="Text/_Analysis%20In%20TDD.xhtml#sigil_toc_id_19" />
       </navPoint>
-      <navPoint id="navPoint-47" playOrder="47">
+      <navPoint id="navPoint-31" playOrder="31">
         <navLabel>
           <text>TODO list... again!</text>
         </navLabel>
-        <content src="Text/_Analysis%20In%20TDD.xhtml#sigil_toc_id_38"/>
-        <navPoint id="navPoint-48" playOrder="48">
-          <navLabel>
-            <text>What to put on the TODO list?</text>
-          </navLabel>
-          <content src="Text/_Analysis%20In%20TDD.xhtml#sigil_toc_id_39"/>
-        </navPoint>
-        <navPoint id="navPoint-49" playOrder="49">
-          <navLabel>
-            <text>How to pick items from TODO list?</text>
-          </navLabel>
-          <content src="Text/_Analysis%20In%20TDD.xhtml#sigil_toc_id_40"/>
-        </navPoint>
-        <navPoint id="navPoint-50" playOrder="50">
-          <navLabel>
-            <text>Where to put a TODO list?</text>
-          </navLabel>
-          <content src="Text/_Analysis%20In%20TDD.xhtml#sigil_toc_id_41"/>
-        </navPoint>
+        <content src="Text/_Analysis%20In%20TDD.xhtml#sigil_toc_id_20" />
       </navPoint>
     </navPoint>
-    <navPoint id="navPoint-51" playOrder="51">
+    <navPoint id="navPoint-32" playOrder="32">
       <navLabel>
-        <text>Developing TDD style - Constrained Non-Determinism</text>
+        <text>Developing TDD style and Constrained Non-Determinism</text>
       </navLabel>
-      <content src="Text/_Constrained%20Non%20Determinism.xhtml"/>
-      <navPoint id="navPoint-52" playOrder="52">
+      <content src="Text/_Constrained%20Non%20Determinism.xhtml" />
+      <navPoint id="navPoint-33" playOrder="33">
         <navLabel>
           <text>A style?</text>
         </navLabel>
-        <content src="Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_42"/>
+        <content src="Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_21" />
       </navPoint>
-      <navPoint id="navPoint-53" playOrder="53">
+      <navPoint id="navPoint-34" playOrder="34">
         <navLabel>
           <text>Principle: Tests As Specification</text>
         </navLabel>
-        <content src="Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_43"/>
+        <content src="Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_22" />
       </navPoint>
-      <navPoint id="navPoint-54" playOrder="54">
+      <navPoint id="navPoint-35" playOrder="35">
         <navLabel>
           <text>First technique: Anonymous Input</text>
         </navLabel>
-        <content src="Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_44"/>
+        <content src="Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_23" />
       </navPoint>
-      <navPoint id="navPoint-55" playOrder="55">
+      <navPoint id="navPoint-36" playOrder="36">
         <navLabel>
           <text>Second Technique: Derived Values</text>
         </navLabel>
-        <content src="Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_45"/>
+        <content src="Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_24" />
       </navPoint>
-      <navPoint id="navPoint-56" playOrder="56">
+      <navPoint id="navPoint-37" playOrder="37">
         <navLabel>
           <text>Third technique: Distinct Generated Values</text>
         </navLabel>
-        <content src="Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_46"/>
+        <content src="Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_25" />
       </navPoint>
-      <navPoint id="navPoint-57" playOrder="57">
+      <navPoint id="navPoint-38" playOrder="38">
         <navLabel>
           <text>Fourth technique: Constant Specification</text>
         </navLabel>
-        <content src="Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_47"/>
+        <content src="Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_26" />
       </navPoint>
-      <navPoint id="navPoint-58" playOrder="58">
+      <navPoint id="navPoint-39" playOrder="39">
         <navLabel>
           <text>Summary of the example</text>
         </navLabel>
-        <content src="Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_48"/>
+        <content src="Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_27" />
       </navPoint>
-      <navPoint id="navPoint-59" playOrder="59">
+      <navPoint id="navPoint-40" playOrder="40">
         <navLabel>
           <text>Constrained non-determinism</text>
         </navLabel>
-        <content src="Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_49"/>
+        <content src="Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_28" />
       </navPoint>
-      <navPoint id="navPoint-60" playOrder="60">
+      <navPoint id="navPoint-41" playOrder="41">
         <navLabel>
           <text>Summary</text>
         </navLabel>
-        <content src="Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_50"/>
-        <navPoint id="navPoint-61" playOrder="61">
-          <navLabel>
-            <text>THIS IS ALL I HAVE FOR NOW. WHAT FOLLOWS IS RAW, UNORDERED MATERIAL THAT'S NOT YET READY TO BE CONSUMED AS PART OF THIS TUTORIAL</text>
-          </navLabel>
-          <content src="Text/End.xhtml"/>
-        </navPoint>
+        <content src="Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_29" />
       </navPoint>
-      <navPoint id="navPoint-62" playOrder="62">
+    </navPoint>
+    <navPoint id="navPoint-42" playOrder="42">
+      <navLabel>
+        <text>What is the scope of a unit-level Statement in TDD?</text>
+      </navLabel>
+      <content src="Text/_What%20is%20the%20scope%20of%20a%20Statement%20in%20TDD.xhtml" />
+      <navPoint id="navPoint-43" playOrder="43">
+        <navLabel>
+          <text></text>
+        </navLabel>
+        <content src="Text/_What%20Exactly%20Do%20We%20Specify.xhtml" />
+      </navPoint>
+      <navPoint id="navPoint-44" playOrder="44">
         <navLabel>
           <text>What exactly is the scope of a Statement? A class, a method, or something else?</text>
         </navLabel>
-        <content src="Text/_What%20Exactly%20Do%20We%20Specify.xhtml"/>
+        <content src="Text/_What%20Exactly%20Do%20We%20Specify.xhtml#sigil_toc_id_30" />
       </navPoint>
-      <navPoint id="navPoint-63" playOrder="63">
-        <navLabel>
-          <text>Why use anonymous generated values instead of literals as input of a specified behavior?</text>
-        </navLabel>
-        <content src="Text/_What%20Exactly%20Do%20We%20Specify.xhtml#sigil_toc_id_51"/>
-      </navPoint>
-      <navPoint id="navPoint-64" playOrder="64">
-        <navLabel>
-          <text>Why and how to use the Any class?</text>
-        </navLabel>
-        <content src="Text/_What%20Exactly%20Do%20We%20Specify.xhtml#sigil_toc_id_52"/>
-      </navPoint>
-      <navPoint id="navPoint-65" playOrder="65">
+      <navPoint id="navPoint-45" playOrder="45">
         <navLabel>
           <text>What code to extract from a Statement to shared utility method?</text>
         </navLabel>
-        <content src="Text/_What%20Exactly%20Do%20We%20Specify.xhtml#sigil_toc_id_53"/>
+        <content src="Text/_What%20Exactly%20Do%20We%20Specify.xhtml#sigil_toc_id_31" />
       </navPoint>
-      <navPoint id="navPoint-66" playOrder="66">
+      <navPoint id="navPoint-46" playOrder="46">
         <navLabel>
           <text>Why such a strange approach to create enumerated constants?</text>
         </navLabel>
-        <content src="Text/_What%20Exactly%20Do%20We%20Specify.xhtml#sigil_toc_id_54"/>
+        <content src="Text/_What%20Exactly%20Do%20We%20Specify.xhtml#sigil_toc_id_32" />
       </navPoint>
-      <navPoint id="navPoint-67" playOrder="67">
+      <navPoint id="navPoint-47" playOrder="47">
         <navLabel>
           <text>Expanded TDD process</text>
         </navLabel>
-        <content src="Text/_What%20Exactly%20Do%20We%20Specify.xhtml#sigil_toc_id_55"/>
+        <content src="Text/_What%20Exactly%20Do%20We%20Specify.xhtml#sigil_toc_id_33" />
       </navPoint>
-      <navPoint id="navPoint-68" playOrder="68">
+      <navPoint id="navPoint-48" playOrder="48">
         <navLabel>
-          <text>A TODO list</text>
+          <text>What exactly do we specify?</text>
         </navLabel>
-        <content src="Text/_What%20Exactly%20Do%20We%20Specify.xhtml#sigil_toc_id_56"/>
+        <content src="Text/_What%20Exactly%20Do%20We%20Specify.xhtml#sigil_toc_id_34" />
       </navPoint>
-    </navPoint>
-    <navPoint id="navPoint-69" playOrder="69">
-      <navLabel>
-        <text>What exactly do we specify?</text>
-      </navLabel>
-      <content src="Text/_What%20Exactly%20Do%20We%20Specify.xhtml#sigil_toc_id_57"/>
-      <navPoint id="navPoint-70" playOrder="70">
+      <navPoint id="navPoint-49" playOrder="49">
         <navLabel>
           <text>quick example (list? calculator?)</text>
         </navLabel>
-        <content src="Text/_What%20Exactly%20Do%20We%20Specify.xhtml#sigil_toc_id_58"/>
-      </navPoint>
-      <navPoint id="navPoint-71" playOrder="71">
-        <navLabel>
-          <text>Analysis in TDD - GIVEN-WHEN-THEN step</text>
-        </navLabel>
-        <content src="Text/_What%20Exactly%20Do%20We%20Specify.xhtml#sigil_toc_id_59"/>
-      </navPoint>
-      <navPoint id="navPoint-72" playOrder="72">
-        <navLabel>
-          <text>Should</text>
-        </navLabel>
-        <content src="Text/_What%20Exactly%20Do%20We%20Specify.xhtml#sigil_toc_id_60"/>
+        <content src="Text/_What%20Exactly%20Do%20We%20Specify.xhtml#sigil_toc_id_35" />
       </navPoint>
     </navPoint>
   </navMap>
