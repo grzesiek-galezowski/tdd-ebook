@@ -3,6 +3,11 @@
 ebook-convert ./Test-Driven\ Development\ -\ Extensive\ Tutorial.epub .mobi
 ebook-convert ./Test-Driven\ Development\ -\ Extensive\ Tutorial.epub .pdf
 cp ./Test-Driven\ Development\ -\ Extensive\ Tutorial.mobi /media/astral/Kindle/documents/Test-Driven\ Development\ -\ Extensive\ Tutorial.mobi
+
+cp ./Test-Driven\ Development\ -\ Extensive\ Tutorial.epub /home/astral/Dropbox/Public/
+cp ./Test-Driven\ Development\ -\ Extensive\ Tutorial.mobi /home/astral/Dropbox/Public/
+cp ./Test-Driven\ Development\ -\ Extensive\ Tutorial.pdf /home/astral/Dropbox/Public/
+
 unzip "Test-Driven Development - Extensive Tutorial.epub"
 git add *
 git add ./OEBPS
