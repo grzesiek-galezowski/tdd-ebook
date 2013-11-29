@@ -5,9 +5,9 @@ This ebook is an attempt to create open-source extensive tutorial on Test-Driven
 The main destination format is epub, conversion to mobi is done using calibre's 'ebook-convert' utility. Both formats are readily available for download, so please feel free to do so.
 
 Download: 
-[Epub](http://ubuntuone.com/5LaFN3KjCoHds8UM5hGHyL) |
-[Mobi](http://ubuntuone.com/0IJEF0YFAnM4GniIJsb4UC) |
-[Pdf](http://ubuntuone.com/3PuBC9CzuvEq3kLK5xj6e8) |
+[Epub](https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.epub) |
+[Mobi](https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.mobi) |
+[Pdf](https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.pdf) |
 [C# Toolkit](https://github.com/grzesiek-galezowski/tdd-toolkit)
 
 So far the following chapters are considered ready for reading:
