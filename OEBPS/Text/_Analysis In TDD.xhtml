@@ -9,7 +9,7 @@
 </head>
 
 <body>
-  <h1>How is TDD about analysis and what's with the GIVEN-WHEN-THEN structure?</h1>
+  <h1>How is TDD about analysis and what does "GIVEN-WHEN-THEN" mean?</h1>
 
   <h2 id="sigil_toc_id_18">Is there really a commonality between analysis and TDD?</h2>
 
@@ -29,13 +29,13 @@
 
   <p>In the story about Johnny, Benjamin and Jane, I included a part where they analyze requirements using concrete examples. Johnny explained that this is a part of a technique called Acceptance Test-Driven Development. The process followed by the three characters fulfilled both mentioned conditions for a process to be analytical. But what about TDD itself?</p>
 
-  <p>Actually, I used parts of ATDD process in the story to make the analysis part more obvious, but similar things happen at pure technical levels. For example, when starting development with a failing application-wide Statement (we'll talk about levels of granularity of Statements later. For now the only thing you need to know is that the so called "unit tests level" is not the only level of granularity we write Statements on), we may encounter a situation where we need to call a web method and assert its result. This makes us think: what should this method be called? What are the scenarios supported? What do I need to get out of it? How should its user be notified about errors? Many times, this leads us to either a conversation (if there's another stakeholder that needs to be involved in the decision) or rethinking our assumptions. This is how we gain a better understanding of the topic we're analyzing, which makes TDD fulfill the first of the two requirements for it to be an analysis method.</p>
+  <p>Actually, I used parts of ATDD process in the story to make the analysis part more obvious, but similar things happen at pure technical levels. For example, when starting development with a failing application-wide Statement (we will talk about levels of granularity of Statements later. For now the only thing you need to know is that the so called "unit tests level" is not the only level of granularity we write Statements on), we may encounter a situation where we need to call a web method and assert its result. This makes us think: what should this method be called? What are the scenarios supported? What do I need to get out of it? How should its user be notified about errors? Many times, this leads us to either a conversation (if there is another stakeholder that needs to be involved in the decision) or rethinking our assumptions. This is how we gain a better understanding of the topic we are analyzing, which makes TDD fulfill the first of the two requirements for it to be an analysis method.</p>
 
   <p>But what about the first requirement? What about breaking a complex logic into smaller parts?</p>
 
-  <p>If you go back to our example, you'll note that both when talking to a customer and when writing code, Johnny and Benjamin used a TODO list. This list was first filled with whatever scenarios they came up with, but later, they would add a smaller unit of work. This is one way complex topics are decomposed into smaller items that all land on the TODO list (the other way is mocking, but we won't get into that yet). Thanks to this, we can focus on one thing at a time, crossing off item after item from the list after it's done. If we learn something new or encounter new issue that needs our attention, we can add it to the TODO list and get back to it later, for now continuing our work on the current point of focus.</p>
+  <p>If you go back to our example, you will note that both when talking to a customer and when writing code, Johnny and Benjamin used a TODO list. This list was first filled with whatever scenarios they came up with, but later, they would add a smaller unit of work. This is one way complex topics are decomposed into smaller items that all land on the TODO list (the other way is mocking, but we will not get into that yet). Thanks to this, we can focus on one thing at a time, crossing off item after item from the list after it is done. If we learn something new or encounter new issue that needs our attention, we can add it to the TODO list and get back to it later, for now continuing our work on the current point of focus.</p>
 
-  <p>An example TODO list from the middle of implementation may look like this (don't read trough it, I put it here only to give you a glimpse):</p>
+  <p>An example TODO list from the middle of implementation may look like this (do not read trough it, I put it here only to give you a glimpse):</p>
 
   <ol style="font-style: italic;">
     <li>
@@ -69,13 +69,13 @@
 
   <p>Note that some items are already crossed out as done, while other remain undone and waiting to be addressed.</p>
 
-  <p>Ok, That's it for the discussion. Now that we're sure that TDD is about analysis, let's focus on the tools can use to aid and inform it. You already saw both of them in this book, now we're going to have a closer look.</p>
+  <p>Ok, that is it for the discussion. Now that we are sure that TDD is about analysis, let us focus on the tools can use to aid and inform it. You already saw both of them in this book, now we are going to have a closer look.</p>
 
   <h2 id="sigil_toc_id_19">Gherkin</h2>
 
-  <p>Hungry? Too bad, because the Gkerkin I'm gonna talk about is not edible. It's a notation and a way of thinking about behaviors of the specified piece of code. It can be applied on different levels of granularity - any behavior, whether of a whole system or a single class, may be described using it.</p>
+  <p>Hungry? Too bad, because the Gkerkin I am gonna talk about is not edible. It is a notation and a way of thinking about behaviors of the specified piece of code. It can be applied on different levels of granularity - any behavior, whether of a whole system or a single class, may be described using it.</p>
 
-  <p>We actually talked about Gherkin before in this book, just did not name it. It's the GIVEN-WHEN-THEN structure that you can see everywhere, even in code samples as comments. This time, we're stamping a name on it and analyzing it further.</p>
+  <p>We actually talked about Gherkin before in this book, just did not name it. It is the GIVEN-WHEN-THEN structure that you can see everywhere, even in code samples as comments. This time, we are stamping a name on it and analyzing it further.</p>
 
   <p>In Gherkin, a behavior description consists of three parts:</p>
 
@@ -89,18 +89,18 @@
 
   <p>In other words, the emphasis is on causality in a given context.</p>
 
-  <p>As I said, there are different levels you can apply this. Here's an example for such a behavior description from the perspective of its end user (this is called acceptance-level Statement):</p>
+  <p>As I said, there are different levels you can apply this. Here is an example for such a behavior description from the perspective of its end user (this is called acceptance-level Statement):</p>
   <pre>Given a bag of tea costs $20
 When I buy two of them
 Then I pay 30$ due to promotion</pre>
 
-  <p>And here's one for unit-level (note the line starting with "And" that adds to the context):</p>
+  <p>And here is one for unit-level (note the line starting with "And" that adds to the context):</p>
   <pre>Given a list with 2 items
 When I add another item
 And check count of items
 Then the count should be 3</pre>
 
-  <p>While on acceptance level we put such behavior descriptions together with code as the same artifact (If this doesn't ring a bell, look at tools like SpecFlow or Cucumber or FIT to get some examples), on the unit level the description is usually not written down literally, but in form of code only. Still, this structure is useful when thinking about behaviors required from an object or objects, as we saw when we talked about starting from Statement rather than code. I like to put the structure explicitly in my Statements - I find that it makes them more readable. So most of my unit-level Statements follow this template:</p>
+  <p>While on acceptance level we put such behavior descriptions together with code as the same artifact (If this does not ring a bell, look at tools like SpecFlow or Cucumber or FIT to get some examples), on the unit level the description is usually not written down literally, but in form of code only. Still, this structure is useful when thinking about behaviors required from an object or objects, as we saw when we talked about starting from Statement rather than code. I like to put the structure explicitly in my Statements - I find that it makes them more readable. So most of my unit-level Statements follow this template:</p>
   <pre>[Fact]
 public void Should__BEHAVIOR__()
 {
@@ -133,11 +133,11 @@ public void ShouldThrowExceptionWhenAskedToStoreNull()
 
   <h2 id="sigil_toc_id_20">TODO list... again!</h2>
 
-  <p>As we said previously, a TODO list is a repository for anything that comes to our mind when writing or thinking about a Statement, but is not a part o the current Statement we're writing. We don't want to forget it, neither do we want it to haunt us and distract us from our current task, so we write it down as soon as possible and continue with our current task.</p>
+  <p>As we said previously, a TODO list is a repository for anything that comes to our mind when writing or thinking about a Statement, but is not a part o the current Statement we are writing. We do not want to forget it, neither do we want it to haunt us and distract us from our current task, so we write it down as soon as possible and continue with our current task.</p>
 
-  <p>Suppose you're writing a piece of small logic that allows user access when he's an employee of a zoo, but denies access if he's a guest of the zoo. Then, after starting writing a Statement it gets to you that actually any employee can be a guest as well - for example, he might choose to visit the zoo with his family during his vacation. Still, the two previous rules hold, so not to allow this case to distract you, you quickly add an item to the TODO list (like "TODO: what if someone is an employee, but comes to the zoo as a guest?") and finish the current Statement. When you're finished, you can always come back to the list and pick item to do next.</p>
+  <p>Suppose you are writing a piece of small logic that allows user access when he is an employee of a zoo, but denies access if he is a guest of the zoo. Then, after starting writing a Statement it gets to you that actually any employee can be a guest as well - for example, he might choose to visit the zoo with his family during his vacation. Still, the two previous rules hold, so not to allow this case to distract you, you quickly add an item to the TODO list (like "TODO: what if someone is an employee, but comes to the zoo as a guest?") and finish the current Statement. When you are finished, you can always come back to the list and pick item to do next.</p>
 
-  <p>There are two important questions related to TODO lists: "what exactly should we add as a TODO list item?" and "How to efficiently manage the TODO list?". We'll take care of these two questions now.</p>
+  <p>There are two important questions related to TODO lists: "what exactly should we add as a TODO list item?" and "How to efficiently manage the TODO list?". We will take care of these two questions now.</p>
 
   <h3 class="sigil_not_in_toc">What to put on the TODO list?</h3>
 
@@ -162,11 +162,11 @@ public void ShouldThrowExceptionWhenAskedToStoreNull()
   <p>Another alternative is to use a TODO list functionality built-in into an IDE. Most IDEs, such as Visual Studio (and Resharper plugin has its own enhanced version), Xamarin Studio or eclipse-based IDEs have such functionality. The rules are simple - you put special comments in the code and a special view in your IDE aggregates them for you, allowing you to navigate to each. Such lists are great because:</p>
 
   <ol>
-    <li>They don't force you to take your hands off keyboard to add an item to the list.</li>
+    <li>They do not force you to take your hands off keyboard to add an item to the list.</li>
 
-    <li>You can put such item in a certain place in the code where is makes sense and then navigate back to it with a click of a mouse. This, apart from other advantages, lets you write shorter notes than if you had to do it on paper. For example, a TODO item saying "TODO: what if it throws an exception?" looks out of place on the paper, but when added as a comment to your code in the right place, it's mighty sufficient.</li>
+    <li>You can put such item in a certain place in the code where is makes sense and then navigate back to it with a click of a mouse. This, apart from other advantages, lets you write shorter notes than if you had to do it on paper. For example, a TODO item saying "TODO: what if it throws an exception?" looks out of place on the paper, but when added as a comment to your code in the right place, it is mighty sufficient.</li>
 
-    <li>Many TODO lists automatically add items for certain things. E.g. in C#, when you are yet to implement a method that was automatically generated by a tool, its body usually consists of a line that throws a <code>NotImplementedException</code> exception. Guess what - <code>NotImplementedException</code> occurences are added to the TODO list automatically, so we don't have to manually add items to the TODO list for implementing the methods where they occur.</li>
+    <li>Many TODO lists automatically add items for certain things. E.g. in C#, when you are yet to implement a method that was automatically generated by a tool, its body usually consists of a line that throws a <code>NotImplementedException</code> exception. Guess what - <code>NotImplementedException</code> occurences are added to the TODO list automatically, so we do not have to manually add items to the TODO list for implementing the methods where they occur.</li>
   </ol>
 
   <h3 class="sigil_not_in_toc">Expanded TDD process with a TODO list</h3>
@@ -187,12 +187,12 @@ public void ShouldThrowExceptionWhenAskedToStoreNull()
     <li>Repeat until no item is left on the TODO list</li>
   </ol>
 
-  <p>Of course, we're free to add new items to the TODO list as we make progress with the existing ones and at the beginning of each cycle the list is re-evaluated to choose the most important item to implement next taking into account what was added during the previous cycle.</p>
+  <p>Of course, we are free to add new items to the TODO list as we make progress with the existing ones and at the beginning of each cycle the list is re-evaluated to choose the most important item to implement next taking into account what was added during the previous cycle.</p>
 
   <h3 class="sigil_not_in_toc">Potential downsides</h3>
 
   <p>There are also some downsides. The biggest is that people often add TODO items for other means than to support TDD and they never go back to such items. Some people joke that a TODO left in the code means "Once, I wanted to...". Anyway, such items may pollute your TDD-related TODO list with so much cruft that your own items are barely findable. To work around it, I tend to use a different tag than TODO (many IDEs let you define your own tags, or support multiple tag types out of the box. E.g. with Resharper, I like to use "bug" tag, because this is something no one would leave in the code) and filter by it. Another options is, of course, getting rid of the leftover TODO items - if no one addressed it for a year, then probably no one ever will.</p>
 
-  <p>Another downside is that when you work with multiple workspaces/solutions, your IDE will gather TODO items only from current solution/workspace, so you'll have few TODO lists - one per workspace or solution. Fortunately, this isn't usually a big deal.</p>
+  <p>Another downside is that when you work with multiple workspaces/solutions, your IDE will gather TODO items only from current solution/workspace, so you will have few TODO lists - one per workspace or solution. Fortunately, this isn't usually a big deal.</p>
 </body>
 </html>
