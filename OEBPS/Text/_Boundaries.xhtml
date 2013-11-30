@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Specifying boundaries</title>
+</head>
+
+<body>
+  <h1>Specifying Behaviors Near Boundaries</h1>
+
+  <h2>A Disclaimer</h2>
+
+  <p>Before I begin, I have to admit that this chapter is mostly based on the material from a series of posts by Scot Bain and Amir Kolsky from the blog sustainabletdd.com and their upcoming book Sustainable Test Driven Development. I like their idea of boundaries so much that I just follow the guidelines they outlined. This chapter is going to be a rephrase of these guidelines.</p>
+
+  <h2>When boundaries come into play?</h2>
+
+  <p>When we specify a behavior, there are times when this behavior is the same no matter what arguments we pass in to constructor or invoked methods. An example would be an addition of two numbers - whatever numbers we would supply, the answer would always be a sum of those numbers:</p>
+  <pre>[Fact] public void
+ShouldCalculateTheSumOfPassedNumbers()
+{
+  //GIVEN
+  var a = Any.Integer();
+  var b = Any.Integer();
+
+  //WHEN
+  var result = new Sum().CalculateFrom(a, b);
+
+  //WHEN
+  Assert.Equal(a + b, result);
+}</pre>
+
+  <p>In this case, the integer numbers can really be "any" - the behavior should always occur. TODO write about "ANY"</p>
+
+  <p>Sometimes the expected behavior varies depending on what the input arguments of a method or class constructor are. E.g. a feature is allowed only for "admin" user, but denied for all others. Another example would be that some shops are open from 10:00 to 18:00, so if we had a method to ask whether the shop is currently open, we would expect it to answer differently based on what the current time is.</p>
+
+  <p>We already said that in case</p>
+</body>
+</html>

@@ -11,7 +11,6 @@
   <manifest>
     <item href="toc.ncx" id="ncx" media-type="application/x-dtbncx+xml" />
     <item href="Text/TDD%20is%20a%20good%20teacher.xhtml" id="TDD_is_a_good_teacher.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/We%20are%20in%20need%20of%20feedback.xhtml" id="We_are_in_need_of_feedback.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/Given%20When%20Then%20Negation.xhtml" id="Given_When_Then_Negation.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/How%20to%20test%20private%20methods.xhtml" id="How_to_test_private_methods.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/Null%20object%20specifications%20-%20Booby%20Trap%20pattern.xhtml" id="Null_object_specifications_-_Booby_Trap_pattern.xhtml" media-type="application/xhtml+xml" />
@@ -61,6 +60,8 @@
     <item href="Text/_Part1Marker.xhtml" id="_Part1Marker.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/_Constrained%20Non%20Determinism.xhtml" id="_Constrained_Non_Determinism.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/_Dedication.xhtml" id="_Dedication.xhtml" media-type="application/xhtml+xml" />
+    <item href="Text/_Triangulation.xhtml" id="_Triangulation.xhtml" media-type="application/xhtml+xml" />
+    <item href="Text/_Boundaries.xhtml" id="_Boundaries.xhtml" media-type="application/xhtml+xml" />
   </manifest>
   <spine toc="ncx">
     <itemref idref="Cover.xhtml" />
@@ -77,8 +78,9 @@
     <itemref idref="_Constrained_Non_Determinism.xhtml" />
     <itemref idref="_What_is_the_scope_of_a_Statement_in_TDD.xhtml" />
     <itemref idref="End.xhtml" />
+    <itemref idref="_Boundaries.xhtml" />
+    <itemref idref="_Triangulation.xhtml" />
     <itemref idref="_What_Exactly_Do_We_Specify.xhtml" />
-    <itemref idref="We_are_in_need_of_feedback.xhtml" />
     <itemref idref="The_Two_Main_Techniques_in_Test-Driven_development_part_2.xhtml" />
     <itemref idref="Test_Driven_Development_-_objections_part_1.xhtml" />
     <itemref idref="Test_Driven_Development_-_objections_part_2.xhtml" />
