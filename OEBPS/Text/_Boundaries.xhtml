@@ -14,9 +14,9 @@
 
   <p>Before I begin, I have to admit that this chapter is mostly based on the material from a series of posts by Scot Bain and Amir Kolsky from the blog sustainabletdd.com and their upcoming book Sustainable Test Driven Development. I like their idea of boundaries so much that I just follow the guidelines they outlined. This chapter is going to be a rephrase of these guidelines.</p>
 
-  <h2>When boundaries come into play?</h2>
+  <h2>Sometimes, anonymous value is not enough</h2>
 
-  <p>When we specify a behavior, there are times when this behavior is the same no matter what arguments we pass in to constructor or invoked methods. An example would be an addition of two numbers - whatever numbers we would supply, the answer would always be a sum of those numbers:</p>
+  <p>When we specify a behavior, there are times when this behavior should be the same no matter what arguments we pass in to constructor or invoked methods. An example would be an addition of two numbers - whatever numbers we would supply, the answer would always be a sum of those numbers:</p>
   <pre>[Fact] public void
 ShouldCalculateTheSumOfPassedNumbers()
 {
@@ -31,10 +31,49 @@ ShouldCalculateTheSumOfPassedNumbers()
   Assert.Equal(a + b, result);
 }</pre>
 
-  <p>In this case, the integer numbers can really be "any" - the behavior should always occur. TODO write about "ANY"</p>
+  <p>In this case, the integer numbers can really be "any" - the behavior should always occur. <strong>TODO write about "ANY"</strong></p>
 
-  <p>Sometimes the expected behavior varies depending on what the input arguments of a method or class constructor are. E.g. a feature is allowed only for "admin" user, but denied for all others. Another example would be that some shops are open from 10:00 to 18:00, so if we had a method to ask whether the shop is currently open, we would expect it to answer differently based on what the current time is.</p>
+  <p>Sometimes, however, the expected behavior varies depending on what the input arguments of a method or class constructor are. E.g. a feature is allowed only for "admin" user, but denied for all others. Another example would be that some shops are open from 10:00 to 18:00, so if we had a method to ask whether the shop is currently open, we would expect it to answer differently based on what the current time is.</p>
 
-  <p>We already said that in case</p>
+  <p>In such cases, Scott and Amir offer us other guidelines for choosing input values.</p>
+
+  <p>Exceptional cases</p>
+
+  <p>There are times, when a Statement is true for every value except one (or more) explicitly specified. For example, in Poland, high school students are graded for exams between "mediocre" and "very good". Every grade means the exam is passed with an exception of "mediocre". If imagine have to specify an object that decides whether the exam is passed based on rating, we would have to write two Statements: one for the mediocre rating and other for all the others.</p>
+
+  <p>Here's the Statement for mediocre grade (let's imagine that all grades are members of an enum):</p>
+  <pre>[Fact] public void
+ShouldNotPassTheExamWhenGradeIsMediocre()
+{
+  //GIVEN
+  var decision = new PassOrNotDecision();
+
+  //WHEN
+  var examPassed = decision.MakeFor(Grades.Mediocre);
+
+  //THEN
+  Assert.False(examPassed);
+}</pre>
+
+  <p>Note that here, we used the literal value of <code>Grades.Mediocre</code>. This is because no other value gives the same behavior, so generating the value would not make sense.</p>
+
+  <p>The second Statement is for all the other cases. Here, we are going to use another method of the <code>Any</code> class for generating ay enum member other than specified:</p>
+  <pre>[Fact] public void
+ShouldPassTheExamWhenGradeIsOtherThanMediocre()
+{
+  //GIVEN
+  var decision = new PassOrNotDecision();
+
+  //WHEN
+  var examPassed 
+    = decision.MakeFor(Any.Besides(Grades.Mediocre));
+
+  //THEN
+  Assert.True(examPassed);
+}</pre>
+
+  <p>Here, <code>Any.Besides()</code> takes care of the value generation, producing a nice, readable code as a side effect.</p>
+
+  <p>The example shown above assumes there is only one exception to the rule (the mediocre grade). However, this concept can be scaled up to more values, as long as it is a finished, discrete set. If there are multiple exceptional values that produce the same behavior, a single Statement is sufficient to cover them all (using <code>Any</code> class and making the following call for exception Statement: <code>Any.Of(value1, value2)</code> and the following for the rest: <code>Any.OtherThan(value1, value2)</code>). However, when there are multiple exceptions to the rule and each one triggers a different behavior, each one deserves its own Statement.</p>
 </body>
 </html>
