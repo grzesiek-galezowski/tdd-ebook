@@ -5,7 +5,7 @@
     <dc:title>Test-Driven Development - Extensive Tutorial</dc:title>
     <dc:creator opf:role="aut">Grzegorz Gałęzowski</dc:creator>
     <dc:language>en</dc:language>
-    <dc:date opf:event="modification">2013-12-07</dc:date>
+    <dc:date opf:event="modification">2013-12-17</dc:date>
     <meta content="0.7.2" name="Sigil version" />
   </metadata>
   <manifest>
@@ -62,6 +62,7 @@
     <item href="Text/_Dedication.xhtml" id="_Dedication.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/_Triangulation.xhtml" id="_Triangulation.xhtml" media-type="application/xhtml+xml" />
     <item href="Text/_Boundaries.xhtml" id="_Boundaries.xhtml" media-type="application/xhtml+xml" />
+    <item href="Text/_Tdd%20antipatterns.xhtml" id="_Tdd_antipatterns.xhtml" media-type="application/xhtml+xml" />
   </manifest>
   <spine toc="ncx">
     <itemref idref="Cover.xhtml" />
@@ -81,6 +82,7 @@
     <itemref idref="_Boundaries.xhtml" />
     <itemref idref="_Triangulation.xhtml" />
     <itemref idref="_What_Exactly_Do_We_Specify.xhtml" />
+    <itemref idref="_Tdd_antipatterns.xhtml" />
     <itemref idref="The_Two_Main_Techniques_in_Test-Driven_development_part_2.xhtml" />
     <itemref idref="Test_Driven_Development_-_objections_part_1.xhtml" />
     <itemref idref="Test_Driven_Development_-_objections_part_2.xhtml" />
