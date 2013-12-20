@@ -8,7 +8,7 @@
 </head>
 
 <body>
-  <h1>Specifying Behaviors Near Boundaries</h1>
+  <h1>Specifying Boundaries and Conditions</h1>
 
   <h2>A Disclaimer</h2>
 
@@ -189,17 +189,35 @@ ShouldNotNegateNumberWhenItIsGreaterOrEqualToSmallestValueNotToNegate()
   <ol>
     <li>Age = 17, should yield result <code>TooYoung</code></li>
 
-    <li>Age = 18, should yield result <code>CanApply</code></li>
+    <li>Age = 18, should yield result <code>AllowedToApply</code></li>
 
-    <li>Age = 65, should yield result <code>CanApply</code></li>
+    <li>Age = 65, should yield result <code>AllowedToApply</code></li>
 
     <li>Age = 66, should yield result <code>TooOld</code></li>
   </ol>
 
-  <p>thus, we would describe the behavior where the query should return <code>CanApply</code> value twice, which effectively means that we would copy-paste the Statement and change just one value. How do we deal with this?</p>
+  <p>thus, we would describe the behavior where the query should return <code>AllowedToApply</code> value twice, which effectively means that we would copy-paste the Statement and change just one value. How do we deal with this? Thankfully, we have a solution available:</p>
 
-  <p>TODO: 1. use NUNIt TestCase, 2. divide and conquer the problem.</p>
+  <p>Most xUnit frameworks provide some kind of data-driven test functionality, which we can use to write parameterized Statements. The functionality basically means that we can write the code of the Statement once, but make the xUnit framework invoke it twice with different sets of input values. Let's see an example in XUnit.net:</p>
+  <pre>[Theory]
+[InlineData(17, QueryResults.TooYoung)]
+[InlineData(18, QueryResults.AllowedToApply)]
+[InlineData(65, QueryResults.AllowedToApply)]
+[InlineData(66, QueryResults.TooOld)]
+public void ShouldYieldResultForAge(int age, QueryResults expectedResult)
+{
+  //GIVEN
+  var query = new DrivingLicenseQuery();
 
-  <p>youtuTODO: constant refactoring, TODO: with strings. TODO: with date time, TODO: explain that constants should always be used instead of literal values.</p>
+  //WHEN
+  var result = query.ExecuteFor(age);
+
+  //THEN
+  Assert.Equal(expectedResult, result);
+}</pre>
+
+  <p>This way, there is only one Statement executed four times. The case of <code>AllowedToApply</code> is still evaluated twice for both edge cases (so there is more time spent on executing it, which for small cases is not an issue), but the code maintenance issue is gone - we don't have to copy-paste the code to specify both edges of the behavior.</p>
+
+  <h2><br /></h2>
 </body>
 </html>
