@@ -9,6 +9,24 @@ div.achievement
     padding: 0.5em 1em;
 }
 
+div.disclaimer 
+{
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-top-style: solid;
+    border-bottom-style: solid;
+    border-top-color: black;
+    border-bottom-color: black;
+    padding: 0.5em 1em;
+    font-size: 0.9em;
+}
+
+div.disclaimer h3 {
+  font-size: 1em;
+  font-weight: bold;
+}
+
+
 .achievement h3:before {
   content: "Achievement: ";
 }
