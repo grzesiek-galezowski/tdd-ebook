@@ -10,14 +10,14 @@
 
 <body>
   <div class="disclaimer">
-    <h3>A Disclaimer</h3>
+    <h3 class="sigil_not_in_toc">A Disclaimer</h3>
 
     <p>Before I begin, I have to admit that this chapter is mostly based on the material from a series of posts by Scot Bain and Amir Kolsky from the blog Sustainable Test Driven Development and their upcoming book by the same title. I like their idea of boundaries so much that I just follow the guidelines they outlined. This chapter is going to be a rephrase of these guidelines. I placed it here so that you have all the important topics covered in one place, but I encourage you to read the original blog posts on this subject on http://www.sustainabletdd.com (and the upcoming book).</p>
   </div>
 
-  <h1>Specifying Boundaries and Conditions</h1>
+  <h1 id="sigil_toc_id_30">Specifying Boundaries and Conditions</h1>
 
-  <h2>Sometimes, anonymous value is not enough</h2>
+  <h2 id="sigil_toc_id_31">Sometimes, anonymous value is not enough</h2>
 
   <p>Objects usually exhibit different behaviors based on what is passed to their constructor and to their methods (OK, we also have static methods and singletons. Longer discussion on those will be included in one of the next chapters - for now we can safely ignore them). When we specify a behavior, there are times when this behavior should be the same no matter what arguments we pass to the constructor or invoked methods. An example would be an addition of two numbers - whatever numbers we would supply, the answer would always be a sum of those numbers:</p>
   <pre>[Fact] public void
@@ -40,7 +40,7 @@ ShouldCalculateTheSumOfTwoNumbers()
 
   <p>In such cases, Scott and Amir offer us other guidelines for choosing input values.</p>
 
-  <h2>Exceptions to the rule</h2>
+  <h2 id="sigil_toc_id_32">Exceptions to the rule</h2>
 
   <p>There are times, when a Statement is true for every value except one (or more) explicitly specified. For example, in Poland, high school students are graded for exams between "mediocre" and "very good". Every grade means the exam is passed except for "mediocre" grade which means the exam is failed. If we imagine we have to specify an object that decides whether the exam is passed based on rating, we would have to write two Statements: one for the mediocre rating and other for all the others.</p>
 
@@ -78,7 +78,7 @@ ShouldPassTheExamWhenGradeIsOtherThanMediocre()
 
   <p>The example shown above assumes there is only one exception to the rule (the mediocre grade). However, this concept can be scaled up to more values, as long as it is a finished, discrete set. If there are multiple exceptional values that produce the same behavior, a single Statement is sufficient to cover them all (using <code>Any</code> class and making the following call for exception Statement: <code>Any.Of(value1, value2)</code> and the following for the rest: <code>Any.OtherThan(value1, value2)</code>). However, when there are multiple exceptions to the rule and each one triggers a different behavior, each one deserves its own Statement.</p>
 
-  <h2>Rules Valid Within Boundaries</h2>
+  <h2 id="sigil_toc_id_33">Rules Valid Within Boundaries</h2>
 
   <p>Sometimes, a behavior varies around a numerical boundary. the simplest example would be calculating the absolute value of a number:</p>
 
@@ -180,7 +180,7 @@ ShouldNotNegateNumberWhenItIsGreaterOrEqualToSmallestValueNotToNegate()
 
   <p>Boundaries may look like they apply only to integer input, but they occur at many other places. There are boundaries associated with date/time (e.g. an action is performed if time from last action is at least than 30 seconds - the decision would need to be made whether we need precision in seconds or maybe in ticks), to strings (e.g. validation of name where name must be at least 2 characters, or password that must contain at least 2 special characters) etc.</p>
 
-  <h2>Combination of boundaries - ranges</h2>
+  <h2 id="sigil_toc_id_34">Combination of boundaries - ranges</h2>
 
   <p>So, what about a behavior that is valid in a range? Let us assume that we live in a country where a citizen can get a driving license only after their 17th birthday, but not after 65th (the government decided that people after 65 have worse sight and it's safer not to give them new driving licenses). Let us also assume that we try to develop a class that answers the question whether we can apply for driving license and the return values of this query are as follows:</p>
 
@@ -226,7 +226,7 @@ public void ShouldYieldResultForAge(int age, QueryResults expectedResult)
 
   <p>This way, there is only one Statement executed four times. The case of <code>AllowedToApply</code> is still evaluated twice for both edge cases (so there is more time spent on executing it, which for small cases is not an issue), but the code maintenance issue is gone - we don't have to copy-paste the code to specify both edges of the behavior.</p>
 
-  <h2>Summary</h2>
+  <h2 id="sigil_toc_id_35">Summary</h2>
 
   <p>In this chapter, we covered XXXXXXXXXXXXXXXXXX. There is one more kind of situation left: when we have compound conditions (e.g. a password must be at least 10 characters and contain at least 2 special characters) - we'll get back to those when we introduce mocks.</p>
 </body>
