@@ -30,3 +30,6 @@ If you see a grammar error or a sentence that can be phrased better, or somethin
 You are welcome to fork this ebook and make customized version for the programming language of your choice.
 
 
+```HTML
+<a href="https://plus.google.com/113457358555307974994" rel="publisher">Google+</a>
+```
