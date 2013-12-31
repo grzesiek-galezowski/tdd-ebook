@@ -8,7 +8,8 @@ Download:
 [Epub](https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.epub) |
 [Mobi](https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.mobi) |
 [Pdf](https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.pdf) |
-[C# Toolkit](https://github.com/grzesiek-galezowski/tdd-toolkit)
+[C# Toolkit](https://github.com/grzesiek-galezowski/tdd-toolkit) |
+<a href="https://plus.google.com/113457358555307974994" rel="publisher">Google+ Page</a>
 
 So far the following chapters are considered ready for reading:
 
@@ -31,5 +32,5 @@ If you see a grammar error or a sentence that can be phrased better, or somethin
 You are welcome to fork this ebook and make customized version for the programming language of your choice.
 
 
-<a href="https://plus.google.com/113457358555307974994" rel="publisher">Google+</a>
+
 
