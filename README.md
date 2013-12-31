@@ -9,7 +9,8 @@ Download:
 [Mobi](https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.mobi) |
 [Pdf](https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.pdf) |
 [C# Toolkit](https://github.com/grzesiek-galezowski/tdd-toolkit) |
-<a href="https://plus.google.com/113457358555307974994" rel="publisher">Google+ Page</a>
+<a href="https://plus.google.com/113457358555307974994" rel="publisher">Google+ Page</a> |
+<a href="https://www.facebook.com/tddebook">Facebook Page</a>
 
 So far the following chapters are considered ready for reading:
 
