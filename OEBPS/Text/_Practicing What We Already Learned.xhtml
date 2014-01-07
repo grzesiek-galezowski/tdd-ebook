@@ -1,11 +1,8 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-
+<?xml version='1.0' encoding='utf-8'?>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>Practicing what we already learned</title>
-  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
@@ -17,13 +14,13 @@
     <p>- Shang Tsung, Mortal Kombat The Movie</p>
   </blockquote>
 
-  <p>The above quote took place just before a fighting scene in which a nameless warrior jumped at Sub-Zero only to be frozen and broken into multiple pieces upon hitting the wall. The scene was not spectacular in terms of fighting technique or length. Also, the nameless guy did not even try hard - the only thing he did was to jump only to be hit by a freezing ball, which, by the way, he actually saw coming. It looked a lot like the fight was set up only to showcase Sub-Zero's freezing ability. Guess what? In this chapter, we are gonna do roughly the same thing - set up a fake, easy scenario just to showcase some of the basic TDD elements!</p>
+  <p>The above quote took place just before a fighting scene in which a nameless warrior jumped at Sub-Zero only to be frozen and broken into multiple pieces upon hitting the wall. The scene was not spectacular in terms of fighting technique or length. Also, the nameless guy did not even try hard - the only thing he did was to jump only to be hit by a freezing ball, which, by the way, he actually saw coming. It looked a lot like the fight was set up only to showcase Sub-Zero’s freezing ability. Guess what? In this chapter, we are gonna do roughly the same thing - set up a fake, easy scenario just to showcase some of the basic TDD elements!</p>
 
-  <p>The previous chapter was filled with a lot of theory and philosophy, don't you think? I really hope you did not fall asleep while reading it. To tell you the truth, we need to grasp much more theory until we are really able to write real-world applications using TDD. To compensate for this somehow, I propose we make a side trip from the trail and try what we already learned on a quick and easy example. As we go through the example, you might wonder how on earth could you possibly write real applications the way we will write our simple program. Do not worry, I will not show you all the tricks yet, so treat it as a "taste of things to come". In other words, the example will be as close to real world problems as the fight between Sub-Zero and nameless ninja was to real martial arts fight, but will show you some of the elements of TDD process.</p>
+  <p>The previous chapter was filled with a lot of theory and philosophy, don’t you think? I really hope you did not fall asleep while reading it. To tell you the truth, we need to grasp much more theory until we are really able to write real-world applications using TDD. To compensate for this somehow, I propose we make a side trip from the trail and try what we already learned on a quick and easy example. As we go through the example, you might wonder how on earth could you possibly write real applications the way we will write our simple program. Do not worry, I will not show you all the tricks yet, so treat it as a “taste of things to come”. In other words, the example will be as close to real world problems as the fight between Sub-Zero and nameless ninja was to real martial arts fight, but will show you some of the elements of TDD process.</p>
 
   <h2 id="sigil_toc_id_8">Let me tell you a story</h2>
 
-  <p>Meet Johnny and Benjamin, two developers from Buthig Company. Johnny is quite fluent in programming and Test-Driven Development, while Benjamin is an intern under Johnny's mentorship and is eager to learn TDD. They are on their way to their customer, Jane, who requested their presence as she wants them to do write a small program for her. Together with them, we will see how they interact with the customer and how Benjamin tries to understand the basics of TDD. Just as you, Benjamin is a novice so his questions may reflect yours. However, if you find anything explained in not enough details, do not worry - in the next chapters, we will be expanding on this material.</p>
+  <p>Meet Johnny and Benjamin, two developers from Buthig Company. Johnny is quite fluent in programming and Test-Driven Development, while Benjamin is an intern under Johnny’s mentorship and is eager to learn TDD. They are on their way to their customer, Jane, who requested their presence as she wants them to do write a small program for her. Together with them, we will see how they interact with the customer and how Benjamin tries to understand the basics of TDD. Just as you, Benjamin is a novice so his questions may reflect yours. However, if you find anything explained in not enough details, do not worry - in the next chapters, we will be expanding on this material.</p>
 
   <h2 id="sigil_toc_id_9">Act 1: The Car</h2>
 
@@ -59,7 +56,7 @@
 
   <p><strong>Johnny:</strong> Are you aware that apart from the fancy features that you were using we will have to allocate some effort to implement the basics that all the calculators have?</p>
 
-  <p><strong>Jane:</strong> Sure, I am OK with that. I am so used to my calculator application so much that if I use something else for more than few months, I will have to pay psychotherapist instead of you guys. Apart from that, writing a calculator app seems like a simple task in my mind, so the cost isn't going to be overwhelming, right?</p>
+  <p><strong>Jane:</strong> Sure, I am OK with that. I am so used to my calculator application so much that if I use something else for more than few months, I will have to pay psychotherapist instead of you guys. Apart from that, writing a calculator app seems like a simple task in my mind, so the cost isn’t going to be overwhelming, right?</p>
 
   <p><strong>Johnny:</strong> I think I get it. Let us get it going then. We will be implementing the functionality incrementally, starting with the most essential ones. Which feature of the calculator would you consider the most essential?</p>
 
@@ -67,12 +64,12 @@
 
   <p><strong>Johnny:</strong> Ok, that will be our target for the first iteration. After the iteration, we will deliver this part of functionality for you to try out and give us some feedback. However, before we can even implement addition, we will have to implement displaying digits on the screen as you enter them. Is that correct?</p>
 
-  <p><strong>Jane:</strong> yes, I want the display stuff to work as well - it is the most basic feature, so...</p>
+  <p><strong>Jane:</strong> yes, I want the display stuff to work as well - it is the most basic feature, so…</p>
 
   <p><strong>Johnny:</strong> Ok then, this is a simple functionality, so let me suggest some user stories as I understand what you already said and you will correct me where I am wrong. Here we go:</p>
 
   <ol>
-    <li><strong>In order to</strong> know that the calculator is turned on, <strong>As a</strong> tax payer <strong>I want</strong> to see "0" on the screen as soon as I turn it on.</li>
+    <li><strong>In order to</strong> know that the calculator is turned on, <strong>As a</strong> tax payer <strong>I want</strong> to see “0” on the screen as soon as I turn it on.</li>
 
     <li><strong>In order to</strong> see what numbers I am currently operating on, <strong>As a</strong> tax payer, <strong>I want</strong> the calculator to display the values I enter</li>
 
@@ -85,17 +82,17 @@
 
   <p><strong>Johnny:</strong> Now we will take each story and collect some examples of how it should work.</p>
 
-  <p><strong>Benjamin:</strong> Johnny, don't you think it is obvious enough to proceed with implementation straight away?</p>
+  <p><strong>Benjamin:</strong> Johnny, don’t you think it is obvious enough to proceed with implementation straight away?</p>
 
-  <p><strong>Johnny:</strong> Trust me, Benjamin, if there is one word I fear most in communication, it is "obvious". Miscommunication happens most often around things that people consider obvious, simply because other people do not.</p>
+  <p><strong>Johnny:</strong> Trust me, Benjamin, if there is one word I fear most in communication, it is “obvious”. Miscommunication happens most often around things that people consider obvious, simply because other people do not.</p>
 
   <p><strong>Jane:</strong> Ok, I am in. What do I do?</p>
 
-  <p><strong>Johnny:</strong> Let us go through stories one by one and see if we can find some key examples of how the features work. The first story is...</p>
+  <p><strong>Johnny:</strong> Let us go through stories one by one and see if we can find some key examples of how the features work. The first story is…</p>
 
-  <h3 class="sigil_not_in_toc"><strong>In order to</strong> know that the calculator is turned on, <strong>As a</strong> tax payer <strong>I want</strong> to see "0" on the screen as soon as I turn it on.</h3>
+  <h3 class="sigil_not_in_toc"><strong>In order to</strong> know that the calculator is turned on, <strong>As a</strong> tax payer <strong>I want</strong> to see “0” on the screen as soon as I turn it on.</h3>
 
-  <p><strong>Jane:</strong> I do not think there is much to talk about. If you display "0", I will be happy. That is all.</p>
+  <p><strong>Jane:</strong> I do not think there is much to talk about. If you display “0”, I will be happy. That is all.</p>
 
   <p><strong>Johnny:</strong> Let us write down this example:</p>
 
@@ -117,17 +114,17 @@
     </tr>
   </table>
 
-  <p><strong>Benjamin:</strong> That makes me wonder... what should happen when I press "0" again at this stage?</p>
+  <p><strong>Benjamin:</strong> That makes me wonder… what should happen when I press “0” again at this stage?</p>
 
-  <p><strong>Johnny:</strong> Good catch, that is what these examples are for - they make our thinking concrete. As Ken Pugh says: "Often the complete understanding of a concept does not occur until someone tries to use the concept". We would normally put it on a TODO list, because it is part of a different story, but we are actually done with this one, so let us move straight to the story about displaying entered digits. How about it, Jane?</p>
+  <p><strong>Johnny:</strong> Good catch, that is what these examples are for - they make our thinking concrete. As Ken Pugh says: “Often the complete understanding of a concept does not occur until someone tries to use the concept”. We would normally put it on a TODO list, because it is part of a different story, but we are actually done with this one, so let us move straight to the story about displaying entered digits. How about it, Jane?</p>
 
   <p><strong>Jane:</strong> Agree.</p>
 
   <h3 class="sigil_not_in_toc"><strong>In order to</strong> see what numbers I am currently operating on, <strong>As a</strong> tax payer, <strong>I want</strong> the calculator to display the values I enter</h3>
 
-  <p><strong>Johnny:</strong> Let us begin with the case raised by Benjamin. What should happen when I input "0" multiple times after I have only "0" on the display?</p>
+  <p><strong>Johnny:</strong> Let us begin with the case raised by Benjamin. What should happen when I input “0” multiple times after I have only “0” on the display?</p>
 
-  <p><strong>Jane:</strong> Just one "0" should be displayed</p>
+  <p><strong>Jane:</strong> Just one “0” should be displayed</p>
 
   <p><strong>Johnny:</strong> Do you mean this?</p>
 
@@ -239,7 +236,7 @@
     </tr>
   </table>
 
-  <p><strong>Jane:</strong> This scenario is correct, however, there is also a case when I start with "+" without inputting any number before. This should be treated as adding to zero:</p>
+  <p><strong>Jane:</strong> This scenario is correct, however, there is also a case when I start with “+” without inputting any number before. This should be treated as adding to zero:</p>
 
   <table>
     <tr>
@@ -281,9 +278,9 @@
 
   <p><strong>Jane:</strong> Sure, I do not mind. I do not add such big numbers anyway.</p>
 
-  <p><strong>Johnny:</strong> There is still one question we missed. Let us say that I input a number, then press "+" and then another number without asking for result with "=". What should I see?</p>
+  <p><strong>Johnny:</strong> There is still one question we missed. Let us say that I input a number, then press “+” and then another number without asking for result with “=”. What should I see?</p>
 
-  <p><strong>Jane:</strong> Every time you press "+", the calculator should consider entering current number finished and overwrite it as soon as you press any other digit:</p>
+  <p><strong>Jane:</strong> Every time you press “+”, the calculator should consider entering current number finished and overwrite it as soon as you press any other digit:</p>
 
   <table>
     <tr>
@@ -303,7 +300,7 @@
     </tr>
   </table>
 
-  <p><strong>Jane:</strong> Oh, and just asking for result after the calculator is turned on should result in "0".</p>
+  <p><strong>Jane:</strong> Oh, and just asking for result after the calculator is turned on should result in “0”.</p>
 
   <table>
     <tr>
@@ -411,7 +408,7 @@
 
   <p><strong>Jane:</strong> Fine with me. Looks like a lot of work. Nice that we discovered it up-front. For me, the limiting capability seemed so obvious that I did not even think it would be worth mentioning.</p>
 
-  <p><strong>Johnny:</strong> See? That is why I do not like the word "obvious". Jane, we will get back to you if any more questions arise. For now, II think we know enough to implement these three stories for you.</p>
+  <p><strong>Johnny:</strong> See? That is why I do not like the word “obvious”. Jane, we will get back to you if any more questions arise. For now, II think we know enough to implement these three stories for you.</p>
 
   <p><strong>Jane:</strong> good luck!</p>
 
@@ -451,9 +448,9 @@
 
   <p><strong>Johnny:</strong> start by writing the statement in a plain English. What should the calculator do?</p>
 
-  <p><strong>Benjamin:</strong> It should display "0" when I turn the application on.</p>
+  <p><strong>Benjamin:</strong> It should display “0” when I turn the application on.</p>
 
-  <p><strong>Johnny:</strong> In our case, "turning on" is creating a calculator. Let us write it down as a method name:</p>
+  <p><strong>Johnny:</strong> In our case, “turning on” is creating a calculator. Let us write it down as a method name:</p>
   <pre>public class CalculatorSpecification
 {
 
@@ -468,11 +465,11 @@ ShouldDisplay0WhenCreated()
 
   <p><strong>Benjamin:</strong> Why is the name of the class <code>CalculatorSpecification</code> and the name of the method <code>ShouldDisplay0WhenCreated</code>?</p>
 
-  <p><strong>Johnny:</strong> It is a naming convention. There are many others, but this is the one that I like. The rule is that when you take the name of the class without the <code>Specification</code> part followed by the name of the method, it should form a legit sentence. For instance, if I apply it to what we wrote, it would make a sentence: "Calculator should display 0 when created".</p>
+  <p><strong>Johnny:</strong> It is a naming convention. There are many others, but this is the one that I like. The rule is that when you take the name of the class without the <code>Specification</code> part followed by the name of the method, it should form a legit sentence. For instance, if I apply it to what we wrote, it would make a sentence: “Calculator should display 0 when created”.</p>
 
-  <p><strong>Benjamin:</strong> Ah, I see now. So it is a statement of behavior, isn't it?</p>
+  <p><strong>Benjamin:</strong> Ah, I see now. So it is a statement of behavior, isn’t it?</p>
 
-  <p><strong>Johnny:</strong> That is right. Now, the second trick I can sell to you is that if you do not know what code to start with, start with the expected result. In our case, we are expecting that the behavior will end up as displaying "0", right? So let us just write it in form of an assertion.</p>
+  <p><strong>Johnny:</strong> That is right. Now, the second trick I can sell to you is that if you do not know what code to start with, start with the expected result. In our case, we are expecting that the behavior will end up as displaying “0”, right? So let us just write it in form of an assertion.</p>
 
   <p><strong>Benjamin:</strong> You mean something like this?</p>
   <pre>public class CalculatorSpecification
@@ -536,7 +533,7 @@ ShouldDisplay0WhenCreated()
 
   <p><strong>Johnny:</strong> Bravo!</p>
 
-  <p><strong>Benjamin:</strong> Now the code still does not compile, because I do not have the <code>Calculator</code> class at all...</p>
+  <p><strong>Benjamin:</strong> Now the code still does not compile, because I do not have the <code>Calculator</code> class at all…</p>
 
   <p><strong>Johnny:</strong> sounds like a good reason to create it.</p>
 
@@ -565,18 +562,18 @@ ShouldDisplay0WhenCreated()
 {
   public string Display()
   {
-    return "Once upon a time in Africa...";
+    return "Once upon a time in Africa…";
   } 
 }
 </pre>
 
-  <p><strong>Johnny:</strong> Look, now we can run the Specification and watch that Statement evaluate to false, because it expects "0", but gets "Once upon a time in Africa...".</p>
+  <p><strong>Johnny:</strong> Look, now we can run the Specification and watch that Statement evaluate to false, because it expects “0”, but gets “Once upon a time in Africa…”.</p>
 
-  <p><strong>Benjamin:</strong> Running... Ok, it is false. By the way, do you always use such silly values to make Statements false?</p>
+  <p><strong>Benjamin:</strong> Running… Ok, it is false. By the way, do you always use such silly values to make Statements false?</p>
 
   <p><strong>Johnny:</strong> Hahaha, no, I just did it to emphasize the point. Normally, I would write <code>return "";</code> or something similarly simple. Now we can evaluate the Statement and see it evaluate to false. Now we are sure that we have not yet implemented what is required for the Statement to be true.</p>
 
-  <p><strong>Benjamin:</strong> I think I get it. For now, the Statement shows that we do not have something we need and gives us a reason to add this "thing". When we do so, this Statement will show that we do have what we need. So what do we do now?</p>
+  <p><strong>Benjamin:</strong> I think I get it. For now, the Statement shows that we do not have something we need and gives us a reason to add this “thing”. When we do so, this Statement will show that we do have what we need. So what do we do now?</p>
 
   <p><strong>Johnny:</strong> Write the simplest thing that makes this Statement true.</p>
 
@@ -594,21 +591,21 @@ ShouldDisplay0WhenCreated()
 
   <p><strong>Benjamin:</strong> But that is not a real implementation. What is the value behind putting in a hardcoded string? The final implementation is not going to be like this for sure!</p>
 
-  <p><strong>Johnny:</strong> You're right. The final implementation is most probably going to be different. What we did, however, is still valuable because:</p>
+  <p><strong>Johnny:</strong> You’re right. The final implementation is most probably going to be different. What we did, however, is still valuable because:</p>
 
   <ol>
-    <li>You're one step closer to implementing the final solution</li>
+    <li>You’re one step closer to implementing the final solution</li>
 
     <li>This feeling that this is not the final implementation points you towards writing more Statements. When there is enough Statements to make your implementation complete, it usually means that you have a complete Specification of class behaviors as well.</li>
 
-    <li>If you treat making every Statement true as an achievement, this practice allows you to evolve your code without losing what you already achieved. If by accident you break any of the behaviors you've already implemented, the Specification is going to tell you because one of the existing Statements that were previously true will then evaluate to false. You can then either fix it or undo your changes using version control and start over from the point where all existing Statements were true.</li>
+    <li>If you treat making every Statement true as an achievement, this practice allows you to evolve your code without losing what you already achieved. If by accident you break any of the behaviors you’ve already implemented, the Specification is going to tell you because one of the existing Statements that were previously true will then evaluate to false. You can then either fix it or undo your changes using version control and start over from the point where all existing Statements were true.</li>
   </ol>
 
   <p><strong>Benjamin:</strong> looks like quite a few benefits. Still, I will have to get used to this kind of working.</p>
 
   <p><strong>Johnny:</strong> do not worry, it is central to TDD, so you will grasp it in no time. Now, before we proceed to the next Statement, let us look at what we already achieved. First, we wrote a Statement that turned out false. Then, we wrote just enough code to make the Statement true. Time for a step called Refactoring. In this step, we will take a look at the Statement and the code and remove duplication. Can you see what is duplicated between the Statement and the code?</p>
 
-  <p><strong>Benjamin:</strong> both of them contain the literal "0". The Statement has it here:</p>
+  <p><strong>Benjamin:</strong> both of them contain the literal “0”. The Statement has it here:</p>
   <pre>Assert.Equal("0", displayedResult);</pre>
 
   <p>and the implementation here:</p>
@@ -637,11 +634,11 @@ ShouldDisplayInitialValueWhenCreated()
 }
 </pre>
 
-  <p><strong>Benjamin:</strong> The code looks better and having the constant in one place will make it more maintainable, but I think the Statement in its current form is weaker than before. We could change the <code>InitialValue</code> to anything and the Statement would still be true, since it does not force this constant to be "0".</p>
+  <p><strong>Benjamin:</strong> The code looks better and having the constant in one place will make it more maintainable, but I think the Statement in its current form is weaker than before. We could change the <code>InitialValue</code> to anything and the Statement would still be true, since it does not force this constant to be “0”.</p>
 
   <p>That is right. We need to add it to our TODO list to handle this case. Can you write it down?</p>
 
-  <p><strong>Benjamin:</strong> Sure. I will write it as "TODO: 0 should be used as an initial value."</p>
+  <p><strong>Benjamin:</strong> Sure. I will write it as “TODO: 0 should be used as an initial value.”</p>
 
   <p><strong>Johnny:</strong> Ok. We should handle it now, especially that it is part of the story we are currently implementing, but I will leave it for later just to show you the power of TODO list in TDD - whatever is on the list, we can forget and get back to when we have nothing better to do. Our next item from the list is this:</p>
 
@@ -693,7 +690,7 @@ ShouldDisplayEnteredDigits()
 
     <li>The Statement does not clearly show the relationship between input and output. Of course, in this simple case it is pretty self-evident that the sum is a concatenation of entered digits, we do not want anyone who will be reading this Specification in the future to have to guess.</li>
 
-    <li>The Statement suggests that what you wrote is sufficient for any value, which isn't true, since the behavior for "0" is different (no matter how many times we enter "0", the result is just "0")</li>
+    <li>The Statement suggests that what you wrote is sufficient for any value, which isn’t true, since the behavior for “0” is different (no matter how many times we enter “0”, the result is just “0”)</li>
   </ol>
 
   <p>Hence, I propose the following:</p>
@@ -733,13 +730,13 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 
   <p><strong>Benjamin:</strong> Now I get it. So how about the <code>Any.Besides()</code> and <code>Any.Of()</code>? What do they do?</p>
 
-  <p><strong>Johnny:</strong> They are methods from a small utility library I am using when writing unit-level Specifications. <code>Any.Besides()</code> returns any value from enumeration besides the one supplied as an argument. Hence, the call <code>Any.Besides(DigitKeys.Zero)</code> means "any of the values contained in DigitKeys enumeration, but not DigitKeys.Zero".</p>
+  <p><strong>Johnny:</strong> They are methods from a small utility library I am using when writing unit-level Specifications. <code>Any.Besides()</code> returns any value from enumeration besides the one supplied as an argument. Hence, the call <code>Any.Besides(DigitKeys.Zero)</code> means “any of the values contained in DigitKeys enumeration, but not DigitKeys.Zero”.</p>
 
   <p>The <code>Any.Of()</code> is simpler - it just returns any value in an enumeration. Note that when I create the values this way, I state explicitly that this behavior occurs when first digit is non-zero. This technique of using generated values instead of literals has its own principles, but let us leave it for later. I promise to give you a detailed lecture on it. Agree?</p>
 
   <p><strong>Benjamin:</strong> You better do, because for now, I feel a bit uneasy with generating the values - it seems like the Statement we are writing is getting less deterministic this way. The last question - what about those weird comments you put in the code? Given? When? Then?</p>
 
-  <p><strong>Johnny:</strong> Yes, this is a convention that I use, not only in writing, but in thinking as well. I like to think about every behavior in terms of three elements: assumptions (given), trigger (when) and expected result (then). Using the words, we can summarize the Statement we are writing in the following way: "<strong>Given</strong> a calculator, <strong>when</strong> I enter some digits first one being other than zero, <strong>then</strong> they should all be displayed in order they were entered". This is also something that I will tell you more about later.</p>
+  <p><strong>Johnny:</strong> Yes, this is a convention that I use, not only in writing, but in thinking as well. I like to think about every behavior in terms of three elements: assumptions (given), trigger (when) and expected result (then). Using the words, we can summarize the Statement we are writing in the following way: “<strong>Given</strong> a calculator, <strong>when</strong> I enter some digits first one being other than zero, <strong>then</strong> they should all be displayed in order they were entered”. This is also something that I will tell you more about later.</p>
 
   <p><strong>Benjamin:</strong> Sure, for now I need just enough detail to understand what is going on - we can talk about the principles, pros and cons later. By the way, the following sequence of casts looks a little bit ugly:</p>
   <pre>  string.Format("{0}{1}{2}", 
@@ -749,9 +746,9 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
   )
 </pre>
 
-  <p><strong>Johnny:</strong> We will get back to it and make it more "smarter" in a second after we make this statement true. For now, we need something obvious. Something we know works. Let us evaluate this Statement. What is the result?</p>
+  <p><strong>Johnny:</strong> We will get back to it and make it more “smarter” in a second after we make this statement true. For now, we need something obvious. Something we know works. Let us evaluate this Statement. What is the result?</p>
 
-  <p><strong>Benjamin:</strong> Failed, expected "331", but was "0".</p>
+  <p><strong>Benjamin:</strong> Failed, expected “331”, but was “0”.</p>
 
   <p><strong>Johnny:</strong> Good, now let us write some code to make this Statement true. First, let us introduce an enumeration of digits:</p>
   <pre>public enum DigitKeys
@@ -882,7 +879,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
  }
 </pre>
 
-  <p><strong>Benjamin:</strong> Running... Ok, it is false now. Expected "243", got "0".</p>
+  <p><strong>Benjamin:</strong> Running… Ok, it is false now. Expected “243”, got “0”.</p>
 
   <p><strong>Johnny:</strong> good, now we are pretty sure that it works OK. Let us uncomment the lines we just commented out and move forward.</p>
 
@@ -890,7 +887,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 
   <p><strong>Johnny:</strong> Benjamin, this should be easy for you, so go ahead and try it. It is really a variation of previous Statement.</p>
 
-  <p><strong>Benjamin:</strong> Let me try... ok, here it is:</p>
+  <p><strong>Benjamin:</strong> Let me try… ok, here it is:</p>
   <pre>[Fact] public void 
 ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipleTimes()
 {
@@ -911,7 +908,7 @@ ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipl
 
   <p><strong>Benjamin:</strong> It seems that our current code already fulfills the Statement. Should I try to comment some code to make sure this Statement can fail just like you did in the previous Statement?</p>
 
-  <p><strong>Johnny:</strong> That would be wise thing to do. When a Statement is true without requiring you to change any production code, it is always suspicious. Just like you said, we have to modify production code for a second to force this Statement to be false, then undo this modification to make it true again. This isn't as obvious as previously, so let me do it. I will mark all the added lines with <code>//+</code> comment so that you can see them easily:</p>
+  <p><strong>Johnny:</strong> That would be wise thing to do. When a Statement is true without requiring you to change any production code, it is always suspicious. Just like you said, we have to modify production code for a second to force this Statement to be false, then undo this modification to make it true again. This isn’t as obvious as previously, so let me do it. I will mark all the added lines with <code>//+</code> comment so that you can see them easily:</p>
   <pre>public class Calculator
 {
  int _result = 0;

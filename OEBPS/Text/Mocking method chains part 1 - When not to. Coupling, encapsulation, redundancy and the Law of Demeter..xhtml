@@ -1,30 +1,27 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-
+<?xml version='1.0' encoding='utf-8'?>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>Mocking method chains part 1: When not to. Coupling, encapsulation, redundancy and the Law of Demeter</title>
-  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
-  <p>Today I'd like to start discussing mocking of sequences of method call chains. This discussion will be split in two parts, part two coming soon.</p>
+  <p>Today I’d like to start discussing mocking of sequences of method call chains. This discussion will be split in two parts, part two coming soon.</p>
 
   <h3 class="sigil_not_in_toc">The basics of call chains</h3>
 
-  <p>When I say "call chain", I mean something like this:</p>
+  <p>When I say “call chain”, I mean something like this:</p>
   <pre class="brush: csharp">
 a.X().Y().Z().V();
 </pre>
 
-  <p>So basically we're just invoking methods on a result of another method. This is a construct that probably everyone programming in an object oriented language have come across, so I'll only note that I don't mean "call chain" merely as a synonym of invoking method on returned object (because it would be plain silly to make up a name for something that obvious), but rather the style of invoking methods "in a chain" as seen in the example above.</p>
+  <p>So basically we’re just invoking methods on a result of another method. This is a construct that probably everyone programming in an object oriented language have come across, so I’ll only note that I don’t mean “call chain” merely as a synonym of invoking method on returned object (because it would be plain silly to make up a name for something that obvious), but rather the style of invoking methods “in a chain” as seen in the example above.</p>
 
   <h3 class="sigil_not_in_toc">Call chains may be a design smell</h3>
 
-  <p>Now, one thing I want to make clear is that there's a point in mocking method chains only in specific situations. This is because call chains can be either a design smell or a sophisticated API design technique. Today, I'm gonna talk a little bit about the first case, leaving the latter for part two.</p>
+  <p>Now, one thing I want to make clear is that there’s a point in mocking method chains only in specific situations. This is because call chains can be either a design smell or a sophisticated API design technique. Today, I’m gonna talk a little bit about the first case, leaving the latter for part two.</p>
 
-  <p>Let's take a look at the following example of call chain being just a design smell (we're gonna discuss why in a minute):</p>
+  <p>Let’s take a look at the following example of call chain being just a design smell (we’re gonna discuss why in a minute):</p>
   <pre class="brush: csharp">
 bool wasWrittenInAmericanEnglish = message
   .GetWrappedFrame()
@@ -32,11 +29,11 @@ bool wasWrittenInAmericanEnglish = message
   .GetLocale() == "en-US";
 </pre>
 
-  <p>So, what's really wrong with this? I can guess that you've probably seen code like this many times before. The issue with the example above is that we're now coupled to all of the types of objects between the message object and the locale string. Also, we're coupled to the information that message language can be obtained by locale, as well as to the name of the en-US locale and so on.</p>
+  <p>So, what’s really wrong with this? I can guess that you’ve probably seen code like this many times before. The issue with the example above is that we’re now coupled to all of the types of objects between the message object and the locale string. Also, we’re coupled to the information that message language can be obtained by locale, as well as to the name of the en-US locale and so on.</p>
 
-  <p>Moreover, we're coupled to if and when will subsequent calls return valid objects. Let's say that there are some messages that do not contain a header and we can't obtain a locale information. We decide that we want to use application's default locale in such case - this decision will have to be properly handled by this code. If this isn't the only place where we need to follow this default locale policy, we've already introduced redundancy (oh, and did I say that we've violated encapsulation by failing to protect the information on how the locale is obtained?). Another example might be adding support for messages without locale specified in the header.</p>
+  <p>Moreover, we’re coupled to if and when will subsequent calls return valid objects. Let’s say that there are some messages that do not contain a header and we can’t obtain a locale information. We decide that we want to use application’s default locale in such case - this decision will have to be properly handled by this code. If this isn’t the only place where we need to follow this default locale policy, we’ve already introduced redundancy (oh, and did I say that we’ve violated encapsulation by failing to protect the information on how the locale is obtained?). Another example might be adding support for messages without locale specified in the header.</p>
 
-  <p>Here's how ugly may this kind of code turn when only these two constrains are loosened:</p>
+  <p>Here’s how ugly may this kind of code turn when only these two constrains are loosened:</p>
   <pre class="brush: csharp">
 const string EnUs = "en-US";
 bool wasWrittenInAmericanEnglish 
@@ -72,16 +69,16 @@ var wasWrittenInAmericanEnglish = locale == "en-US";
   <p>We mainly run into this kind of code in four situations:</p>
 
   <ol>
-    <li>We introduce it during bottom-up coding (because we have access to all the data wee need, just need to "reach it through the dots")</li>
+    <li>We introduce it during bottom-up coding (because we have access to all the data wee need, just need to “reach it through the dots”)</li>
 
-    <li>We introduce it when not using TDD, because there is nothing to tell us loud enough that it's wrong</li>
+    <li>We introduce it when not using TDD, because there is nothing to tell us loud enough that it’s wrong</li>
 
     <li>We introduce it by abusing mocking frameworks (whose authors usually add support for mocking of method chains, but not with such situations in mind)</li>
 
     <li>We encounter it in legacy code</li>
   </ol>
 
-  <p>In any case, you don't want to mock the methods chain. I mean, <strong>really really</strong>, you don't want to mock it. Or specify it.</p>
+  <p>In any case, you don’t want to mock the methods chain. I mean, <strong>really really</strong>, you don’t want to mock it. Or specify it.</p>
 
   <p>What you DO want to do is to refactor it into something like this:</p>
   <pre class="brush: csharp">
@@ -89,12 +86,12 @@ bool wasWrittenInAmericanEnglish
   = message.WasWrittenIn(Languages.AmericanEnglish);
 </pre>
 
-  <p>Here, the code is decoupled from all the information about the encapsulated calls - it doesn't know the structure of message object or the locale format used, or even that the check is made by comparing locale values of any sort. We're safe and sound.</p>
+  <p>Here, the code is decoupled from all the information about the encapsulated calls - it doesn’t know the structure of message object or the locale format used, or even that the check is made by comparing locale values of any sort. We’re safe and sound.</p>
 
-  <p>Also, it's very straightforward to mock, even with manual mocks. That's one of the reasons some of the TDD gurus suggest to use manual mocks (at least when getting started) - they provide more of the diagnostic pain that points where the design is going wrong.</p>
+  <p>Also, it’s very straightforward to mock, even with manual mocks. That’s one of the reasons some of the TDD gurus suggest to use manual mocks (at least when getting started) - they provide more of the diagnostic pain that points where the design is going wrong.</p>
 
   <p>And how to avoid running into such smelly chains when writing new code? My favorite technique is to use <a href="http://xunitpatterns.com/need-driven%20development.html">Need Driven Development</a>, at the same time forgetting about the call chain mocking feature of some of the mocking frameworks.</p>
 
-  <p>Ok, that's it for today, in the next installment, we'll take a look at some proper usage of call chains and three classes of such chains: ordered chains, unordered chains and chains with grammar. Stay tuned!</p>
+  <p>Ok, that’s it for today, in the next installment, we’ll take a look at some proper usage of call chains and three classes of such chains: ordered chains, unordered chains and chains with grammar. Stay tuned!</p>
 </body>
 </html>

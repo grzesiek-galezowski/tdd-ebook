@@ -1,31 +1,28 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-
+<?xml version='1.0' encoding='utf-8'?>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>How to test private methods?</title>
-  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
   <p>(Thanks go to Oleksandr Kravchenko for inspiration.)</p>
 
-  <p>This question gets asked over and over again. Actually, this is the question I've been asking myself for quite a long time.</p>
+  <p>This question gets asked over and over again. Actually, this is the question I’ve been asking myself for quite a long time.</p>
 
-  <p>Until I realized it's the wrong question to ask. So let's rephrase the question a little, rewind and start over:</p>
+  <p>Until I realized it’s the wrong question to ask. So let’s rephrase the question a little, rewind and start over:</p>
 
   <h3 class="post-title entry-title sigil_not_in_toc">What to do when you feel you need to test private methods?</h3>
 
-  <p>Now, that's better :-)</p>
+  <p>Now, that’s better :-)</p>
 
-  <p>Basically there are few ways to tackle this issue, depending on circumstances. I'll try to point them out starting from simplest.</p>
+  <p>Basically there are few ways to tackle this issue, depending on circumstances. I’ll try to point them out starting from simplest.</p>
 
-  <h3 class="sigil_not_in_toc">1. Don't do it.</h3>
+  <h3 class="sigil_not_in_toc">1. Don’t do it.</h3>
 
-  <p>As <a href="http://lizkeogh.com/2012/05/30/showcasing-the-language-of-bdd/">Liz Keogh pointed out (using BDD language, but it applies to TDD as well)</a>, unit tests in TDD or BDD are <strong>examples</strong> of how to use objects of the class and how is this class valuable to other classes. As such, unit test (or unit-level specifications if you will) should go through the public interface only (with an exception, that I'm going to introduce later).</p>
+  <p>As <a href="http://lizkeogh.com/2012/05/30/showcasing-the-language-of-bdd/">Liz Keogh pointed out (using BDD language, but it applies to TDD as well)</a>, unit tests in TDD or BDD are <strong>examples</strong> of how to use objects of the class and how is this class valuable to other classes. As such, unit test (or unit-level specifications if you will) should go through the public interface only (with an exception, that I’m going to introduce later).</p>
 
-  <p>Let's consider a code example:</p>
+  <p>Let’s consider a code example:</p>
   <pre class="brush: csharp">
 public class DishWasher
 {
@@ -53,7 +50,7 @@ public class DishWasher
 }
 </pre>
 
-  <p>Here, the private method is used solely to enhance readability. There's no need to specify it separately. We can easily write two specifications:</p>
+  <p>Here, the private method is used solely to enhance readability. There’s no need to specify it separately. We can easily write two specifications:</p>
 
   <div style="border: solid thin gray;">
     <ol>
@@ -63,39 +60,39 @@ public class DishWasher
     </ol>
   </div>
 
-  <p>And that's all - no need to excercise the private mehod, because from the specification point of view, it does not exist - the "washer capacity" thing is abstract enough to leave it in the spec.</p>
+  <p>And that’s all - no need to excercise the private mehod, because from the specification point of view, it does not exist - the “washer capacity” thing is abstract enough to leave it in the spec.</p>
 
-  <p>However, let's look at what I did with the actual washing - I made it a separate class and passed its instance to the washer. That's interesting - why isn't washing just a private method of the DishWasher class?</p>
+  <p>However, let’s look at what I did with the actual washing - I made it a separate class and passed its instance to the washer. That’s interesting - why isn’t washing just a private method of the DishWasher class?</p>
 
   <h3 class="sigil_not_in_toc">2. Move a responsibility by Introducing a collaborator (TDD) or moving method (Refactoring)</h3>
 
-  <p><strong>First, let's look at it from TDD (and Test-First) point of view.</strong></p>
+  <p><strong>First, let’s look at it from TDD (and Test-First) point of view.</strong></p>
 
-  <p>Usually, when doing TDD, we always think "outside the object", because the "inside" is always a result of failing spec/test and comes AFTER the spec. So, following the TDD process, we'd have no code and start with a specification in mind (let's remind it here):</p>
+  <p>Usually, when doing TDD, we always think “outside the object”, because the “inside” is always a result of failing spec/test and comes AFTER the spec. So, following the TDD process, we’d have no code and start with a specification in mind (let’s remind it here):</p>
 
   <p style="border: solid thin gray; padding: 1em;"><strong>Given</strong> I have a new set of dishes <strong>And</strong> the count of dishes is less than washer capacity, <strong>When</strong> I try to wash the dishes in the washer, <strong>Then</strong> it should perform the washing process.</p>
 
-  <p>Looking at this spec, we quickly run into conclusion that the behavior description of the dish washer ends with starting the washing process. We didn't go any further than that. How can we use this information? We can notice that there are actually two responsibilities involved.</p>
+  <p>Looking at this spec, we quickly run into conclusion that the behavior description of the dish washer ends with starting the washing process. We didn’t go any further than that. How can we use this information? We can notice that there are actually two responsibilities involved.</p>
 
-  <p>The first one is maintaining the right functionality of controlling the device (here, we're dealing with making sure the washing does not start when too many dishes are put inside, but it will probably include other scenarios soon, like "do not start washing when washing is in progress" or "Only start washing when the washer is turned on", or "Stop washing when washer is turned off" etc.)</p>
+  <p>The first one is maintaining the right functionality of controlling the device (here, we’re dealing with making sure the washing does not start when too many dishes are put inside, but it will probably include other scenarios soon, like “do not start washing when washing is in progress” or “Only start washing when the washer is turned on”, or “Stop washing when washer is turned off” etc.)</p>
 
-  <p>The other responsibility is the washing process, which is not started at the same time the washer turned on, so it is something more separate and has a logic of its own (e.g. how many phases are there, when to apply the detergent, how long does it take, how's the temperature of the water going to change along the washing process etc.).</p>
+  <p>The other responsibility is the washing process, which is not started at the same time the washer turned on, so it is something more separate and has a logic of its own (e.g. how many phases are there, when to apply the detergent, how long does it take, how’s the temperature of the water going to change along the washing process etc.).</p>
 
-  <p>As we discover, we did't specify the second part at all, so looks like for us, the responsibility of the washer ends with starting the washing process. Following Robert C. Martin's Single Responsibility Principle, it's good to move this washing process into a separate class. So, In TDD, you don't think about privacy or not - you think about _the_spec_ and it often tells you when you need to introduce a new collaborator by stressing different responsibilities. Private methods are introduced during the refactoring phase when you need to make some things a little more readable or eliminate redundancy.</p>
+  <p>As we discover, we did’t specify the second part at all, so looks like for us, the responsibility of the washer ends with starting the washing process. Following Robert C. Martin’s Single Responsibility Principle, it’s good to move this washing process into a separate class. So, In TDD, you don’t think about privacy or not - you think about _the_spec_ and it often tells you when you need to introduce a new collaborator by stressing different responsibilities. Private methods are introduced during the refactoring phase when you need to make some things a little more readable or eliminate redundancy.</p>
 
-  <p><strong>Ok, now let's look from the refactoring perspective.</strong></p>
+  <p><strong>Ok, now let’s look from the refactoring perspective.</strong></p>
 
-  <p>Imagine that you're dealing with a legacy code. All you have is the DishWasher class with the dish washing process coded inside as a private method. What you surely need to do is make sure that washing works OK by writing some unit tests that no one wrote ever before. In this case, it's usually useful to ask yourself a question: "Why do I think that I need to test the private method?". The answer is usually something like "because it has some complex logic, but well defined logic of it's own and I need to make sure that it works". Let's try to rephrase what you were trying to say by this (by the way, notice that a lot of this post up to now is about understanding your own reasoning :-) ). You actually said that "the washing is a separate responsibility and I have to make sure that it's fulfilled correctly". Well, if it's a separate responsibility, why is it in the DishWasher class? Quickly move the method into a new class and make it public! There - it's ready for testing! Wasn't THAT easy? :-)</p>
+  <p>Imagine that you’re dealing with a legacy code. All you have is the DishWasher class with the dish washing process coded inside as a private method. What you surely need to do is make sure that washing works OK by writing some unit tests that no one wrote ever before. In this case, it’s usually useful to ask yourself a question: “Why do I think that I need to test the private method?”. The answer is usually something like “because it has some complex logic, but well defined logic of it’s own and I need to make sure that it works”. Let’s try to rephrase what you were trying to say by this (by the way, notice that a lot of this post up to now is about understanding your own reasoning :-) ). You actually said that “the washing is a separate responsibility and I have to make sure that it’s fulfilled correctly”. Well, if it’s a separate responsibility, why is it in the DishWasher class? Quickly move the method into a new class and make it public! There - it’s ready for testing! Wasn’t THAT easy? :-)</p>
 
-  <p>Now, these two patterns (not testing and moving responsibilities) cover about 90% of cases. There is, however, a third case when you really want to test/specify private methods. Let's take a look at it now.</p>
+  <p>Now, these two patterns (not testing and moving responsibilities) cover about 90% of cases. There is, however, a third case when you really want to test/specify private methods. Let’s take a look at it now.</p>
 
   <h3 class="sigil_not_in_toc">3. Use inheritance</h3>
 
-  <p>(First, a disclaimer - I find this case very rare and usualy never run into it, so it was hard for me to find a good example. Please don't shout "hey, I can solve it by delegation instead of inheritance" - just bear with me :-)).</p>
+  <p>(First, a disclaimer - I find this case very rare and usualy never run into it, so it was hard for me to find a good example. Please don’t shout “hey, I can solve it by delegation instead of inheritance” - just bear with me :-)).</p>
 
-  <p>I'll start with the code, not the spec, since it's easier to understant the problem this way.</p>
+  <p>I’ll start with the code, not the spec, since it’s easier to understant the problem this way.</p>
 
-  <p>Let's say that you've got two models of dish washers. Each of them has a different policy for starting washing - the first one washes all dishes at once, and the seond one (a bigger one) implements a swapping functionality - it let's you put in twice as many dishes, then splits them into two chunks and performs washing for the dirst chunk, then the second chunk. Other than that, the washing process is the same. Let's say that we decided to make subclasses for different washers, overriding the "start washing" functionality. So, our DishWasher is now abstract and its Wash() method is implemented like this:</p>
+  <p>Let’s say that you’ve got two models of dish washers. Each of them has a different policy for starting washing - the first one washes all dishes at once, and the seond one (a bigger one) implements a swapping functionality - it let’s you put in twice as many dishes, then splits them into two chunks and performs washing for the dirst chunk, then the second chunk. Other than that, the washing process is the same. Let’s say that we decided to make subclasses for different washers, overriding the “start washing” functionality. So, our DishWasher is now abstract and its Wash() method is implemented like this:</p>
   <pre class="brush: csharp">
   public void Wash(Dishes dishes)
   {
@@ -108,7 +105,7 @@ public class DishWasher
   protected abstract void PerformWashing(dishes, dishWashing);
 </pre>
 
-  <p>Now, the "small" dish washer implements the method the following way:</p>
+  <p>Now, the “small” dish washer implements the method the following way:</p>
   <pre class="brush: csharp">
 protected void PerformWashing(Dishes dishes, DishWashing dishWashing)
 {
@@ -116,7 +113,7 @@ protected void PerformWashing(Dishes dishes, DishWashing dishWashing)
 }
 </pre>
 
-  <p>...and the "bigger", two-chunk washer does it like this:</p>
+  <p>…and the “bigger”, two-chunk washer does it like this:</p>
   <pre class="brush: csharp">
 protected void PerformWashing(Dishes dishes, DishWashing dishWashing)
 {
@@ -126,11 +123,11 @@ protected void PerformWashing(Dishes dishes, DishWashing dishWashing)
 }
 </pre>
 
-  <p>We've got two classes now, each of them inheriting the Wash() method from DishWasher class and implementing a different variant of starting the washing process. Do specify the whole Wash() method in both of these derived classes?</p>
+  <p>We’ve got two classes now, each of them inheriting the Wash() method from DishWasher class and implementing a different variant of starting the washing process. Do specify the whole Wash() method in both of these derived classes?</p>
 
-  <p>No. It's the responsibility of DishWasher and should be specified for it. But it's abstract. What do we do?</p>
+  <p>No. It’s the responsibility of DishWasher and should be specified for it. But it’s abstract. What do we do?</p>
 
-  <p>First of all, we're gonna use a partial mock inheriting from DishWasher to specify DishWasher's behavior. The only thing we want to specify/test is that the abstract PerformWashing() method actually gets called in certain circumstances, because this is where the DishWasher's responsibility ends. We can achieve this easily either with a mocking framework or with a simple manual mock:</p>
+  <p>First of all, we’re gonna use a partial mock inheriting from DishWasher to specify DishWasher’s behavior. The only thing we want to specify/test is that the abstract PerformWashing() method actually gets called in certain circumstances, because this is where the DishWasher’s responsibility ends. We can achieve this easily either with a mocking framework or with a simple manual mock:</p>
   <pre class="brush: csharp">
 public class DishWasherMock : DishWasher
 {
@@ -147,9 +144,9 @@ public class DishWasherMock : DishWasher
 } 
 </pre>
 
-  <p>In the spec, we only care about whether this method was called once with correct arguments and that's it.</p>
+  <p>In the spec, we only care about whether this method was called once with correct arguments and that’s it.</p>
 
-  <p>Now the more interesting part - what to do with the protected methods in the subclasses? We're gonna specify them as well! Let's see, who is allowed to access protected methods? Derived classes! Ha! Why not make our little test suite class derived from specific dish washer to allow it to access its protected members? Let's see how it works for the "small" dish washer:</p>
+  <p>Now the more interesting part - what to do with the protected methods in the subclasses? We’re gonna specify them as well! Let’s see, who is allowed to access protected methods? Derived classes! Ha! Why not make our little test suite class derived from specific dish washer to allow it to access its protected members? Let’s see how it works for the “small” dish washer:</p>
   <pre class="brush: csharp">
 public class SmallDishWasherSpecification : SmallDishWasher
 {
@@ -168,14 +165,14 @@ public class SmallDishWasherSpecification : SmallDishWasher
 
   <p>Note that ShouldJustStartWashing() is an instance method, so it has access to all public and protected instance methods of SmallDishWasher class.</p>
 
-  <p>"Bigger" washer follows the same patterns, so I'll leave it to you as an excercise. By the way, this technique works quite fine with classes that have protected constructors as well (although I'd never make such a class, but I know some folks do, e.g. in singletons or abstract classes).</p>
+  <p>“Bigger” washer follows the same patterns, so I’ll leave it to you as an excercise. By the way, this technique works quite fine with classes that have protected constructors as well (although I’d never make such a class, but I know some folks do, e.g. in singletons or abstract classes).</p>
 
-  <p>But what if something is private? Just make it protected - maybe shed a small tear, but in the long run, it's no big deal.</p>
+  <p>But what if something is private? Just make it protected - maybe shed a small tear, but in the long run, it’s no big deal.</p>
 
   <h3 class="sigil_not_in_toc">The last 1%</h3>
 
-  <p>This covers 99% of cases where you "need to" test the private method. The last 1% are some corner cases that are hard for me to even imagine. You can then use some of the "last resort techniques", like friends (C++), InternalsVisibleTo (C#), instrumentation/profiling API, reflection etc. but I really advise you to strongly consider the three options mentioned above before going that far.</p>
+  <p>This covers 99% of cases where you “need to” test the private method. The last 1% are some corner cases that are hard for me to even imagine. You can then use some of the “last resort techniques”, like friends (C++), InternalsVisibleTo (C#), instrumentation/profiling API, reflection etc. but I really advise you to strongly consider the three options mentioned above before going that far.</p>
 
-  <p>Ok, that's it. Have a good weekend!</p>
+  <p>Ok, that’s it. Have a good weekend!</p>
 </body>
 </html>

@@ -1,23 +1,20 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-
+<?xml version='1.0' encoding='utf-8'?>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title></title>
-  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
-  <p>Although the idea of <a href="http://osherove.com/tdd-kata-1/">doing code kata to practice TDD</a> is quite popular, I couldn't get on this train for a long time. The reason was that I was striving to find a kata that would help me practice or demonstrate a mock-based TDD, at the same time being simple and showing all the <a href="http://www.sustainabletdd.com/2012/01/test-categories.html">testing</a> <a href="http://www.sustainabletdd.com/2012/01/testing-best-practices-test-categories.html">categories</a>, as well as <a href="http://www.sustainabletdd.com/2011/10/test-reflexology-part-1-first-post.html">test</a> <a href="http://www.sustainabletdd.com/2011/10/test-reflexology-part-1-second-post.html">reflexology</a> in practice.</p>
+  <p>Although the idea of <a href="http://osherove.com/tdd-kata-1/">doing code kata to practice TDD</a> is quite popular, I couldn’t get on this train for a long time. The reason was that I was striving to find a kata that would help me practice or demonstrate a mock-based TDD, at the same time being simple and showing all the <a href="http://www.sustainabletdd.com/2012/01/test-categories.html">testing</a> <a href="http://www.sustainabletdd.com/2012/01/testing-best-practices-test-categories.html">categories</a>, as well as <a href="http://www.sustainabletdd.com/2011/10/test-reflexology-part-1-first-post.html">test</a> <a href="http://www.sustainabletdd.com/2011/10/test-reflexology-part-1-second-post.html">reflexology</a> in practice.</p>
 
   <p>This was until I ran into a situation that, with few simplifications, could be turned into a compelling kata to show off the power of mocks and Need-Driven Development.</p>
 
-  <p>I've decided to present the kata in a series of posts. This one is going to be about the challenge only.</p>
+  <p>I’ve decided to present the kata in a series of posts. This one is going to be about the challenge only.</p>
 
   <h3 class="sigil_not_in_toc">The challenge</h3>
 
-  <p>Imagine the following situations: you're creating a message processing module for a system that receives data in a form of frames from the network. The frame parsing is done using a proprietary third party library and your module receives the frames as deserialized objects. As the class for the objects is stored in the third-party library, you cannot change it (e.g. add or remove methods or change any signature).</p>
+  <p>Imagine the following situations: you’re creating a message processing module for a system that receives data in a form of frames from the network. The frame parsing is done using a proprietary third party library and your module receives the frames as deserialized objects. As the class for the objects is stored in the third-party library, you cannot change it (e.g. add or remove methods or change any signature).</p>
 
   <p>There is only one type of frame, described below:</p>
   <pre class="brush: csharp">
@@ -67,7 +64,7 @@ public class Frame
 
   <h3 class="sigil_not_in_toc">Two more posts to come - one for failure, one for success</h3>
 
-  <p>I believe that failure and success are both great opportunities to learn something valuable. So in the next post, <a href="http://feelings-erased.blogspot.com/2012/09/a-kata-challenge-to-try-your-tdd-skills_25.html">I'll try to show you how to screw up</a> :-) and what we can learn from the failure by listening to the tests.</p>
+  <p>I believe that failure and success are both great opportunities to learn something valuable. So in the next post, <a href="http://feelings-erased.blogspot.com/2012/09/a-kata-challenge-to-try-your-tdd-skills_25.html">I’ll try to show you how to screw up</a> :-) and what we can learn from the failure by listening to the tests.</p>
 
   <p>In the meantime, you can try to solve the kata yourself (coming up with any solutions should be trivial) and share your observations.</p>
 

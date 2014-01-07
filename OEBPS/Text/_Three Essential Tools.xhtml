@@ -1,11 +1,8 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-
+<?xml version='1.0' encoding='utf-8'?>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>The three most essential tools</title>
-  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
@@ -27,7 +24,7 @@
 
   <p>The first and most essential tool we are going to use is an xUnit framework.</p>
 
-  <p>Let us assume that our application looks like this:<br /></p>
+  <p>Let us assume that our application looks like this:<br/></p>
 
   <div style="text-align: center;"></div>
   <pre>public static void Main(string[] args) 
@@ -92,7 +89,7 @@ public static void AssertTwoIntegersAreEqual(
 }
 </pre>
 
-  <p>Note that I started the name of the method with "Assert" - we will get back to the naming soon, for now just assume that this is just a good name for the method. Let us take one last round and put the test into its own method:</p>
+  <p>Note that I started the name of the method with “Assert” - we will get back to the naming soon, for now just assume that this is just a good name for the method. Let us take one last round and put the test into its own method:</p>
   <pre>public static void Main(string[] args) 
 {
   Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers();
@@ -101,13 +98,13 @@ public static void AssertTwoIntegersAreEqual(
 public void 
 Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
 {
-  //Assuming...
+  //Assuming…
   var multiplication = new Multiplication(3,7);
   
   //when this happens:
   var result = multiplication.Perform();
   
-  //then the result should be...
+  //then the result should be…
   AssertTwoIntegersAreEqual(expected: 21, actual: result);
 }
 
@@ -127,7 +124,7 @@ public static void AssertTwoIntegersAreEqual(
   <p>As you can see, we can easily write automated checks like this, but this way has some disadvantages:</p>
 
   <ol>
-    <li>Every time we add new test, we have to maintain the <code>Main()</code> method, adding a call to the new test. If you forget to add such a call, the test will never be run. At first it isn't a big deal, but as soon as we have dozens of tests, it will get really hard to notice.</li>
+    <li>Every time we add new test, we have to maintain the <code>Main()</code> method, adding a call to the new test. If you forget to add such a call, the test will never be run. At first it isn’t a big deal, but as soon as we have dozens of tests, it will get really hard to notice.</li>
 
     <li>Imagine your system consists of more than one application - you would have some problems trying to gather summary results for all of the applications that your system consists of.</li>
 
@@ -136,7 +133,7 @@ public static void AssertTwoIntegersAreEqual(
     <li>Given that a test fails, it would be hard to navigate from the commandline output to the line in your IDE. Would it not be easier if you could click on the call stack to take you immediately to the code where the failure took place?</li>
   </ol>
 
-  <p>For these and other reasons, automated testing tools were born. Those testing tools are generally referenced to as <strong>xUnit family</strong>, because many of them have names that end with the word "Unit", e.g. CppUnit (for C++), JUnit (for Java), NUnit (for .NET) etc.</p>
+  <p>For these and other reasons, automated testing tools were born. Those testing tools are generally referenced to as <strong>xUnit family</strong>, because many of them have names that end with the word “Unit”, e.g. CppUnit (for C++), JUnit (for Java), NUnit (for .NET) etc.</p>
 
   <p>To be honest, I cannot wait to show you how the test we wrote just a minute ago looks like when xUnit framework is used, however, before I do this, I would like to recap quickly what we have in our brute-force naive approach to writing automated tests:</p>
 
@@ -152,13 +149,13 @@ public static void AssertTwoIntegersAreEqual(
   <pre>[Fact] public void 
 Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
 {
-  //Assuming...
+  //Assuming…
   var multiplication = new Multiplication(3,7);
   
   //when this happens:
   var result = multiplication.Perform();
   
-  //then the result should be...
+  //then the result should be…
   Assert.Equal(21, result);
 }
 </pre>
@@ -175,7 +172,7 @@ Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
 
   <p>Phew, I hope I made the transition quite painless for you. Now the last thing to add - as there is not <code>Main()</code> method anymore in the last example, you surely must wonder how we run those tests, right? Ok, the last big secret unveiled - we use an external application for this (we will refer to it using a term <strong>Test Runner</strong>) - we tell it which assemblies to run and it loads them, runs them, reports results etc. It can take various forms, e.g. it can be a console application, a GUI application or a plugin to our IDEs. Here is an example of a stand-alone runner for xUnit.NET framework:</p>
 
-  <p style="margin-left: auto; margin-right: auto;"><img alt="XUnit.NET.Window" src="../Images/XUnit.NET.Window.png" /></p>
+  <p style="margin-left: auto; margin-right: auto;"><img alt="XUnit.NET.Window" src="../Images/XUnit.NET.Window.png"/></p>
 
   <div class="achievement">
     <h3 class="sigil_not_in_toc">Sprinter</h3>
@@ -185,7 +182,7 @@ Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
 
   <h3 class="sigil_not_in_toc">Mocking framework</h3>
 
-  <p>Mocking frameworks are libraries that automate runtime creation of objects (called "mocks") that adhere to specified interface. Aside from the creation itself, the frameworks provide an API to configure our mocks on how they behave when certain methods are called on them and to let us inspect which calls they received.</p>
+  <p>Mocking frameworks are libraries that automate runtime creation of objects (called “mocks”) that adhere to specified interface. Aside from the creation itself, the frameworks provide an API to configure our mocks on how they behave when certain methods are called on them and to let us inspect which calls they received.</p>
 
   <p>Mocking frameworks are not as old as xUnit frameworks and were not present in TDD since the very beginning. As you might be wondering why on earth do we need something like this, I will let you in on a secret: they were born with a goal of aiding a specific approach to object oriented design in mind. This kind of design is what TDD supports as you will soon experience.</p>
 
@@ -194,7 +191,7 @@ Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
   <p>Let us pretend that we have the following code for adding new set of orders for products to a database and handling exceptions (by writing a message to a log) when it fails:</p>
   <pre>public class OrderProcessing
 {
-  //other code...
+  //other code…
 
   public void Place(Order order)
   {
@@ -208,11 +205,11 @@ Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
     }
   }
 
-  //other code...
+  //other code…
 }
 </pre>
 
-  <p>Now, imagine we need to test it - how do we do it? I can already see you shaking your head and saying: "Let us just create this database, invoke this method and see if the record is added properly". In such case, the first test would look like this:</p>
+  <p>Now, imagine we need to test it - how do we do it? I can already see you shaking your head and saying: “Let us just create this database, invoke this method and see if the record is added properly”. In such case, the first test would look like this:</p>
   <pre>
 [Fact]
 public void ShouldInsertNewOrderToDatabase()

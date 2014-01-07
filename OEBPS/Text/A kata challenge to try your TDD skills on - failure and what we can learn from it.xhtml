@@ -1,21 +1,18 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-
+<?xml version='1.0' encoding='utf-8'?>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>A kata challenge to try your TDD skills on - failure and what we can learn from it</title>
-  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
-  <p>As promised, today I'd like to show you a way to come up with a suboptimal solution to the <a href="http://feelings-erased.blogspot.com/2012/09/a-kata-challenge-to-try-your-tdd-skills.html">kata described earlier</a>.</p>
+  <p>As promised, today I’d like to show you a way to come up with a suboptimal solution to the <a href="http://feelings-erased.blogspot.com/2012/09/a-kata-challenge-to-try-your-tdd-skills.html">kata described earlier</a>.</p>
 
-  <p>I'll be using xUnit.NET as my unit test runner and NSubstitute as my mocking library of choice throughout this exercise. In general, I'll be following good practices most of the time and indicate where I'll be "accidentially" losing sight of them.</p>
+  <p>I’ll be using xUnit.NET as my unit test runner and NSubstitute as my mocking library of choice throughout this exercise. In general, I’ll be following good practices most of the time and indicate where I’ll be “accidentially” losing sight of them.</p>
 
   <h3 class="sigil_not_in_toc">Specification 1: Creating new instances</h3>
 
-  <p>We're starting outside-in, from the inputs. In my system, I'll model the most "outside" part of the module as a MessageProcessing class. We should be able to create instances of this class, so the first specification will tell just this:</p>
+  <p>We’re starting outside-in, from the inputs. In my system, I’ll model the most “outside” part of the module as a MessageProcessing class. We should be able to create instances of this class, so the first specification will tell just this:</p>
   <pre class="brush: csharp">
 [Fact]
 public void ShouldAllowCreatingNewInstancesWithoutExceptions()
@@ -31,11 +28,11 @@ public class MessageProcessing
 }
 </pre>
 
-  <p>Ok, so far so good. This, by the way, is a simple example of a <a href="http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html">Creational Specification</a>. Now let's take on a more complex behavior.</p>
+  <p>Ok, so far so good. This, by the way, is a simple example of a <a href="http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html">Creational Specification</a>. Now let’s take on a more complex behavior.</p>
 
   <h3 class="sigil_not_in_toc">Specification 2: Submitting frame to validation</h3>
 
-  <p>Ok, so now's the time to use the Given-When-Then analysis. We already have the MessageProcessing class - also, we've got the Frame class. How do they interact with each other?</p>
+  <p>Ok, so now’s the time to use the Given-When-Then analysis. We already have the MessageProcessing class - also, we’ve got the Frame class. How do they interact with each other?</p>
 
   <p>After giving it a short thought, we can come up with this obvious behavior description:</p>
   <pre style="padding: 1em; border: dashed thin gray;">
@@ -44,7 +41,7 @@ WHEN message processing is performed for it
 THEN it should submit the frame to validation
 </pre>
 
-  <p>Cool, let's get to implementing it. The first thing we want to do is to just translate the behavior description above to the code and see which abstractions and methods are missing - then supply them.</p>
+  <p>Cool, let’s get to implementing it. The first thing we want to do is to just translate the behavior description above to the code and see which abstractions and methods are missing - then supply them.</p>
 
   <p>The first line:</p>
   <pre style="padding: 1em; border: dashed thin gray;">
@@ -77,7 +74,7 @@ THEN it should submit the frame to validation
 validation.Received().PerformFor(anyFrame);
 </pre>
 
-  <p>Ok, so we've made the translation, now let's summarize this and see what's missing to make this code compile:</p>
+  <p>Ok, so we’ve made the translation, now let’s summarize this and see what’s missing to make this code compile:</p>
   <pre class="brush: csharp">
 [Fact] public void 
 ShouldSubmitFrameToValidationWhenPerformedForThatFrame()
@@ -94,7 +91,7 @@ ShouldSubmitFrameToValidationWhenPerformedForThatFrame()
 }
 </pre>
 
-  <p>What's missing? We have to somehow create the validation and pass it to MessageProcessing, since it's the entity responsible for performing the validation. And so, the corrected version looks like this.</p>
+  <p>What’s missing? We have to somehow create the validation and pass it to MessageProcessing, since it’s the entity responsible for performing the validation. And so, the corrected version looks like this.</p>
   <pre class="brush: csharp">
 [Fact] public void 
 ShouldSubmitFrameToValidationWhenPerformedForThatFrame()
@@ -112,9 +109,9 @@ ShouldSubmitFrameToValidationWhenPerformedForThatFrame()
 }
 </pre>
 
-  <p>As you can see, we've discovered one new abstraction - a validation, and two new methods: one for message processing and one for validation (accidentially, both named PerformFor()). Thus, we have <strong>created a need</strong> for all this new stuff to exist. Additionally, <strong>we made a mistake</strong> when dividing responsibilities between classes, and we'll see why later.</p>
+  <p>As you can see, we’ve discovered one new abstraction - a validation, and two new methods: one for message processing and one for validation (accidentially, both named PerformFor()). Thus, we have <strong>created a need</strong> for all this new stuff to exist. Additionally, <strong>we made a mistake</strong> when dividing responsibilities between classes, and we’ll see why later.</p>
 
-  <p>By the way, this is what's called a <a href="http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html">Work-Flow Specification</a>. Our workflow is very primitive, since it consists of forwarding a method call to another object. In real-world scenarios (and in the correct solution to this kata) workflows are more worthwile.</p>
+  <p>By the way, this is what’s called a <a href="http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html">Work-Flow Specification</a>. Our workflow is very primitive, since it consists of forwarding a method call to another object. In real-world scenarios (and in the correct solution to this kata) workflows are more worthwile.</p>
 
   <p>After creating all the necessary types and methods, the implementation looks like this:</p>
   <pre class="brush: csharp">
@@ -138,7 +135,7 @@ public interface Validation
 }
 </pre>
 
-  <p>Also, we've got to correct the first specification to cater for new construction argument:</p>
+  <p>Also, we’ve got to correct the first specification to cater for new construction argument:</p>
   <pre class="brush: csharp">
 [Fact]
 public void ShouldAllowCreatingNewInstancesWithoutExceptions()
@@ -149,9 +146,9 @@ public void ShouldAllowCreatingNewInstancesWithoutExceptions()
 }
 </pre>
 
-  <p>Note that I added a TODO next to the Validation interface - this is because I'll need to go back later and actually implement it. While I don't write much about a TODO list in this post, it's actually one of TDDer's best friends (maybe I'll write a post about it someday).</p>
+  <p>Note that I added a TODO next to the Validation interface - this is because I’ll need to go back later and actually implement it. While I don’t write much about a TODO list in this post, it’s actually one of TDDer’s best friends (maybe I’ll write a post about it someday).</p>
 
-  <p>Let's leave the validation for now. To make this specification I just wrote pass, I'll need to change the MessageProcessing class:</p>
+  <p>Let’s leave the validation for now. To make this specification I just wrote pass, I’ll need to change the MessageProcessing class:</p>
   <pre class="brush: csharp">
 public class MessageProcessing
 {
@@ -169,11 +166,11 @@ public class MessageProcessing
 }
 </pre>
 
-  <p>Now it's all green, so let's examine our TODO list. The only item on the list is the Validation interface implementation, so let's go ahead and create...</p>
+  <p>Now it’s all green, so let’s examine our TODO list. The only item on the list is the Validation interface implementation, so let’s go ahead and create…</p>
 
   <h3 class="sigil_not_in_toc">Specification 3: new instances of concrete validation.</h3>
 
-  <p>So we need a concrete implementation of the Validation interface. Let's call it BasicValidation, since the logic in there is gonna be really simple.</p>
+  <p>So we need a concrete implementation of the Validation interface. Let’s call it BasicValidation, since the logic in there is gonna be really simple.</p>
   <pre class="brush: csharp">
 [Fact]
 public void ShouldAllowCreatingNewInstancesWithoutExceptions()
@@ -184,7 +181,7 @@ public void ShouldAllowCreatingNewInstancesWithoutExceptions()
 }
 </pre>
 
-  <p>and now we've created <strong>a need</strong> for a class named SanityValidation. The code for SanityValidation class looks like this now:</p>
+  <p>and now we’ve created <strong>a need</strong> for a class named SanityValidation. The code for SanityValidation class looks like this now:</p>
   <pre class="brush: csharp">
 public class SanityValidation : Validation
 {
@@ -195,11 +192,11 @@ public class SanityValidation : Validation
 }
 </pre>
 
-  <p>Some tools, like Resharper, put occurences of NotImplementedException on the TODO list, which is a great feature, because replacing it with concrete implementation actually IS something "to do".</p>
+  <p>Some tools, like Resharper, put occurences of NotImplementedException on the TODO list, which is a great feature, because replacing it with concrete implementation actually IS something “to do”.</p>
 
   <h3 class="sigil_not_in_toc">Specification 4: Ignoring valid frames</h3>
 
-  <p>Starting from this chapter, we're going to feel the pain of my bad design decision more and more. In the grand finale, I'll show you what mess we've got ourselves into. But first things first, let's write the first specification of validation, which says:</p>
+  <p>Starting from this chapter, we’re going to feel the pain of my bad design decision more and more. In the grand finale, I’ll show you what mess we’ve got ourselves into. But first things first, let’s write the first specification of validation, which says:</p>
   <pre style="padding: 1em; border: dashed thin gray;">
 GIVEN a validation and a frame
 AND the frame has all its fields valid
@@ -231,7 +228,7 @@ ShouldNotThrowAnyExceptionWhenPerformedForFrameWithAllFieldsValid()
 
   <p>(By the way, this is called a <a href="http://www.sustainabletdd.com/2012/01/test-categories.html">Functional Specification</a>.)</p>
 
-  <p>Interesting... we had to know exactly what <strong>"all fields"</strong> mean. I wonder what will be the effect of adding new field to the frame in the future... We'll see more of that with upcoming specs. For now, let's just type in the implementation which is to remove throwing the NotImplementedException() from PerformFor() method. Oh, I almost forgot, we introduced a need to create a constant named MinValidInteger, so we have to add it to the SanityValidation class:</p>
+  <p>Interesting… we had to know exactly what <strong>“all fields”</strong> mean. I wonder what will be the effect of adding new field to the frame in the future… We’ll see more of that with upcoming specs. For now, let’s just type in the implementation which is to remove throwing the NotImplementedException() from PerformFor() method. Oh, I almost forgot, we introduced a need to create a constant named MinValidInteger, so we have to add it to the SanityValidation class:</p>
   <pre class="brush: csharp">
 public class SanityValidation : Validation
 {
@@ -242,11 +239,11 @@ public class SanityValidation : Validation
 }
 </pre>
 
-  <p>Note that we're not assigning this new constant any particular value - 12345 is just a dummy number. Moreover, we're putting a TODO next to the constant, since we'll want to revisit it later and actually write a specification on what the value of the constant should be. But for now - done. Time for the next one.</p>
+  <p>Note that we’re not assigning this new constant any particular value - 12345 is just a dummy number. Moreover, we’re putting a TODO next to the constant, since we’ll want to revisit it later and actually write a specification on what the value of the constant should be. But for now - done. Time for the next one.</p>
 
   <h3 class="sigil_not_in_toc">Specification 5: throwing exception on invalid Speed</h3>
 
-  <p>Let's describe the expected behavior:</p>
+  <p>Let’s describe the expected behavior:</p>
   <pre style="padding: 1em; border: dashed thin gray;">
 GIVEN a validation and a frame
 AND the frame has all its fields valid except for the Speed
@@ -254,7 +251,7 @@ WHEN the frame is submitted to validation
 THEN an exception should be thrown
 </pre>
 
-  <p>Note the <strong>"all fields"</strong> again... this is becoming very interesting. let's see what comes up when we put the spec into code:</p>
+  <p>Note the <strong>“all fields”</strong> again… this is becoming very interesting. let’s see what comes up when we put the spec into code:</p>
   <pre class="brush: csharp">
 [Fact] public void 
 ShouldThrowAnExceptionWhenPerformedForFrameWithInvalidSpeed()
@@ -276,7 +273,7 @@ ShouldThrowAnExceptionWhenPerformedForFrameWithInvalidSpeed()
 }
 </pre>
 
-  <p>Another Functional Specification. Note that we're repeating assignments to all of the frame fields. Also, we're repeating the knowledge on what it means to be "valid" for each field except the speed. Keep calm, the grand finale is getting nearer and nearer. For now, let's just pretend that nothing happened and add the necessary code to make this spec pass:</p>
+  <p>Another Functional Specification. Note that we’re repeating assignments to all of the frame fields. Also, we’re repeating the knowledge on what it means to be “valid” for each field except the speed. Keep calm, the grand finale is getting nearer and nearer. For now, let’s just pretend that nothing happened and add the necessary code to make this spec pass:</p>
   <pre class="brush: csharp">
 public class SanityValidation : Validation
 {
@@ -291,7 +288,7 @@ public class SanityValidation : Validation
 
   <h3 class="sigil_not_in_toc">Specification 6: throwing exceptions on invalid Age</h3>
 
-  <p>To be honest, nothing really interesting happens here, since it's almost the same as in the previous case. Let's just write the spec:</p>
+  <p>To be honest, nothing really interesting happens here, since it’s almost the same as in the previous case. Let’s just write the spec:</p>
   <pre class="brush: csharp">
 [Fact] public void 
 ShouldThrowAnExceptionWhenPerformedForFrameWithInvalidAge()
@@ -332,7 +329,7 @@ public class SanityValidation : Validation
 
   <h3 class="sigil_not_in_toc">Specification 7: Sender cannot be null</h3>
 
-  <p>Also, this one is analogous to the two previous ones, only this time we'll be checking for null instead of a numeric boundary:</p>
+  <p>Also, this one is analogous to the two previous ones, only this time we’ll be checking for null instead of a numeric boundary:</p>
   <pre class="brush: csharp">
 [Fact] public void 
 ShouldThrowAnExceptionWhenPerformedForFrameWithNullSender()
@@ -354,7 +351,7 @@ ShouldThrowAnExceptionWhenPerformedForFrameWithNullSender()
 }
 </pre>
 
-  <p>and here's the code:</p>
+  <p>and here’s the code:</p>
   <pre class="brush: csharp">
 public class SanityValidation : Validation
 {
@@ -371,11 +368,11 @@ public class SanityValidation : Validation
 }
 </pre>
 
-  <p>...and the last validation:</p>
+  <p>…and the last validation:</p>
 
   <h3 class="sigil_not_in_toc">Specification 8: Sender cannot be empty</h3>
 
-  <p>Almost exactly the same as the previous one. Comments are not needed. Here's the spec:</p>
+  <p>Almost exactly the same as the previous one. Comments are not needed. Here’s the spec:</p>
   <pre class="brush: csharp">
 [Fact] public void 
 ShouldThrowAnExceptionWhenPerformedForFrameWithEmptySender()
@@ -414,7 +411,7 @@ public class SanityValidation : Validation
 }
 </pre>
 
-  <p>and that's it for the validation logic - we've got all the behaviors nailed. The only thing left to do before I explain where (and why) I failed, is a specification for the constant that pollutes our TODO list:</p>
+  <p>and that’s it for the validation logic - we’ve got all the behaviors nailed. The only thing left to do before I explain where (and why) I failed, is a specification for the constant that pollutes our TODO list:</p>
 
   <h3 class="sigil_not_in_toc">Specification 9: Minimum Valid Integer for validations should be 1</h3>
 
@@ -427,7 +424,7 @@ ShouldUse1AsMinimumValidInteger()
 }
 </pre>
 
-  <p>This thing is called a <a href="http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html">Constant Specification</a>. To make it pass (because now it's failing - remember that we put 12345 as the value for MinValidInteger), we'll just have to change the value of the constant to 1:</p>
+  <p>This thing is called a <a href="http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html">Constant Specification</a>. To make it pass (because now it’s failing - remember that we put 12345 as the value for MinValidInteger), we’ll just have to change the value of the constant to 1:</p>
   <pre class="brush: csharp">
 public class SanityValidation : Validation
 {
@@ -445,17 +442,17 @@ public class SanityValidation : Validation
 }
 </pre>
 
-  <p>Ok, all behaviors nailed down, all specifications written, now it's time for a short retrospective.</p>
+  <p>Ok, all behaviors nailed down, all specifications written, now it’s time for a short retrospective.</p>
 
   <h3 class="sigil_not_in_toc">Where (and why) did I go wrong?</h3>
 
-  <p>The first mistake I made was in <strong>Specification 2</strong>. I just passed the whole frame to validation. What's wrong with that? By doing this, I failed to encapsulate the knowledge about the structure of the frame and eventually led to coupling all objects of the application to the Frame type. The frame is a third party class (you can't control how it changes), plus it's a data class (and <a href="http://www.codinghorror.com/blog/2006/05/code-smells.html">data classes are code smells</a>) - never couple your application to something as horrible as this!. Imagine the next version of the module would introduce compression and we'd handle this by introducing another class called Compression, then pass whole frame to it. Now every change to the Frame would impact both Validation and Compression object in the same way, introducing redundancy in dependencies and a maintainability pain - stronger with each new class that would need to operate on the frame. One of the goals of object oriented design is to keep data together with behaviors related to that data and that's exactly what I failed to achieve.</p>
+  <p>The first mistake I made was in <strong>Specification 2</strong>. I just passed the whole frame to validation. What’s wrong with that? By doing this, I failed to encapsulate the knowledge about the structure of the frame and eventually led to coupling all objects of the application to the Frame type. The frame is a third party class (you can’t control how it changes), plus it’s a data class (and <a href="http://www.codinghorror.com/blog/2006/05/code-smells.html">data classes are code smells</a>) - never couple your application to something as horrible as this!. Imagine the next version of the module would introduce compression and we’d handle this by introducing another class called Compression, then pass whole frame to it. Now every change to the Frame would impact both Validation and Compression object in the same way, introducing redundancy in dependencies and a maintainability pain - stronger with each new class that would need to operate on the frame. One of the goals of object oriented design is to keep data together with behaviors related to that data and that’s exactly what I failed to achieve.</p>
 
-  <p>The other mistake was to further fail to encapsulate the frame structure when it got into the Validation object. If you look at <strong>specifications 4, 5, 6, 7 and 8</strong> - all of them contain both the knowledge on which fields to validate and what "valid" means for each field. This led to many repetitions in the specs (adding a new field to Frame class would require changes in five specs plus adding a new one - a real horror!) and exposed smells in the production code itself, which are: violation of the Single Responsibility Principle (again, Validation is responsible for deciding which fields to validate as well as what the validations mean, making it bear two responsibilities) and redundancy (note that Age and Speed are validated the same way - the specification in my previous post did not assign a validation rule to fields, but to types - and I failed to eliminate the duplication between validations of two fields that are of the same type). And this is only for three fields! To give you a feel of the maintenance horror I mentioned, let's imagine how the truth table would look like if we had ten fields:</p>
+  <p>The other mistake was to further fail to encapsulate the frame structure when it got into the Validation object. If you look at <strong>specifications 4, 5, 6, 7 and 8</strong> - all of them contain both the knowledge on which fields to validate and what “valid” means for each field. This led to many repetitions in the specs (adding a new field to Frame class would require changes in five specs plus adding a new one - a real horror!) and exposed smells in the production code itself, which are: violation of the Single Responsibility Principle (again, Validation is responsible for deciding which fields to validate as well as what the validations mean, making it bear two responsibilities) and redundancy (note that Age and Speed are validated the same way - the specification in my previous post did not assign a validation rule to fields, but to types - and I failed to eliminate the duplication between validations of two fields that are of the same type). And this is only for three fields! To give you a feel of the maintenance horror I mentioned, let’s imagine how the truth table would look like if we had ten fields:</p>
 
   <table>
     <tr>
-      <th style="padding: 0.2em;"></th>
+      <th style="padding: 0.2em;"/>
 
       <th style="padding: 0.2em;">Spec 1</th>
 
@@ -741,8 +738,8 @@ public class SanityValidation : Validation
     </tr>
   </table>
 
-  <p>You get the issue, right? This code should be refactored, but I'm not going to do this, because I want to show you the correct solution next time. In the meantime, you can try to refactor yourself and see what you end up with. As always, comments are welcome.</p>
+  <p>You get the issue, right? This code should be refactored, but I’m not going to do this, because I want to show you the correct solution next time. In the meantime, you can try to refactor yourself and see what you end up with. As always, comments are welcome.</p>
 
-  <p>But until then... see ya!</p>
+  <p>But until then… see ya!</p>
 </body>
 </html>

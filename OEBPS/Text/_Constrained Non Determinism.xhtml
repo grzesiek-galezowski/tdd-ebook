@@ -1,11 +1,8 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-
+<?xml version='1.0' encoding='utf-8'?>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title></title>
-  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
@@ -19,7 +16,7 @@
 
   <p>Yep. Why am I wasting your time writing about style instead of giving you the hardcore technical details? The answer is simple. Before I started writing this tutorial, I read four or five books solely on TDD and maybe two others that contain chapters on TDD. All of this sums up to about two or three thousands of paper pages, plus numerous posts on many blogs. And you know what I noticed? No two authors use exactly the same sets of techniques for test-driving their code! I mean, sometimes, when you look techniques they are suggesting, the suggestions from two authorities contradict each other. As each authority has their followers, it is not uncommon to observe and take part in discussions about whether this or that technique is better than a competing one or which one leads to trouble in the long run.</p>
 
-  <p>I did this, too. I also tried to understand how come people praise techniques I KNEW were wrong and led to disaster. Then, Finally, I got it. I understood that it is not a "technique A vs. technique B" debate. There are certain sets of techniques that work together and choosing one technique leaves us with issues we have to resolve by adopting other techniques. This is how a style is created.</p>
+  <p>I did this, too. I also tried to understand how come people praise techniques I KNEW were wrong and led to disaster. Then, Finally, I got it. I understood that it is not a “technique A vs. technique B” debate. There are certain sets of techniques that work together and choosing one technique leaves us with issues we have to resolve by adopting other techniques. This is how a style is created.</p>
 
   <p>Developing a style starts with underlying set of principles. These principles lead us to adopt our first technique, which makes us adopt another one and, ultimately, a coherent style emerges. Using Constrained Non-Determinism as an example, I will try to show you how part of a style gets derived from a technique that is derived from a principle.</p>
 
@@ -39,13 +36,13 @@ ShouldCreateBackupFileNameContainingPassedHostName()
   Assert.Equal("backup_MY_HOST_NAME.zip");
 }</pre>
 
-  <p>Although the relationship can be guessed quite easily, remember it is just an example. Also, seeing code like that makes me ask questions like: is the "backup_" prefix always applied? What if I actually pass "backup_" instead of "MY_HOST_NAME"? Will the name be "backup_backup_.zip", or "backup_.zip"? Also, is this object responsible for any validation of passed string?</p>
+  <p>Although the relationship can be guessed quite easily, remember it is just an example. Also, seeing code like that makes me ask questions like: is the “backup_” prefix always applied? What if I actually pass “backup_” instead of “MY_HOST_NAME”? Will the name be “backup_backup_.zip”, or “backup_.zip”? Also, is this object responsible for any validation of passed string?</p>
 
   <p>This makes me invent a first technique to provide my Statements with better support for the principle I believe in.</p>
 
   <h2 id="sigil_toc_id_23">First technique: Anonymous Input</h2>
 
-  <p>I can wrap the actual value "MY_HOST_NAME" with a method and give it a name that better documents the constraints imposed on it by the specified functionality. In our case, we can pass whatever string we want (the object is not responsible for input validation), so we will name our method <code>AnyString()</code>:</p>
+  <p>I can wrap the actual value “MY_HOST_NAME” with a method and give it a name that better documents the constraints imposed on it by the specified functionality. In our case, we can pass whatever string we want (the object is not responsible for input validation), so we will name our method <code>AnyString()</code>:</p>
   <pre>[Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostName()
 {
@@ -65,9 +62,9 @@ public string AnyString()
   return "MY_HOST_NAME";
 }</pre>
 
-  <p>By using <strong>anonymous input</strong>, we provide a better documentation of the input value. Here, I wrote <code>AnyString()</code>, but of course, there can be a situation where I use more constrained data, e.g. <code>AnyAlphaNumericString()</code> when I need a string that does not contain any characters other than letters and digits. Note that this technique <strong>is applicable only when the particular value of the variable is not important, but rather its "trait"</strong>. Taking authorization as an example, when a certain behavior occurs only when the input value is <code>Users.Admin</code>, there is <strong>no sense</strong> making it anonymous. On the other hand, for a behavior that occurs for all values other than <code>Users.Admin</code>, it makes sense to use a method like <code>AnyUserOtherThan(Users.Admin)</code> or even <code>AnyNonAdminUser()</code>.</p>
+  <p>By using <strong>anonymous input</strong>, we provide a better documentation of the input value. Here, I wrote <code>AnyString()</code>, but of course, there can be a situation where I use more constrained data, e.g. <code>AnyAlphaNumericString()</code> when I need a string that does not contain any characters other than letters and digits. Note that this technique <strong>is applicable only when the particular value of the variable is not important, but rather its “trait”</strong>. Taking authorization as an example, when a certain behavior occurs only when the input value is <code>Users.Admin</code>, there is <strong>no sense</strong> making it anonymous. On the other hand, for a behavior that occurs for all values other than <code>Users.Admin</code>, it makes sense to use a method like <code>AnyUserOtherThan(Users.Admin)</code> or even <code>AnyNonAdminUser()</code>.</p>
 
-  <p>Now that the Statement itself is freed from the knowledge of the concrete value of <code>hostName</code> variable, the concrete value of "backup_MY_HOST_NAME.zip" looks kinda weird. There is no clear indication of the kind of relationship between input and output and whether there is any at all (one may reason whether the output is always the same string or maybe it depends on the string length). It is unclear which part is added by the production code and which part depends on the input we pass to the method. This leads us to another technique.</p>
+  <p>Now that the Statement itself is freed from the knowledge of the concrete value of <code>hostName</code> variable, the concrete value of “backup_MY_HOST_NAME.zip” looks kinda weird. There is no clear indication of the kind of relationship between input and output and whether there is any at all (one may reason whether the output is always the same string or maybe it depends on the string length). It is unclear which part is added by the production code and which part depends on the input we pass to the method. This leads us to another technique.</p>
 
   <h2 id="sigil_toc_id_24">Second Technique: Derived Values</h2>
 
@@ -90,13 +87,13 @@ public string AnyString()
   return "MY_HOST_NAME";
 }</pre>
 
-  <p>This looks more like a part of specification, because we are documenting the format of the backup file name and show which part of the format is variable and which part is fixed. This is something you would probably find documented in a paper specification for the application you are writing - it would probably contain a sentence saying: "The format of a backup file should be <strong>backup_H.zip</strong>, where <strong>H</strong> is the current local host name".</p>
+  <p>This looks more like a part of specification, because we are documenting the format of the backup file name and show which part of the format is variable and which part is fixed. This is something you would probably find documented in a paper specification for the application you are writing - it would probably contain a sentence saying: “The format of a backup file should be <strong>backup_H.zip</strong>, where <strong>H</strong> is the current local host name”.</p>
 
-  <p><strong>Derived values</strong> are about defining expected output in terms of the input that was passed to provide a clear indication on what is the "transformation" of the input required of the specified production code.</p>
+  <p><strong>Derived values</strong> are about defining expected output in terms of the input that was passed to provide a clear indication on what is the “transformation” of the input required of the specified production code.</p>
 
   <h2 id="sigil_toc_id_25">Third technique: Distinct Generated Values</h2>
 
-  <p>Let us assume that some time after our initial version is shipped, we are asked to make the backup feature applied locally per user only for this user's data. As the customer does not want to confuse files from different users, we are asked to add name of the user doing backup to the backup file name. Thus, the new format is "backup_H_U.zip", where H is still the host name and U is the user name. Our Statement for the pattern must change as well to include this information. Of course, we are trying to use the anonymous input again as a proven technique and we end up with:</p>
+  <p>Let us assume that some time after our initial version is shipped, we are asked to make the backup feature applied locally per user only for this user’s data. As the customer does not want to confuse files from different users, we are asked to add name of the user doing backup to the backup file name. Thus, the new format is “backup_H_U.zip”, where H is still the host name and U is the user name. Our Statement for the pattern must change as well to include this information. Of course, we are trying to use the anonymous input again as a proven technique and we end up with:</p>
   <pre>[Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostNameAndUserName()
 {
@@ -167,7 +164,7 @@ public string AnyString()
   return Guid.NewGuid.ToString();
 }</pre>
 
-  <p>This time, we are not returning an understandable string, but rather a guid, which gives us the fairly strong guarantee of generating distinct value each time. The string not being understandable (contrary to something like "MY_HOST_NAME") may leave you worried that maybe we are losing something, but hey, didn't we say <strong>Any</strong>String()?</p>
+  <p>This time, we are not returning an understandable string, but rather a guid, which gives us the fairly strong guarantee of generating distinct value each time. The string not being understandable (contrary to something like “MY_HOST_NAME”) may leave you worried that maybe we are losing something, but hey, didn’t we say <strong>Any</strong>String()?</p>
 
   <p><strong>Distinct generated values</strong> means that each time we need a value of a particular type, we get something different (if possible) than the last time and each value is generated automatically using some kind of heuristics.</p>
 
@@ -196,7 +193,7 @@ public string AnyString()
   return Guid.NewGuid.ToString();
 }</pre>
 
-  <p>Note that I didn't use the literal constant value, but rather, the value inside the <code>Version.Number</code> constant. This allows us to use derived value, but leaves us a little worried about whether the value of the constant is correct - after all, we are using it for creation of our expected value, but it is a part of production code - i.e. is something that should be specified itself!</p>
+  <p>Note that I didn’t use the literal constant value, but rather, the value inside the <code>Version.Number</code> constant. This allows us to use derived value, but leaves us a little worried about whether the value of the constant is correct - after all, we are using it for creation of our expected value, but it is a part of production code - i.e. is something that should be specified itself!</p>
 
   <p>To keep everyone happy, we write a single Statement just for the constant to specify what the value should be:</p>
   <pre>[Fact] public void 
@@ -214,7 +211,7 @@ ShouldContainNumberEqualTo1_0()
   <ol>
     <li>To introduce to you a set of techniques I personally use and recommend and to do it in a fluent and logical way.</li>
 
-    <li>To help you better communicate with people that are using different styles. Instead of just throwing "you are doing it wrong" at them, try to understand their principles and how their techniques of choice support those principles.</li>
+    <li>To help you better communicate with people that are using different styles. Instead of just throwing “you are doing it wrong” at them, try to understand their principles and how their techniques of choice support those principles.</li>
   </ol>
 
   <p>Now, let us take a quick summary of all the techniques introduced in example:</p>
@@ -246,7 +243,7 @@ ShouldContainNumberEqualTo1_0()
 
     <li>The values are generated in as distinct as possible sequence (which means that, whenever possible, no two values generated one after another hold the same value)</li>
 
-    <li>The non-determinism in generation of the values is constrained, which means that the algorithms for generating values are carefully picked in order to provide values that are not special in any way (e.g. when generating integers, we do not allow generating '0' as it is usually a special-case-value)) and that are not "evil" (e.g. for integers, we generate small positive values first and go with bigger numbers only when we run out of those small ones).</li>
+    <li>The non-determinism in generation of the values is constrained, which means that the algorithms for generating values are carefully picked in order to provide values that are not special in any way (e.g. when generating integers, we do not allow generating ‘0’ as it is usually a special-case-value)) and that are not “evil” (e.g. for integers, we generate small positive values first and go with bigger numbers only when we run out of those small ones).</li>
   </ol>
 
   <p>There are multiple ways to implement constrained non-determinism. Mark Seemann himself invented the AutoFixture library for C# that is freely available to download by anyone (the home is at https://github.com/AutoFixture/AutoFixture). Here is a shortest possible snippet to generate an anonymous integer using AutoFixture:</p>
@@ -257,6 +254,6 @@ var anonymousInteger = fixture.Create&lt;int&gt;();</pre>
 
   <h2 id="sigil_toc_id_29">Summary</h2>
 
-  <p>That was a long ride, wasn't it? I hope that this chapter, gave you some understanding of how different TDD styles came into existence and why I use some of the techniques I do (and how these techniques are not just a series of random choices). In the next chapters, I will try to introduce some more techniques to help you grow a bag of neat tricks - a coherent style.</p>
+  <p>That was a long ride, wasn’t it? I hope that this chapter, gave you some understanding of how different TDD styles came into existence and why I use some of the techniques I do (and how these techniques are not just a series of random choices). In the next chapters, I will try to introduce some more techniques to help you grow a bag of neat tricks - a coherent style.</p>
 </body>
 </html>

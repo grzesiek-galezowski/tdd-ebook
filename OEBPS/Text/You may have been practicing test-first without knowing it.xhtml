@@ -1,72 +1,69 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-
+<?xml version='1.0' encoding='utf-8'?>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>You may have been practicing test-first without knowing it</title>
-  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
-  <p>This post is going to be mostly about seeing TDD in a larger picture and is mostly inspired by some materials by Ken Pugh on Acceptance Test Driven Development (although it does not exactly echo Ken's opinions).</p>
+  <p>This post is going to be mostly about seeing TDD in a larger picture and is mostly inspired by some materials by Ken Pugh on Acceptance Test Driven Development (although it does not exactly echo Ken’s opinions).</p>
 
   <h3 class="sigil_not_in_toc">What is a requirement?</h3>
 
-  <p>Imagine you've got technical requirements, one of which looks like this:</p>
+  <p>Imagine you’ve got technical requirements, one of which looks like this:</p>
 
   <div style="border: solid thin gray; padding: 1em; margin: 1em;">
     All incoming e-mail messages that are directed to recipient called emergency@my.mail.com shall be broadcasted to all accounts in the my.mail.com domain
   </div>
 
-  <p>Here, the technical requirement defines a special emergency e-mail address that may be used as a kind of emergency notification mechanism (like when an error occurs on your website). What's usually expected from the development team is to take this requirement and implement, so that the requirement is fulfilled. In other words, this is a request to perform an amount of work.</p>
+  <p>Here, the technical requirement defines a special emergency e-mail address that may be used as a kind of emergency notification mechanism (like when an error occurs on your website). What’s usually expected from the development team is to take this requirement and implement, so that the requirement is fulfilled. In other words, this is a request to perform an amount of work.</p>
 
   <p>But <strong>how do you know that this amount of work needs to be performed</strong>? <strong>How do you know that you need to state such a requirement and send it to the development team</strong>?</p>
 
-  <p>Let's stop for a minute and consider these questions. Thinking about it, we can arrive at the following hypothetical situations:</p>
+  <p>Let’s stop for a minute and consider these questions. Thinking about it, we can arrive at the following hypothetical situations:</p>
 
   <ol>
     <li>A customer (be it business representative or real end-user) is familiar with another system, where such notification mechanism worked and worked well. Going to our system, he expects it to have a similar functionality. However, in a situation when he expects an emergency to be communicated to all staff, nothing happens.</li>
 
     <li>A customer is familiar with our system and knows what it can and cannot do. He comes up with an idea that having such feature would greatly increase visibility of website errors, and recognizes that up to now, the system does not implement it.</li>
 
-    <li>A customer not familiar with our system reads a user manual and discovers that this kind of functionality, which he knows he'll need, is not described in there, so looks like it does not exist.</li>
+    <li>A customer not familiar with our system reads a user manual and discovers that this kind of functionality, which he knows he’ll need, is not described in there, so looks like it does not exist.</li>
 
     <li>A customer is about to buy our system and as one of the feature he wants the system to support, he mentions emergency notification solution, but the sales representative tells him that the system does not support this kind of functionality</li>
   </ol>
 
   <h3 class="sigil_not_in_toc">Test-first</h3>
 
-  <p>We can imagine that one of the situations described above may have led to this new requirement being specified. But what are these situations? Let's try to rephrase them a little, adding a small comment in braces after each one that should clear the situation a bit:</p>
+  <p>We can imagine that one of the situations described above may have led to this new requirement being specified. But what are these situations? Let’s try to rephrase them a little, adding a small comment in braces after each one that should clear the situation a bit:</p>
 
   <ol>
-    <li>A customer leads to a situation where he expects everybody to be notified of the emergency situation, but they're not notified <span style="color: red;">(FAIL)</span>.</li>
+    <li>A customer leads to a situation where he expects everybody to be notified of the emergency situation, but they’re not notified <span style="color: red;">(FAIL)</span>.</li>
 
-    <li>A customer searches his memory expecting to find the fact that our system implements the feature, but cannot find the fact because it's not true <span style="color: red;">(FAIL)</span>.</li>
+    <li>A customer searches his memory expecting to find the fact that our system implements the feature, but cannot find the fact because it’s not true <span style="color: red;">(FAIL)</span>.</li>
 
-    <li>A customer expects the user manual to contain information that such a feature exists, but the manual says that it doesn't <span style="color: red;">(FAIL)</span>.</li>
+    <li>A customer expects the user manual to contain information that such a feature exists, but the manual says that it doesn’t <span style="color: red;">(FAIL)</span>.</li>
 
     <li>A customer expects the sales representative to tell him that their system supports the desired feature, but the representative tells him otherwise <span style="color: red;">(FAIL)</span></li>
   </ol>
 
-  <p>Yes, you've guessed it - these are tests! Well, maybe not JUnit/NUnit/Rspec/whateverUnit tests, but they're tests anyway. What's more, they're tests that fail, which makes us "repair" this "failure" by providing a technical requirement and then implementing it.</p>
+  <p>Yes, you’ve guessed it - these are tests! Well, maybe not JUnit/NUnit/Rspec/whateverUnit tests, but they’re tests anyway. What’s more, they’re tests that fail, which makes us “repair” this “failure” by providing a technical requirement and then implementing it.</p>
 
   <h3 class="sigil_not_in_toc">What got lost?</h3>
 
-  <p>Also, note that the tests tell nothing about e-mail and the broadcast address - they tell us that our customer expects everybody to be notified of emergency situation. The e-mail part is what's been added in the requirement. At the same time, another piece of information was dropped by translating test into technical requirement - the user's intention.</p>
+  <p>Also, note that the tests tell nothing about e-mail and the broadcast address - they tell us that our customer expects everybody to be notified of emergency situation. The e-mail part is what’s been added in the requirement. At the same time, another piece of information was dropped by translating test into technical requirement - the user’s intention.</p>
 
-  <p>It's because this requirement was <strong>HOW</strong> the user expectation should be satisfied.</p>
+  <p>It’s because this requirement was <strong>HOW</strong> the user expectation should be satisfied.</p>
 
-  <p>The sad part is that, although these tests contain some information that got "lost in translation" to technical requirements, usually such tests are never even stored, not mentioning automating them (which, in some cases, could be possible).</p>
+  <p>The sad part is that, although these tests contain some information that got “lost in translation” to technical requirements, usually such tests are never even stored, not mentioning automating them (which, in some cases, could be possible).</p>
 
   <p>There are two important lessons to learn from this story:</p>
 
   <ol>
-    <li>It's a pity that we don't value the tests that come before requirements</li>
+    <li>It’s a pity that we don’t value the tests that come before requirements</li>
 
-    <li>It's a pity that we can't see that <strong>tests come first</strong>. If we could, it would let us understand better why unit-level Test Driven Development makes perfect sense, because it's the same process of specifying what we expect to have, seeing it not fulfilled and then providing it.</li>
+    <li>It’s a pity that we can’t see that <strong>tests come first</strong>. If we could, it would let us understand better why unit-level Test Driven Development makes perfect sense, because it’s the same process of specifying what we expect to have, seeing it not fulfilled and then providing it.</li>
   </ol>
 
-  <p>Ok, that's it for today. Have fun!</p>
+  <p>Ok, that’s it for today. Have fun!</p>
 </body>
 </html>

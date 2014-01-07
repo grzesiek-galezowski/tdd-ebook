@@ -1,19 +1,16 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-
+<?xml version='1.0' encoding='utf-8'?>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <title>Starting off with unit testing and TDD? Here's my advice...</title>
-  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
+  <title>Starting off with unit testing and TDD? Here’s my advice…</title>
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
   <p>Thanks to Mark Mishaev for inspiration.</p>
 
-  <p>Sometimes, I hear that someone is trying to start off with unit testing or TDD and they ask me for some good advice on where to start - some general guidelines that would help them along the way. I thought I'd summarize my usual answer here for everyone to benefit from.</p>
+  <p>Sometimes, I hear that someone is trying to start off with unit testing or TDD and they ask me for some good advice on where to start - some general guidelines that would help them along the way. I thought I’d summarize my usual answer here for everyone to benefit from.</p>
 
-  <p>So, if you're starting off with unit testing or TDD, here's my advice:</p>
+  <p>So, if you’re starting off with unit testing or TDD, here’s my advice:</p>
 
   <ol>
     <li>Read at least these blogs to grasp some good practices:
@@ -23,11 +20,11 @@
 
         <li><a href="http://feelings-erased.blogspot.com">My own blog</a></li>
 
-        <li>There are some other good ones, just look around, I recommend blogs by Steeve Freeman, Roy Osherove, Dan North, Liz Keogh, Robert C. Martin, James W. Grenning, Kent Beck, Mark Seemann, James Newkirk...</li>
+        <li>There are some other good ones, just look around, I recommend blogs by Steeve Freeman, Roy Osherove, Dan North, Liz Keogh, Robert C. Martin, James W. Grenning, Kent Beck, Mark Seemann, James Newkirk…</li>
       </ul>
     </li>
 
-    <li>Pick up some books on the subject. The topic of unit testing and TDD might seem straightforward (there are a lot of simplifications around, such as "unit test is just a small code that creates a class, invokes a method and performs assertions on its output" and "TDD means you write your test first, then write the code"), but it actually requires quite a bit of knowledge to get things right. Also, don't limit yourself to a single book - read at least three or four - many TDD gurus have more or less different styles of doing TDD and writing unit tests and your own technique will get more and more flexible as you manage to understand more of them.</li>
+    <li>Pick up some books on the subject. The topic of unit testing and TDD might seem straightforward (there are a lot of simplifications around, such as “unit test is just a small code that creates a class, invokes a method and performs assertions on its output” and “TDD means you write your test first, then write the code”), but it actually requires quite a bit of knowledge to get things right. Also, don’t limit yourself to a single book - read at least three or four - many TDD gurus have more or less different styles of doing TDD and writing unit tests and your own technique will get more and more flexible as you manage to understand more of them.</li>
 
     <li>Try writing your tests first. For a list of benefits, take a look at:
 
@@ -40,7 +37,7 @@
 
     <li>For new code, try to follow <a href="http://www.jmock.org/oopsla2004.pdf">Need Driven Development</a></li>
 
-    <li>To drive your code and design, try exposing yourself to “diagnostic pain”. This means putting some limitations onto yourself and when you’re tempted to break them, it means that the code or design is at fault and you should refactor. To give you a quick example, I do not use Setup and TearDown kinds of methods in unit tests (not mentioning Action Attributes from NUnit), which means all the objects used in the unit test are created in the body of the test method itself. I sometimes use helper methods when they improve readability and understandability of the test (but not to hide redundancy - that's the catch). At first it might look awkward, but I have created a lot of unit tests without Setup and Teardown and I'm very happy with the result. So it’s not like I don’t know how to use a unit testing framework - I deliberately hold back from using many of its features</li>
+    <li>To drive your code and design, try exposing yourself to “diagnostic pain”. This means putting some limitations onto yourself and when you’re tempted to break them, it means that the code or design is at fault and you should refactor. To give you a quick example, I do not use Setup and TearDown kinds of methods in unit tests (not mentioning Action Attributes from NUnit), which means all the objects used in the unit test are created in the body of the test method itself. I sometimes use helper methods when they improve readability and understandability of the test (but not to hide redundancy - that’s the catch). At first it might look awkward, but I have created a lot of unit tests without Setup and Teardown and I’m very happy with the result. So it’s not like I don’t know how to use a unit testing framework - I deliberately hold back from using many of its features</li>
 
     <li>Ideally, a maintainable unit test has to fulfill three conditions, as <a href="http://www.netobjectives.com/resources/webinars/sustainable-tdd">pointed by Scott Bain</a>:
 
@@ -53,9 +50,9 @@
       </ol>This is the ideal - try to keep as close to it as possible.
     </li>
 
-    <li>Try using a technique called <a href="http://blog.ploeh.dk/2009/03/05/ConstrainedNonDeterminism.aspx">Constrained Non-Determinism</a>. You can either use tools that help with this (like AutoFixture for C#) directly, or you can wrap it in your own class (if you're reading my blog, you probably know that I like to wrap creating anonymous values in a class called Any). Alternatively, just roll out your own mini library or a set of functions.</li>
+    <li>Try using a technique called <a href="http://blog.ploeh.dk/2009/03/05/ConstrainedNonDeterminism.aspx">Constrained Non-Determinism</a>. You can either use tools that help with this (like AutoFixture for C#) directly, or you can wrap it in your own class (if you’re reading my blog, you probably know that I like to wrap creating anonymous values in a class called Any). Alternatively, just roll out your own mini library or a set of functions.</li>
 
-    <li>Use continuous testing tools, (examples for .NET include <a href="http://continuoustests.com/">Mighty Moose</a> (free) or <a href="www.ncrunch.net">NCrunch</a> (paid)) for running your unit tests. If no such solution exists for your programming language of choice, you can always write a script that performs continuous compilation and running unit tests and lets you know of the results. There are some tools like Watchr that can make writing such scripts easier (especially when integrated with your operating system's default user notification mechanism).</li>
+    <li>Use continuous testing tools, (examples for .NET include <a href="http://continuoustests.com/">Mighty Moose</a> (free) or <a href="www.ncrunch.net">NCrunch</a> (paid)) for running your unit tests. If no such solution exists for your programming language of choice, you can always write a script that performs continuous compilation and running unit tests and lets you know of the results. There are some tools like Watchr that can make writing such scripts easier (especially when integrated with your operating system’s default user notification mechanism).</li>
 
     <li>
       <a href="http://feelings-erased.blogspot.com/2012/09/what-is-scope-of-test-in-tdd.html">Always specify class behaviors</a> (not methods or classes) with unit tests – to help you with this, try using the following convention of naming your tests: ShouldXYZ() where XYZ is the description of the behavior the class should supply. The convention is taken from <a href="http://dannorth.net/introducing-bdd/">Dan North’s post</a> and helps to avoid:
@@ -65,15 +62,15 @@
 
         <li>Names that do not make sense. I saw one a unit test named: SendFrameMethodSendsFrame() which tells almost nothing about the behavior. The “Should” naming forces us to rethink the name and come up with something like: ShouldPassReceivedValidFrameThroughTheMessageQueue() which works better.</li>
 
-        <li>Also, pick names that read well when converted from "ThisNamingConvention" (or "This_naming_convention" - whatever you choose to apply to your unit test methods) to "this naming convention" – it lets you use the unit test results report in Cruise Control or Jenkins as a living documentation of your code after you apply a little post-procesing to it.</li>
+        <li>Also, pick names that read well when converted from “ThisNamingConvention” (or “This_naming_convention” - whatever you choose to apply to your unit test methods) to “this naming convention” – it lets you use the unit test results report in Cruise Control or Jenkins as a living documentation of your code after you apply a little post-procesing to it.</li>
 
         <li>You can look at <a href="http://feelings-erased.blogspot.com/2012/07/if-you-treat-your-unit-tests-like.html">my blog post that discusses the repercussions of bad naming</a>.</li>
       </ol>
     </li>
 
-    <li>When choosing a mocking framework for your project, put your money on ease of use and readability. For example, many mocking frameworks for C# use lambda expressions everywhere, but many programmers are still not used to thinking in terms of expressions and are a bit confused. When developers find using such framework awkward, they're more likely to reject the idea of unit testing or TDD. Thus, as a main mocking framework, I like to choose NSubstitute.</li>
+    <li>When choosing a mocking framework for your project, put your money on ease of use and readability. For example, many mocking frameworks for C# use lambda expressions everywhere, but many programmers are still not used to thinking in terms of expressions and are a bit confused. When developers find using such framework awkward, they’re more likely to reject the idea of unit testing or TDD. Thus, as a main mocking framework, I like to choose NSubstitute.</li>
 
-    <li>Always keep handy a "fallback mock framework" - there are some features that your main mocking framework of choice does not support or that are difficult to achieve using this framework. For example, NSubstitute does not yet support partial mocks. That's why it's good to have a secondary mock framework of choice that can make up for the main one's weaknesses in some rare cases. For such a fallback mock framework, I like to use Moq, but that may as well be FakeItEasy or Rhino Mocks or something else - depending on what you need.</li>
+    <li>Always keep handy a “fallback mock framework” - there are some features that your main mocking framework of choice does not support or that are difficult to achieve using this framework. For example, NSubstitute does not yet support partial mocks. That’s why it’s good to have a secondary mock framework of choice that can make up for the main one’s weaknesses in some rare cases. For such a fallback mock framework, I like to use Moq, but that may as well be FakeItEasy or Rhino Mocks or something else - depending on what you need.</li>
 
     <li>Try to stay as close as possible to <a href="http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod">SOLID principles</a> and adhere to the Law Of Demeter (which is a conclusion from those principles, specifically - from Open Closed principle) – all of this lets you write better, more focused and more maintainable unit tests. For a list of smells that show the problem is in the design rather than in tests, see:
 
@@ -92,13 +89,13 @@
 
     <li>Watch out for unit tests execution times – unit tests that run for more than 2-3 seconds (to tell you the truth, many should even run in less than one second), almost always have a smell attached to them – either they touch external resources or are not unit tests. Staying away from external resources may be tricky. For one such example where this actually does get tricky and one may be tempted to break the isolation, see my <a href="http://feelings-erased.blogspot.com/2012/06/mock-operating-system-timers-example.html">example related to timers</a></li>
 
-    <li>Avoid the "The code is so straightforward that there’s no need to test it" thinking. When the code is complex, the solution is refactoring, not unit-testing (of course, tests can be written, but they have to be used <a href="http://www.objectmentor.com/resources/articles/WorkingEffectivelyWithLegacyCode.pdf">as coverings</a>). Unit tests are about specification, not coverage, and short specifications are good.</li>
+    <li>Avoid the “The code is so straightforward that there’s no need to test it” thinking. When the code is complex, the solution is refactoring, not unit-testing (of course, tests can be written, but they have to be used <a href="http://www.objectmentor.com/resources/articles/WorkingEffectivelyWithLegacyCode.pdf">as coverings</a>). Unit tests are about specification, not coverage, and short specifications are good.</li>
 
     <li>Perform a kata or two on your own. <a href="http://feelings-erased.blogspot.com/2012/09/a-kata-challenge-to-try-your-tdd-skills.html">One such kata</a> and <a href="http://feelings-erased.blogspot.com/2012/10/validation-kata-better-implementation.html">its exemplary solution</a> are posted on this blog</li>
 
     <li>There may be a temptation to write more coarse-grained tests/specifications that are tied to the code (they’re sometimes called white-box tests). This is possible, however, I recommend not to do it if it’s not very well thought. I’ve been in projects where coarse-grained, so called “white-box tests” led to situations where correcting and debugging the tests took twice as long as changing the code. Again, it’s possible to write good coarse-grained tests, it just that it’s hard – it requires reading some books and doing few dry runs to grasp many best practices that are different than in case of unit tests. On short discussion of how things may go wrong, be sure to look at my post: <a href="http://feelings-erased.blogspot.com/2012/05/perfect-from-start.html">Perfect from the start</a>.</li>
 
-    <li>Also, there may be a temptation to "test private methods". This is a sign that things are going <a href="http://feelings-erased.blogspot.com/2012/06/how-to-test-private-methods.html">a little bit offroad</a>.</li>
+    <li>Also, there may be a temptation to “test private methods”. This is a sign that things are going <a href="http://feelings-erased.blogspot.com/2012/06/how-to-test-private-methods.html">a little bit offroad</a>.</li>
 
     <li><a href="http://www.sustainabletdd.com/2011/12/lies-damned-lies-and-code-coverage.html">Attaining X% code coverage should not be a goal</a>. High coverage is good when it’s a side effect.</li>
   </ol>

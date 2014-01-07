@@ -1,55 +1,52 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-
+<?xml version='1.0' encoding='utf-8'?>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>Test Driven Development - objections, part 2</title>
-  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
   <p>Welcome to part 2 of my post about TDD objections.</p>
 
-  <p>By the way, I found an <a href="http://www.slideshare.net/sebrose/common-objections-to-tdd-and-their-refutations">interesting analysis on slideshare</a> on the same topic. It's an interesting read, so be sure to take a look.</p>
+  <p>By the way, I found an <a href="http://www.slideshare.net/sebrose/common-objections-to-tdd-and-their-refutations">interesting analysis on slideshare</a> on the same topic. It’s an interesting read, so be sure to take a look.</p>
 
   <h3 class="sigil_not_in_toc">Where did we leave the last time?</h3>
 
-  <p>Ok, let's take on the next set of objections from the list:</p>
+  <p>Ok, let’s take on the next set of objections from the list:</p>
 
   <ol>
     <li><a href="http://feelings-erased.blogspot.com/2012/12/test-driven-development-objections-part.html">Not enough time</a></li>
 
-    <li><a href="http://feelings-erased.blogspot.com/2012/12/test-driven-development-objections-part.html">TDD will slow us down, because we'll have to create a lot of additional code</a></li>
+    <li><a href="http://feelings-erased.blogspot.com/2012/12/test-driven-development-objections-part.html">TDD will slow us down, because we’ll have to create a lot of additional code</a></li>
 
-    <li><a href="http://feelings-erased.blogspot.com/2012/12/test-driven-development-objections-part.html">TDD will slow us down, because we'll have to maintain a lot of additional code</a></li>
+    <li><a href="http://feelings-erased.blogspot.com/2012/12/test-driven-development-objections-part.html">TDD will slow us down, because we’ll have to maintain a lot of additional code</a></li>
 
-    <li><strong>We don't have the necessary skills or experience</strong></li>
+    <li><strong>We don’t have the necessary skills or experience</strong></li>
 
-    <li><strong>We don't have the necessary tools</strong></li>
+    <li><strong>We don’t have the necessary tools</strong></li>
 
-    <li><strong>(This one is unit testing specific) There are already other kinds of tests, we don't need unit tests?</strong></li>
+    <li><strong>(This one is unit testing specific) There are already other kinds of tests, we don’t need unit tests?</strong></li>
 
-    <li><strong>It's very hard to perform with legacy code</strong></li>
+    <li><strong>It’s very hard to perform with legacy code</strong></li>
 
     <li><a href="http://feelings-erased.blogspot.com/2013/01/test-driven-development-objections-part.html">I already know how to write a testable code, TDD will not really improve my design</a></li>
 
-    <li><a href="http://feelings-erased.blogspot.com/2013/01/test-driven-development-objections-part.html">We've got enough quality and we're doing fine without TDD</a></li>
+    <li><a href="http://feelings-erased.blogspot.com/2013/01/test-driven-development-objections-part.html">We’ve got enough quality and we’re doing fine without TDD</a></li>
 
-    <li><a href="http://feelings-erased.blogspot.com/2013/01/test-driven-development-objections-part.html">My manager won't let me do TDD</a></li>
+    <li><a href="http://feelings-erased.blogspot.com/2013/01/test-driven-development-objections-part.html">My manager won’t let me do TDD</a></li>
 
-    <li><a href="http://feelings-erased.blogspot.com/2013/01/test-driven-development-objections-part.html">There's no "scientific proof" and enough research on whether TDD really provides a return of investment</a></li>
+    <li><a href="http://feelings-erased.blogspot.com/2013/01/test-driven-development-objections-part.html">There’s no “scientific proof” and enough research on whether TDD really provides a return of investment</a></li>
   </ol>
 
-  <p>The ones I'm gonna talk about today are the one marked with <strong>strong text</strong>. Let's go then!</p>
+  <p>The ones I’m gonna talk about today are the one marked with <strong>strong text</strong>. Let’s go then!</p>
 
-  <h3 class="sigil_not_in_toc">4. We don't have the necessary skills or experience</h3>
+  <h3 class="sigil_not_in_toc">4. We don’t have the necessary skills or experience</h3>
 
-  <p>This is a valid impediment. However, its a common one in any skill. You see, it's an extremely rare situation that someone is proficient using a technique for the first time (think of the times when you learned how to use a keyboard and a mouse). Most techniques require some time and knowledge to master - the same is with TDD. Let's say that TDD is like a flower, where the core is the "Red-Green-Refactor" cycle and there are a lot of petals - good practices and heuristics. These include: need-driven design, triangulation, mocking, listening to tests etc.</p>
+  <p>This is a valid impediment. However, its a common one in any skill. You see, it’s an extremely rare situation that someone is proficient using a technique for the first time (think of the times when you learned how to use a keyboard and a mouse). Most techniques require some time and knowledge to master - the same is with TDD. Let’s say that TDD is like a flower, where the core is the “Red-Green-Refactor” cycle and there are a lot of petals - good practices and heuristics. These include: need-driven design, triangulation, mocking, listening to tests etc.</p>
 
   <p>Thankfully, lack of skills can be dealt with by providing training, mentoring, books, doing katas, randoris and by the teams drawing conclusions out of their own experience. In other words, this is a temporary obstacle. Of course, together with staff rotation in your team comes the need to renew part of the investment in skills, knowledge and experience.</p>
 
-  <h3 class="sigil_not_in_toc">5. We don't have the necessary tools</h3>
+  <h3 class="sigil_not_in_toc">5. We don’t have the necessary tools</h3>
 
   <p>This too is a valid impediment. TDD is a kind of process that can be made a lot easier with tools. There are many areas where tools can improve the overall performance with TDD. These include:</p>
 
@@ -62,42 +59,42 @@
 
     <li>Code Analysis</li>
 
-    <li>Quick fixes (like "generate method signature from its use)</li>
+    <li>Quick fixes (like “generate method signature from its use)</li>
 
     <li>Continuous Testing</li>
 
     <li>Code generation</li>
   </ol>
 
-  <p>...etc.</p>
+  <p>…etc.</p>
 
-  <p>If the issue is "money related" (e.g. there are tools on the market, but hey have to be bought), then the management should consider buying the best tools that are on the market and are available within the company budget. Thus, it's always good to have management buy-in for TDD. Thankfully, most of these tools (excluding the ones related to continuous testing) give a performance boost regardless of whether someone is using TDD or not, so many teams have such tools anyway.</p>
+  <p>If the issue is “money related” (e.g. there are tools on the market, but hey have to be bought), then the management should consider buying the best tools that are on the market and are available within the company budget. Thus, it’s always good to have management buy-in for TDD. Thankfully, most of these tools (excluding the ones related to continuous testing) give a performance boost regardless of whether someone is using TDD or not, so many teams have such tools anyway.</p>
 
-  <p>If the issue is "technology related" (there are no tools on the market that work well with the technology your team is using), the good news is that TDD is usable even without these tools and still provides a lot of its benefits, since it is about analysis, design and specification. The tools only (well, "only" :-)) help in keeping focus and go faster through the whole cycle.</p>
+  <p>If the issue is “technology related” (there are no tools on the market that work well with the technology your team is using), the good news is that TDD is usable even without these tools and still provides a lot of its benefits, since it is about analysis, design and specification. The tools only (well, “only” :-)) help in keeping focus and go faster through the whole cycle.</p>
 
-  <h3 class="sigil_not_in_toc">6. (This one is unit testing specific) There are already other kinds of tests, we don't need unit tests?</h3>
+  <h3 class="sigil_not_in_toc">6. (This one is unit testing specific) There are already other kinds of tests, we don’t need unit tests?</h3>
 
-  <p>Although TDD is not solely limited to unit-level specs/tests, they form a crucial part of it. While some people believe that we can skip higher level specs in TDD, there's no one I know who says you can skip unit level.</p>
+  <p>Although TDD is not solely limited to unit-level specs/tests, they form a crucial part of it. While some people believe that we can skip higher level specs in TDD, there’s no one I know who says you can skip unit level.</p>
 
-  <p>Anyway, let's get to the point. this objection is based on a premise that TDD is about testing and "unit tests" produced with it are merely another kinds of tests. When I hear people raising this argument, they talk a lot about coverage, defect discovery, strengthening the testing net etc. Such arguments, for the most part, miss the point, since they ignore the biggest benefits of TDD which do not lie in its testing aspect (which I already discussed).</p>
+  <p>Anyway, let’s get to the point. this objection is based on a premise that TDD is about testing and “unit tests” produced with it are merely another kinds of tests. When I hear people raising this argument, they talk a lot about coverage, defect discovery, strengthening the testing net etc. Such arguments, for the most part, miss the point, since they ignore the biggest benefits of TDD which do not lie in its testing aspect (which I already discussed).</p>
 
-  <p>Dealing with such objections is really hard, because it requires others to accept a different point of view than the one they kept believing in so far. Sure, the <a href="http://www.growing-object-oriented-software.com/">books</a> and <a href="http://martinfowler.com/bliki/SpecificationByExample.html">authorities</a> are on your side, but hey, the guys that read books and listen to authorities don't usually need convincing! So what to do in such case?</p>
+  <p>Dealing with such objections is really hard, because it requires others to accept a different point of view than the one they kept believing in so far. Sure, the <a href="http://www.growing-object-oriented-software.com/">books</a> and <a href="http://martinfowler.com/bliki/SpecificationByExample.html">authorities</a> are on your side, but hey, the guys that read books and listen to authorities don’t usually need convincing! So what to do in such case?</p>
 
-  <p>Remember, this argument is usually raised in teams that don't even do unit testing, let alone TDD. The following options are available:</p>
+  <p>Remember, this argument is usually raised in teams that don’t even do unit testing, let alone TDD. The following options are available:</p>
 
   <ol>
-    <li><strong>Point the opponents to the blog posts and literature</strong> - be careful with this. If you do it wrong, the other side may take it as questioning their professionalism. Also, they may just question the authorities you believe in - this is rather easy in software engineering world - they can just say "that doesn't convince me at all" and the game is over. You have to somehow show that you're passionate about TDD and point at such sources as to something that made you passionate. In other words, if you want to lead someone out of their biases, tell them that you too were led out before them and tell them how. This leaves them in a position of "look, there's a way to do things better" instead of "you're all idiots and only I know the truth". I'm hardly an expert on this matter, however, there are <a href="http://www.infoq.com/interviews/Linda-Rising-Fearless-Change">some "change patterns" that are worth checking out</a>.</li>
+    <li><strong>Point the opponents to the blog posts and literature</strong> - be careful with this. If you do it wrong, the other side may take it as questioning their professionalism. Also, they may just question the authorities you believe in - this is rather easy in software engineering world - they can just say “that doesn’t convince me at all” and the game is over. You have to somehow show that you’re passionate about TDD and point at such sources as to something that made you passionate. In other words, if you want to lead someone out of their biases, tell them that you too were led out before them and tell them how. This leaves them in a position of “look, there’s a way to do things better” instead of “you’re all idiots and only I know the truth”. I’m hardly an expert on this matter, however, there are <a href="http://www.infoq.com/interviews/Linda-Rising-Fearless-Change">some “change patterns” that are worth checking out</a>.</li>
 
-    <li><strong>Talk about your experiences</strong> from your previous projects if you have any or bring someone else if you don't. There are not many arguments as convincing as "I have experienced it myself", especially to the guys that don't have any experience in a certain field and are in a process of evaluating whether it makes sense to enter this field. Also, some people are more convinced by "soft" arguments ("we did it like this before and everybody in the team said that they feel in improvement in their coding style as never before"), while others are better convinced by "hard" arguments ("we did it like this before and we were able to get the best results of code complexity analysis in the whole project plus we were able to demonstrate a print out of documentation of 40 pages that just came out for free as we did TDD."). Also, better than words are living proofs ("you can just ask those guys I worked with and they show you what our living documentation looks like" or "Just ask the guys that were there with me on how they feel about it").</li>
+    <li><strong>Talk about your experiences</strong> from your previous projects if you have any or bring someone else if you don’t. There are not many arguments as convincing as “I have experienced it myself”, especially to the guys that don’t have any experience in a certain field and are in a process of evaluating whether it makes sense to enter this field. Also, some people are more convinced by “soft” arguments (“we did it like this before and everybody in the team said that they feel in improvement in their coding style as never before”), while others are better convinced by “hard” arguments (“we did it like this before and we were able to get the best results of code complexity analysis in the whole project plus we were able to demonstrate a print out of documentation of 40 pages that just came out for free as we did TDD.”). Also, better than words are living proofs (“you can just ask those guys I worked with and they show you what our living documentation looks like” or “Just ask the guys that were there with me on how they feel about it”).</li>
 
-    <li><strong>Create an internal training</strong>. This has one big advantage and two small disadvantages. The advantage is that you have a lot of time (at least longer than on regular meetings) to lead people by hand through your argumentation, reasons, examples and so on. In other words, you're given a chance to give more full explanation of the idea. The first disadvantage is that usually you get to prepare for such training in your free time (since management usually approves only spending time on giving the training, not on preparing it). The second disadvantage is that the people that you want to convince can simply ignore the invitation to the training and not attend at all or (if they're forced to attend) they can spend the whole training doing their stuff on their laptops.</li>
+    <li><strong>Create an internal training</strong>. This has one big advantage and two small disadvantages. The advantage is that you have a lot of time (at least longer than on regular meetings) to lead people by hand through your argumentation, reasons, examples and so on. In other words, you’re given a chance to give more full explanation of the idea. The first disadvantage is that usually you get to prepare for such training in your free time (since management usually approves only spending time on giving the training, not on preparing it). The second disadvantage is that the people that you want to convince can simply ignore the invitation to the training and not attend at all or (if they’re forced to attend) they can spend the whole training doing their stuff on their laptops.</li>
   </ol>
 
-  <h3 class="sigil_not_in_toc">7. It's very hard to perform with legacy code</h3>
+  <h3 class="sigil_not_in_toc">7. It’s very hard to perform with legacy code</h3>
 
-  <p>The version of this objection that I find valid is: "It's harder to perform with legacy code". Why? Because TDD requires the code to have a quality called "testability". Legacy code doesn't usually have it. Thus, the code has to be refactored, risking breaking something that already works (if you know how to do this, then the risk is significantly lower, but there's still some risk). On the other hand, there is this temptation to just "insert a little if clause right in the middle of this mess and be done with".</p>
+  <p>The version of this objection that I find valid is: “It’s harder to perform with legacy code”. Why? Because TDD requires the code to have a quality called “testability”. Legacy code doesn’t usually have it. Thus, the code has to be refactored, risking breaking something that already works (if you know how to do this, then the risk is significantly lower, but there’s still some risk). On the other hand, there is this temptation to just “insert a little if clause right in the middle of this mess and be done with”.</p>
 
-  <p>Anyway, the strategy to deal with this objection is to somehow make is clear that it's either "we don't have the necessary skills" or "we don't have the necessary tools" objection, just dressed differently. In the first case, take a look at the following books:</p>
+  <p>Anyway, the strategy to deal with this objection is to somehow make is clear that it’s either “we don’t have the necessary skills” or “we don’t have the necessary tools” objection, just dressed differently. In the first case, take a look at the following books:</p>
 
   <ol>
     <li>Refactoring by Martin Fowler</li>
@@ -111,6 +108,6 @@
 
   <h3 class="sigil_not_in_toc"><a href="http://feelings-erased.blogspot.com/2013/01/test-driven-development-objections-part.html">Part 3</a> is already published! Go ahead and read it!</h3>
 
-  <p>In the meantime, I'll be happy to hear your comments. I'm not an oracle and would gladly learn more about what objections do people receive and how they dispel them.</p>
+  <p>In the meantime, I’ll be happy to hear your comments. I’m not an oracle and would gladly learn more about what objections do people receive and how they dispel them.</p>
 </body>
 </html>
