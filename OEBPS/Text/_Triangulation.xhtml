@@ -1,34 +1,38 @@
 <?xml version='1.0' encoding='utf-8'?>
 <html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
   <title>Triangulation</title>
   <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
+
   <div class="disclaimer">The first occurence of the term triangulation I know about is in Kent Beck’s book <a href="http://www.pearsonhighered.com/educator/product/Test-Driven-Development-By-Example/9780321146533.page">Test Driven Development: By Example</a> where Kent describes it as the most conservative technique of test-driving the implementation. It’s one of the three core techniques of classic TDD.</div>
 
   <h1 class="sigil_not_in_toc">Triangulation</h1>
 
-<p>As one of the last topics of the core TDD techniques that do not require us to delve into the object oriented world, I’d like to show you triangulation.</p>
+  <p>As one of the last topics of the core TDD techniques that do not require us to delve into the object oriented world, I’d like to show you triangulation.</p>
 
-<p>Triangulation is often described as the most conservative of three approaches of test-driving implementation. These approaches are:</p>
+  <p>Triangulation is often described as the most conservative of three approaches of test-driving implementation. These approaches are:</p>
 
   <ol>
+
     <li>Type the obvious implementation</li>
 
     <li>Fake it (‘til you make it)</li>
 
     <li>Triangulate</li>
+
   </ol>
 
-<p>All of these techniques are simple (triangulaion being a little more complex), so I’ll show you all of them one by one, putting more emphasis on triangulation:</p>
+  <p>All of these techniques are simple (triangulaion being a little more complex), so I’ll show you all of them one by one, putting more emphasis on triangulation:</p>
 
-<h2>Type the obvious implementation</h2>
+  <h2>Type The Obvious Implementation</h2>
 
-<p>The first of the three techniques is just writing an obvious implementation in response to a Statetement. If the implementation is simple, this approach makes a lot of sense. Let’s take a trivial example of adding two numbers:</p>
+  <p>The first of the three techniques is just writing an obvious implementation in response to a Statetement. If the implementation is simple, this approach makes a lot of sense. Let’s take a trivial example of adding two numbers:</p>
 
-<pre>[Fact] public void
+  <pre>[Fact] public void
 ShouldAddTwoNumbersTogether()
 {
   //GIVEN
@@ -41,9 +45,9 @@ ShouldAddTwoNumbersTogether()
   Assert.Equal(8, result);
 }</pre>
 
-<p>You may remember I told you that usually we write the simplest production code that would make the Statement true. This rule would encourage us to just return 7 from the <code>Of</code> method, because it would be sufficient to make the Statement true. Instead, we can decide that the logic is so obvious, that we can just write it based on this one Statement:</p>
+  <p>You may remember I told you that usually we write the simplest production code that would make the Statement true. This rule would encourage us to just return 7 from the <code>Of</code> method, because it would be sufficient to make the Statement true. Instead, we can decide that the logic is so obvious, that we can just write it based on this one Statement:</p>
 
-<pre>public class Sum
+  <pre>public class Sum
 {
   public int Of(int a, int b)
   {
@@ -51,11 +55,11 @@ ShouldAddTwoNumbersTogether()
   }
 }</pre>
 
-<p>and this is it.</p>
+  <p>and this is it.</p>
 
-<p>Note that I didn’t use Constrained Non-Determinism here, because its use enforces using “Just write obvious implementation” technique. In fact, most (if not all) Statements we wrote so far in previous chapters, uses this approach because of this fact. Let’s take a look at how the above Statement would look if we used Constrained Non-Determinism:</p>
+  <p>Note that I didn’t use Constrained Non-Determinism here, because its use enforces using “Just write obvious implementation” technique. In fact, most (if not all) Statements we wrote so far in previous chapters, uses this approach because of this fact. Let’s take a look at how the above Statement would look if we used Constrained Non-Determinism:</p>
 
-<pre>[Fact] public void
+  <pre>[Fact] public void
 ShouldAddTwoNumbersTogether()
 {
   //GIVEN
@@ -70,22 +74,25 @@ ShouldAddTwoNumbersTogether()
   Assert.Equal(a + b, result);
 }</pre>
 
-<p>Here, we don’t have any choice. The most obvious implementation that would make this Statement true is the correct implementation. We are unable to return some constant value as we previously could (but we did not), because we just don’t know what the expected result is and it is strictly dependent on the input values which we don’t know as well.</p>
+  <p>Here, we don’t have any choice. The most obvious implementation that would make this Statement true is the correct implementation. We are unable to return some constant value as we previously could (but we did not), because we just don’t know what the expected result is and it is strictly dependent on the input values which we don’t know as well.</p>
 
-<h2>Fake it (‘til you make it)</h2>
+  <h2>Fake It (‘Til You Make It)</h2>
 
-<p>This technique is kind of funny. I do not recall myself ever using it, but it is so interesting I want to show it to you anyway. It is so simple you will not regret these few minutes even if just for broadening your horizons.</p>
+  <p>This technique is kind of funny. I do not recall myself ever using it, but it is so interesting I want to show it to you anyway. It is so simple you will not regret these few minutes even if just for broadening your horizons.</p>
 
-<p>There are two core things that we need to pay attention when using these technique:</p>
-<ol>
-  <li>Start with the simplest implementation possible (i.e. fake it), which usually is returning a literal constant. Then gradually transform the code of both Statement and implementation using variables</li>
+  <p>There are two core things that we need to pay attention when using these technique:</p>
 
-  <li>When doing it, rely on your sense of duplication between Statement and (fake) implementation</li>
-</ol>
+  <ol>
 
-<p>Let us apply Fake It to the same addition example as before (I promise, for triangulation, I will give you better one). The Statement looks the same as before:</p>
+    <li>Start with the simplest implementation possible (i.e. fake it), which usually is returning a literal constant. Then gradually transform the code of both Statement and implementation using variables</li>
 
-<pre>[Fact] public void
+    <li>When doing it, rely on your sense of duplication between Statement and (fake) implementation</li>
+
+  </ol>
+
+  <p>Let us apply Fake It to the same addition example as before (I promise, for triangulation, I will give you better one). The Statement looks the same as before:</p>
+
+  <pre>[Fact] public void
 ShouldAddTwoNumbersTogether()
 {
   //GIVEN
@@ -98,9 +105,9 @@ ShouldAddTwoNumbersTogether()
   Assert.Equal(8, result);
 }</pre>
 
-<p>Only this time, we are going to use the simplest implementation possible. As I wrote, this simplest implementation is almost always to return a constant:</p>
+  <p>Only this time, we are going to use the simplest implementation possible. As I wrote, this simplest implementation is almost always to return a constant:</p>
 
-<pre>public class Sum
+  <pre>public class Sum
 {
   public int Of(int a, int b)
   {
@@ -108,11 +115,11 @@ ShouldAddTwoNumbersTogether()
   }
 }</pre>
 
-<p>The Statement evaluates to true (green) now, though the implementation is obviously wrong. BUT, the TDD cycle is not over yet. Remember that as soon as the Statement is true, refactoring phase kicks in. This is something we were ignoring silently for now (and here we will only slightly lick it). We can use the refactoring phase to remove duplication between the Statement and the implementing code.</p>
+  <p>The Statement evaluates to true (green) now, though the implementation is obviously wrong. BUT, the TDD cycle is not over yet. Remember that as soon as the Statement is true, refactoring phase kicks in. This is something we were ignoring silently for now (and here we will only slightly lick it). We can use the refactoring phase to remove duplication between the Statement and the implementing code.</p>
 
-<p>First, let us note that the number 8 is duplicated between Statement and implementation - the implementation returns it and the Statement asserts on it. To reduce this duplication, let us break the 8 in the implementation into a sum:</p>
+  <p>First, let us note that the number 8 is duplicated between Statement and implementation - the implementation returns it and the Statement asserts on it. To reduce this duplication, let us break the 8 in the implementation into a sum:</p>
 
-<pre>public class Sum
+  <pre>public class Sum
 {
   public int Of(int a, int b)
   {
@@ -120,9 +127,9 @@ ShouldAddTwoNumbersTogether()
   }
 }</pre>
 
-<p>Note the smart trick I did. I changed duplication between implementation and expected result to duplication between implementation and input values of the Statement. After all, 3 and 5 are the exact values I used in the Statement, right? This kind of duplication is different in that it can be removed using variables (this applies not only to input variables, but basically anything we have access to prior to triggering specified behavior - constructor parameters, fields etc. in contrast to result which we normally do not know until we invoke the behavior). The duplication of number 3 can be eliminated this way:</p>
+  <p>Note the smart trick I did. I changed duplication between implementation and expected result to duplication between implementation and input values of the Statement. After all, 3 and 5 are the exact values I used in the Statement, right? This kind of duplication is different in that it can be removed using variables (this applies not only to input variables, but basically anything we have access to prior to triggering specified behavior - constructor parameters, fields etc. in contrast to result which we normally do not know until we invoke the behavior). The duplication of number 3 can be eliminated this way:</p>
 
-<pre>public class Sum
+  <pre>public class Sum
 {
   public int Of(int a, int b)
   {
@@ -130,9 +137,9 @@ ShouldAddTwoNumbersTogether()
   }
 }</pre>
 
-<p>and we have just the number 5 duplicated, because we used variable to transfer the value of 3 from Statement method to the <code>Of</code> implementation, so we have it in one place now. Let us do the same with 5:</p>
+  <p>and we have just the number 5 duplicated, because we used variable to transfer the value of 3 from Statement method to the <code>Of</code> implementation, so we have it in one place now. Let us do the same with 5:</p>
 
-<pre>public class Sum
+  <pre>public class Sum
 {
   public int Of(int a, int b)
   {
@@ -140,18 +147,20 @@ ShouldAddTwoNumbersTogether()
   }
 }</pre>
 
-<p>And that’s it. I used a trivial example, since I don’t want to spend too much time on this, but you can find more advanced ones in Kent Beck’s book if you like.</p>
+  <p>And that’s it. I used a trivial example, since I don’t want to spend too much time on this, but you can find more advanced ones in Kent Beck’s book if you like.</p>
 
-<h2>Triangulation</h2>
+  <h2>Triangulation</h2>
 
   <p>As I wrote, triangulation is the most conservative technique, because following it involves the tiniest possible steps to arrive at the right solution. The technique is called triangulation by analogy to <a href="http://encyclopedia2.thefreedictionary.com/radar+triangulation">radar triangulation</a> where outputs from at least two radars must be used to determine the position of a unit. Also, in radar triangulation, the position is measured indirectly, by combining the following data: range (not position!) between two radars, measurement done by each radar and the positions of the radars (which we know, because we are the ones who put the radars there). From this data, we can derive a triangle, so we can use trigonometry to calculate the position of the third point of the triangle, which is the desired position of the unit (two remaining points are the positions of radars). Such measurement is indirect in nature, because we do not measure the position directly, but calculate it from other helper measurements.</p>
 
   <p>These two characteristics: indirect measurement and using at least two sources of information are at the core of TDD triangulation. Basically, it says:</p>
 
   <ol>
+
     <li><strong>Indirect measurement</strong>: derive the design from few known examples of its desired external behavior by looking at what varies in these examples and making this variability into something more general</li>
 
-    <li><strong>Using at least two sources of information</strong>: start with the simplest possible implementation and make it more general <strong>only</strong> when you have two or more examples. Then new examples can be added and generalization can be done again. This process is repeated until we reach the desired implementation. Robert C. Martin developed a maxim on this, saying that “As the tests get more specific, the code gets more abstract”.</li>
+    <li><strong>Using at least two sources of information</strong>: start with the simplest possible implementation and make it more general <strong>only</strong> when you have two or more different examples (i.e. Statements that describe the desired functionality for specific inputs). Then new examples can be added and generalization can be done again. This process is repeated until we reach the desired implementation. Robert C. Martin developed a maxim on this, saying that “As the tests get more specific, the code gets more generic.</li>
+
   </ol>
 
   <p>Usually, when TDD is showcased on simple examples, triangulation is the primary technique used, so many novices mistakenly believe TDD is all about triangulation. This isn’t true, although triangulation is important.</p>
@@ -174,9 +183,9 @@ ShouldReturn0AsASumOfNoElements()
   Assert.Equal(0, result);
 }</pre>
 
-<p>Remember we want to write just enough code to make the Statement true. We can achieve it with just returning 0 from the <code>SumOfElements</code> method:</p>
+  <p>Remember we want to write just enough code to make the Statement true. We can achieve it with just returning 0 from the <code>SumOfElements</code> method:</p>
 
-<pre class="brush: csharp">public class ListWithAggregateOperations
+  <pre class="brush: csharp">public class ListWithAggregateOperations
 {
   public int SumOfElements()
   {
@@ -184,7 +193,7 @@ ShouldReturn0AsASumOfNoElements()
   }
 }</pre>
 
-<p>This is not yet the implementation we are happy with, which makes us add another Statement - this time for a single element:</p>
+  <p>This is not yet the implementation we are happy with, which makes us add another Statement - this time for a single element:</p>
 
   <pre class="brush: csharp">[Fact] public void 
 ShouldReturnTheSameElementAsASumOfSingleElement()
@@ -202,6 +211,7 @@ ShouldReturnTheSameElementAsASumOfSingleElement()
 }</pre>
 
   <p>The naive implementation can be as follows:</p>
+
   <pre class="brush: csharp">public class ListWithAggregateOperations
 {
   int _element = 0;
@@ -221,7 +231,7 @@ ShouldReturnTheSameElementAsASumOfSingleElement()
   }
 }</pre>
 
-<p>We have two examples, so let us check whether we can generalize now. We could try to get rid of the two constructors now, but let us wait just a little bit longer and see if this is the right path to go (after all, I told you that we need <strong>at least</strong> two examples).</p>
+  <p>We have two examples, so let us check whether we can generalize now. We could try to get rid of the two constructors now, but let us wait just a little bit longer and see if this is the right path to go (after all, I told you that we need <strong>at least</strong> two examples).</p>
 
   <p>Let’s add third example then. What would be the next more complex one? Note that the choice of next example is not random. Triangulation is about considering the axes of variability. If you carefully read the last example, you probably noticed that we already skipped one axis of variability - the value of the element. We used <code>Any.Integer()</code> where we could use a literal value and add a second example with another value to make us turn it into variable. This time, however, I decided to <strong>type the obvious implementation</strong>. The second axis of variability is the number of elements. The third example will move us further along this axis - so it will use two elements instead of one or zero. This is how it looks like:</p>
 
@@ -238,10 +248,11 @@ ShouldReturnSumOfTwoElementsAsASumWhenTwoElementsAreSupplied()
   var result = listWithAggregateOperations.SumOfElements();
 
   //THEN
-  Assert.AreEqual(firstElement + secondElement, result);
+  Assert.Equal(firstElement + secondElement, result);
 }</pre>
 
   <p>And the naive implementation will look like this:</p>
+
   <pre class="brush: csharp">public class ListWithAggregateOperations
 {
   int _element1 = 0;
@@ -273,7 +284,7 @@ ShouldReturnSumOfTwoElementsAsASumWhenTwoElementsAreSupplied()
 
   <p>How do we encapsulate the variability of the element count so that we can get rid of this redundancy? A collection! How do we generalize the addition of multiple elements? A foreach loop through the collection! Thankfully, C# supports <code>params</code> keyword, that let us use it to remove the redundant constructor like this:</p>
 
-<pre class="brush: csharp">public class ListWithAggregateOperations
+  <pre class="brush: csharp">public class ListWithAggregateOperations
 {
   int[] _elements;  
 
@@ -295,9 +306,9 @@ ShouldReturnSumOfTwoElementsAsASumWhenTwoElementsAreSupplied()
   }
 }</pre>
 
-<p>Now it’s time to make a general Statement that describes this logic. After all, we don’t want more than one failure for the same reason. So as the next step, I will write a Statement to replace the examples (I leave them in though, until I get this one to evaluate to true).</p>
+  <p>While the first Statement (“no elements”) seems like a special case, the remaining two - for one and two elements - seem to be just two variations of the same behavior (“some elements”). Thus, it is a good idea to make a more general Statement that describes this logic to replace the two examples. After all, we don’t want more than one failure for the same reason. So as the next step, I will write a Statement to replace these examples (I leave them in though, until I get this one to evaluate to true).</p>
 
-  <pre class="brush: csharp">[Test]
+  <pre class="brush: csharp">[Fact]
 public void 
 ShouldReturnSumOfAllItsElementsWhenAskedForAggregateSum()
 {
@@ -315,33 +326,42 @@ ShouldReturnSumOfAllItsElementsWhenAskedForAggregateSum()
   var result = listWithAggregateOperations.SumOfElements();
 
   //THEN
-  Assert.AreEqual(
+  Assert.Equal(
    firstElement + 
    secondElement + 
    thirdElement, result);
 }
 </pre>
 
-<p>This Statement uses three values rather than zero, one or two as in the examples we had. When I need to use collections with deterministic size (and I do prefer to do it everywhere where using collection with non-deterministic size would force me to use a <code>for</code> loop in my Statement), I pick 3, which is the number I got from Mark Seemann and the rationale is that 3 is the smallest number that has distinct head, tail and middle element. One or two elements seem like a special case, while three sounds generic enough.</p>
+  <p>This Statement uses three values rather than zero, one or two as in the examples we had. When I need to use collections with deterministic size (and I do prefer to do it everywhere where using collection with non-deterministic size would force me to use a <code>for</code> loop in my Statement), I pick 3, which is the number I got from Mark Seemann and the rationale is that 3 is the smallest number that has distinct head, tail and middle element. One or two elements seem like a special case, while three sounds generic enough.</p>
 
-  <p>The examples (“zero elements”, “one element” and “two elements”) still evaluate to true, but it’s now safe to remove them, leaving only the Statement we just wrote.</p>
+  <p>One more thing we can do is to ensure that we didn’t write a <strong>false positive</strong>, i.e. a Statement that is always true due to being badly written. In other words, we need to ensure that the Statement we just wrote will ever evaluate to false if the implementation is wrong. As we wrote it after the implementation is in place, we do not have this certainty.</p>
+
+  <p>What we will do is to modify the implementation slightly to make it badly implemented and see how our Statement will react (we expect it to evaluate to false):</p>
+
+  <pre class="brush: csharp">public class ListWithAggregateOperations
+public int SumOfElements()
+{
+  //changed
+  int sum = 0;
+  foreach(var element in _elements)
+  {
+    sum += element;
+  }
+  return sum + 1; //modified with "+1"!
+}
+</pre>
+
+  <p>When we do this, we can see our last Statement evaluate to false with a message like “expected 21, got 22”. We can now undo this one little change and go back to correct implementation.</p>
+
+  <p>The examples (“zero elements”, “one element” and “two elements”) still evaluate to true, but it’s now safe to remove the last two, leaving only the Statement about a behavior we expect when we calculate sum of no elements and the Statement about N elements we just wrote.</p>
 
   <p>And voilà! We have arrived at the final, generic solution. Note that the steps we took were tiny - so you might get the impression that the effort was not worth it. Indeed, this example was only to show the mechanics of triangulation - in real life, if we encountered such simple situation we’d know straight away what the design would be and we’d start with the general Statement straight away and just type in the obvious implementation. Triangulation shows its power in more complex problems with multiple design axes and where taking tiny steps helps avoid “analysis paralysis”.</p>
 
-  <h2 class="sigil_not_in_toc">Principles of triangulation</h4>
+  <h2 class="sigil_not_in_toc">Summary</h2>
 
-  <p>These are the main principles of Triangulation:<br/></p>
+  <p>As I stated before, triangulation is most useful when you have no idea how the internal design of a piece of functionality will look like (e.g. even if there are work-flows, they cannot be easily derived from your knowledge of the domain) and it’s not obvious along which axes your design must provide generality, but you are able to give some examples of the observable behavior of that functionality given certain inputs. These are usually situations where you need to slow down and take tiny steps that slowly bring you closer to the right design and functionality - and that’s what triangulation is for!</p>
 
-  <ol>
-    <li>Start writing specs from the simplest and most obvious case, increasing the complexity of the specs and the generality of implemntation as you add more specs.</li>
-
-    <li>Generalize only when you have at least two examples that show you which axis of design change needs to be generalized.</li>
-
-    <li>After arriving at the correct design, remove the redundant examples (remember, we want to have one failure for a single reason)</li>
-  </ol>
-
-  <h2 class="sigil_not_in_toc">Summary</h4>
-
-  <p>As I stated before, triangulation is most useful when you have no idea how the internal design of a piece of functionality will look like (e.g. even if there are work-flows, they cannot be easily derived from your knowledge of the domain) and it’s not obvious along which axes your design must provide generality, but you are able to give some examples of the observable behavior of that functionality given certain inputs. These are usually situations where you need to slow down and take tiny steps that slowly bring you closer to the right design - and that’s what triangulation is for!</p>
 </body>
+
 </html>

@@ -14,7 +14,7 @@
 
   <h1 id="sigil_toc_id_30">Specifying Boundaries and Conditions</h1>
 
-  <h2 id="sigil_toc_id_31">Sometimes, anonymous value is not enough</h2>
+  <h2 id="sigil_toc_id_31">Sometimes, Anonymous Value Is Not Enough</h2>
 
   <p>When we specify a behavior, there are times when this behavior should be the same no matter what arguments we pass to the constructor or invoked methods. An example would be an addition of two numbers - whatever numbers we would supply, the answer would always be a sum of those numbers:</p>
   <pre>[Fact] public void
@@ -37,7 +37,7 @@ ShouldCalculateTheSumOfTwoNumbers()
 
   <p>In such cases, Scott and Amir offer us other guidelines for choosing input values.</p>
 
-  <h2 id="sigil_toc_id_32">Exceptions to the rule</h2>
+  <h2 id="sigil_toc_id_32">Exceptions To The Rule</h2>
 
   <p>There are times, when a Statement is true for every value except one (or more) explicitly specified. For example, in Poland, high school students are graded for exams between “mediocre” and “very good”. Every grade means the exam is passed except for “mediocre” grade which means the exam is failed. If we imagine we have to specify an object that decides whether the exam is passed based on rating, we would have to write two Statements: one for the mediocre rating and other for all the others.</p>
 
@@ -179,7 +179,7 @@ ShouldNotNegateNumberWhenItIsGreaterOrEqualToSmallestValueNotToNegate()
 
   <p>Boundaries may look like they apply only to integer input, but they occur at many other places. There are boundaries associated with date/time (e.g. an action is performed again when time from last action is at least 30 seconds - the decision would need to be made whether we need precision in seconds or maybe in ticks), to strings (e.g. validation of user name where it must be at least 2 characters, or password that must contain at least 2 special characters) etc.</p>
 
-  <h2 id="sigil_toc_id_34">Combination of boundaries - ranges</h2>
+  <h2 id="sigil_toc_id_34">Combination of Boundaries - Ranges</h2>
 
   <p>So, what about a behavior that is valid in a range? Let us assume that we live in a country where a citizen can get a driving license only after their 17th birthday, but before 65th (the government decided that people after 65 have worse sight and it’s safer not to give them new driving licenses). Let us also assume that we try to develop a class that answers the question whether we can apply for driving license and the return values of this query are as follows:</p>
 
