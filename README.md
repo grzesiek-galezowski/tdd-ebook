@@ -5,19 +5,16 @@
 <a href="https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.epub">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-epub.png" />Epub
 </a>
-|
 <a href="https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.mobi">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-mobi.png" />Mobi
 </a>
-|
 <a href="https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.azw3">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-mobi.png" />AZW3
 </a>
-|
 <a href="https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.pdf">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-pdf.png" />PDF
 </a>
-|
+
 [C# Toolkit](https://github.com/grzesiek-galezowski/tdd-toolkit) |
 <a href="https://plus.google.com/113457358555307974994" rel="publisher">Google+</a> |
 <a href="https://www.facebook.com/tddebook">Facebook</a>
@@ -47,4 +44,6 @@ If you see a grammar error or a sentence that can be phrased better, or somethin
 
 You are welcome to fork this ebook and make customized version for the programming language of your choice.
 
-PDF, MOBI and EPUB download icons by <a href="http://smithsrus.com/e-book-download-icons/">Yusuke Kamiyamane and Doug Smith</a>, used under <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution License</a>.
+### Credits
+
+(PDF, MOBI and EPUB download icons by <a href="http://smithsrus.com/e-book-download-icons/">Yusuke Kamiyamane and Doug Smith</a>, used under <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution License</a>.)
