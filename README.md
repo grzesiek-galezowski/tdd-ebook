@@ -25,6 +25,7 @@ So far the following chapters are considered ready for reading:
  1. Developing TDD style and Constrained Non-Determinism
  1. What is the scope of a unit-level Statement in TDD?
  1. Specifying Boundaries and Conditions
+ 1. Triangulation
 
 At least four or five more chapters are planned
 
