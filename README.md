@@ -18,8 +18,12 @@
 ### Additional Links
 
 [C# Toolkit](https://github.com/grzesiek-galezowski/tdd-toolkit) |
-<a href="https://plus.google.com/113457358555307974994" rel="publisher">Google+</a> |
-<a href="https://www.facebook.com/tddebook">Facebook</a>
+<a href="//plus.google.com/113457358555307974994?prsrc=3" rel="publisher" target="_top" style="text-decoration:none;">
+  <img src="//ssl.gstatic.com/images/icons/gplus-16.png" alt="Google+" style="border:0;width:16px;height:16px;"/> Google+ Profile
+</a>
+<a href="https://www.facebook.com/tddebook" rel="publisher" target="_top" style="text-decoration:none;">
+  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/FB-f-Logo__blue_29.png" alt="Facebook" style="border:0;width:16px;height:16px;"/> Facebook Profile
+</a>
 
 ### Summary
 
@@ -54,4 +58,6 @@ You are welcome to fork this ebook and make customized version for the programmi
 
 ### Credits
 
-(PDF, MOBI and EPUB download icons by <a href="http://smithsrus.com/e-book-download-icons/">Yusuke Kamiyamane and Doug Smith</a>, used under <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution License</a>.)
+ - Cover by Daniel Żołopa
+ - PDF, MOBI and EPUB download icons by <a href="http://smithsrus.com/e-book-download-icons/">Yusuke Kamiyamane and Doug Smith</a>, used under <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution License</a>.
+  
