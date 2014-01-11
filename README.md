@@ -60,4 +60,6 @@ You are welcome to fork this ebook and make customized version for the programmi
 
  - Cover by Daniel Żołopa
  - PDF, MOBI and EPUB download icons by <a href="http://smithsrus.com/e-book-download-icons/">Yusuke Kamiyamane and Doug Smith</a>, used under <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution License</a>.
+ - Google+ icon coppyright by Google
+ - Facebook icon coppyright by Facebook
   
