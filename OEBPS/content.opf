@@ -115,6 +115,6 @@
   <guide>
     <reference href="Text/TODO.xhtml" title="Przedmowa" type="notes"/>
     <reference href="Text/_Three%20Essential%20Tools.xhtml" title="Tekst" type="text"/>
-    <reference href="Text/Cover.xhtml" title="Okładka" type="cover"/>
-  </guide>
+    <reference href="Text/Cover.xhtml" type="cover"/>
+    </guide>
 </package>
