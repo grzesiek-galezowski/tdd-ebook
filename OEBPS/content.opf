@@ -65,7 +65,6 @@
     <item href="Text/_Tdd%20antipatterns.xhtml" id="_Tdd_antipatterns.xhtml" media-type="application/xhtml+xml" />
   </manifest>
   <spine toc="ncx">
-    <itemref idref="Reusing_code_in_Test_Data_Builders_in_C_.xhtml" />
     <itemref idref="Cover.xhtml" />
     <itemref idref="_Dedication.xhtml" />
     <itemref idref="_Part1Marker.xhtml" />
