@@ -1,8 +1,11 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>Mock the operating system: timers example</title>
-  <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -22,7 +25,7 @@
 
   <p>The topic of today’s post is a combination of both above cases. Timers work as a way to say “in X milliseconds (or any other time unit), invoke Y and in the meantime, let me do my job.”</p>
 
-  <p><a href="http://1.bp.blogspot.com/-RIn6HavVmco/T-I47IqIwmI/AAAAAAAAAIE/lRzchNu4IS4/s1600/TimerDiagram.png" imageanchor="1" style="margin-left:1em; margin-right:1em"><img alt="" border="0" height="121" src="http://1.bp.blogspot.com/-RIn6HavVmco/T-I47IqIwmI/AAAAAAAAAIE/lRzchNu4IS4/s400/TimerDiagram.png" width="400"/></a></p>
+  <p><a href="http://1.bp.blogspot.com/-RIn6HavVmco/T-I47IqIwmI/AAAAAAAAAIE/lRzchNu4IS4/s1600/TimerDiagram.png" imageanchor="1" style="margin-left:1em; margin-right:1em"><img alt="" border="0" height="121" src="http://1.bp.blogspot.com/-RIn6HavVmco/T-I47IqIwmI/AAAAAAAAAIE/lRzchNu4IS4/s400/TimerDiagram.png" width="400" /></a></p>
 
   <p>The scheduling phase is where our code uses the timer and the calling back phase is where the timer uses our code. But before I show you how to properly handle this kind of situation, let’s examine how things can go wrong.</p>
 

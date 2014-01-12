@@ -1,13 +1,14 @@
-<?xml version='1.0' encoding='utf-8'?>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title></title>
-  <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
-
   <p>Today, I’d like to write a bit about different techniques for test-driving development. There are actually two of them which I’d like to discuss: Need-Driven Development and Triangulation. Part one is about NDD, Triangulation shall be covered in part two.</p>
 
   <h3 class="sigil_not_in_toc">Need-Driven Development</h3>
@@ -25,9 +26,7 @@
   <p>As the fathers of NDD <a href="http://jmock.org/oopsla2004.pdf">put it</a>:</p>
 
   <blockquote>
-
     <p>We use Mock Objects to let us write the code under test as if it had everything it needs from its environment. This process shows us what an object’s environment should be so we can then provide it.</p>
-
   </blockquote>
 
   <h4 class="sigil_not_in_toc">Example</h4>
@@ -35,13 +34,10 @@
   <p>Let’s take as an example the case from <a href="http://feelings-erased.blogspot.com/2013/01/single-method-perspective-vs-single.html">my previous post</a>, which specified a simplified logic for logging in:</p>
 
   <ol>
-
     <li>When supplied credentials are valid, the Log-in process shall setup response as positive and redirect me to the home page</li>
 
     <li>When supplied credentials are invalid, the log-in process shall setup the response as negative and redirect me to the login page.</li>
-
   </ol>
-
   <pre class="brush: csharp">
 [Test]
 public void 
@@ -71,7 +67,6 @@ ShouldSetResponseAsPositiveAndRedirectToHomePageWhenPerformedWithValidCredential
   <p>These are the main principles of Need-Driven Development:</p>
 
   <ol>
-
     <li>Start the development from the outermost layer (i.e. the inputs) and dig deeper and deeper, layer by layer, reaching the boundaries of the application</li>
 
     <li>Derive how interfaces should look like from what their clients need them to provide</li>
@@ -96,7 +91,6 @@ ShouldSetResponseAsPositiveAndRedirectToHomePageWhenPerformedWithValidCredential
     </li>
 
     <li>Distinguish between <a href="http://feelings-not-erased.blogspot.com/2013/01/value-objects-are-lesson-i-keep.html">Value Types</a> and “objects”. Value types are merely a more intelligent and domain-oriented data, while “objects” are service providers.</li>
-
   </ol>
 
   <h4 class="sigil_not_in_toc">Related Concepts</h4>
@@ -116,7 +110,5 @@ ShouldSetResponseAsPositiveAndRedirectToHomePageWhenPerformedWithValidCredential
   <h4 class="sigil_not_in_toc">Applicability</h4>
 
   <p>The technique is most useful when we have well-defined acceptance criteria and usually comes into play after creating and executing a failing acceptance test that defines the next increment of functionality we need to provide. Also, it’s easier to apply when we know the high-level work-flows the application needs to support (usually the case of enterprise systems). Then we discover lower-level work-flows that result from the higher-level work-flows and, layer by layer, we reach the boundaries of the system.</p>
-
 </body>
-
 </html>

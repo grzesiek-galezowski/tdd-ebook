@@ -1,8 +1,11 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>Specifying boundaries</title>
-  <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -66,7 +69,7 @@ ShouldPassTheExamWhenGradeIsOtherThanMediocre()
 
   //WHEN
   var examPassed 
-    = decision.MakeBasedOn(Any.Besides(Grades.Mediocre));<br/>
+    = decision.MakeBasedOn(Any.Besides(Grades.Mediocre));<br />
   //THEN
   Assert.True(examPassed);
 }</pre>
@@ -129,7 +132,7 @@ ShouldNotNegateTheNumberWhenItIsGreaterOrEqualTo0()
 
   <p>There are two things to note about these examples. The first one is that we don’t use any kind of <code>Any</code> methods. We explicitly take the edges, because they’re the numbers that most strictly define the boundary. This way we document the boundary length.</p>
 
-  <p>It is important to understand why we are not using methods like <code>Any.IntegerGreaterOrEqualTo(0)</code>, even though we do use <code>Any</code> in case when we have no boundary. This is because in the latter case, no value is better than the other in any particular way. In case of boundaries, however, the edge values are better in that they more strictly define the boundary and drive the right implementation.</p>
+  <p>It is important to understand why we are not using methods like <code>Any.IntegerGreaterOrEqualTo(0)</code>, even though we do use <code>Any</code>&nbsp;in case when we have no boundary. This is because in the latter case, no value is better than the other in any particular way. In case of boundaries, however, the edge values are better in that they more strictly define the boundary and drive the right implementation.</p>
 
   <p>The second thing to note is the usage of literal constant 0 in the above example. In one of the previous chapter, I showed you a technique called <strong>Constant Specification</strong>, where we write an explicit Statement about the value of the named constant and use the named constant everywhere else instead of its literal. So why did i not use this technique?</p>
 

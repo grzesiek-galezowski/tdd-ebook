@@ -1,8 +1,11 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>What is the scope of a unit-level Statement in TDD?</title>
-  <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -60,7 +63,7 @@ ShouldBeFulfilledWhenEventOccursThreeTimes()
 
   <h3 class="sigil_not_in_toc">It is the scope of class behavior!</h3>
 
-  <p>The proper answer is: behavior! Each TDD Statement specifies a single behavior. I like how <a href="http://sustainabletdd.com">Amir Kolsky and Scott Bain</a> phrase it, by saying that each unit-level Statement should “introduce a behavioral distinction not existing before”.</p>
+  <p>The proper answer is: behavior! Each TDD Statement specifies a single behavior. I like how <a href="http://sustainabletdd.com">Amir Kolsky and Scott Bain</a>&nbsp;phrase it, by saying that each unit-level Statement should “introduce a behavioral distinction not existing before”.</p>
 
   <p>It may look that “behavior” scope is actually broader than method or class levels, since such Statement can span multiple classes and multiple methods. This is only partially true. That is because e.g. Statements with method scope can span multiple behaviors (which, by the way, is a sign of poorly written Statement). Let us take a look at an example:</p>
   <pre class="brush: csharp">[Fact] public void 

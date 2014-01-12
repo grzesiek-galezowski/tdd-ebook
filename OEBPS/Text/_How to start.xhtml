@@ -1,8 +1,11 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>How to start?</title>
-  <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -98,7 +101,7 @@ public void Statement_002()
 
   <p>When inventing a name, It is important to put the main focus on what result or action is expected from an object. If you do not, you quickly find it troublesome. As an example, one of my colleagues was specifying a class <code>UserId</code> and wrote the following name for the Statement about comparison of two identifiers: <code>EqualOperationShouldPassForTwoInstancesWithTheSameUserName()</code>. Note that this is not from the perspective of a single object, but rather from the perspective of an operation that is executed on it, which means that we stopped thinking in terms of object responsibilities and started thinking in terms of operation correctness, which is farther away from our assumption that we are writing a Specification consisting o Statements. This name should be something more like: <code>ShouldReportThatItIsEqualToAnotherIdThatHasTheSameUserName()</code>.</p>
 
-  <h2 id="sigil_toc_id_14">Start by filling the GIVEN-WHEN-THEN structure with the obvious<br/></h2>
+  <h2 id="sigil_toc_id_14">Start by filling the GIVEN-WHEN-THEN structure with the obvious<br /></h2>
 
   <p>This is a technique that is applicable when you come up with a GIVEN-WHEN-THEN structure for the Statement or a good name for it (GIVEN-WHEN-THEN structure can be easily derived from a good name and vice versa). Anyway, this technique is about taking the GIVEN, WHEN and THEN parts and translating them into code in almost literal, brute-force way, then add all the missing pieces that are required for the code to compile and run.</p>
 

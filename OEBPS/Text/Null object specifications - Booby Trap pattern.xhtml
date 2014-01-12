@@ -1,8 +1,11 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
   <title>Null object specifications - Booby Trap pattern</title>
-  <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -16,11 +19,11 @@
 
   <p>Now imagine that for various regulatory reasons, some customers need to encrypt the e-mail using one algorithm, while others use another algorithm. Also, there are customers that use more than one algorithm interchangeably depending on a day of month. So for different customers, you’re maintaining separate encryption algorithms and allow swapping them at runtime. The conceptual class diagram may look like this:</p>
 
-  <p><a href="http://1.bp.blogspot.com/-fKgz0KQXBTs/T9Br_fz1eGI/AAAAAAAAAHM/df74NNT-nPo/s1600/NullObject_1.png" imageanchor="1" style="margin-left:1em; margin-right:1em"><img alt="" border="0" height="206" src="http://1.bp.blogspot.com/-fKgz0KQXBTs/T9Br_fz1eGI/AAAAAAAAAHM/df74NNT-nPo/s400/NullObject_1.png" width="400"/></a></p>
+  <p><a href="http://1.bp.blogspot.com/-fKgz0KQXBTs/T9Br_fz1eGI/AAAAAAAAAHM/df74NNT-nPo/s1600/NullObject_1.png" imageanchor="1" style="margin-left:1em; margin-right:1em"><img alt="" border="0" height="206" src="http://1.bp.blogspot.com/-fKgz0KQXBTs/T9Br_fz1eGI/AAAAAAAAAHM/df74NNT-nPo/s400/NullObject_1.png" width="400" /></a></p>
 
   <p>One day, another customer appears and says “we don’t want the encryption, since we already have a solution that handles this issue. All we want is the compression”. You’re then left with two choices: either to treat “no encryption” as a special case and put an if-else (i.e. a variation of behavior) into the processing logic, or follow the Gang of Four’s principle of encapsulating what varies and put the variation into the factory, treating “no encryption” as a kind of encryption. The factory then would be able to create an encryption object that… does not encrypt at all. We chose the second option, of course. So let’s quickly add it to our diagram:</p>
 
-  <p><a href="http://2.bp.blogspot.com/-6f0uQgAX6rE/T9BthW7GDjI/AAAAAAAAAHY/Z2hBEIwCpCs/s1600/NullObject_2.png" imageanchor="1" style="margin-left:1em; margin-right:1em"><img alt="" border="0" height="213" src="http://2.bp.blogspot.com/-6f0uQgAX6rE/T9BthW7GDjI/AAAAAAAAAHY/Z2hBEIwCpCs/s400/NullObject_2.png" width="400"/></a></p>
+  <p><a href="http://2.bp.blogspot.com/-6f0uQgAX6rE/T9BthW7GDjI/AAAAAAAAAHY/Z2hBEIwCpCs/s1600/NullObject_2.png" imageanchor="1" style="margin-left:1em; margin-right:1em"><img alt="" border="0" height="213" src="http://2.bp.blogspot.com/-6f0uQgAX6rE/T9BthW7GDjI/AAAAAAAAAHY/Z2hBEIwCpCs/s400/NullObject_2.png" width="400" /></a></p>
 
   <p>This kind of object - an object that encapsulates “doing nothing” when filling a specified role - is called a <strong>null object</strong>.</p>
 
@@ -38,7 +41,7 @@
 
   <p>We can use a testing pattern that I call a Booby Trap (although, as you’ll see in a minute, the pattern can so be trivially implemented that one may argue whether it deserves its own name). In the real world, there are many kinds of booby traps - ranging from fun ones that make a noise when stepped on, to the military ones that may make a massive damage. What we’ll use this time is an equivalent of the latter.</p>
 
-  <p><a href="http://4.bp.blogspot.com/-9N3y2Zk0IsU/T9BwyZqo7GI/AAAAAAAAAHw/-qcvyvQ_v9s/s1600/BoobyTrap.jpg" imageanchor="1" style="margin-left:1em; margin-right:1em"><img alt="" border="0" height="220" src="http://4.bp.blogspot.com/-9N3y2Zk0IsU/T9BwyZqo7GI/AAAAAAAAAHw/-qcvyvQ_v9s/s320/BoobyTrap.jpg" width="320"/></a></p>
+  <p><a href="http://4.bp.blogspot.com/-9N3y2Zk0IsU/T9BwyZqo7GI/AAAAAAAAAHw/-qcvyvQ_v9s/s1600/BoobyTrap.jpg" imageanchor="1" style="margin-left:1em; margin-right:1em"><img alt="" border="0" height="220" src="http://4.bp.blogspot.com/-9N3y2Zk0IsU/T9BwyZqo7GI/AAAAAAAAAHw/-qcvyvQ_v9s/s320/BoobyTrap.jpg" width="320" /></a></p>
 
   <p>The easiest way to implement a full booby trap is to use a mocking framework that has a feature called <a href="http://stackoverflow.com/questions/3526195/rhinomock-mocks-vs-strictmocks-vs-dynamicmocks">Strict Mocks</a>. Strict mock is a variant of mock object that can only receive calls that we mark as “expected”. Any other call made on a strict mock blows things up with an exception and the test fails. So, the easiest way to implement a full booby trap is to just use a strict mock without ANY calls marked as “expected”. Of course, as mock objects rely mostly on inheritance, you’d have to pass an interface mock or mark all methods as virtual in your mocked class, but that’s a relatively small price to pay.</p>
 
