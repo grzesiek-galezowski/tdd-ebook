@@ -47,3 +47,8 @@ td, th {
 table {
   width: 70%;
 }
+
+html, body { 
+  widows: 0; 
+  orphans: 0; 
+}

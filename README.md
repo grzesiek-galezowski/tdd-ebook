@@ -17,7 +17,10 @@
 
 ### Additional Links
 
-[C# Toolkit](https://github.com/grzesiek-galezowski/tdd-toolkit) |
+
+<a href="https://github.com/grzesiek-galezowski/tdd-toolkit">
+  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/tdd-toolkit.png" />C# TDD Toolkit
+</a>
 <a href="http://plus.google.com/113457358555307974994?prsrc=3" rel="publisher" target="_top" style="text-decoration:none;">
   <img src="http://ssl.gstatic.com/images/icons/gplus-16.png" alt="Google+" style="border:0;width:16px;height:16px;"/> Google+ Profile
 </a>
