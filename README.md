@@ -4,13 +4,13 @@
 
 <a href="https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.epub">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-epub.png" />Epub
-</a>
+</a>&nbsp;
 <a href="https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.mobi">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-mobi.png" />Mobi
-</a>
+</a>&nbsp;
 <a href="https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.azw3">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-mobi.png" />AZW3
-</a>
+</a>&nbsp;
 <a href="https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.pdf">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-pdf.png" />PDF
 </a>
@@ -20,10 +20,10 @@
 
 <a href="https://github.com/grzesiek-galezowski/tdd-toolkit">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/tdd-toolkit.png" />C# TDD Toolkit
-</a>
+</a>&nbsp;
 <a href="http://plus.google.com/113457358555307974994?prsrc=3" rel="publisher" target="_top" style="text-decoration:none;">
   <img src="http://ssl.gstatic.com/images/icons/gplus-16.png" alt="Google+" style="border:0;width:16px;height:16px;"/> Google+ Profile
-</a>
+</a>&nbsp;
 <a href="https://www.facebook.com/tddebook" rel="publisher" target="_top" style="text-decoration:none;">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/FB-f-Logo__blue_29.png" alt="Facebook" style="border:0;width:16px;height:16px;"/> Facebook Profile
 </a>
