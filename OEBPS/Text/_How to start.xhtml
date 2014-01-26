@@ -60,7 +60,6 @@
   <h3 class="sigil_not_in_toc">What does a good name contain?</h3>
 
   <p>For the name of the Statement to be of any use, it has to describe the expected behavior. At minimum, it should describe what happens under what circumstances. Let us take a look at one of the names Steve freeman and Nat Pryce came up in their great book Growing Object Oriented Software Guided By Tests:</p>
-
   <pre>notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort()</pre>
 
   <p>Note few things about the name of the Statement:</p>
@@ -81,8 +80,10 @@ public void Statement_002()
 </pre>
 
       <p>There are two downsides to this solution: one is that we now have to put extra information (<code>Statement_002</code>) which is required only by compiler, because every method needs to have a name - there is usually no value a human could derive from such a name. The second downside is that when the Statement is evaluated to false, the automated runner shows you the following line: <code>Statement_002: FAILED</code> - note that all the information included in the comment isn’t present in the failure report. It is really better to receive a report such as:</p>
-<p><code>notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort: FAILED</code></p> 
-<p>because then a lot of information about the Statement that fails is available from the runner window.</p>
+
+      <p><code>notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort: FAILED</code></p>
+
+      <p>because then a lot of information about the Statement that fails is available from the runner window.</p>
     </li>
 
     <li>Using a name that describes a (single) behavior allows you to track quickly why the Statement is false when it is. Suppose a Statement is true when you start refactoring, but at one point it starts being evaluated as false and the report in the runner looks like this: <code>TrySendingHttpRequest: FAILED</code> - it does not really tell you anything more than that an attempt is made to send a HTTP request, but, for instance, does not tell you whether your specified object is the sender (that should try to send this request under some circumstances) or the receiver (that should handle such request properly). To actually know what went wrong, you have to go Statement body and scan its source code. Now compare it to the following name: <code>ShouldRespondWithAnAckWheneverItReceivesAHttpRequest</code>. Now when it evaluates to false, you can tell what is broken - the object no longer responds with an ACK to HTTP request. Sometimes this is enough to identify which part of the code is in fault of this evaluation failure.</li>
@@ -90,7 +91,11 @@ public void Statement_002()
 
   <h3 class="sigil_not_in_toc">My favourite convention</h3>
 
-  <p>There are many conventions for naming Statements appropriately. My favorite is the one developed by Dan North, which makes each Statement name begin with the word <code>Should</code>. So for example, I would name a Statement:</p> <p><code>ShouldReportAllErrorsSortedAlphabeticallyWhenItEncountersErrorsDuringSearch()</code></p> <p>The name of the Specification (i.e. class name) answers the question “who should do it?”, i.e. when I have a class named <code>SortingOperation</code> and want to say that it “should sort all items in ascending order when performed”, I say it like this:</p>
+  <p>There are many conventions for naming Statements appropriately. My favorite is the one developed by Dan North, which makes each Statement name begin with the word <code>Should</code>. So for example, I would name a Statement:</p>
+
+  <p><code>ShouldReportAllErrorsSortedAlphabeticallyWhenItEncountersErrorsDuringSearch()</code></p>
+
+  <p>The name of the Specification (i.e. class name) answers the question “who should do it?”, i.e. when I have a class named <code>SortingOperation</code> and want to say that it “should sort all items in ascending order when performed”, I say it like this:</p>
   <pre>public class SortingOperationSpecification
 {
  [Fact] public void
@@ -102,8 +107,13 @@ public void Statement_002()
 
   <p>The “should” word was introduced by Dan to weaken the statement following it and thus, to allow questioning what you are stating and ask yourself the question: “should it really?”. If this causes uncertainty, then it is high time to talk to a domain expert and make sure you understand well what you need to accomplish. If you are not a native English speaker, the “should” prefix will probably have a weaker influence on you - that is why I do not insist on you using it. I like it though.</p>
 
-  <p>When inventing a name, It is important to put the main focus on what result or action is expected from an object. If you do not, you quickly find it troublesome. As an example, one of my colleagues was specifying a class <code>UserId</code> and wrote the following name for the Statement about comparison of two identifiers:</p> <p><code>EqualOperationShouldPassForTwoInstancesWithTheSameUserName()</code>.</p> <p>Note that this is not from the perspective of a single object, but rather from the perspective of an operation that is executed on it, which means that we stopped thinking in terms of object responsibilities and started thinking in terms of operation correctness, which is farther away from our assumption that we are writing a Specification consisting o Statements. This name should be something more like:</p>
-<p><code>ShouldReportThatItIsEqualToAnotherIdThatHasTheSameUserName()</code>.</p>
+  <p>When inventing a name, It is important to put the main focus on what result or action is expected from an object. If you do not, you quickly find it troublesome. As an example, one of my colleagues was specifying a class <code>UserId</code> and wrote the following name for the Statement about comparison of two identifiers:</p>
+
+  <p><code>EqualOperationShouldPassForTwoInstancesWithTheSameUserName()</code>.</p>
+
+  <p>Note that this is not from the perspective of a single object, but rather from the perspective of an operation that is executed on it, which means that we stopped thinking in terms of object responsibilities and started thinking in terms of operation correctness, which is farther away from our assumption that we are writing a Specification consisting o Statements. This name should be something more like:</p>
+
+  <p><code>ShouldReportThatItIsEqualToAnotherIdThatHasTheSameUserName()</code>.</p>
 
   <h2 id="sigil_toc_id_14">Start By Filling The GIVEN-WHEN-THEN Structure With The Obvious<br /></h2>
 
@@ -129,14 +139,13 @@ THEN it should appear equal to this other user
   <pre style="padding: 1em; border: dashed thin gray;">WHEN I compare it to another user with the same name</pre>
 
   <p>can be written as:</p>
-  <p><pre class="brush: csharp">user.Equals(anotherUserWithTheSameName);</pre></p>
+  <pre class="brush: csharp">user.Equals(anotherUserWithTheSameName);</pre>
 
   <p>Great! Now the last line:</p>
   <pre style="padding: 1em; border: dashed thin gray;">THEN it should appear equal to this other user</pre>
 
   <p>and its translation into the code:</p>
-  
-  <p><pre class="brush: csharp">Assert.True(areUsersEqual);</pre></p>
+  <pre class="brush: csharp">Assert.True(areUsersEqual);</pre>
 
   <p>Ok, so we have made the translation, now let us summarize this and see what is missing to make this code compile:</p>
   <pre class="brush: csharp">[Fact] public void 
@@ -168,13 +177,28 @@ ShouldAppearEqualToAnotherUserWithTheSameName()
   <p>The compiler created a kind of a small TODO list for us, which is nice. Note that, while we do not have full compiling code, filling the gaps boils down to making a few trivial declarations and assignments:</p>
 
   <ol>
-    <li><code>anyName</code> can be declared as <p><code>var anyName = Any.String();</code></p></li>
+    <li>
+      <code>anyName</code> can be declared as
 
-    <li><code>anotherUserWithTheSameName</code> can be declared as <p><code>var anotherUserWithTheSameName = new User(anyName);</code></p></li>
+      <p><code>var anyName = Any.String();</code></p>
+    </li>
 
-    <li><code>areUsersEqual</code> can be declared and assigned this way: <p><code>var areUsersEqual = user.Equals(anotherUserWithTheSameName);</code></p></li>
+    <li>
+      <code>anotherUserWithTheSameName</code> can be declared as
 
-    <li>If <code>User</code> class does not exist, we can add it by simply stating: <p><code>public class User {}</code></p></li>
+      <p><code>var anotherUserWithTheSameName = new User(anyName);</code></p>
+    </li>
+
+    <li>
+      <code>areUsersEqual</code> can be declared and assigned this way:
+
+      <p><code>var areUsersEqual = user.Equals(anotherUserWithTheSameName);</code></p>
+    </li>
+
+    <li>If <code>User</code> class does not exist, we can add it by simply stating:
+
+      <p><code>public class User {}</code></p>
+    </li>
   </ol>
 
   <p>Putting it all together:</p>
