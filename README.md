@@ -39,7 +39,8 @@ The main destination format is epub, conversion to mobi is done using calibre's 
 So far the following chapters are considered ready for reading:
 
 
-Part 1: Just The Basics
+*Part 1: Just The Basics*
+
  1. Motivation - the first step to learning TDD
  1. The three most essential tools
  1. It's not a test
@@ -53,7 +54,10 @@ Part 1: Just The Basics
  1. Specifying Boundaries and Conditions
  1. Triangulation
 
-Part2: Test-Driven Development in Object Oriented World
+*Part2: Test-Driven Development in Object Oriented World*
+ 1. TBD
+*Part3: Beyond Objects - TDD on higher levels*
+ 1. TBD
 
 At least four or five more chapters are planned
 
