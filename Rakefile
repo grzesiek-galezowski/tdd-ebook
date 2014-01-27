@@ -4,7 +4,13 @@ end
 desc "Push ebook into source control"
 task :push, [:commit_message] => [:generate_formats] do | t, args |
   sh 'unzip "Test-Driven Development - Extensive Tutorial.epub"'
-  #sh 'git add *'
+  
+  begin
+    sh 'git add *'
+  rescue 
+    puts "Nothing to add to source control"
+  end
+
   sh 'git add ./OEBPS'
   sh "git commit -a -m \"#{args[:commit_message]}\""
   sh 'git push -u origin master'
