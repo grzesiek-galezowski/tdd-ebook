@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml version='1.0' encoding='utf-8'?>
 <package xmlns="http://www.idpf.org/2007/opf" unique-identifier="BookId" version="2.0">
   <metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">
     <dc:identifier id="BookId" opf:scheme="UUID">urn:uuid:6d00fb77-2111-4dd8-bba0-36b822fd09b2</dc:identifier>
@@ -6,113 +6,115 @@
     <dc:creator opf:role="aut">Grzegorz Gałęzowski</dc:creator>
     <dc:language>en</dc:language>
     <dc:date opf:event="modification">2014-01-26</dc:date>
-    <meta content="0.7.2" name="Sigil version" />
+    <meta content="0.7.2" name="Sigil version"/>
   </metadata>
   <manifest>
-    <item href="toc.ncx" id="ncx" media-type="application/x-dtbncx+xml" />
-    <item href="Text/TDD%20is%20a%20good%20teacher.xhtml" id="TDD_is_a_good_teacher.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/Given%20When%20Then%20Negation.xhtml" id="Given_When_Then_Negation.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/How%20to%20test%20private%20methods.xhtml" id="How_to_test_private_methods.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/Null%20object%20specifications%20-%20Booby%20Trap%20pattern.xhtml" id="Null_object_specifications_-_Booby_Trap_pattern.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/How%20to%20test-drive%20decorators%20-%20adding%20same%20logic%20to%20all%20wrapped%20methods.xhtml" id="How_to_test-drive_decorators_-_adding_same_logic_to_all_wrapped_methods.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/Test-driving%20attributes.xhtml" id="Test-driving_attributes.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/Mock%20the%20operating%20system%20-%20timers%20example%20.xhtml" id="Mock_the_operating_system_-_timers_example_.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/Why%20do%20I%20consider%20interfaces%20superior%20to%20classes%20for%20mocking.xhtml" id="Why_do_I_consider_interfaces_superior_to_classes_for_mocking.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/Class%20mocks%20-%20maintaining%20constructors.xhtml" id="Class_mocks_-_maintaining_constructors.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/You%20may%20have%20been%20practicing%20test-first%20without%20knowing%20it.xhtml" id="You_may_have_been_practicing_test-first_without_knowing_it.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/TDD%20and%20Single%20Responsibility%20Principle%20violation%20-%20a%20simple%20example.xhtml" id="TDD_and_Single_Responsibility_Principle_violation_-_a_simple_example.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/Mocking%20method%20chains%20part%201%20-%20When%20not%20to.%20Coupling%2C%20encapsulation%2C%20redundancy%20and%20the%20Law%20of%20Demeter..xhtml" id="Mocking_method_chains_part_1_-_When_not_to._Coupling__encapsulation__redundancy_and_the_Law_of_Demeter..xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/Mocking%20method%20chains%20part%202%20-%20types%20of%20chains%20and%20fluent%20interfaces.xhtml" id="Mocking_method_chains_part_2_-_types_of_chains_and_fluent_interfaces.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/_What%20is%20the%20scope%20of%20a%20Statement%20in%20TDD.xhtml" id="_What_is_the_scope_of_a_Statement_in_TDD.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/Does%20TDD%20lead%20to%20explosion%20of%20unnecessary%20abstractions%20and%20bad%20readability.xhtml" id="Does_TDD_lead_to_explosion_of_unnecessary_abstractions_and_bad_readability.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/A%20kata%20challenge%20to%20try%20your%20TDD%20skills%20on.xhtml" id="A_kata_challenge_to_try_your_TDD_skills_on.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/A%20kata%20challenge%20to%20try%20your%20TDD%20skills%20on%20-%20failure%20and%20what%20we%20can%20learn%20from%20it.xhtml" id="A_kata_challenge_to_try_your_TDD_skills_on_-_failure_and_what_we_can_learn_from_it.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/Validation%20Kata%20-%20a%20better%20implementation.xhtml" id="Validation_Kata_-_a_better_implementation.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/Starting%20off%20with%20unit%20testing%20and%20TDD%20-%20here%27s%20my%20advice....xhtml" id="Starting_off_with_unit_testing_and_TDD_-_here_s_my_advice....xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/Test%20Driven%20Development%20-%20objections%20part%201.xhtml" id="Test_Driven_Development_-_objections_part_1.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/Test%20Driven%20Development%20-%20objections%20part%202.xhtml" id="Test_Driven_Development_-_objections_part_2.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/Test%20Driven%20Development%20-%20objections%20part%203.xhtml" id="Test_Driven_Development_-_objections_part_3.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/Single%20method%20perspective%20vs%20single%20behavior%20perspective.xhtml" id="Single_method_perspective_vs_single_behavior_perspective.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/The%20Two%20Main%20Techniques%20in%20Test-Driven%20development%20part%201.xhtml" id="The_Two_Main_Techniques_in_Test-Driven_development_part_1.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/Implementation%20Readability%20vs%20Design%20Readability%20and%20what%20TDD%20has%20to%20do%20with%20it.xhtml" id="Implementation_Readability_vs_Design_Readability_and_what_TDD_has_to_do_with_it.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/Don%27t%20use%20setup%20and%20teardown%20or%20I%20will....xhtml" id="Don_t_use_setup_and_teardown_or_I_will....xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/_Motivations.xhtml" id="_Motivations.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/TODO.xhtml" id="TODO.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/_Three%20Essential%20Tools.xhtml" id="_Three_Essential_Tools.xhtml" media-type="application/xhtml+xml" />
-    <item href="Images/XUnit.NET.Window.png" id="XUnit.NET.Window.png" media-type="image/png" />
-    <item href="Images/Tekken3.png" id="Tekken3.png" media-type="image/png" />
-    <item href="Text/_It%27s%20Not%20a%20Test.xhtml" id="_It_s_Not_a_Test.xhtml" media-type="application/xhtml+xml" />
-    <item href="Styles/Global.css" id="Global.css" media-type="text/css" />
-    <item href="Text/Cover.xhtml" id="Cover.xhtml" media-type="application/xhtml+xml" />
-    <item href="Images/Tekken3-gray.png" id="Tekken3-gray.png" media-type="image/png" />
-    <item href="Text/_Statement-First%20Programming.xhtml" id="_Statement-First_Programming.xhtml" media-type="application/xhtml+xml" />
-    <item href="Images/Traditional_TDD_cycle.png" id="Traditional_TDD_cycle.png" media-type="image/png" />
-    <item href="Images/Modern_TDD_cycle.png" id="Modern_TDD_cycle.png" media-type="image/png" />
-    <item href="Text/End.xhtml" id="End.xhtml" media-type="application/xhtml+xml" />
-    <item href="Images/cover.png" id="cover.png" media-type="image/png" />
-    <item href="Text/_What%20Exactly%20Do%20We%20Specify.xhtml" id="_What_Exactly_Do_We_Specify.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/_Practicing%20What%20We%20Already%20Learned.xhtml" id="_Practicing_What_We_Already_Learned.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/_Sorting%20out%20the%20bits.xhtml" id="_Sorting_out_the_bits.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/_Analysis%20In%20TDD.xhtml" id="_Analysis_In_TDD.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/_How%20to%20start.xhtml" id="_How_to_start.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/_Part1Marker.xhtml" id="_Part1Marker.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/_Constrained%20Non%20Determinism.xhtml" id="_Constrained_Non_Determinism.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/_Dedication.xhtml" id="_Dedication.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/_Triangulation.xhtml" id="_Triangulation.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/_Boundaries.xhtml" id="_Boundaries.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/_Tdd%20antipatterns.xhtml" id="_Tdd_antipatterns.xhtml" media-type="application/xhtml+xml" />
-    <item href="Text/_Part2Marker.xhtml" id="id" media-type="application/xhtml+xml" />
+    <item href="toc.ncx" id="ncx" media-type="application/x-dtbncx+xml"/>
+    <item href="Text/TDD%20is%20a%20good%20teacher.xhtml" id="TDD_is_a_good_teacher.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/Given%20When%20Then%20Negation.xhtml" id="Given_When_Then_Negation.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/How%20to%20test%20private%20methods.xhtml" id="How_to_test_private_methods.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/Null%20object%20specifications%20-%20Booby%20Trap%20pattern.xhtml" id="Null_object_specifications_-_Booby_Trap_pattern.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/How%20to%20test-drive%20decorators%20-%20adding%20same%20logic%20to%20all%20wrapped%20methods.xhtml" id="How_to_test-drive_decorators_-_adding_same_logic_to_all_wrapped_methods.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/Test-driving%20attributes.xhtml" id="Test-driving_attributes.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/Mock%20the%20operating%20system%20-%20timers%20example%20.xhtml" id="Mock_the_operating_system_-_timers_example_.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/Why%20do%20I%20consider%20interfaces%20superior%20to%20classes%20for%20mocking.xhtml" id="Why_do_I_consider_interfaces_superior_to_classes_for_mocking.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/Class%20mocks%20-%20maintaining%20constructors.xhtml" id="Class_mocks_-_maintaining_constructors.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/You%20may%20have%20been%20practicing%20test-first%20without%20knowing%20it.xhtml" id="You_may_have_been_practicing_test-first_without_knowing_it.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/TDD%20and%20Single%20Responsibility%20Principle%20violation%20-%20a%20simple%20example.xhtml" id="TDD_and_Single_Responsibility_Principle_violation_-_a_simple_example.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/Mocking%20method%20chains%20part%201%20-%20When%20not%20to.%20Coupling%2C%20encapsulation%2C%20redundancy%20and%20the%20Law%20of%20Demeter..xhtml" id="Mocking_method_chains_part_1_-_When_not_to._Coupling__encapsulation__redundancy_and_the_Law_of_Demeter..xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/Mocking%20method%20chains%20part%202%20-%20types%20of%20chains%20and%20fluent%20interfaces.xhtml" id="Mocking_method_chains_part_2_-_types_of_chains_and_fluent_interfaces.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/_What%20is%20the%20scope%20of%20a%20Statement%20in%20TDD.xhtml" id="_What_is_the_scope_of_a_Statement_in_TDD.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/Does%20TDD%20lead%20to%20explosion%20of%20unnecessary%20abstractions%20and%20bad%20readability.xhtml" id="Does_TDD_lead_to_explosion_of_unnecessary_abstractions_and_bad_readability.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/A%20kata%20challenge%20to%20try%20your%20TDD%20skills%20on.xhtml" id="A_kata_challenge_to_try_your_TDD_skills_on.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/A%20kata%20challenge%20to%20try%20your%20TDD%20skills%20on%20-%20failure%20and%20what%20we%20can%20learn%20from%20it.xhtml" id="A_kata_challenge_to_try_your_TDD_skills_on_-_failure_and_what_we_can_learn_from_it.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/Validation%20Kata%20-%20a%20better%20implementation.xhtml" id="Validation_Kata_-_a_better_implementation.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/Starting%20off%20with%20unit%20testing%20and%20TDD%20-%20here%27s%20my%20advice....xhtml" id="Starting_off_with_unit_testing_and_TDD_-_here_s_my_advice....xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/Test%20Driven%20Development%20-%20objections%20part%201.xhtml" id="Test_Driven_Development_-_objections_part_1.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/Test%20Driven%20Development%20-%20objections%20part%202.xhtml" id="Test_Driven_Development_-_objections_part_2.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/Test%20Driven%20Development%20-%20objections%20part%203.xhtml" id="Test_Driven_Development_-_objections_part_3.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/Single%20method%20perspective%20vs%20single%20behavior%20perspective.xhtml" id="Single_method_perspective_vs_single_behavior_perspective.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/The%20Two%20Main%20Techniques%20in%20Test-Driven%20development%20part%201.xhtml" id="The_Two_Main_Techniques_in_Test-Driven_development_part_1.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/Implementation%20Readability%20vs%20Design%20Readability%20and%20what%20TDD%20has%20to%20do%20with%20it.xhtml" id="Implementation_Readability_vs_Design_Readability_and_what_TDD_has_to_do_with_it.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/Don%27t%20use%20setup%20and%20teardown%20or%20I%20will....xhtml" id="Don_t_use_setup_and_teardown_or_I_will....xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/_Motivations.xhtml" id="_Motivations.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/TODO.xhtml" id="TODO.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/_Three%20Essential%20Tools.xhtml" id="_Three_Essential_Tools.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Images/XUnit.NET.Window.png" id="XUnit.NET.Window.png" media-type="image/png"/>
+    <item href="Images/Tekken3.png" id="Tekken3.png" media-type="image/png"/>
+    <item href="Text/_It%27s%20Not%20a%20Test.xhtml" id="_It_s_Not_a_Test.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Styles/Global.css" id="Global.css" media-type="text/css"/>
+    <item href="Text/Cover.xhtml" id="Cover.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Images/Tekken3-gray.png" id="Tekken3-gray.png" media-type="image/png"/>
+    <item href="Text/_Statement-First%20Programming.xhtml" id="_Statement-First_Programming.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Images/Traditional_TDD_cycle.png" id="Traditional_TDD_cycle.png" media-type="image/png"/>
+    <item href="Images/Modern_TDD_cycle.png" id="Modern_TDD_cycle.png" media-type="image/png"/>
+    <item href="Text/End.xhtml" id="End.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Images/cover.png" id="cover.png" media-type="image/png"/>
+    <item href="Text/_What%20Exactly%20Do%20We%20Specify.xhtml" id="_What_Exactly_Do_We_Specify.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/_Practicing%20What%20We%20Already%20Learned.xhtml" id="_Practicing_What_We_Already_Learned.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/_Sorting%20out%20the%20bits.xhtml" id="_Sorting_out_the_bits.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/_Analysis%20In%20TDD.xhtml" id="_Analysis_In_TDD.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/_How%20to%20start.xhtml" id="_How_to_start.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/_Part1Marker.xhtml" id="_Part1Marker.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/_Constrained%20Non%20Determinism.xhtml" id="_Constrained_Non_Determinism.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/_Dedication.xhtml" id="_Dedication.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/_Triangulation.xhtml" id="_Triangulation.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/_Boundaries.xhtml" id="_Boundaries.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/_Tdd%20antipatterns.xhtml" id="_Tdd_antipatterns.xhtml" media-type="application/xhtml+xml"/>
+    <item href="Text/_Part2Marker.xhtml" id="id" media-type="application/xhtml+xml"/>
+    <item href="../_Composable%20Design.xhtml" id="id1" media-type="application/xhtml+xml"/>
   </manifest>
   <spine toc="ncx">
-    <itemref idref="Cover.xhtml" />
-    <itemref idref="_Dedication.xhtml" />
-    <itemref idref="_Part1Marker.xhtml" />
-    <itemref idref="_Motivations.xhtml" />
-    <itemref idref="_Three_Essential_Tools.xhtml" />
-    <itemref idref="_It_s_Not_a_Test.xhtml" />
-    <itemref idref="_Statement-First_Programming.xhtml" />
-    <itemref idref="_Practicing_What_We_Already_Learned.xhtml" />
-    <itemref idref="_Sorting_out_the_bits.xhtml" />
-    <itemref idref="_How_to_start.xhtml" />
-    <itemref idref="_Analysis_In_TDD.xhtml" />
-    <itemref idref="_Constrained_Non_Determinism.xhtml" />
-    <itemref idref="_What_is_the_scope_of_a_Statement_in_TDD.xhtml" />
-    <itemref idref="_Boundaries.xhtml" />
-    <itemref idref="_Triangulation.xhtml" />
-    <itemref idref="id" />
-    <itemref idref="End.xhtml" />
-    <itemref idref="_What_Exactly_Do_We_Specify.xhtml" />
-    <itemref idref="_Tdd_antipatterns.xhtml" />
-    <itemref idref="Test_Driven_Development_-_objections_part_1.xhtml" />
-    <itemref idref="Test_Driven_Development_-_objections_part_2.xhtml" />
-    <itemref idref="Test_Driven_Development_-_objections_part_3.xhtml" />
-    <itemref idref="TDD_is_a_good_teacher.xhtml" />
-    <itemref idref="You_may_have_been_practicing_test-first_without_knowing_it.xhtml" />
-    <itemref idref="Starting_off_with_unit_testing_and_TDD_-_here_s_my_advice....xhtml" />
-    <itemref idref="Single_method_perspective_vs_single_behavior_perspective.xhtml" />
-    <itemref idref="Given_When_Then_Negation.xhtml" />
-    <itemref idref="The_Two_Main_Techniques_in_Test-Driven_development_part_1.xhtml" />
-    <itemref idref="Why_do_I_consider_interfaces_superior_to_classes_for_mocking.xhtml" />
-    <itemref idref="Mock_the_operating_system_-_timers_example_.xhtml" />
-    <itemref idref="TDD_and_Single_Responsibility_Principle_violation_-_a_simple_example.xhtml" />
-    <itemref idref="A_kata_challenge_to_try_your_TDD_skills_on.xhtml" />
-    <itemref idref="A_kata_challenge_to_try_your_TDD_skills_on_-_failure_and_what_we_can_learn_from_it.xhtml" />
-    <itemref idref="Validation_Kata_-_a_better_implementation.xhtml" />
-    <itemref idref="Does_TDD_lead_to_explosion_of_unnecessary_abstractions_and_bad_readability.xhtml" />
-    <itemref idref="Implementation_Readability_vs_Design_Readability_and_what_TDD_has_to_do_with_it.xhtml" />
-    <itemref idref="Class_mocks_-_maintaining_constructors.xhtml" />
-    <itemref idref="Mocking_method_chains_part_1_-_When_not_to._Coupling__encapsulation__redundancy_and_the_Law_of_Demeter..xhtml" />
-    <itemref idref="Mocking_method_chains_part_2_-_types_of_chains_and_fluent_interfaces.xhtml" />
-    <itemref idref="Null_object_specifications_-_Booby_Trap_pattern.xhtml" />
-    <itemref idref="How_to_test_private_methods.xhtml" />
-    <itemref idref="How_to_test-drive_decorators_-_adding_same_logic_to_all_wrapped_methods.xhtml" />
-    <itemref idref="Test-driving_attributes.xhtml" />
-    <itemref idref="Don_t_use_setup_and_teardown_or_I_will....xhtml" />
-    <itemref idref="TODO.xhtml" />
+    <itemref idref="Cover.xhtml"/>
+    <itemref idref="_Dedication.xhtml"/>
+    <itemref idref="_Part1Marker.xhtml"/>
+    <itemref idref="_Motivations.xhtml"/>
+    <itemref idref="_Three_Essential_Tools.xhtml"/>
+    <itemref idref="_It_s_Not_a_Test.xhtml"/>
+    <itemref idref="_Statement-First_Programming.xhtml"/>
+    <itemref idref="_Practicing_What_We_Already_Learned.xhtml"/>
+    <itemref idref="_Sorting_out_the_bits.xhtml"/>
+    <itemref idref="_How_to_start.xhtml"/>
+    <itemref idref="_Analysis_In_TDD.xhtml"/>
+    <itemref idref="_Constrained_Non_Determinism.xhtml"/>
+    <itemref idref="_What_is_the_scope_of_a_Statement_in_TDD.xhtml"/>
+    <itemref idref="_Boundaries.xhtml"/>
+    <itemref idref="_Triangulation.xhtml"/>
+    <itemref idref="id"/>
+    <itemref idref="End.xhtml"/>
+    <itemref idref="id1"/>
+    <itemref idref="_What_Exactly_Do_We_Specify.xhtml"/>
+    <itemref idref="_Tdd_antipatterns.xhtml"/>
+    <itemref idref="Test_Driven_Development_-_objections_part_1.xhtml"/>
+    <itemref idref="Test_Driven_Development_-_objections_part_2.xhtml"/>
+    <itemref idref="Test_Driven_Development_-_objections_part_3.xhtml"/>
+    <itemref idref="TDD_is_a_good_teacher.xhtml"/>
+    <itemref idref="You_may_have_been_practicing_test-first_without_knowing_it.xhtml"/>
+    <itemref idref="Starting_off_with_unit_testing_and_TDD_-_here_s_my_advice....xhtml"/>
+    <itemref idref="Single_method_perspective_vs_single_behavior_perspective.xhtml"/>
+    <itemref idref="Given_When_Then_Negation.xhtml"/>
+    <itemref idref="The_Two_Main_Techniques_in_Test-Driven_development_part_1.xhtml"/>
+    <itemref idref="Why_do_I_consider_interfaces_superior_to_classes_for_mocking.xhtml"/>
+    <itemref idref="Mock_the_operating_system_-_timers_example_.xhtml"/>
+    <itemref idref="TDD_and_Single_Responsibility_Principle_violation_-_a_simple_example.xhtml"/>
+    <itemref idref="A_kata_challenge_to_try_your_TDD_skills_on.xhtml"/>
+    <itemref idref="A_kata_challenge_to_try_your_TDD_skills_on_-_failure_and_what_we_can_learn_from_it.xhtml"/>
+    <itemref idref="Validation_Kata_-_a_better_implementation.xhtml"/>
+    <itemref idref="Does_TDD_lead_to_explosion_of_unnecessary_abstractions_and_bad_readability.xhtml"/>
+    <itemref idref="Implementation_Readability_vs_Design_Readability_and_what_TDD_has_to_do_with_it.xhtml"/>
+    <itemref idref="Class_mocks_-_maintaining_constructors.xhtml"/>
+    <itemref idref="Mocking_method_chains_part_1_-_When_not_to._Coupling__encapsulation__redundancy_and_the_Law_of_Demeter..xhtml"/>
+    <itemref idref="Mocking_method_chains_part_2_-_types_of_chains_and_fluent_interfaces.xhtml"/>
+    <itemref idref="Null_object_specifications_-_Booby_Trap_pattern.xhtml"/>
+    <itemref idref="How_to_test_private_methods.xhtml"/>
+    <itemref idref="How_to_test-drive_decorators_-_adding_same_logic_to_all_wrapped_methods.xhtml"/>
+    <itemref idref="Test-driving_attributes.xhtml"/>
+    <itemref idref="Don_t_use_setup_and_teardown_or_I_will....xhtml"/>
+    <itemref idref="TODO.xhtml"/>
   </spine>
   <guide>
-    <reference href="Text/TODO.xhtml" title="Przedmowa" type="notes" />
-    <reference href="Text/_Three%20Essential%20Tools.xhtml" title="Tekst" type="text" />
-    <reference href="Text/Cover.xhtml" type="cover" />
+    <reference href="Text/TODO.xhtml" title="Przedmowa" type="notes"/>
+    <reference href="Text/_Three%20Essential%20Tools.xhtml" title="Tekst" type="text"/>
+    <reference href="Text/Cover.xhtml" type="cover"/>
   </guide>
 </package>
