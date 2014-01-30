@@ -32,7 +32,7 @@ class Git
 
   def add_all()
     begin
-      sh 'git add *'
+      sh 'git add -all'
     rescue 
       puts "Nothing to add to source control"
     end

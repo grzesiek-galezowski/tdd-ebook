@@ -62,7 +62,7 @@
     <item href="Text/_Boundaries.xhtml" id="_Boundaries.xhtml" media-type="application/xhtml+xml"/>
     <item href="Text/_Tdd%20antipatterns.xhtml" id="_Tdd_antipatterns.xhtml" media-type="application/xhtml+xml"/>
     <item href="Text/_Part2Marker.xhtml" id="id" media-type="application/xhtml+xml"/>
-    <item href="../_Composable%20Design.xhtml" id="id1" media-type="application/xhtml+xml"/>
+    <item href="Text/_Composable%20Design.xhtml" id="id1" media-type="application/xhtml+xml"/>
   </manifest>
   <spine toc="ncx">
     <itemref idref="Cover.xhtml"/>
