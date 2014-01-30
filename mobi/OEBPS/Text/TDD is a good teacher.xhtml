@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Nieznany</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="../../stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="../../page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="calibre4">
+  <p class="calibre2">Thanks go to Kuba Miara for inspiration.</p>
+
+  <p class="calibre2">Last time I was debating my colleague on pros and cons of TDD, I made a mistake. I stressed too much that TDD is good, because it quickly shows you when the design is wrong and punishes you for not writing clean, properly encapsulated code. I did not talk so much about the support TDD provides, just about the punishment. By doing this, I got two counterarguments. Both of these are interesting and worth discussing. Today, I’d like to tackle the first one.</p>
+
+  <h3 class="sigilnotintoc">Teaching by punishment is too harsh.</h3>
+
+  <p class="calibre2">The argument was like this: “If TDD is so demanding, it will be hard for people to satisfy these demands. There are better and worse developers. Some people are having hard times writing good code, now they would need to know how to do it plus how to write good unit tests. Since the latter is a challenge on its own, they’re just gonna pay double.”. This is a vision of TDD as a “strict teacher”, that only makes demands and punishes you severely, when you’re unable to make it. This is also a vision of a “bad teacher” that ONLY makes demands and it’s the only kind of help it can provide.</p>
+
+  <p class="calibre2">This, however, is not true. <strong class="calibre14">TDD is a good teacher</strong>. How do you recognize a good teacher? Such teacher would:</p>
+
+  <ol class="calibre12">
+    <li class="calibre13">tell you when you’re getting things wrong.</li>
+
+    <li class="calibre13">support you in getting things right.</li>
+  </ol>
+
+  <p class="calibre2">In TDD, the first is achieved by using various heuristics when looking at unit tests. If you’re doing things wrong, your unit tests will tell you this (<a href="http://www.sustainabletdd.com/2011/10/test-reflexology-part-1-first-post.html">Amir and Scott have a nice summary</a> <a href="http://www.sustainabletdd.com/2011/10/test-reflexology-part-1-second-post.html">in two parts</a> of these heuristics). Now I’d like to concentrate more on the “supportive” stuff that I kind of missed during the original discussion - there are various ways TDD can <strong class="calibre14">support</strong> you in doing the right thing(TM). Among these things are:</p>
+
+  <dl class="calibre2">
+    <dt class="calibre16">Need Driven Design</dt>
+
+    <dd class="calibre17">helps in discovering new classes, methods and collaboration models as well as gaining high encapsulation and outside-in insight into your code (crafting method signatures from the view of their concrete usage, not from the top of your head), at the same time providing you a way to be more “lean” and write only the code you really need. I will do a separate post on Need Driven Design soon.</dd>
+
+    <dt class="calibre16">Test First</dt>
+
+    <dd class="calibre17">helping in many thing, but this time I’d like to stress that it lets you create classes with high testability by default - since you’re writing the test before the code, you design the production code with testability in mind and it brings with itself stronger cohesion and encapsulation plus looser coupling.</dd>
+
+    <dt class="calibre16">Given When Then Analysis</dt>
+
+    <dd class="calibre17">helps you to think about the code in terms of behaviors, discover holes in requirements, prioritize the implementation and enables deliberate discovery of new behaviors the system must support.</dd>
+
+    <dt class="calibre16">TODO list</dt>
+
+    <dd class="calibre17">helping you in keeping track of the things left to specify, refactor and implement, so that you can know when you’re done. Additionally, TODO list helps you in keeping focus on single behavior at once (“hmm, here, I’m passing two strings, but what if the first one is null? I’ll just add it to TODO list and get to it after I specify current behavior”). Kent Beck’s Test Driven Development By Example provides some good examples on how to work with TODO lists.</dd>
+
+    <dt class="calibre16">Triangulation</dt>
+
+    <dd class="calibre17">useful when driving implementation of a piece of code we don’t have an idea how to implement. By specifying example after example of how we expect a single behavior to work from the outside and refactoring each time into something more general, we gradually gain understanding of the problem and drive towards the right implementation.</dd>
+  </dl>
+
+  <p class="calibre2">Each of these tools that come “bundled” with TDD has its own set of best practices that can make even a mediocre developer write good code quickly. There is only one requirement: motivation.</p>
+
+  <p class="calibre2">Ok, that’s it for now, in the next post, I will try to discuss the second part of the argument. See ya!</p>
+</body>
+</html>

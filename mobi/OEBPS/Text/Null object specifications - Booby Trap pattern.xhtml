@@ -1,0 +1,84 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Null object specifications - Booby Trap pattern</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="../../stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="../../page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="calibre4">
+  <p class="calibre2">Hi, Today I’d like to write a little about specifying null objects and a simple Booby Trap pattern that can be used for this purpose.</p>
+
+  <h3 class="sigilnotintoc">A case for a null object?</h3>
+
+  <p class="calibre2">First, I’ll try to introduce the example we’re going to work on, at the same time introducing the null object pattern briefly for those that don’t know it (are there such programmers?)</p>
+
+  <p class="calibre2">Let’s imagine that you’re selling an email gateway that stands between your customer’s network and the rest of the world. Its job is to do some kind of processing of incoming and outgoing email and then pass it forward in the processed form to the customer’s network. In order to lower the traffic inside this network, the incoming email is compressed and to improve security, the outgoing mail is encrypted.</p>
+
+  <p class="calibre2">Now imagine that for various regulatory reasons, some customers need to encrypt the e-mail using one algorithm, while others use another algorithm. Also, there are customers that use more than one algorithm interchangeably depending on a day of month. So for different customers, you’re maintaining separate encryption algorithms and allow swapping them at runtime. The conceptual class diagram may look like this:</p>
+
+  <p class="calibre2"><a href="http://1.bp.blogspot.com/-fKgz0KQXBTs/T9Br_fz1eGI/AAAAAAAAAHM/df74NNT-nPo/s1600/NullObject_1.png" imageanchor="1" class="calibre37"><img alt="" border="0" src="http://1.bp.blogspot.com/-fKgz0KQXBTs/T9Br_fz1eGI/AAAAAAAAAHM/df74NNT-nPo/s400/NullObject_1.png" class="calibre50"/></a></p>
+
+  <p class="calibre2">One day, another customer appears and says “we don’t want the encryption, since we already have a solution that handles this issue. All we want is the compression”. You’re then left with two choices: either to treat “no encryption” as a special case and put an if-else (i.e. a variation of behavior) into the processing logic, or follow the Gang of Four’s principle of encapsulating what varies and put the variation into the factory, treating “no encryption” as a kind of encryption. The factory then would be able to create an encryption object that… does not encrypt at all. We chose the second option, of course. So let’s quickly add it to our diagram:</p>
+
+  <p class="calibre2"><a href="http://2.bp.blogspot.com/-6f0uQgAX6rE/T9BthW7GDjI/AAAAAAAAAHY/Z2hBEIwCpCs/s1600/NullObject_2.png" imageanchor="1" class="calibre37"><img alt="" border="0" src="http://2.bp.blogspot.com/-6f0uQgAX6rE/T9BthW7GDjI/AAAAAAAAAHY/Z2hBEIwCpCs/s400/NullObject_2.png" class="calibre51"/></a></p>
+
+  <p class="calibre2">This kind of object - an object that encapsulates “doing nothing” when filling a specified role - is called a <strong class="calibre14">null object</strong>.</p>
+
+  <h3 class="sigilnotintoc">Specifying null object - does that make any sense?</h3>
+
+  <p class="calibre2">What’s the point of specifying “nothing”? Isn’t it a nonsense similar to specifying that the code will not accidentally format the hard drive?</p>
+
+  <p class="calibre2">I may be alone in this opinion, but I think that in this case it does make sense. The main difference is that usually in case of null objects, our “nothing” is pretty well defined.</p>
+
+  <p class="calibre2">Let’s go back to our example and the null encryption object. What’s its definition of nothing? It’s “it should not encrypt the message”. But can it, e.g. Write something into the system log? Sure it can! So the “nothing” is really related to the message only. Hence, in the most strict case, we want to specify that the message shouldn’t be touched at all (the more loose case will be covered by a separate post somewhere in the future).</p>
+
+  <h3 class="sigilnotintoc">Booby traps - how to specify that something should not be touched?</h3>
+
+  <p class="calibre2">Let’s consider a null object that should REALLY do nothing with the message (a null object that triggers some behavior on passed object is more a complex topic - maybe I’ll write a follow up to this post discussing this particular case). What can we do to specify this requirement?</p>
+
+  <p class="calibre2">We can use a testing pattern that I call a Booby Trap (although, as you’ll see in a minute, the pattern can so be trivially implemented that one may argue whether it deserves its own name). In the real world, there are many kinds of booby traps - ranging from fun ones that make a noise when stepped on, to the military ones that may make a massive damage. What we’ll use this time is an equivalent of the latter.</p>
+
+  <p class="calibre2"><a href="http://4.bp.blogspot.com/-9N3y2Zk0IsU/T9BwyZqo7GI/AAAAAAAAAHw/-qcvyvQ_v9s/s1600/BoobyTrap.jpg" imageanchor="1" class="calibre37"><img alt="" border="0" src="http://4.bp.blogspot.com/-9N3y2Zk0IsU/T9BwyZqo7GI/AAAAAAAAAHw/-qcvyvQ_v9s/s320/BoobyTrap.jpg" class="calibre52"/></a></p>
+
+  <p class="calibre2">The easiest way to implement a full booby trap is to use a mocking framework that has a feature called <a href="http://stackoverflow.com/questions/3526195/rhinomock-mocks-vs-strictmocks-vs-dynamicmocks">Strict Mocks</a>. Strict mock is a variant of mock object that can only receive calls that we mark as “expected”. Any other call made on a strict mock blows things up with an exception and the test fails. So, the easiest way to implement a full booby trap is to just use a strict mock without ANY calls marked as “expected”. Of course, as mock objects rely mostly on inheritance, you’d have to pass an interface mock or mark all methods as virtual in your mocked class, but that’s a relatively small price to pay.</p>
+
+  <p class="calibre2">Having such a strict mocks, you can use it like this (example with Moq framework):</p>
+  <pre class="calibre10">
+[Test]
+public void ShouldNotPerformAnyKindOfOperationsOnMessage()
+{
+  //GIVEN
+  var nullEncryption = new NullEncryption();
+  var messageBoobyTrap = new Mock&lt;Message&gt;(MockBehavior.Strict);
+
+  //WHEN
+  nullEncryption.Perform(messageBoobyTrap.Object);
+
+  //THEN
+  messageBoobyTrap.VerifyAll();
+}
+</pre>
+
+  <p class="calibre2">There is, however, some bad news - the Strict Mock pattern is considered a relic of the past (the new and better way of mocking is to use so called Loose Mocks, that by default ignore unexpected calls instead of blowing things up) and many newer mocking frameworks don’t implement them (e.g. NSubstitute or FakeItEasy do not). In some cases we can still get the same benefit when the framework allows us to access the information on how many calls were made on a mock. The following example uses NSubstitute to do just that:</p>
+  <pre class="calibre10">
+[Test]
+public void ShouldNotPerformAnyKindOfOperationsOnMessage()
+{
+  //GIVEN
+  var nullEncryption = new NullEncryption();
+  var messageBoobyTrap = Substitute.For&lt;Message&gt;();
+
+  //WHEN
+  nullEncryption.Perform(messageBoobyTrap);
+
+  //THEN
+  CollectionAssert.IsEmpty(messageBoobyTrap.ReceivedCalls());
+}
+</pre>
+
+  <p class="calibre2">It gets a little bit harder in maintenance with manual mocks, since your mock has to derive from the actual class and mechanically override each method as throwing exception - then you have to remember to add such override for each new method that is added later to the actual class. While this is relatively easy in case your mock implements an interface directly (because the compiler error will tell you that your mock does not implement added method and you can just go and add your implementation - you never forget), in case of mocks deriving from actual/abstract classes it can be a maintenance pain.</p>
+
+  <p class="calibre2">That’s it for today, have a good day!</p>
+</body>
+</html>

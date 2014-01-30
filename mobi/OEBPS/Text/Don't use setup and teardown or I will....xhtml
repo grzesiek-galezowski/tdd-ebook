@@ -1,0 +1,237 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Don’t use setup and teardown, or I will…</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="../../stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="../../page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="calibre4">
+  <p class="calibre2">…write a blog post.</p>
+
+  <p class="calibre2">There - I did it. I told you I would!</p>
+
+  <p class="calibre2">This time, I’m going to share some of my reasons why I tend not to use Setup and Teardown mechanism at all.</p>
+
+  <p class="calibre2">First, a disclaimer - my point here is NOT that Setup and Teardown lead to inevitable catastrophe. My point here is that Setup and Teardown are so misunderstood and so easy to abuse, that I’d rather not use them at all. There are some other reasons why I actually prefer not having Setups and Teardowns even when they are used properly, but I’ll save this for another post. This time, I’d like to focus only on the ways this mechanism is most often abused.</p>
+
+  <h3 class="sigilnotintoc">What’s Setup and Teardown?</h3>
+
+  <p class="calibre2">As everyone knows, a Setup method is a special kind of method that is executed by unit testing tools before each unit test in the suite. Such methods are commonly used to set the stage before a unit test begins. Analogously, “Teardown” method is a method that is always run after unit test execution and is usually used to perform cleanup after the test finishes. So, given this code (example uses NUnit):</p>
+  <pre class="calibre10">
+[Setup]
+public void Setup()
+{
+  Console.WriteLine("SETUP");
+}
+
+[Teardown]
+public void Setup()
+{
+  Console.WriteLine("TEARDOWN");
+}
+
+[Test]
+public void Test2()
+{
+  Console.WriteLine("TEST");
+}
+
+[Test]
+public void Test1()
+{
+  Console.WriteLine("TEST");
+}
+</pre>
+
+  <p class="calibre2">… when it is run by a unit testing tool, it produces the following output:</p>
+  <pre class="calibre10">
+SETUP
+TEST
+TEARDOWN
+SETUP
+TEST
+TEARDOWN
+</pre>
+
+  <p class="calibre2">While having the common logic for “setting the stage” and “cleaning up” in test suite looks like adhering to DRY, avoiding duplication etc., there are, however, certain dangers when using this kind of mechanism, some of which I’d like to list below.</p>
+
+  <h3 class="sigilnotintoc">Issues with Setup and Teardown</h3>
+
+  <p class="calibre2">Because we’re talking mostly about C#, we’re mainly going to examine Setup, because Teardown is seldom used for unit tests in such languages. By the way, the examples provided are to explain what kind of abuse I have in mind. I tried to keep them simple - this way they’re more understandable, but do not show how bad can it get with real code and real project - you’ll have to believe :-). Let’s go!</p>
+
+  <h3 class="sigilnotintoc">Joint Fixtures</h3>
+
+  <p class="calibre2">Imagine that someone has a set of unit tests evolving around the same setup (let’s call it “A”):</p>
+  <pre class="calibre10">
+[Setup]
+public void SetUp()
+{
+  emptyList = new List&lt;int&gt;(); //A
+}
+
+[Test] //A
+public void ShouldHaveElementCountOf0AfterBeingCreated() 
+{
+ Assert.AreEqual(0, emptyList.Count());
+}
+
+[Test] //A
+public void ShouldBeEmptyAfterBeingCreated()
+{
+  Assert.True(emptyList.IsEmpty());
+}
+</pre>
+
+  <p class="calibre2">One day, another set of unit tests must be added for the same class that requires the setup to be handled a little bit differently (let’s call it “B”). What this person might do is to just add the necessary setup besides the first one.</p>
+  <pre class="calibre10">
+[Setup]
+public void SetUp()
+{
+  emptyList = new List&lt;int&gt;(); //A
+  listWithElement = new List&lt;int&gt;() { anyNumber }; //B
+}
+
+[Test] //A
+public void ShouldHaveElementCountOf0AfterBeingCreated() 
+{
+ Assert.AreEqual(0, emptyList.Count());
+}
+
+[Test] //A
+public void ShouldBeEmptyAfterBeingCreated()
+{
+  Assert.True(emptyList.IsEmpty());
+}
+
+[Test] //B
+public void ShouldNotContainElementRemovedFromIt()
+{
+  listWithElement.Remove(anyNumber);
+  Assert.False(listWithElement.Contains(anyNumber));
+}
+
+[Test] //B
+public void ShouldIncrementElementCountEachTimeTheSameElementIsAdded()
+{
+  var previousCount = listWithElement.Count();
+  listWithElement.Add(anyNumber);
+  Assert.AreEqual(previousCount + 1, listWithElement.Count());
+}
+</pre>
+
+  <p class="calibre2">The downside is that another person striving to understand one unit test will have to read both through the related setup and the unrelated one. And in real life scenarios such orthogonal setups tend to be longer that in this toy example.</p>
+
+  <p class="calibre2">Of course, this may be fixed by separating this class into two - each having its own setup. There are, however, two issues with this: one is that this is almost never done by novices, and the second is that it usually complicates navigation through the unit tests.</p>
+
+  <h3 class="sigilnotintoc">Locally Corrected Fixtures</h3>
+
+  <p class="calibre2">Another temptation a novice may face is when one day they need an object that’s slightly different than the one already set up in the Setup. The temptation is to, instead of create new object configured separately, undo some of the changes made by the Setup just for this single test. Let’s see a simplified example of a situation where one needs a radio set up slightly differently each time:</p>
+  <pre class="calibre10">
+[Setup]
+public void Setup()
+{
+  radio = new HandRadio();
+  radio.SetFrequency(100);
+  radio.TurnOn();
+  radio.SetToSecureModeTo(true);
+}
+
+[Test]
+public void ShouldDecryptReceivedContentWhenInSecureMode()
+{
+  var decryptedContent = radio.Receive(encryptedContent);
+  Assert.AreEqual("I love my wife", decryptedContent);
+}
+
+[Test]
+public void ShouldThrowExceptionWhenTryingToSendWhileItIsNotTurnedOn()
+{
+  radio.TurnOff(); //undo turning on!!
+
+  Assert.Throws&lt;Exception&gt;(() =&gt;
+    radio.Send(Any.String())
+  );
+}
+
+[Test]
+public void ShouldTransferDataLiterallyWhenReceivingInNonSecureMode()
+{
+  radio.SetSecureModeTo(false); //undo secure mode setting!!
+
+  var inputSignal = Any.String();
+  var receivedSignal = radio.Receive(inputSignal);
+
+  Assert.AreEqual(inputSignal, receivedSignal);
+}
+</pre>
+
+  <h3 class="sigilnotintoc">Overloaded fixtures</h3>
+
+  <p class="calibre2">Let’s stick with the hand radio example from previous section. Consider the following unit test:</p>
+  <pre class="calibre10">
+[Test]
+public void ShouldAllowGettingFrequencyThatWasSet()
+{
+  radio.SetFrequency(220);
+  Assert.AreEqual(220, radio.GetFrequency());
+}
+</pre>
+
+  <p class="calibre2">Ok, looks good - we specify that we should be able to read the frequency that we set on the radio, but… note that the radio is turned on in the Setup, so this is actually getting a frequency from a radio that’s turned on. What about if it’s turned off? Does it work the same? In the real world, some radios are analog and they allow manual regulation of frequency with a knob. On the other hand, some radios are digital - you can set their parameters only after you turn them on and they become active. Which case is it this time? We don’t know.</p>
+
+  <p class="calibre2">Ok, I actually lied a little. In fact, if someone was doing TDD, we can assume that if the scenario was different when a radio is off, another unit test would exist to document that. But in order to determine that, we have to: 1) look through all the unit tests written for this class, and 2) really, really believe that the author(s) developed all the features test-first. An alternative is to look at code coverage or at the code itself. However, all these ways of dealing with the issue require some examination that we have to perform. In such case, the Setup gets in the way of understanding a minimum activities required for a functionality to work as described.</p>
+
+  <h3 class="sigilnotintoc">Scope hiding</h3>
+
+  <p class="calibre2">It’s quite common to see unit tests grow too big in scope as the design gets worse and worse and it’s harder and harder to separate different bits and pieces for unit testing. Many people think that Setup and Teardown are THE feature to deal with this. I’m sorry, they are not. If you have issues with your design, the right way to go is to SOLVE them, not to HIDE them. Unfortunately, this kind of Setup abuse tends to grow into multi-level inherited Setups (do class names like “TestBase” ring a bell?), where no one really knows anymore what’s going on.</p>
+
+  <h3 class="sigilnotintoc">Evading already used values</h3>
+
+  <p class="calibre2">Consider the following example of a user registration process that may take place in various situations (e.g. creating sessions, presidential election etc.):</p>
+  <pre class="calibre10">
+[Setup]
+public void Setup()
+{
+  registration = new UserRegistration();
+  registration.PerformFor("user1");
+  registration.PerformFor("user2");
+}
+
+[Test]
+public void ShouldBeActiveForRegisteredUsers()
+{
+  Assert.True(registration.IsActiveFor("user1"));
+}
+
+[Test]
+public void ShouldBeInactiveForUnregisteredUsers()
+{
+  //cannot be "user1" or "user2" or it fails!
+  Assert.False(registration.IsActiveFor("unregisteredUser"));
+}
+</pre>
+
+  <p class="calibre2">Why “unregisteredUser” was chosen as a value for unregistered user? That’s because someone writing a unit test wanted to evade the values used in Setup. While that’s not as bad when reading those unit tests, it’s a pain when writing new ones - in order to avoid conflict, you have to always look back at what users are already registered and either use the same values or deliberately pick different ones. Thus, writing every new test begins with trying to understand what the Setup already does and trying to get around that. What’s worse, when putting another value in the Setup, we have to go through all existing unit tests to make sure that we pick a value different that already used in any of them. This hurts maintainability.</p><!--
+<h3>Issues with certain refactorings - TODO</h3>
+
+<p>np. kiedy chcemy zmienić jedno wywołanie metody na drugie w specyfikacjach, możemy to robić jedno po drugim. Alternatywa w przypadku setupu to skopiowanie, poprawienie setupu i kopiowanie specyfikacji jedna po drugiej.</p>
+-->
+
+  <h3 class="sigilnotintoc">Why do I tell teams to avoid Setup and Teardown</h3>
+
+  <p class="calibre2">As <a href="http://osherove.com/blog/2012/10/14/the-three-values-of-a-good-isolation-framework.html#disqus_thread">Roy Osherove once told me</a>:</p>
+
+  <p class="calibre2"><q>I don’t use my frameworks to teach me design.</q></p>
+
+  <p class="calibre2">and while it was in a different context, I can paraphrase it into saying that avoiding using a feature instead of learning how not to misuse it is not something that will teach you good design and TDD.</p>
+
+  <p class="calibre2">Why then do I insist that people new to unit testing hold back from using features such as Setup and Teardown? How is it helpful?</p>
+
+  <p class="calibre2">In my opinion, holding back from using Setup and Teardown exposes us to a diagnostic pain - when we feel the pain and we cannot work around it, we have to learn to avoid it. It’s never sufficient to say “don’t use Setup and Teardown” or put in any other rule (e.g. “no getters”) without following up on experience from applying this rule. When the team gets into difficulties, there has to be someone to explain what’s the root cause. Only then do such rules make sense. If not for this, the team would just find another workaround, e.g. with helper methods (which are better than Setup and Teardown in that you always get to choose every time which ones to use and which not, but can also be abused). Thus, when I say “no Setup/Teardown” to a team, I always wait for a reaction like “you’re nuts!” - through such experiences, I’m preparing them to acknowledge that TDD is something different that they initially thought (which is usually something like “execute a lot of production code” and “get a high coverage”).</p>
+
+  <p class="calibre2">How about experienced developers? Do they need to adhere to the same rule? Well, let me share my experience. I told myself once - if I ever run into a situation where it makes perfect sense to use Setup and Teardown, I will not hold myself back. Guess what - since then, I used it only once (because one technique of dependency injection required it) and I was regretting it later. Other than this, I never really felt the need to use this feature, since I was doing even better without it. There are some other advantages (like keeping each unit test a “one part story”) that make me never want to go back. Where I work, we’ve got over a thousand of unit tests and no Setup and Teardown at all.</p>
+
+  <p class="calibre2">There are actually more smells and difficulties associated with Setup and Teardown (like impeding certain refactorings) and I could also write something more about Setup and Teardown vs helper methods, but everything has to have an end, doesn’t it? Till the next time!</p>
+</body>
+</html>

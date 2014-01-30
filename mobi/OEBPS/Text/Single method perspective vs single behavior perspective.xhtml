@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Single method perspective vs single behavior perspective</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="../../stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="../../page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="calibre4">
+  <p class="calibre2">Hi, today, I’d like to outline few differences between a technique called Programming By Intention and Test-Driven Development. I’m currently halfway through <a href="http://www.netobjectives.com/resources/books/essential-skills-agile-developers">Essential Skills For The Agile Developer</a> and the chapter on <a href="http://www.netobjectives.com/files/books/esad/essential-skills-programming-by-intention.pdf">Programming By Intention</a> made me revisit this fine technique and think it over again, especially in comparison to Test-Driven Development.</p>
+
+  <h3 class="sigilnotintoc">What’s Programming By Intention?</h3>
+
+  <p class="calibre2">On the book’s page you can get the chapter on Programming By Intention for free and read it, but for those of you that like summaries - it’s an outside-in approach to writing methods, that makes a distinction between so called “Sergeant” methods and “Private” methods. A “Sergeant” is a method that has the single responsibility of describing a high-level workflow and it delegates all the implementation details to “Private” methods. When beginning to write a piece of code, you start with a “Sergeant” and pretend that all the methods it needs to call already exist (although they usually don’t). A simplified example of a “sergeant” for logging-in logic would be something like this:</p>
+  <pre class="calibre10">
+public string LogIn(string userName, string password)
+{
+  string homePage = GetHomePageAddress();
+  string loginPage = GetLoginPageAddress();
+  string response = GetDefaultResponse();
+
+  if(AreCredentialsValid(userName, password))
+  {
+    response = GetResponseWithSuccessfulLoginMessage();
+    RedirectTo(homePage);
+  }
+  else
+  {
+    response = GetResponseWithLoginErrorsFor(userName);
+    RedirectTo(loginPage);
+  }
+  return response;
+}
+</pre>
+
+  <p class="calibre2">As you can see, in the above example, we’re passing what we can as method parameters instead of relying on fields. Also, there are almost no operators (even “new” and object access operator “.”) - they’re hidden inside the “private” methods to whom we delegate the work. These methods don’t exist yet - we’re just imagining how they should look to fit our needs. The next step is to generate skeleton bodies for “privates” (preferably using an IDE) and fill them in one by one (Of course, a “private” for this method might also be a “sergeant” with its own “privates”). A simple implementation example of a private method might look like this:</p>
+  <pre class="calibre10">
+private string GetResponseWithLoginErrorsFor(string userName)
+{
+  return userName + " could not login. Invalid credentials";
+} 
+</pre>
+
+  <p class="calibre2">Programming By Intention produces code that is very readable - every work-flow step has its domain-specific name. Also, this technique is so powerful, because it separates specification perspective from implementation perspective and, by doing so, leads to a very high method cohesion. Thus, for example, it’s very simple to refactor our exemplary “sergeant” later into something like this:</p>
+  <pre class="calibre10">
+public Response LogIn(
+  UserCredentials userCredentials,
+  Page homePage, 
+  Page loginPage)
+{
+  Response response = Response.Default();
+
+  if(credentials.AreValid())
+  {
+    response.SetUpWithSuccessfulLoginMessage();
+    homePage.RedirectTo();
+  }
+  else
+  {
+    response.SetUpWithLoginErrorsFor(userName);
+    loginPage.RedirectTo();
+  }
+  return response;
+}
+</pre>
+
+  <p class="calibre2">and achieve class-level cohesion, although the decision whether to pay that cost right now or defer it for later is left to us. Thanks to this, Programming By Intention can be at best almost no-cost (in case of small programs that don’t need any maintenance in the future), while at worst allowing us to defer the cost for later while introducing minimal technical debt (in case of more serious pieces of software that need cohesion on every level).</p>
+
+  <h3 class="sigilnotintoc">How does it relate to Test-Driven Development?</h3>
+
+  <p class="calibre2">I must confess that this is the second most powerful technique I know for writing good and easy to read code, the only more powerful being Test-Driven Development. Whenever I am in a situation where for some reasons I cannot use TDD, I use Programming by Intention.</p>
+
+  <p class="calibre2">Now, let’s examine the similarities between the two techniques first:</p>
+
+  <ol class="calibre12">
+    <li class="calibre13">Both are outside-in approaches (I’m talking here about the outside-in style of TDD, as it can also be used bottom-up, as e.g. Kent Beck prefers to use it), crafting APIs and method names from the perspective of their use</li>
+
+    <li class="calibre13">Both are variants of the divide-and-conquer strategy</li>
+
+    <li class="calibre13">Both are about specifying intention through code</li>
+
+    <li class="calibre13">Both tend to lead to highly cohesive designs, although TDD demands both class-level and method-level cohesion, while Programming By Intention tends to demand method-level cohesion only (although class-level is easily achievable from there, as in the example above).</li>
+  </ol>
+
+  <p class="calibre2">Now for the differences. The main one in my opinion is that Programming By Intention looks at writing code from a perspective of a method, while Test-Driven Development looks from the perspective of a behavior. This means several things:</p>
+
+  <ol class="calibre12">
+    <li class="calibre13">When implementing a single method (as in Programming By Intention), one does not see the whole context of its usage - only this one method. On the other hand, in TDD, when writing a unit-level spec, it usually begins with object instantiation and ends with observable result (either returning a result or call collaborating object’s method)</li>
+
+    <li class="calibre13">The method perspective also means that, when writing it using Programming By Intention, one has to consider the method as a whole - e.g. all required execution paths (ifs and elses) must be considered throughout the whole implementation process, since they’re all usually added in one go. On the other hand, in TDD one only worries about the current path he’s specifying with a test. Other paths are either already tied to other tests that will remind us when we unintentionally break them (so we don’t have to think about them anymore), or on our TODO list (so we don’t have to worry about them yet).</li>
+  </ol>
+
+  <p class="calibre2">The second point is, IMHO, really important. Few days ago, I finally watched <a href="http://skillsmatter.com/podcast/agile-testing/make-impact-not-software">a presentation by Gojko Adzic and Dan North</a> from BDD Exchange. Talking about accelerating Agile, Gojko and Dan stressed very heavily the importance of making a “measurable impact”. I think that, when scaled down, this idea aligns well with TDD. The “measurability” of the “impact” we make with our executable specifications can be considered in two ways:</p>
+
+  <ol class="calibre12">
+    <li class="calibre13">For a single specification: watching the <span class="calibre32">RED</span> to <span class="calibre35">GREEN</span> transition is an act of measuring the impact - reaching the <span class="calibre35">GREEN</span> phase means that you now have something that was not present yet during the <span class="calibre32">RED</span> phase.</li>
+
+    <li class="calibre13">For a suite of specifications: the comparison of already implemented specs vs the ones left on the TODO list are a way to measure “how much of the impact” was already made vs what’s left.</li>
+  </ol>
+
+  <h3 class="sigilnotintoc">Summary</h3>
+
+  <p class="calibre2">Personally, I find many similarities between Programming By Intention and TDD, with Programming By Intention being lower cost (at least in the short run) and easier to learn, while TDD being more powerful and advanced. I dare to say that TDD is Programming By Intention on steroids. Also, I believe that learning Programming By Intention helps in in grasping mock-based Test Driven Development. Hence, if you are struggling with outside-in TDD using mocks, it’s a good idea to train Programming By Intention first.</p>
+
+  <p class="calibre2">That’s all for today, I hope you liked it and see you soon!</p>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Nieznany</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="../../stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="../../page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="calibre4">
+  <p class="calibre2">Although the idea of <a href="http://osherove.com/tdd-kata-1/">doing code kata to practice TDD</a> is quite popular, I couldn’t get on this train for a long time. The reason was that I was striving to find a kata that would help me practice or demonstrate a mock-based TDD, at the same time being simple and showing all the <a href="http://www.sustainabletdd.com/2012/01/test-categories.html">testing</a> <a href="http://www.sustainabletdd.com/2012/01/testing-best-practices-test-categories.html">categories</a>, as well as <a href="http://www.sustainabletdd.com/2011/10/test-reflexology-part-1-first-post.html">test</a> <a href="http://www.sustainabletdd.com/2011/10/test-reflexology-part-1-second-post.html">reflexology</a> in practice.</p>
+
+  <p class="calibre2">This was until I ran into a situation that, with few simplifications, could be turned into a compelling kata to show off the power of mocks and Need-Driven Development.</p>
+
+  <p class="calibre2">I’ve decided to present the kata in a series of posts. This one is going to be about the challenge only.</p>
+
+  <h3 class="sigilnotintoc">The challenge</h3>
+
+  <p class="calibre2">Imagine the following situations: you’re creating a message processing module for a system that receives data in a form of frames from the network. The frame parsing is done using a proprietary third party library and your module receives the frames as deserialized objects. As the class for the objects is stored in the third-party library, you cannot change it (e.g. add or remove methods or change any signature).</p>
+
+  <p class="calibre2">There is only one type of frame, described below:</p>
+  <pre class="calibre10">
+public class Frame
+{
+  int Speed { get; set; }
+  int Age { get; set; }
+  string Sender { get; set; }
+}
+</pre>
+
+  <p class="calibre2">Your task is to implement the message processing. So far, it only consists of validation and nothing more. Each field of each incoming frame is validated. The following examples describe the validation rules:</p>
+
+  <table class="calibre39">
+    <tr class="calibre21">
+      <th class="calibre40">type of field</th>
+
+      <th class="calibre40">Correctness criteria</th>
+
+      <th class="calibre40">When satisfied</th>
+
+      <th class="calibre40">When not satisfied</th>
+    </tr>
+
+    <tr class="calibre21">
+      <td class="calibre41">int</td>
+
+      <td class="calibre41">greater than 0</td>
+
+      <td class="calibre41">do nothing</td>
+
+      <td class="calibre41">throw exception</td>
+    </tr>
+
+    <tr class="calibre21">
+      <td class="calibre42">string</td>
+
+      <td class="calibre42">not null and not empty</td>
+
+      <td class="calibre42">do nothing</td>
+
+      <td class="calibre42">throw exception</td>
+    </tr>
+  </table>
+
+  <p class="calibre2">Of course, you have to do this test-first.</p>
+
+  <h3 class="sigilnotintoc">Two more posts to come - one for failure, one for success</h3>
+
+  <p class="calibre2">I believe that failure and success are both great opportunities to learn something valuable. So in the next post, <a href="http://feelings-erased.blogspot.com/2012/09/a-kata-challenge-to-try-your-tdd-skills_25.html">I’ll try to show you how to screw up</a> :-) and what we can learn from the failure by listening to the tests.</p>
+
+  <p class="calibre2">In the meantime, you can try to solve the kata yourself (coming up with any solutions should be trivial) and share your observations.</p>
+
+  <p class="calibre2">Good night, everyone!</p>
+</body>
+</html>

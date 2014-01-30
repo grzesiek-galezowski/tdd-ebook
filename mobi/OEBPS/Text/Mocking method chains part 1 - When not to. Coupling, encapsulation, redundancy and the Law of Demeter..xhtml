@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Mocking method chains part 1: When not to. Coupling, encapsulation, redundancy and the Law of Demeter</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="../../stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="../../page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="calibre4">
+  <p class="calibre2">Today I’d like to start discussing mocking of sequences of method call chains. This discussion will be split in two parts, part two coming soon.</p>
+
+  <h3 class="sigilnotintoc">The basics of call chains</h3>
+
+  <p class="calibre2">When I say “call chain”, I mean something like this:</p>
+  <pre class="calibre10">
+a.X().Y().Z().V();
+</pre>
+
+  <p class="calibre2">So basically we’re just invoking methods on a result of another method. This is a construct that probably everyone programming in an object oriented language have come across, so I’ll only note that I don’t mean “call chain” merely as a synonym of invoking method on returned object (because it would be plain silly to make up a name for something that obvious), but rather the style of invoking methods “in a chain” as seen in the example above.</p>
+
+  <h3 class="sigilnotintoc">Call chains may be a design smell</h3>
+
+  <p class="calibre2">Now, one thing I want to make clear is that there’s a point in mocking method chains only in specific situations. This is because call chains can be either a design smell or a sophisticated API design technique. Today, I’m gonna talk a little bit about the first case, leaving the latter for part two.</p>
+
+  <p class="calibre2">Let’s take a look at the following example of call chain being just a design smell (we’re gonna discuss why in a minute):</p>
+  <pre class="calibre10">
+bool wasWrittenInAmericanEnglish = message
+  .GetWrappedFrame()
+  .GetHeader()
+  .GetLocale() == "en-US";
+</pre>
+
+  <p class="calibre2">So, what’s really wrong with this? I can guess that you’ve probably seen code like this many times before. The issue with the example above is that we’re now coupled to all of the types of objects between the message object and the locale string. Also, we’re coupled to the information that message language can be obtained by locale, as well as to the name of the en-US locale and so on.</p>
+
+  <p class="calibre2">Moreover, we’re coupled to if and when will subsequent calls return valid objects. Let’s say that there are some messages that do not contain a header and we can’t obtain a locale information. We decide that we want to use application’s default locale in such case - this decision will have to be properly handled by this code. If this isn’t the only place where we need to follow this default locale policy, we’ve already introduced redundancy (oh, and did I say that we’ve violated encapsulation by failing to protect the information on how the locale is obtained?). Another example might be adding support for messages without locale specified in the header.</p>
+
+  <p class="calibre2">Here’s how ugly may this kind of code turn when only these two constrains are loosened:</p>
+  <pre class="calibre10">
+const string EnUs = "en-US";
+bool wasWrittenInAmericanEnglish 
+  = EnUs == getCurrentAppLocale();
+
+var wrappedFrame = message.GetWrappedFrame();
+
+if(wrappedFrame.HasHeader())
+{
+  var header = message.GetHeader();
+  var locale = header.GetLocale();
+  if(locale != null)
+  {
+    wasWrittenInAmericanEnglish = locale == EnUs;
+  }
+}
+</pre>
+
+  <p class="calibre2">See how the code was impacted by broken encapsulation? By the way, this is also a violation of <a href="http://www.ccs.neu.edu/research/demeter/demeter-method/LawOfDemeter/paper-boy/demeter.pdf">Law of Demeter</a>.</p>
+
+  <p class="calibre2">As a side note, the issue does not have anything to do with the calls being chained. It may as well look like this without it changing the problem at all:</p>
+  <pre class="calibre10">
+var frame = message.GetWrappedFrame();
+var header = frame.GetHeader();
+var locale = header.GetLocale();
+var wasWrittenInAmericanEnglish = locale == "en-US";
+</pre>
+
+  <p class="calibre2">So the chain in such smelly situations is rather a workaround than an API design technique. The workaround is for typing too much and dealing with too many variables that are only used to obtain other variables.</p>
+
+  <h3 class="sigilnotintoc">The diagnosis and the cure</h3>
+
+  <p class="calibre2">We mainly run into this kind of code in four situations:</p>
+
+  <ol class="calibre12">
+    <li class="calibre13">We introduce it during bottom-up coding (because we have access to all the data wee need, just need to “reach it through the dots”)</li>
+
+    <li class="calibre13">We introduce it when not using TDD, because there is nothing to tell us loud enough that it’s wrong</li>
+
+    <li class="calibre13">We introduce it by abusing mocking frameworks (whose authors usually add support for mocking of method chains, but not with such situations in mind)</li>
+
+    <li class="calibre13">We encounter it in legacy code</li>
+  </ol>
+
+  <p class="calibre2">In any case, you don’t want to mock the methods chain. I mean, <strong class="calibre14">really really</strong>, you don’t want to mock it. Or specify it.</p>
+
+  <p class="calibre2">What you DO want to do is to refactor it into something like this:</p>
+  <pre class="calibre10">
+bool wasWrittenInAmericanEnglish 
+  = message.WasWrittenIn(Languages.AmericanEnglish);
+</pre>
+
+  <p class="calibre2">Here, the code is decoupled from all the information about the encapsulated calls - it doesn’t know the structure of message object or the locale format used, or even that the check is made by comparing locale values of any sort. We’re safe and sound.</p>
+
+  <p class="calibre2">Also, it’s very straightforward to mock, even with manual mocks. That’s one of the reasons some of the TDD gurus suggest to use manual mocks (at least when getting started) - they provide more of the diagnostic pain that points where the design is going wrong.</p>
+
+  <p class="calibre2">And how to avoid running into such smelly chains when writing new code? My favorite technique is to use <a href="http://xunitpatterns.com/need-driven%20development.html">Need Driven Development</a>, at the same time forgetting about the call chain mocking feature of some of the mocking frameworks.</p>
+
+  <p class="calibre2">Ok, that’s it for today, in the next installment, we’ll take a look at some proper usage of call chains and three classes of such chains: ordered chains, unordered chains and chains with grammar. Stay tuned!</p>
+</body>
+</html>

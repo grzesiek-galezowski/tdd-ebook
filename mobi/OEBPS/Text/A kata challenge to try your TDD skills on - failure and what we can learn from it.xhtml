@@ -1,0 +1,746 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>A kata challenge to try your TDD skills on - failure and what we can learn from it</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="../../stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="../../page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="calibre4">
+  <p class="calibre2">As promised, today I’d like to show you a way to come up with a suboptimal solution to the <a href="http://feelings-erased.blogspot.com/2012/09/a-kata-challenge-to-try-your-tdd-skills.html">kata described earlier</a>.</p>
+
+  <p class="calibre2">I’ll be using xUnit.NET as my unit test runner and NSubstitute as my mocking library of choice throughout this exercise. In general, I’ll be following good practices most of the time and indicate where I’ll be “accidentially” losing sight of them.</p>
+
+  <h3 class="sigilnotintoc">Specification 1: Creating new instances</h3>
+
+  <p class="calibre2">We’re starting outside-in, from the inputs. In my system, I’ll model the most “outside” part of the module as a MessageProcessing class. We should be able to create instances of this class, so the first specification will tell just this:</p>
+  <pre class="calibre10">
+[Fact]
+public void ShouldAllowCreatingNewInstancesWithoutExceptions()
+{
+  Assert.DoesNotThrow(() =&gt; new MessageProcessing());
+}
+</pre>
+
+  <p class="calibre2">This specification creates <strong class="calibre14">a need</strong> to have a MessageProcessing class:</p>
+  <pre class="calibre10">
+public class MessageProcessing
+{
+}
+</pre>
+
+  <p class="calibre2">Ok, so far so good. This, by the way, is a simple example of a <a href="http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html">Creational Specification</a>. Now let’s take on a more complex behavior.</p>
+
+  <h3 class="sigilnotintoc">Specification 2: Submitting frame to validation</h3>
+
+  <p class="calibre2">Ok, so now’s the time to use the Given-When-Then analysis. We already have the MessageProcessing class - also, we’ve got the Frame class. How do they interact with each other?</p>
+
+  <p class="calibre2">After giving it a short thought, we can come up with this obvious behavior description:</p>
+  <pre class="calibre27">
+GIVEN any frame
+WHEN message processing is performed for it
+THEN it should submit the frame to validation
+</pre>
+
+  <p class="calibre2">Cool, let’s get to implementing it. The first thing we want to do is to just translate the behavior description above to the code and see which abstractions and methods are missing - then supply them.</p>
+
+  <p class="calibre2">The first line:</p>
+  <pre class="calibre27">
+GIVEN any frame
+</pre>
+
+  <p class="calibre2">can be translated to code like this:</p>
+  <pre class="calibre10">
+var anyFrame = Any.InstanceOf&lt;Frame&gt;();
+</pre>
+
+  <p class="calibre2">Then the second line:</p>
+  <pre class="calibre27">
+WHEN message processing is performed for it
+</pre>
+
+  <p class="calibre2">can be written as:</p>
+  <pre class="calibre10">
+var messageProcessing = new MessageProcessing();
+messageProcessing.PerformFor(frame);
+</pre>
+
+  <p class="calibre2">Great! Now the last line:</p>
+  <pre class="calibre27">
+THEN it should submit the frame to validation
+</pre>
+
+  <p class="calibre2">and its translation into the code (note the Received() extension method, which is an NSubstitute construct):</p>
+  <pre class="calibre10">
+validation.Received().PerformFor(anyFrame);
+</pre>
+
+  <p class="calibre2">Ok, so we’ve made the translation, now let’s summarize this and see what’s missing to make this code compile:</p>
+  <pre class="calibre10">
+[Fact] public void 
+ShouldSubmitFrameToValidationWhenPerformedForThatFrame()
+{
+  //GIVEN
+  var anyFrame = Any.InstanceOf&lt;Frame&gt;();
+
+  //WHEN
+  var messageProcessing = new MessageProcessing();
+  messageProcessing.PerformFor(frame);
+
+  //THEN
+  validation.Received().PerformFor(anyFrame);
+}
+</pre>
+
+  <p class="calibre2">What’s missing? We have to somehow create the validation and pass it to MessageProcessing, since it’s the entity responsible for performing the validation. And so, the corrected version looks like this.</p>
+  <pre class="calibre10">
+[Fact] public void 
+ShouldSubmitFrameToValidationWhenPerformedForThatFrame()
+{
+  //GIVEN
+  var anyFrame = Any.InstanceOf&lt;Frame&gt;();
+  var validation = Substitute.For&lt;Validation&gt;();  
+
+  //WHEN
+  var messageProcessing = new MessageProcessing(validation);
+  messageProcessing.PerformFor(frame);
+
+  //THEN
+  validation.Received().PerformFor(anyFrame);
+}
+</pre>
+
+  <p class="calibre2">As you can see, we’ve discovered one new abstraction - a validation, and two new methods: one for message processing and one for validation (accidentially, both named PerformFor()). Thus, we have <strong class="calibre14">created a need</strong> for all this new stuff to exist. Additionally, <strong class="calibre14">we made a mistake</strong> when dividing responsibilities between classes, and we’ll see why later.</p>
+
+  <p class="calibre2">By the way, this is what’s called a <a href="http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html">Work-Flow Specification</a>. Our workflow is very primitive, since it consists of forwarding a method call to another object. In real-world scenarios (and in the correct solution to this kata) workflows are more worthwile.</p>
+
+  <p class="calibre2">After creating all the necessary types and methods, the implementation looks like this:</p>
+  <pre class="calibre10">
+public class MessageProcessing
+{
+  public MessageProcessing(Validation validation)
+  {
+    throw new NotImplementedException();
+  }
+
+  public void PerformFor(Frame frame)
+  {
+    throw new NotImplementedException();
+  }
+}
+
+//TODO implement
+public interface Validation
+{
+  void PerformFor(Frame frame); 
+}
+</pre>
+
+  <p class="calibre2">Also, we’ve got to correct the first specification to cater for new construction argument:</p>
+  <pre class="calibre10">
+[Fact]
+public void ShouldAllowCreatingNewInstancesWithoutExceptions()
+{
+  Assert.DoesNotThrow(
+    () =&gt; new MessageProcessing(Any.InstanceOf&lt;Validation&gt;())
+  );
+}
+</pre>
+
+  <p class="calibre2">Note that I added a TODO next to the Validation interface - this is because I’ll need to go back later and actually implement it. While I don’t write much about a TODO list in this post, it’s actually one of TDDer’s best friends (maybe I’ll write a post about it someday).</p>
+
+  <p class="calibre2">Let’s leave the validation for now. To make this specification I just wrote pass, I’ll need to change the MessageProcessing class:</p>
+  <pre class="calibre10">
+public class MessageProcessing
+{
+  private readonly Validation _validation;
+
+  public MessageProcessing(Validation validation)
+  {
+    _validation = validation;
+  }
+
+  public void PerformFor(Frame frame)
+  {
+    _validation.PerformFor(frame);
+  }
+}
+</pre>
+
+  <p class="calibre2">Now it’s all green, so let’s examine our TODO list. The only item on the list is the Validation interface implementation, so let’s go ahead and create…</p>
+
+  <h3 class="sigilnotintoc">Specification 3: new instances of concrete validation.</h3>
+
+  <p class="calibre2">So we need a concrete implementation of the Validation interface. Let’s call it BasicValidation, since the logic in there is gonna be really simple.</p>
+  <pre class="calibre10">
+[Fact]
+public void ShouldAllowCreatingNewInstancesWithoutExceptions()
+{
+  Assert.DoesNotThrow(
+    () =&gt; new SanityValidation()
+  );
+}
+</pre>
+
+  <p class="calibre2">and now we’ve created <strong class="calibre14">a need</strong> for a class named SanityValidation. The code for SanityValidation class looks like this now:</p>
+  <pre class="calibre10">
+public class SanityValidation : Validation
+{
+  public void PerformFor(Frame frame)
+  {
+    throw new NotImplementedException();
+  }
+}
+</pre>
+
+  <p class="calibre2">Some tools, like Resharper, put occurences of NotImplementedException on the TODO list, which is a great feature, because replacing it with concrete implementation actually IS something “to do”.</p>
+
+  <h3 class="sigilnotintoc">Specification 4: Ignoring valid frames</h3>
+
+  <p class="calibre2">Starting from this chapter, we’re going to feel the pain of my bad design decision more and more. In the grand finale, I’ll show you what mess we’ve got ourselves into. But first things first, let’s write the first specification of validation, which says:</p>
+  <pre class="calibre27">
+GIVEN a validation and a frame
+AND the frame has all its fields valid
+WHEN the frame is submitted to validation
+THEN no exception should be thrown
+</pre>
+
+  <p class="calibre2">which, translated into code, looks like this:</p>
+  <pre class="calibre10">
+[Fact] public void 
+ShouldNotThrowAnyExceptionWhenPerformedForFrameWithAllFieldsValid()
+{
+  //GIVEN
+  var frame = new Frame()
+  { 
+    Speed = SanityValidation.MinValidInteger,
+    Age = SanityValidation.MinValidInteger,
+    Sender = Any.NonNullNonEmptyString()
+  };
+
+  var validation = new SanityValidation();
+
+  //WHEN - THEN
+  Assert.DoesNotThrow(
+    () =&gt; validation.PerformFor(frame)
+  );
+}
+</pre>
+
+  <p class="calibre2">(By the way, this is called a <a href="http://www.sustainabletdd.com/2012/01/test-categories.html">Functional Specification</a>.)</p>
+
+  <p class="calibre2">Interesting… we had to know exactly what <strong class="calibre14">“all fields”</strong> mean. I wonder what will be the effect of adding new field to the frame in the future… We’ll see more of that with upcoming specs. For now, let’s just type in the implementation which is to remove throwing the NotImplementedException() from PerformFor() method. Oh, I almost forgot, we introduced a need to create a constant named MinValidInteger, so we have to add it to the SanityValidation class:</p>
+  <pre class="calibre10">
+public class SanityValidation : Validation
+{
+  public const MinValidInteger = 12345; //TODO
+  public void PerformFor(Frame frame)
+  {
+  }
+}
+</pre>
+
+  <p class="calibre2">Note that we’re not assigning this new constant any particular value - 12345 is just a dummy number. Moreover, we’re putting a TODO next to the constant, since we’ll want to revisit it later and actually write a specification on what the value of the constant should be. But for now - done. Time for the next one.</p>
+
+  <h3 class="sigilnotintoc">Specification 5: throwing exception on invalid Speed</h3>
+
+  <p class="calibre2">Let’s describe the expected behavior:</p>
+  <pre class="calibre27">
+GIVEN a validation and a frame
+AND the frame has all its fields valid except for the Speed
+WHEN the frame is submitted to validation
+THEN an exception should be thrown
+</pre>
+
+  <p class="calibre2">Note the <strong class="calibre14">“all fields”</strong> again… this is becoming very interesting. let’s see what comes up when we put the spec into code:</p>
+  <pre class="calibre10">
+[Fact] public void 
+ShouldThrowAnExceptionWhenPerformedForFrameWithInvalidSpeed()
+{
+  //GIVEN
+  var frame = new Frame()
+  { 
+    Speed = SanityValidation.MinValidInteger - 1,
+    Age = SanityValidation.MinValidInteger,
+    Sender = Any.NonNullNonEmptyString()
+  };
+
+  var validation = new SanityValidation();
+
+  //WHEN - THEN
+  Assert.Throws&lt;Exception&gt;(
+    () =&gt; validation.PerformFor(frame)
+  );
+}
+</pre>
+
+  <p class="calibre2">Another Functional Specification. Note that we’re repeating assignments to all of the frame fields. Also, we’re repeating the knowledge on what it means to be “valid” for each field except the speed. Keep calm, the grand finale is getting nearer and nearer. For now, let’s just pretend that nothing happened and add the necessary code to make this spec pass:</p>
+  <pre class="calibre10">
+public class SanityValidation : Validation
+{
+  public const MinValidInteger = 12345; //TODO
+  public void PerformFor(Frame frame)
+  {
+    if(frame.Speed &lt; MinValidInteger)
+      throw new Exception();
+  }
+}
+</pre>
+
+  <h3 class="sigilnotintoc">Specification 6: throwing exceptions on invalid Age</h3>
+
+  <p class="calibre2">To be honest, nothing really interesting happens here, since it’s almost the same as in the previous case. Let’s just write the spec:</p>
+  <pre class="calibre10">
+[Fact] public void 
+ShouldThrowAnExceptionWhenPerformedForFrameWithInvalidAge()
+{
+  //GIVEN
+  var frame = new Frame()
+  { 
+    Speed = SanityValidation.MinValidInteger,
+    Age = SanityValidation.MinValidInteger - 1,
+    Sender = Any.NonNullNonEmptyString()
+  };
+
+  var validation = new SanityValidation();
+
+  //WHEN - THEN
+  Assert.Throws&lt;Exception&gt;(
+    () =&gt; validation.PerformFor(frame)
+  );
+}
+</pre>
+
+  <p class="calibre2">and the code necessary to make it pass:</p>
+  <pre class="calibre10">
+public class SanityValidation : Validation
+{
+  public const MinValidInteger = 12345; //TODO
+  public void PerformFor(Frame frame)
+  {
+    if(frame.Speed &lt; MinValidInteger)
+      throw new Exception();
+    if(frame.Age &lt; MinValidInteger)
+      throw new Exception();
+  }
+}
+</pre>
+
+  <p class="calibre2">By the way, is it only me, or is there a pattern recurring in both specs and production code? Oh, and the conclusions on bad design drawn during the previous specification are only reinforced here!</p>
+
+  <h3 class="sigilnotintoc">Specification 7: Sender cannot be null</h3>
+
+  <p class="calibre2">Also, this one is analogous to the two previous ones, only this time we’ll be checking for null instead of a numeric boundary:</p>
+  <pre class="calibre10">
+[Fact] public void 
+ShouldThrowAnExceptionWhenPerformedForFrameWithNullSender()
+{
+  //GIVEN
+  var frame = new Frame()
+  { 
+    Speed = SanityValidation.MinValidInteger,
+    Age = SanityValidation.MinValidInteger,
+    Sender = null
+  };
+
+  var validation = new SanityValidation();
+
+  //WHEN - THEN
+  Assert.Throws&lt;Exception&gt;(
+    () =&gt; validation.PerformFor(frame)
+  );
+}
+</pre>
+
+  <p class="calibre2">and here’s the code:</p>
+  <pre class="calibre10">
+public class SanityValidation : Validation
+{
+  public const MinValidInteger = 12345; //TODO
+  public void PerformFor(Frame frame)
+  {
+    if(frame.Speed &lt; MinValidInteger)
+      throw new Exception();
+    if(frame.Age &lt; MinValidInteger)
+      throw new Exception();
+    if(frame.Sender == null)
+      throw new Exception();
+  }
+}
+</pre>
+
+  <p class="calibre2">…and the last validation:</p>
+
+  <h3 class="sigilnotintoc">Specification 8: Sender cannot be empty</h3>
+
+  <p class="calibre2">Almost exactly the same as the previous one. Comments are not needed. Here’s the spec:</p>
+  <pre class="calibre10">
+[Fact] public void 
+ShouldThrowAnExceptionWhenPerformedForFrameWithEmptySender()
+{
+  //GIVEN
+  var frame = new Frame()
+  { 
+    Speed = SanityValidation.MinValidInteger,
+    Age = SanityValidation.MinValidInteger,
+    Sender = string.Empty
+  };
+
+  var validation = new SanityValidation();
+
+  //WHEN - THEN
+  Assert.Throws&lt;Exception&gt;(
+    () =&gt; validation.PerformFor(frame)
+  );
+}
+</pre>
+
+  <p class="calibre2">and production code that fulfills it:</p>
+  <pre class="calibre10">
+public class SanityValidation : Validation
+{
+  public const MinValidInteger = 12345; //TODO
+  public void PerformFor(Frame frame)
+  {
+    if(frame.Speed &lt; MinValidInteger)
+      throw new Exception();
+    if(frame.Age &lt; MinValidInteger)
+      throw new Exception();
+    if(string.IsNullOrEmpty(frame.Sender))
+      throw new Exception();
+  }
+}
+</pre>
+
+  <p class="calibre2">and that’s it for the validation logic - we’ve got all the behaviors nailed. The only thing left to do before I explain where (and why) I failed, is a specification for the constant that pollutes our TODO list:</p>
+
+  <h3 class="sigilnotintoc">Specification 9: Minimum Valid Integer for validations should be 1</h3>
+
+  <p class="calibre2">The spec is really simple:</p>
+  <pre class="calibre10">
+[Fact] public void 
+ShouldUse1AsMinimumValidInteger()
+{
+  Assert.Equal(1, SanityValidation.MinValidInteger);
+}
+</pre>
+
+  <p class="calibre2">This thing is called a <a href="http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html">Constant Specification</a>. To make it pass (because now it’s failing - remember that we put 12345 as the value for MinValidInteger), we’ll just have to change the value of the constant to 1:</p>
+  <pre class="calibre10">
+public class SanityValidation : Validation
+{
+  public const MinValidInteger = 1;
+
+  public void PerformFor(Frame frame)
+  {
+    if(frame.Speed &lt; MinValidInteger)
+      throw new Exception();
+    if(frame.Age &lt; MinValidInteger)
+      throw new Exception();
+    if(string.IsNullOrEmpty(frame.Sender))
+      throw new Exception();
+  }
+}
+</pre>
+
+  <p class="calibre2">Ok, all behaviors nailed down, all specifications written, now it’s time for a short retrospective.</p>
+
+  <h3 class="sigilnotintoc">Where (and why) did I go wrong?</h3>
+
+  <p class="calibre2">The first mistake I made was in <strong class="calibre14">Specification 2</strong>. I just passed the whole frame to validation. What’s wrong with that? By doing this, I failed to encapsulate the knowledge about the structure of the frame and eventually led to coupling all objects of the application to the Frame type. The frame is a third party class (you can’t control how it changes), plus it’s a data class (and <a href="http://www.codinghorror.com/blog/2006/05/code-smells.html">data classes are code smells</a>) - never couple your application to something as horrible as this!. Imagine the next version of the module would introduce compression and we’d handle this by introducing another class called Compression, then pass whole frame to it. Now every change to the Frame would impact both Validation and Compression object in the same way, introducing redundancy in dependencies and a maintainability pain - stronger with each new class that would need to operate on the frame. One of the goals of object oriented design is to keep data together with behaviors related to that data and that’s exactly what I failed to achieve.</p>
+
+  <p class="calibre2">The other mistake was to further fail to encapsulate the frame structure when it got into the Validation object. If you look at <strong class="calibre14">specifications 4, 5, 6, 7 and 8</strong> - all of them contain both the knowledge on which fields to validate and what “valid” means for each field. This led to many repetitions in the specs (adding a new field to Frame class would require changes in five specs plus adding a new one - a real horror!) and exposed smells in the production code itself, which are: violation of the Single Responsibility Principle (again, Validation is responsible for deciding which fields to validate as well as what the validations mean, making it bear two responsibilities) and redundancy (note that Age and Speed are validated the same way - the specification in my previous post did not assign a validation rule to fields, but to types - and I failed to eliminate the duplication between validations of two fields that are of the same type). And this is only for three fields! To give you a feel of the maintenance horror I mentioned, let’s imagine how the truth table would look like if we had ten fields:</p>
+
+  <table class="calibre20">
+    <tr class="calibre21">
+      <th class="calibre43"/>
+
+      <th class="calibre43">Spec 1</th>
+
+      <th class="calibre43">Spec 2</th>
+
+      <th class="calibre43">Spec 3</th>
+
+      <th class="calibre43">Spec 4</th>
+
+      <th class="calibre43">Spec 5</th>
+
+      <th class="calibre43">Spec 6</th>
+
+      <th class="calibre43">Spec 7</th>
+
+      <th class="calibre43">Spec 8</th>
+
+      <th class="calibre43">Spec 9</th>
+
+      <th class="calibre43">Spec 10</th>
+
+      <th class="calibre43">Spec 11</th>
+    </tr>
+
+    <tr class="calibre44">
+      <td class="calibre45">Field 1</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">X</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+    </tr>
+
+    <tr class="calibre21">
+      <td class="calibre45">Field 2</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">X</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre23">V</td>
+    </tr>
+
+    <tr class="calibre44">
+      <td class="calibre45">Field 3</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">X</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+    </tr>
+
+    <tr class="calibre21">
+      <td class="calibre45">Field 4</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">X</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+    </tr>
+
+    <tr class="calibre44">
+      <td class="calibre45">Field 5</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">X</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+    </tr>
+
+    <tr class="calibre21">
+      <td class="calibre45">Field 6</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">X</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+    </tr>
+
+    <tr class="calibre44">
+      <td class="calibre45">Field 7</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">X</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+    </tr>
+
+    <tr class="calibre21">
+      <td class="calibre45">Field 8</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">X</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+    </tr>
+
+    <tr class="calibre44">
+      <td class="calibre45">Field 9</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">X</td>
+
+      <td class="calibre46">V</td>
+    </tr>
+
+    <tr class="calibre21">
+      <td class="calibre45">Field 10</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">V</td>
+
+      <td class="calibre46">X</td>
+    </tr>
+  </table>
+
+  <p class="calibre2">You get the issue, right? This code should be refactored, but I’m not going to do this, because I want to show you the correct solution next time. In the meantime, you can try to refactor yourself and see what you end up with. As always, comments are welcome.</p>
+
+  <p class="calibre2">But until then… see ya!</p>
+</body>
+</html>

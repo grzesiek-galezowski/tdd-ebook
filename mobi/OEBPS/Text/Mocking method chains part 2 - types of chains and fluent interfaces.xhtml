@@ -1,0 +1,249 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Mocking method chains part 2: types of chains and fluent interfaces</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="../../stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="../../page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="calibre4">
+  <p class="calibre2">Hi, today, I’m going to continue discussion I already started on mocking and specifying call chains. <a href="http://feelings-erased.blogspot.com/2012/08/mocking-method-chains-part-1-when-not.html">Last time</a>, I discussed when call chains are a symptom of bad design and bad coding that violates few object oriented design principles. This time, I’m gonna take on situations when call chains are a good idea or even a sophisticated design technique.</p>
+
+  <p class="calibre2">Basically, the three groups we can distinguish (by the criteria of how they’re mocked), are:</p>
+
+  <ol class="calibre12">
+    <li class="calibre13">Unordered chains</li>
+
+    <li class="calibre13">Ordered chains</li>
+
+    <li class="calibre13">Chains with grammar</li>
+  </ol>
+
+  <p class="calibre2">The post concludes of a brief discussion of the terminology and how it relates to the term ‘Fluent Interface’ and ‘Internal Domain Specific Language’, since it seems that these terms are often confused with call chaining.</p>
+
+  <p class="calibre2">But for now, let’s focus on the three categories:</p>
+
+  <h3 class="sigilnotintoc" id="unordered-chains">1. Unordered chains</h3>
+
+  <p class="calibre2">Let’s imagine that our system sends frames through a network interface and the frame has to be built according to a specified format. To allow building such frames easily, we introduce a builder pattern implementation to hide the format and allow us to specify each field freely. The builder can be used like this:</p>
+  <pre class="calibre10">
+var frame = new FrameWithParameters()
+  .Speed(10)
+  .Age(1)
+  .DestinationIp(“192.168.0.2”)
+  .Build();
+</pre>
+
+  <p class="calibre2">This is a situation where we don’t care what is the order of calls chained. Quite the contrary - when using the builder, we’re relieved of having to remember all the parameters, how many of them are, which ones go to constructor and which ones are set with setters. Also, we let the builder supply default parameters for the values we don’t specify. So we can build another frame like this:</p>
+  <pre class="calibre10">
+var frame = new FrameWithParameters()
+ .DestinationIp(“192.168.0.4”)
+ .Age(2) 
+ .Build();
+</pre>
+
+  <p class="calibre2">As you can see neither the order of the calls nor the use of all the available calls is necessary.</p>
+
+  <p class="calibre2">Just as in the example from <a href="http://feelings-erased.blogspot.com/2012/08/mocking-method-chains-part-1-when-not.html">part 1</a>, this kind of API is invented as a shortcut to group multiple invocations under one object and make this grouping obvious. The difference is that here, the invocations are NOT made in order to browse through object’s dependencies, but to reduce the “noise” that would result from specifying the object name before each method call.</p>
+
+  <h4 class="sigilnotintoc1" id="mocking-unordered-chains.">Mocking unordered chains.</h4>
+
+  <p class="calibre2">Before I show you how unordered chains can be mocked/specified, we need to take a look how such objects are usually implemented. We’ll use the builder example, but modify it so that the FrameWithParameters is an interface rather than a concrete class:</p>
+  <pre class="calibre10">
+public interface FrameWithParameters 
+{ 
+  FrameWithParameters Speed(int value); 
+  FrameWithParameters Age(int value); 
+  FrameWithParameters DestinationIp(string value); 
+  Frame Build(); 
+}
+</pre>
+
+  <p class="calibre2">And the implementation would look like this:</p>
+  <pre class="calibre10">
+public class ProtocolXFrameWithParameters 
+  : FrameWithParameters
+{ 
+  int speed = 1; 
+  int age = 0; 
+  string destinationIp = “127.0.0.1”;
+
+  FrameWithParameters Speed(int value) 
+  { 
+    this.speed = value; 
+    return this; 
+  }
+
+  FrameWithParameters Age(int value) 
+  { 
+    this.age = value; 
+    return this; 
+  }
+
+  FrameWithParameters DestinationIp(string value) 
+  { 
+    this.destinationIp = value; 
+    return this; 
+  }
+  
+  Frame Build() 
+  { 
+    var frame = new XProtocolFrame(destinationIp); 
+    frame.Age = this.age; 
+    frame.Speed = this.speed; 
+    return frame; 
+  } 
+}
+</pre>
+
+  <p class="calibre2">So as you can see, all the methods responsible for configuration return the same object that they were called on. When mocking such interfaces, we have to preserve this behavior - then we’ll be able to verify all calls on the same mock.</p>
+
+  <p class="calibre2">Thankfully, many mocking frameworks allow us to make a single setup for all methods returning a given type. An example for Moq framework:</p>
+  <pre class="calibre10">
+var builderMock = new Mock&lt;FrameWithParameters&gt;();
+builderMock.SetReturnsDefault&lt;FrameWithParameters&gt;(builderMock.Object);
+</pre>
+
+  <p class="calibre2">And FakeItEasy framework:</p>
+  <pre class="calibre10">
+var fakeBuilder = A.Fake&lt;FrameWithParameters&gt;(); 
+A.CallTo(fakeBuilder)
+  .WithReturnType&lt;FrameWithParameters&gt;()
+  .Returns(fakeBuilder);
+</pre>
+
+  <p class="calibre2">As far as I know, NSubstitute does not offer such feature, but you’re welcome to prove me wrong in the comments section. For all mocking frameworks that do not support this feature (and for manual mocks), you have to setup return value for each method separately. Feel free to do this in a helper method, because extracting such code from the direct specification code will not hinder readability. Example of such helper method for NSubstitute:</p>
+  <pre class="calibre10">
+static void UnorderedCallChainingIsSupportedBy
+  (FrameWithParameters builder) 
+{ 
+  builder.Speed(Arg.Any&lt;int&gt;()).Returns(builder); 
+  builder.Age(Arg.Any&lt;int&gt;()).Returns(builder); 
+  builder.DestinationIp(Arg.Any&lt;string&gt;()).Returns(builder); 
+}
+</pre>
+
+  <p class="calibre2">Ok, that’s pretty much it. Now for ordered chains.</p>
+
+  <h3 class="sigilnotintoc" id="ordered-chains">2. Ordered chains</h3>
+
+  <p class="calibre2">These is a case when making the calls in a different order gives different semantic results. Let’s take a look at a simplified example of stream parser. The stream consists of fields, each having a name and a fixed length. The role of the parser is to chop off subsequent fields from the stream and place them in a dictionary.</p>
+  <pre class="calibre10">
+stream
+  .CHAR(“Author”, 20) 
+  .INT(“Format”, 12) 
+  .DATE(“Created”, 8) 
+  .BIN(“Content”, 300);
+</pre>
+
+  <p class="calibre2">Note that from the API design point of view, nothing prevents us from switching the order of invocations, but if we did that, the stream would be split in a different way, so the final effect of stream processing would be different - the fields would have different values.</p>
+
+  <p class="calibre2">Mocking this kind of invocations is sometimes easier, sometimes harder than unordered chains - it all depends on which framework you use. So, for example, verifying the stream parser call chain described above in Moq looks like this:</p>
+  <pre class="calibre10">
+var streamMock = new Mock&lt;IParser&gt;() 
+{ 
+  DefaultValue = DefaultValue.Mock 
+};
+
+// perform some actions that result in call chain
+
+streamMock.Verify(m =&gt; m
+  .CHAR(“Author”, 20) 
+  .INT(“Format”, 12) 
+  .DATE(“Created”, 8) 
+  .BIN(“Content”, 300));
+</pre>
+
+  <p class="calibre2">FakeItEasy does not allow using recursive mocks in verification, but you can use the same technique as with unordered chains, but include ordered assertions (google ‘fakeiteasy ordered assertions’).</p>
+
+  <p class="calibre2">NSubstitute only allows stubbing recursive calls (at least with Mono), so one can use a small trick to work around this limitation:</p>
+  <pre class="calibre10">
+var streamMock = Substitute.For&lt;StreamParsing&gt;(); 
+var callSequence = Substitute.For&lt;StreamParsing&gt;();
+
+streamMock
+  .CHAR(“Author”, 20) 
+  .INT(“Format”, 12) 
+  .DATE(“Created”, 8) 
+  .Returns(callSequence);
+
+someLogic.PerformOn(streamMock);
+
+callSequence.Received().BIN(“Content”, 300);
+</pre>
+
+  <p class="calibre2">So as you see, we can stub the whole sequence except the last step. This sequence returns another mock that we use to verify the just this last step. A little bit awkward, but does the job.</p>
+
+  <p class="calibre2">To sum up, ordered chains need some non-standard tricks depending on what mocking framework you use. Usually, however, one can find a way to get the desired result.</p>
+
+  <h3 class="sigilnotintoc" id="chains-with-grammar">3. Chains with grammar</h3>
+
+  <p class="calibre2">Conceptually, this is the most interesting chaining technique. It is used to build API that tries to mimic sentences (and as you know, in a sentence, not every word is legal in every place. There are rules that define what can be used where in a sentence and these rules are called “grammar”). Let’s take a look at the following example:</p>
+  <pre class="calibre10">
+api.Method("SetMaximumUserCount")
+  .Requires(Constraint.AtLeastOneOf) 
+  .Role("PowerUser") 
+  .Role("Administrator");
+</pre>
+
+  <p class="calibre2">Note that the above chain makes sense: invocation of a method called “SetMaximumUserCount” requires having at least one of the two roles specified: either a power user or an administrator. However, the following chain makes abosolutely no sense:</p>
+  <pre class="calibre10">
+api.Role(“PowerUser”) 
+  .Method(“RoleSetMaximumUserCount”) 
+  .Requires(Constraint.AtLeastOneOf)
+  .Role(“Administrator”);
+</pre>
+
+  <p class="calibre2">The situation is different than in ordered chains, where any chain made sense, but different chains resulted in different behaviors. Here, we have “legal sentences” (legal chains) that produce sensible result and “illegal sentences” (illegal chains) that do not make any sense at all. What we want to do is to prevent users of our API from creating incorrect chains, i.e. enforce some kind of “grammar”, preferably at compile time than at runtime.</p>
+
+  <p class="calibre2">The easiest way to do this is to distribute the methods into several types, so that a single call in the chain returns a result that contains only the methods legal in its context. For the example above, it could look like this:</p>
+  <pre class="calibre10">
+public interface WebApi 
+{ 
+  WebMethodConfiguration Method(string name); 
+}
+
+public interface WebMethodConfiguration 
+{ 
+  RequirementConfiguration Requires(Constraint c); 
+}
+
+public interface RequirementConfiguration 
+{ 
+  RequirementConfiguration Role(string name); 
+}
+</pre>
+
+  <p class="calibre2">This way, the object returned by previous call creates a context for the next call. E.g. calling Requires() twice in a chain is impossible - such code would not compile.</p>
+
+  <h4 class="sigilnotintoc1" id="mocking-chains-with-grammar">Mocking chains with grammar</h4>
+
+  <p class="calibre2">Note that in the example above, the order of calls is mostly enforced by the “grammar”, but the last two calls are an exception - we want to be able to specify as many roles as we wish and the order of these role specifications is irrelevant. The conclusion is that parts of the chains in grammar can be ordered as enforced by the “grammar”, parts can be ordered as enforced by the semantics of produced code, and parts can be unordered.</p>
+
+  <p class="calibre2">From mocking perspective, this is just scaling the solutions described in the first two sections to span several interfaces. Sometimes, you may even want to specify unordered calls as ordered if it makes your live easier - the penalty is having inaccurate documentation, since anyone looking at the unit test may think that the order is actually required where it’s not.</p>
+
+  <h3 class="sigilnotintoc" id="chains-and-fluent-interfaces">Chains and Fluent Interfaces</h3>
+
+  <p class="calibre2">The last thing I’d like to clarify is why I avoid the term Fluent Interface throughout this post. The main reason is that this term is a bit misunderstood among the novice programmers and it doesn’t matter so much from the perspective of mocking. They often make the simplification that the “fluency” in fluent interfaces is about the chaining itself. As I said, this is a misunderstanding. Method chaining is just one of the techniques to achieve fluent interfaces. Other techniques include: function sequence, function nesting, lambdas, closures, operator overloading, annotations/attributes, abstract syntax tree manipulation etc.</p>
+
+  <p class="calibre2">In general, there are three terms that need to be sorted out:</p>
+
+  <ol class="calibre12">
+    <li class="calibre13">Fluent Interface - an API created with “flow” and readability in mind, rather than commands and queries</li>
+
+    <li class="calibre13">Embedded Domain Specific Language (Internal Domain Specific Language) - a type of API implemented in a general purpose programming language that reads like a mini-language of its own. This mini-language is targeted at a particular domain of problems (see rake syntax for example), i.e. mimics a language used by a domain expert as much as possible</li>
+
+    <li class="calibre13">Method Chaining (Call Chaining) - described earlier</li>
+  </ol>
+
+  <p class="calibre2">So, an API does not have to be all three at the same time. Embedded domain specific languages are (almost?) always created as fluent interfaces, because they have to be readable to the domain expert and the goal of fluent interfaces is readability. Fluent interfaces often use method chaining, but this is not always true. Also, fluent interfaces may use more than one technique at the same time for achieving “fluency”, call chaining being just one of them.</p>
+
+  <p class="calibre2">There is a lot of places on the internet where you can deepen your knowledge on this topic. If there is a demand, however, I can expand on what I wrote here, but for now, I’ll hold back.</p>
+
+  <h3 class="sigilnotintoc" id="wrapping-it-up">Wrapping it up</h3>
+
+  <p class="calibre2">Wow, this series was a great challenge both in terms of scope and teaching skills. If you think there are some improvements to be made or see some errors, please let me know in the comments, so that I can clarify or correct the material.</p>
+
+  <p class="calibre2">See ya!</p>
+</body>
+</html>

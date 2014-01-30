@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>Class mocks - maintaining constructors</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="../../stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="../../page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="calibre4">
+  <p class="calibre2">In <a href="http://feelings-erased.blogspot.com/2012/06/why-do-i-consider-interfaces-superior.html">one of my previous posts</a> I promised, that I’d share with you some hints on reducing the cost of maintaining class mocks. Remember that I’m not recommending class mocks, just showing you what to do when you have little choice. That said, I’ll try to highlight a way to deal with constructor maintenance.</p>
+
+  <p class="calibre2">My plan is as follows: first, I’ll introduce the general pattern and describe its canonical use in unit testing. Then I’ll show you how adding one teeny tiny method drives us to the solution to our mock constructor issue.</p>
+
+  <h3 class="sigilnotintoc">The builder to the rescue!</h3>
+
+  <p class="calibre2">Before we jump into creating mocks, let’s note that there are many unit tests where we create the specified object (e.g. in class X specifications, we create new object of class X in every spec/unit test, at least that’s what I do, since I strongly believe that Setup/Teardown are last resort mechanisms).</p>
+
+  <p class="calibre2">Now, just to let you get a feeling of what I’m talking about, let’s look at simple example:</p>
+  <pre class="calibre10">
+[Test]
+public void ShouldCopyFromSourceToDestination()
+{
+  //GIVEN
+  var source = new Mock&lt;ISource&gt;();
+  var destination = new Mock&lt;IDestination&gt;();
+  var anyLog = Any.InstanceOf&lt;ILog&gt;();
+  var anyFile = Any.InstanceOf&lt;IFile&gt;();  
+  var copyOperation = new CopyOperation(source, destination, anyLog);
+  source.Setup(m =&gt; m.Get()).Returns(anyFile);
+
+  //WHEN
+  copyOperation.PerformOn(anyFile);
+  
+  //THEN
+  destination.Verify(m =&gt; m.Write(anyFile));
+}
+</pre>
+
+  <p class="calibre2">Let’s see - what does this logging object do here? It’s not really part of the behavior - it only makes the intent less visible! Also, when we add another parameter to the constructor, we’ll have to update all specs that create a CopyOperation object.</p>
+
+  <p class="calibre2">There are cases when having many constructor parameters is a sign that it’s high time to introduce a Facade in the design. But sometimes not. In such cases we can use a builder pattern that takes only the parameters that are important. No need for logger when we specify logging-agnostic behaviors. For example:</p>
+  <pre class="calibre10">
+[Test]
+public void ShouldCopyFromSourceToDestination()
+{
+  //GIVEN
+  var source = new Mock&lt;ISource&gt;();
+  var destination = new Mock&lt;IDestination&gt;();
+  var anyFile = Any.InstanceOf&lt;IFile&gt;();  
+  var copyOperation = new CopyOperationBuilder()
+    .Source(source)
+    .Destination(destination)
+    .Build();
+  
+  source.Setup(m =&gt; m.Get()).Returns(anyFile);
+
+  //WHEN
+  copyOperation.PerformOn(anyFile);
+  
+  //THEN
+  destination.Verify(m =&gt; m.Write(anyFile));
+}
+</pre>
+
+  <p class="calibre2">The implementation of such builder is dead simple:</p>
+  <pre class="calibre10">
+public class CopyOperationBuilder()
+{
+  private ISource _source 
+    = new Mock&lt;ISource&gt;().Object;
+  private IDestination _destination 
+    = new Mock&lt;IDestination&gt;().Object;
+  private ILog _log 
+    = new Mock&lt;ILog&gt;().Object;
+
+  public CopyOperationBuilder Source(
+    ISource source)
+  {
+    _source = source;
+    return this;
+  }
+
+  public CopyOperationBuilder Destination(
+    IDestination destination)
+  {
+    _destination = destination;
+    return this;
+  }
+
+  public CopyOperationBuilder Log(ILog log)
+  {
+    _log = log;
+    return this;
+  }
+
+  public CopyOperation Build()
+  {
+    return new CopyOperation(
+      _source, 
+      _destination, 
+      _log);
+  }
+}
+</pre>
+
+  <p class="calibre2">Easy, isn’t it? Not only did we make the specification more meaningful, we also made the spec less prone to changes in constructor - when new parameter is added that doesn’t affect the spec, the builder is the only place we need to update.</p>
+
+  <p class="calibre2">OK, now that I introduced the pattern and its usual usage in unit testing, let’s see how we can benefit from it in case of mocking.</p>
+
+  <h3 class="sigilnotintoc">Mock builder</h3>
+
+  <p class="calibre2">Now, time for a trick. We can just add another method in the builder, that will build a mock for us:</p>
+  <pre class="calibre10">
+public class CopyOperationBuilder
+{
+  //all the methods described above…
+
+  public Mock&lt;CopyOperation&gt; BuildMock()
+  {
+    return new Mock&lt;CopyOperation&gt;(
+      _source, 
+      _destination, 
+      _log) { CallBase = true };
+  }
+}
+</pre>
+
+  <p class="calibre2">And that’s it. Simple and sweet trick that may become handy in those very rare cases where we need to create class mocks.</p>
+
+  <p class="calibre2">Good night everyone!</p>
+</body>
+</html>

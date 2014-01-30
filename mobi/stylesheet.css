@@ -1,0 +1,334 @@
+.achievement {
+    display: block;
+    padding: 0.5em 1em;
+    border-top: #E1A60A double 4px;
+    border-bottom: #E1A60A double 4px
+    }
+.calibre {
+    display: block;
+    font-size: 1em;
+    padding-left: 0;
+    padding-right: 0;
+    margin: 0 5pt
+    }
+.calibre1 {
+    display: block;
+    font-size: 2em;
+    font-weight: bold;
+    line-height: 1.2;
+    margin: 0.67em 0
+    }
+.calibre2 {
+    display: block;
+    margin: 1em 0
+    }
+.calibre3 {
+    font-style: italic
+    }
+.calibre4 {
+    display: block;
+    font-size: 1em;
+    orphans: 0;
+    padding-left: 0;
+    padding-right: 0;
+    widows: 0;
+    margin: 0 5pt
+    }
+.calibre5 {
+    display: block;
+    font-size: 1.41667em;
+    font-weight: bold;
+    line-height: 1.2;
+    margin: 0.83em 0
+    }
+.calibre6 {
+    display: block
+    }
+.calibre7 {
+    height: auto;
+    width: auto
+    }
+.calibre8 {
+    display: block;
+    font-style: italic;
+    margin: 1em 0
+    }
+.calibre9 {
+    display: block;
+    text-align: center
+    }
+.calibre10 {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1em 0
+    }
+.calibre11 {
+    font-family: monospace
+    }
+.calibre12 {
+    display: block;
+    list-style-type: decimal;
+    margin: 1em 0
+    }
+.calibre13 {
+    display: list-item
+    }
+.calibre14 {
+    font-weight: bold
+    }
+.calibre15 {
+    display: block;
+    margin: 1em auto
+    }
+.calibre16 {
+    display: block;
+    padding-top: 0.2em
+    }
+.calibre17 {
+    display: block;
+    margin-left: 40px
+    }
+.calibre18 {
+    display: block;
+    margin: 1em
+    }
+.calibre19 {
+    font-weight: bold;
+    line-height: 1.2
+    }
+.calibre20 {
+    border-collapse: separate;
+    border-spacing: 2px;
+    display: table;
+    margin-bottom: 0;
+    margin-top: 0;
+    text-indent: 0;
+    width: 70%
+    }
+.calibre21 {
+    display: table-row;
+    vertical-align: middle
+    }
+.calibre22 {
+    display: table-cell;
+    font-weight: bold;
+    vertical-align: inherit;
+    padding: 4px;
+    border: #C0C0C0 solid thin
+    }
+.calibre23 {
+    display: table-cell;
+    text-align: inherit;
+    vertical-align: inherit;
+    padding: 4px;
+    border: #C0C0C0 solid thin
+    }
+.calibre24 {
+    display: block;
+    page-break-after: always
+    }
+.calibre25 {
+    display: block;
+    list-style-type: disc;
+    margin: 1em 0
+    }
+.calibre26 {
+    display: block;
+    line-height: 1.2
+    }
+.calibre27 {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    padding: 1em;
+    border: gray dashed thin;
+    margin: 1em 0
+    }
+.calibre28 {
+    display: block;
+    font-style: italic;
+    list-style-type: decimal;
+    margin: 1em 0
+    }
+.calibre29 {
+    text-decoration: line-through
+    }
+.calibre30 {
+    line-height: 1.2
+    }
+.calibre31 {
+    display: block;
+    padding: 1em;
+    border: gray solid thin;
+    margin: 1em
+    }
+.calibre32 {
+    color: red
+    }
+.calibre33 {
+    display: block;
+    list-style-type: circle;
+    margin: 0
+    }
+.calibre34 {
+    display: block;
+    list-style-type: decimal;
+    margin: 0
+    }
+.calibre35 {
+    color: green
+    }
+.calibre36 {
+    background-color: #FFFB8B;
+    display: block;
+    padding-left: 2em;
+    border: #FAEB46 solid thin
+    }
+.calibre37 {
+    margin-left: 1em;
+    margin-right: 1em
+    }
+.calibre38 {
+    height: 121px;
+    width: 400px
+    }
+.calibre39 {
+    border-collapse: separate;
+    border-spacing: 2px;
+    display: table;
+    margin-bottom: 0;
+    margin-top: 0;
+    text-indent: 0;
+    width: 70%;
+    border: black solid thin
+    }
+.calibre40 {
+    background-color: #eeeefe;
+    display: table-cell;
+    font-weight: bold;
+    vertical-align: inherit;
+    padding: 0.5em;
+    border: #C0C0C0 solid thin
+    }
+.calibre41 {
+    display: table-cell;
+    text-align: inherit;
+    vertical-align: inherit;
+    padding: 0.5em;
+    border: #C0C0C0 solid thin
+    }
+.calibre42 {
+    background-color: #eee;
+    display: table-cell;
+    text-align: inherit;
+    vertical-align: inherit;
+    padding: 0.5em;
+    border: #C0C0C0 solid thin
+    }
+.calibre43 {
+    display: table-cell;
+    font-weight: bold;
+    vertical-align: inherit;
+    padding: 0.2em;
+    border: #C0C0C0 solid thin
+    }
+.calibre44 {
+    background: #eef;
+    display: table-row;
+    vertical-align: middle
+    }
+.calibre45 {
+    display: table-cell;
+    font-weight: bold;
+    text-align: inherit;
+    vertical-align: inherit;
+    padding: 0.2em;
+    border: #C0C0C0 solid thin
+    }
+.calibre46 {
+    display: table-cell;
+    text-align: inherit;
+    vertical-align: inherit;
+    padding: 0.2em;
+    border: #C0C0C0 solid thin
+    }
+.calibre47 {
+    display: block;
+    padding: 1em;
+    border: gray dashed thin
+    }
+.calibre48 {
+    display: table-cell;
+    font-weight: bold;
+    vertical-align: inherit;
+    padding: 0.5em;
+    border: #C0C0C0 solid thin
+    }
+.calibre49 {
+    display: block;
+    font-size: 0.41667em;
+    margin: 1em 0
+    }
+.calibre50 {
+    height: 206px;
+    width: 400px
+    }
+.calibre51 {
+    height: 213px;
+    width: 400px
+    }
+.calibre52 {
+    height: 220px;
+    width: 320px
+    }
+.calibre53 {
+    display: block;
+    border: gray solid thin
+    }
+.calibre54 {
+    display: block;
+    padding: 1em;
+    border: gray solid thin;
+    margin: 1em 0
+    }
+.disclaimer {
+    display: block;
+    font-size: 0.75em;
+    padding: 0.5em 1em;
+    border-top: black solid 1px;
+    border-bottom: black solid 1px
+    }
+.sigilnotintoc {
+    display: block;
+    font-size: 1.125em;
+    font-weight: bold;
+    line-height: 1.2;
+    margin: 1em 0
+    }
+.sigilnotintoc1 {
+    display: block;
+    font-weight: bold;
+    margin: 1.33em 0
+    }
+.sigilnotintoc2 {
+    display: block;
+    font-size: 1em;
+    font-weight: bold;
+    margin: 1em 0
+    }
+.sigilnotintoc3 {
+    display: block;
+    font-weight: bold;
+    padding-top: 1em;
+    margin: 1.33em 0
+    }
+.sigilnotintoc4 {
+    display: block;
+    font-size: 0.75em;
+    font-weight: bold;
+    margin: 1.67em 0
+    }
+.pcalibre:before {
+    content: "Achievement: "
+    }

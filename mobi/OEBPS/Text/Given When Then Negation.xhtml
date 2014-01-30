@@ -1,0 +1,128 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>TDD - the power of learning and negation in analysis</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <link href="../../stylesheet.css" rel="stylesheet" type="text/css"/>
+<link href="../../page_styles.css" rel="stylesheet" type="text/css"/>
+</head>
+  <body class="calibre4">
+  <p class="calibre2">This post is about how TDD informs analysis and stimulates learning. We’ll go through a simple example and investigate rationale and mechanics of decisions taken.</p>
+
+  <h3 class="sigilnotintoc">The boards starts empty</h3>
+
+  <p class="calibre2">Let’s imagine we’re writing a virtual Kanban-like board (this is also called a ‘scrum board’ AFAIK). If you don’t know what a scrum board is: the board is used for task tracking and is split into vertical columns that represent task progress (like NOT STARTED, IN PROGRESS, DONE). It’s also split into horizontal categories that represent bigger units of work (often user stories) that the tasks belong to. We usually add a task to the story and watch it pass through the vertical columns until we reach the DONE state.<a href="http://www.mountaingoatsoftware.com/scrum/task-boards">You can read more on scrum boards if you’re unfamiliar with the topic</a>, however, what I’ve written here is enough knowledge to push forward with our example.</p>
+
+  <p class="calibre2">There is only one issue: how to start? We could do proper requirements analysis or commonality-variability analysis or something along the way, but this time, let’s just start by writing a spec (AKA unit test). What’s the simplest behavior we can come up with? Let’s see… it would be:</p>
+
+  <div class="calibre36">
+    <p class="calibre2">The board should start off as empty.</p>
+  </div>
+
+  <p class="calibre2">This is written in plain English (we’ll investigate another notation in a second), but that’s enough to get us started. Using the above statement, we can put together the first spec:</p>
+  <pre class="calibre10">
+[Test]
+public void ShouldStartOffClean ()
+{
+  var board = new ScrumBoard ();
+  Assert.IsTrue (board.IsEmpty);
+}
+</pre>
+
+  <p class="calibre2">The first time I wrote this spec, it seemed (wrongly, but that’s coming in a minute :-)) silly to me. Why? Because:</p>
+
+  <ol class="calibre12">
+    <li class="calibre13">It didn’t let me discover any new collaboration and any new abstraction other than ScrumBoard, which I already knew I was going to need.</li>
+
+    <li class="calibre13">It verifies a public flag is set on the same object that is specified. It looks like cheating - we consider X did something when it tells us so</li>
+
+    <li class="calibre13">It’s only a flag, nothing more. No domain logic is needed to implement it</li>
+
+    <li class="calibre13">I can’t imagine this flag used anywhere in the application. Even when I write a GUI that displays the board, it’s unlikely that it’s gonna need to check whether the board is empty. In Scrum board domain, empty board is not a special condition of any kind and does not trigger any special behaviors or conditions.</li>
+  </ol>
+
+  <p class="calibre2">So, did we just waste our time here?</p>
+
+  <h3 class="sigilnotintoc">Negative learning</h3>
+
+  <p class="calibre2">Let’s hold our horses for a minute before deleting this spec and try to write this spec in a <a href="http://dannorth.net/introducing-bdd/">Given-When-Then</a> form:</p>
+
+  <div class="calibre36">
+    <p class="calibre2"><strong class="calibre14">GIVEN</strong> nothing</p>
+
+    <p class="calibre2"><strong class="calibre14">WHEN</strong> a new scrum board is created</p>
+
+    <p class="calibre2"><strong class="calibre14">THEN</strong> it should be empty</p>
+  </div>
+
+  <p class="calibre2">The Given-When-Then form has this nice capability that you can discover many things by simply negating what you already have (by the way, this is not the only way to proceed, but this is the one I want to show you). We can be smart about it, but for now, I suggest we take the brute force approach - we’ll go through each part of the behavior description and try to negate everything we can. We expect to run into some VERY obvious conclusions as well as find some jewels.</p>
+
+  <h4 class="sigilnotintoc1">Assumptions: Given nothing</h4>
+
+  <p class="calibre2">Here, we can make only one negation in the following form:</p>
+
+  <div class="calibre36">
+    <p class="calibre2"><strong class="calibre14">GIVEN</strong> NOT nothing</p>
+  </div>
+
+  <p class="calibre2">What is “not nothing”? It’s “something” :-). What can we learn from it? Not much. In fact, most of the app logic we’re going to write will rely on assumption that “there is something”. Nothing valuable, let’s move on</p>
+
+  <h4 class="sigilnotintoc1">Trigger: When a new scrum board is created</h4>
+
+  <p class="calibre2">Let’s start with negating the second part (the order doesn’t matter, it’s just that this part is more obvious):</p>
+
+  <div class="calibre36">
+    <p class="calibre2"><strong class="calibre14">WHEN</strong> a new scrum board is NOT created</p>
+  </div>
+
+  <p class="calibre2">What does it mean that the scrum board is not created? It’s the central abstraction of our domain, so what’s the point in not creating it? This may lead to a question: Is a scrum board the right abstraction? Maybe it would be more valuable to look at it as “a process”, not “a place”? I such case, a better abstraction would be “sprint” (which is represented by the board on the GUI level), not board. Let’s assume we decided to leave the “board” abstraction (although this thought is so valuable, that I’d probably add it to my TODO list to be able to revise my decision as the development goes on).</p>
+
+  <p class="calibre2">A nice thought from such a stupid negation, don’t you think? Ok, let’s dig further by negating the first part:</p>
+
+  <div class="calibre36">
+    <p class="calibre2"><strong class="calibre14">WHEN</strong> a NOT new scrum board is created</p>
+  </div>
+
+  <p class="calibre2">What does it mean “NOT a new board”? I means “an old board”. Wait a minute, that’s INTERESTING! Let’s ask further question: what does it mean to “create an old board”? It rings a bell - it’s about “loading an old board”. Wait a minute! This is a perfectly valid use case, because no user would like the board to disappear when they turn off the app! As this is not the core functionality, while not letting our self esteem and enthusiasm about this discovery eat us, we add it to the TODO list for later and proceed with the next negation.</p>
+
+  <h4 class="sigilnotintoc1">Outcome: Then it should be empty</h4>
+
+  <p class="calibre2">Again, there is only one negation we can perform:</p>
+
+  <div class="calibre36">
+    <p class="calibre2"><strong class="calibre14">THEN</strong> it should NOT be empty</p>
+  </div>
+
+  <p class="calibre2">We thought knowing that the board is empty doesn’t help the app at all. But what about us? Does it help us learn anything? Let’s check it out by asking further question: when is the board not empty? The answer: when there is at least one task added. Yes, we discovered the next use case - adding a task. This looks like the next core functionality element we need!</p>
+
+  <p class="calibre2">Let’s document this discovery with a Given-When-Then form:</p>
+
+  <div class="calibre36">
+    <p class="calibre2"><strong class="calibre14">GIVEN</strong> an empty board</p>
+
+    <p class="calibre2"><strong class="calibre14">WHEN</strong> a new task is added to it</p>
+
+    <p class="calibre2"><strong class="calibre14">THEN</strong> it should not be empty</p>
+  </div>
+
+  <p class="calibre2">And an executable specification:</p>
+  <pre class="calibre10">
+[Test]
+public void ShouldNotBeCleanWhenTaskIsAdded()
+{
+  var board = new ScrumBoard();
+  var task = Any.InstanceOf&lt;Task&gt;();
+  board.AddNew(task);
+  Assert.IsFalse (board.IsEmpty);
+}
+</pre>
+
+  <p class="calibre2">Now THAT’S a discovery! Let’s quickly recap what we’ve learned here: we’ve learned that there is an abstraction called “Task” that can be added to the board by invoking the “AddNew()” method (which needs to be implemented: another item for the TODO list!). We’ve also got another Given-When-Then behavior description that we can analyze the same way as the first one. Shhh… I’ll tell you a secret: until now we’ve been proceeding asking question “What if not?”. Another useful question to ask is “What else?”, and we can apply it to the WHEN part by asking “What else happens when we add a task?”. But that’s another story.</p>
+
+  <h3 class="sigilnotintoc">Summary</h3>
+
+  <p class="calibre2">What I tried to show you is how TDD can be often used to inform analysis. I’ve also tried to show how potentially pointless specs can help us learn more on our domain or ask the right questions about the domain. I’m not trying to say that TDD is a substitute for other analysis methods, such as commonality-variability analysis, but it sure adds much to your current toolset.</p>
+
+  <p class="calibre2">Ok, that’s it, time for a walk :-). Bye!</p>
+</body>
+</html>

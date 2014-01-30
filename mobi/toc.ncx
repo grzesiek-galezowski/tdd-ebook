@@ -1,0 +1,327 @@
+<?xml version='1.0' encoding='utf-8'?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="eng">
+  <head>
+    <meta content="51af491b-16f3-41d8-90c2-c5a59551fa15" name="dtb:uid"/>
+    <meta content="3" name="dtb:depth"/>
+    <meta content="calibre (1.21.0)" name="dtb:generator"/>
+    <meta content="0" name="dtb:totalPageCount"/>
+    <meta content="0" name="dtb:maxPageNumber"/>
+  </head>
+  <docTitle>
+    <text>Test-Driven Development - Extensive Tutorial</text>
+  </docTitle>
+  <navMap>
+    <navPoint class="chapter" id="navPoint-2" playOrder="1">
+      <navLabel>
+        <text>Dedications</text>
+      </navLabel>
+      <content src="OEBPS/Text/_Dedication.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="navPoint-3" playOrder="2">
+      <navLabel>
+        <text>Part 1: Just the basics</text>
+      </navLabel>
+      <content src="OEBPS/Text/_Part1Marker.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="navPoint-4" playOrder="3">
+      <navLabel>
+        <text>Motivation - the first step to learning TDD</text>
+      </navLabel>
+      <content src="OEBPS/Text/_Motivations.xhtml"/>
+      <navPoint class="chapter" id="navPoint-5" playOrder="4">
+        <navLabel>
+          <text>How TDD feels like</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Motivations.xhtml#sigil_toc_id_1"/>
+      </navPoint>
+    </navPoint>
+    <navPoint class="chapter" id="navPoint-6" playOrder="5">
+      <navLabel>
+        <text>The three most essential tools</text>
+      </navLabel>
+      <content src="OEBPS/Text/_Three%20Essential%20Tools.xhtml"/>
+      <navPoint class="chapter" id="navPoint-7" playOrder="6">
+        <navLabel>
+          <text>Our shiny tools</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Three%20Essential%20Tools.xhtml#sigil_toc_id_2"/>
+      </navPoint>
+    </navPoint>
+    <navPoint class="chapter" id="navPoint-8" playOrder="7">
+      <navLabel>
+        <text>It is not a test</text>
+      </navLabel>
+      <content src="OEBPS/Text/_It%27s%20Not%20a%20Test.xhtml"/>
+      <navPoint class="chapter" id="navPoint-9" playOrder="8">
+        <navLabel>
+          <text>When a test becomes something else</text>
+        </navLabel>
+        <content src="OEBPS/Text/_It%27s%20Not%20a%20Test.xhtml#sigil_toc_id_3"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-10" playOrder="9">
+        <navLabel>
+          <text>Taking It To The Software Development Land</text>
+        </navLabel>
+        <content src="OEBPS/Text/_It%27s%20Not%20a%20Test.xhtml#sigil_toc_id_4"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-11" playOrder="10">
+        <navLabel>
+          <text>A Specification Instead of a Test Suite</text>
+        </navLabel>
+        <content src="OEBPS/Text/_It%27s%20Not%20a%20Test.xhtml#sigil_toc_id_5"/>
+      </navPoint>
+    </navPoint>
+    <navPoint class="chapter" id="navPoint-12" playOrder="11">
+      <navLabel>
+        <text>Statement-First programming</text>
+      </navLabel>
+      <content src="OEBPS/Text/_Statement-First%20Programming.xhtml"/>
+      <navPoint class="chapter" id="navPoint-13" playOrder="12">
+        <navLabel>
+          <text>What is The Point of Writing Specification After The Fact?</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Statement-First%20Programming.xhtml#sigil_toc_id_6"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-14" playOrder="13">
+        <navLabel>
+          <text>The Benefit of Failure</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Statement-First%20Programming.xhtml#sigil_toc_id_7"/>
+      </navPoint>
+    </navPoint>
+    <navPoint class="chapter" id="navPoint-15" playOrder="14">
+      <navLabel>
+        <text>Practicing what we already learned</text>
+      </navLabel>
+      <content src="OEBPS/Text/_Practicing%20What%20We%20Already%20Learned.xhtml"/>
+      <navPoint class="chapter" id="navPoint-16" playOrder="15">
+        <navLabel>
+          <text>Let me tell you a story</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_8"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-17" playOrder="16">
+        <navLabel>
+          <text>Act 1: The Car</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_9"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-18" playOrder="17">
+        <navLabel>
+          <text>Act 2: The Customer</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_10"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-19" playOrder="18">
+        <navLabel>
+          <text>Act 3: Test-Driven Development</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_11"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-20" playOrder="19">
+        <navLabel>
+          <text>Epilogue</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Practicing%20What%20We%20Already%20Learned.xhtml#sigil_toc_id_12"/>
+      </navPoint>
+    </navPoint>
+    <navPoint class="chapter" id="navPoint-21" playOrder="20">
+      <navLabel>
+        <text>Sorting out the bits</text>
+      </navLabel>
+      <content src="OEBPS/Text/_Sorting%20out%20the%20bits.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="navPoint-22" playOrder="21">
+      <navLabel>
+        <text>How to start?</text>
+      </navLabel>
+      <content src="OEBPS/Text/_How%20to%20start.xhtml"/>
+      <navPoint class="chapter" id="navPoint-23" playOrder="22">
+        <navLabel>
+          <text>Start with a good name</text>
+        </navLabel>
+        <content src="OEBPS/Text/_How%20to%20start.xhtml#sigil_toc_id_13"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-24" playOrder="23">
+        <navLabel>
+          <text>Start by filling the GIVEN-WHEN-THEN structure with the obvious</text>
+        </navLabel>
+        <content src="OEBPS/Text/_How%20to%20start.xhtml#sigil_toc_id_14"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-25" playOrder="24">
+        <navLabel>
+          <text>Start from the end</text>
+        </navLabel>
+        <content src="OEBPS/Text/_How%20to%20start.xhtml#sigil_toc_id_15"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-26" playOrder="25">
+        <navLabel>
+          <text>Start by invoking a method when you have one</text>
+        </navLabel>
+        <content src="OEBPS/Text/_How%20to%20start.xhtml#sigil_toc_id_16"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-27" playOrder="26">
+        <navLabel>
+          <text>Summary</text>
+        </navLabel>
+        <content src="OEBPS/Text/_How%20to%20start.xhtml#sigil_toc_id_17"/>
+      </navPoint>
+    </navPoint>
+    <navPoint class="chapter" id="navPoint-28" playOrder="27">
+      <navLabel>
+        <text>How is TDD about analysis and what does "GIVEN-WHEN-THEN" mean?</text>
+      </navLabel>
+      <content src="OEBPS/Text/_Analysis%20In%20TDD.xhtml"/>
+      <navPoint class="chapter" id="navPoint-29" playOrder="28">
+        <navLabel>
+          <text>Is there really a commonality between analysis and TDD?</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Analysis%20In%20TDD.xhtml#sigil_toc_id_18"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-30" playOrder="29">
+        <navLabel>
+          <text>Gherkin</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Analysis%20In%20TDD.xhtml#sigil_toc_id_19"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-31" playOrder="30">
+        <navLabel>
+          <text>TODO list... again!</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Analysis%20In%20TDD.xhtml#sigil_toc_id_20"/>
+      </navPoint>
+    </navPoint>
+    <navPoint class="chapter" id="navPoint-32" playOrder="31">
+      <navLabel>
+        <text>Developing TDD style and Constrained Non-Determinism</text>
+      </navLabel>
+      <content src="OEBPS/Text/_Constrained%20Non%20Determinism.xhtml"/>
+      <navPoint class="chapter" id="navPoint-33" playOrder="32">
+        <navLabel>
+          <text>A style?</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_21"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-34" playOrder="33">
+        <navLabel>
+          <text>Principle: Tests As Specification</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_22"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-35" playOrder="34">
+        <navLabel>
+          <text>First technique: Anonymous Input</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_23"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-36" playOrder="35">
+        <navLabel>
+          <text>Second Technique: Derived Values</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_24"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-37" playOrder="36">
+        <navLabel>
+          <text>Third technique: Distinct Generated Values</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_25"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-38" playOrder="37">
+        <navLabel>
+          <text>Fourth technique: Constant Specification</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_26"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-39" playOrder="38">
+        <navLabel>
+          <text>Summary of the example</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_27"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-40" playOrder="39">
+        <navLabel>
+          <text>Constrained non-determinism</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_28"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-41" playOrder="40">
+        <navLabel>
+          <text>Summary</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Constrained%20Non%20Determinism.xhtml#sigil_toc_id_29"/>
+      </navPoint>
+    </navPoint>
+    <navPoint class="chapter" id="navPoint-42" playOrder="41">
+      <navLabel>
+        <text>What is the scope of a unit-level Statement in TDD?</text>
+      </navLabel>
+      <content src="OEBPS/Text/_What%20is%20the%20scope%20of%20a%20Statement%20in%20TDD.xhtml"/>
+    </navPoint>
+    <navPoint class="chapter" id="navPoint-43" playOrder="42">
+      <navLabel>
+        <text>Specifying Boundaries and Conditions</text>
+      </navLabel>
+      <content src="OEBPS/Text/_Boundaries.xhtml#sigil_toc_id_30"/>
+      <navPoint class="chapter" id="navPoint-44" playOrder="43">
+        <navLabel>
+          <text>Sometimes, anonymous value is not enough</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Boundaries.xhtml#sigil_toc_id_31"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-45" playOrder="44">
+        <navLabel>
+          <text>Exceptions to the rule</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Boundaries.xhtml#sigil_toc_id_32"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-46" playOrder="45">
+        <navLabel>
+          <text>Rules Valid Within Boundaries</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Boundaries.xhtml#sigil_toc_id_33"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-47" playOrder="46">
+        <navLabel>
+          <text>Combination of boundaries - ranges</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Boundaries.xhtml#sigil_toc_id_34"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-48" playOrder="47">
+        <navLabel>
+          <text>Summary</text>
+        </navLabel>
+        <content src="OEBPS/Text/_Boundaries.xhtml#sigil_toc_id_35"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-49" playOrder="48">
+        <navLabel>
+          <text>What code to extract from a Statement to shared utility method?</text>
+        </navLabel>
+        <content src="OEBPS/Text/_What%20Exactly%20Do%20We%20Specify.xhtml"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-50" playOrder="49">
+        <navLabel>
+          <text>Why such a strange approach to create enumerated constants?</text>
+        </navLabel>
+        <content src="OEBPS/Text/_What%20Exactly%20Do%20We%20Specify.xhtml#sigil_toc_id_36"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-51" playOrder="50">
+        <navLabel>
+          <text>Expanded TDD process</text>
+        </navLabel>
+        <content src="OEBPS/Text/_What%20Exactly%20Do%20We%20Specify.xhtml#sigil_toc_id_37"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-52" playOrder="51">
+        <navLabel>
+          <text>What exactly do we specify?</text>
+        </navLabel>
+        <content src="OEBPS/Text/_What%20Exactly%20Do%20We%20Specify.xhtml#sigil_toc_id_38"/>
+      </navPoint>
+      <navPoint class="chapter" id="navPoint-53" playOrder="52">
+        <navLabel>
+          <text>quick example (list? calculator?)</text>
+        </navLabel>
+        <content src="OEBPS/Text/_What%20Exactly%20Do%20We%20Specify.xhtml#sigil_toc_id_39"/>
+      </navPoint>
+    </navPoint>
+  </navMap>
+</ncx>
