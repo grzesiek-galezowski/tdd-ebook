@@ -8,6 +8,158 @@
         <link href="OEBPS/Styles/Global.css" rel="stylesheet" type="text/css"/>
     </head>
     <body>
-        <p>aaa</p>
+        <h1>On Objects Composability</h1>
+        <p>In this chapter, I will try to outline why objects' composability is a goal worth achieving and how it can be achieved. I am going to start with an example of unmaintainable code and will gradually fix its flaws in the next chapters.</p>
+
+<pre>public class YearlyIncentivePlan : IDisposable
+{
+  readonly SqlEmployees _employees = new SqlEmployees();
+  
+  public YearlyIncentivePlan()
+  {
+    _employees.Fill();
+  }
+  
+  public void Apply()
+  {
+    var employeeCollection = _employees.Current();
+    foreach(SqlEmployee employee in employeeCollection)
+    {
+      var payGrade = employee.GetPayGrade();
+      if(employee.GetSalary() &gt; payGrade.Minimum 
+      &amp;&amp; employee.GetSalary() &lt; payGrade.Maximum)
+      {
+        employee.SetSalary(
+          employee.GetSalary() 
+          + employee.GetSalary() / 10);
+      }
+      
+      if(employee.GetYearseOfService() == 5)
+      {
+        employee.SetBonusFor(2014, 
+          employee.GetSalary() / 2);
+      }
+      
+      employee.Save();
+    }
+  }
+  
+  public void Dispose()
+  {
+    _employees.Dispose();
+  }
+}</pre>
+
+<p>Imagine one day, we need to support other database - a NoSql one. With the current design (we are creating our own instance), we have no way of using another object than just the SqlEmployees, so we have to modify the YearlyIncentivePlan to use something different.</p>
+
+<p>We can solve this problem by using an interface instead of SqlEmployees and pass an instance from outside of the class:</p>
+
+<pre>public class YearlyIncentivePlan : IDisposable
+{
+  readonly Employees _employees;
+  
+  public YearlyIncentivePlan(Employees employees)
+  {
+    _employees = employees;
+    _employees.Fill();
+  }
+
+  //...further code
+
+  public void Dispose()
+  {
+    _employees.Dispose();
+  }
+}</pre>
+
+<p>The YearlyIncentivePlan is used in the code the following way:</p>
+
+<pre>
+Employees employees = ...// choose either SQL or NoSQL
+var incentivePlan = new YearlyIncentivePlan(employees);
+
+//... somewhere else in the code
+
+incentivePlan.Apply();
+
+//... somewhere else in the code
+
+incentivePlan.Dispose();
+</pre>
+
+<p>Note two things: 1) as the instance is passed by 3rd party, YearlyIncentivePlan instances cannot assume the instance is used only by it. Thus, it cannot neither initialize nor dispose of the instance. These two responsibilities have to be moved outside the class as well:</p>
+
+<pre>public class YearlyIncentivePlan
+{
+  readonly Employees _employees;
+  
+  public YearlyIncentivePlan(Employees employees)
+  {
+    _employees = employees;
+  }
+  
+  public void Apply()
+  {
+    var employeeCollection = _employees.Current();
+    foreach(SqlEmployee employee in employeeCollection)
+    {
+      var payGrade = employee.GetPayGrade();
+      if(employee.GetSalary() &gt; payGrade.Minimum 
+      &amp;&amp; employee.GetSalary() &lt; payGrade.Maximum)
+      {
+        employee.SetSalary(
+          employee.GetSalary() 
+          + employee.GetSalary() / 10);
+      }
+      
+      if(employee.GetYearseOfService() == 5)
+      {
+        employee.SetBonusFor(2014, 
+          employee.GetSalary() / 2);
+      }
+      
+      employee.Save();
+    }
+  }
+}</pre>
+
+<p>Note that we got rid of IDisposable, which is always good for abstraction... Now the usage pattern looks the same, only that now the same third party that created employees object, disposes of it. This is good, because one object has complete control over the lifetime of the employees object:</p>
+
+<pre>
+Employees employees = ...// choose either SQL or NoSQL
+employees.Fill();
+
+var incentivePlan = new YearlyIncentivePlan(employees);
+
+//... somewhere else in the code
+
+incentivePlan.Apply();
+
+//... somewhere else in the code
+
+employees.Dispose();
+</pre>
+
+<p>What have we achieved? Theoretically, we allowed ourselves to choose the implementation of employees' storage. We did this by making the system composable - i.e. we can achieve different behaviors of the system by changing the way objects are composed together into a system.</p>
+
+<p>Unfortunately, with the current design, this is only theoretical. Why? Let us look at the <code>Employees</code> interface we extracted to achieve substitutability:</p>
+
+<pre>public interface Employees
+{
+  IList<SqlEmployee> Current();
+}
+</pre>
+
+<p>As we can see, the <code>Current()</code> method returns a collection of <code>SqlEmployee</code> objects. This means that even if we create another implementation of <code>Employees</code> interface, e.g. <code>NoSqlEmployees</code>, it is not enough to decouple our yearly incentive plan from SQL based storage completely. We would have to extract an interface from <code>SqlEmployee</code> and make our method return it:</p>
+
+<pre>public interface Employees
+{
+  IList<Employee> Current();
+}
+</pre>
+
+<p>Would that solve the problem? To answer this question, let us examine the newly extracted <code>Employee</code> interface:</p>
+
+<p>Message: Objects' composability leads to more maintainable systems</p>
     </body>
 </html>
