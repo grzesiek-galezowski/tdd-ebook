@@ -27,7 +27,7 @@
     <li>Triangulate</li>
   </ol>
 
-  <p>All of these techniques are simple (triangulaion being a little more complex), so I’ll show you all of them one by one, putting more emphasis on triangulation:</p>
+  <p>All of these techniques are simple (triangulaion being a&nbsp;youtubelittle more complex), so I’ll show you all of them one by one, putting more emphasis on triangulation:</p>
 
   <h2>Type The Obvious Implementation</h2>
 
@@ -149,7 +149,7 @@ ShouldAddTwoNumbersTogether()
   <ol>
     <li><strong>Indirect measurement</strong>: derive the design from few known examples of its desired external behavior by looking at what varies in these examples and making this variability into something more general</li>
 
-    <li><strong>Using at least two sources of information</strong>: start with the simplest possible implementation and make it more general <strong>only</strong> when you have two or more different examples (i.e. Statements that describe the desired functionality for specific inputs). Then new examples can be added and generalization can be done again. This process is repeated until we reach the desired implementation. Robert C. Martin developed a maxim on this, saying that “As the tests get more specific, the code gets more generic.</li>
+    <li><strong>Using at least two sources of information</strong>: start with the simplest possible implementation and make it more general <strong>only</strong> when you have two or more different examples (i.e. Statements that describe the desired functionality for specific inputs). Then new examples can be added and generalization can be done again. This process is repeated until we reach the desired implementation. Robert C. Martin developed a&nbsp;maxim on this, saying that “As the tests get more specific, the code gets more generic.</li>
   </ol>
 
   <p>Usually, when TDD is showcased on simple examples, triangulation is the primary technique used, so many novices mistakenly believe TDD is all about triangulation. This isn’t true, although triangulation is important.</p>
@@ -265,7 +265,7 @@ ShouldReturnSumOfTwoElementsAsASumWhenTwoElementsAreSupplied()
 
   <p>After adding and implementing the third example, the variability of elements count becomes obvious. Now that we have three examples, we see even more clearly that we have redundant constructors and redundant fields for each element in the list and if we added a fourth example for three elements, we’d have to add another constructor, another field and another element of the sum computation. Time to generalize!</p>
 
-  <p>How do we encapsulate the variability of the element count so that we can get rid of this redundancy? A collection! How do we generalize the addition of multiple elements? A foreach loop through the collection! Thankfully, C# supports <code>params</code> keyword, that let us use it to remove the redundant constructor like this:</p>
+  <p>How do we encapsulate the variability of the element count so that we can get rid of this redundancy? A collection! How do we generalize the addition of multiple elements? A&nbsp;foreach loop through the collection! Thankfully, C# supports <code>params</code> keyword, that let us use it to remove the redundant constructor like this:</p>
   <pre class="brush: csharp">public class ListWithAggregateOperations
 {
   int[] _elements;  

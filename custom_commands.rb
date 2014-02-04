@@ -4,9 +4,10 @@ def local_ebook_variant(extension)
   "./Test-Driven Development - Extensive Tutorial.#{extension}"
 end
 
-def unzip!(archive)
+def unzip!(archive, exdir = nil)
+  exdir ||= "."
   archive = archive.shellescape
-  sh "unzip -o #{archive}"
+  sh "unzip -o #{archive} -d #{exdir}"
 end
 
 def convert(source_ebook, params)

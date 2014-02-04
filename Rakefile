@@ -16,7 +16,7 @@ task :unzip_epub do
 end
 
 desc "Generate all ebook formats"
-multitask :generate_formats => [:epub, :mobi, :pdf, :azw3] do
+multitask :generate_formats => [:epub, :mobi, :pdf, :azw3, :htmlz] do
 end
 
 desc "Generate epub format"
@@ -40,6 +40,14 @@ desc "Generate newer Kindle format"
 task :azw3 do
   convert SOURCE_DOCUMENT, to: :azw3
   copy local_ebook_variant(:azw3), PUBLISH_FOLDER
+end
+
+desc "Generate HTMLZ format to gh-pages branch directory"
+task :htmlz do
+  convert SOURCE_DOCUMENT, to: :htmlz
+  copy local_ebook_variant(:htmlz), "../Pages_TDDEbook/tdd-ebook/book.htmlz"
+  unzip! "../Pages_TDDEbook/tdd-ebook/book.htmlz", "../Pages_TDDEbook/tdd-ebook/"
+  rm "../Pages_TDDEbook/tdd-ebook/book.htmlz"
 end
 
 

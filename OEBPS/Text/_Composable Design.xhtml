@@ -36,7 +36,7 @@
 
 <p><strong>Johnny:</strong> So here's one: how do you call a development phase when you ensure high code quality?</p>
 
-<p><strong>Benjamin:</strong> ... ... seems I don't have a clue... So how is it called?</p>
+<p><strong>Benjamin:</strong> ... ... seems I don't have a clue... So what is it called?</p>
 
 <p><strong>Johnny:</strong> It's called "now".</p>
 
@@ -95,18 +95,71 @@
 
 <p><strong>Johnny:</strong> Yeah. We won't be fixing all of that today. Still, we will follow the scout rule and "leave the campground cleaner than we found it".</p>
 
+<p><strong>Benjamin:</strong> What's our assignment?</p>
 
-<h1>New Requirements: Support For Another Database</h1>
-
-<p>Imagine one day, we need to support another database - a NoSQL one. The plan is that there will be a possibility to configure which database is in use and use either an SQL one, or a NoSQL one.</p>
-
-<p>To achieve this, we need to be somehow able to make the <code>CompanyPolicies</code> class database type-agnostic. Currently, it is coupled to an SQL storage, because it itself creates its database connection:</p>
+<p><strong>Johnny:</strong> First of all, we need to provide our users a choice between an SQL database and a NoSQL one. To achieve our goal, we need to be somehow able to make the <code>CompanyPolicies</code> class database type-agnostic. For now, as you can see, the implementation is coupled to the specific <code>SqlRepository</code>, because it creates a specific instance itself:</p>
 
 <pre>public class CompanyPolicies : IDisposable
 {
   readonly SqlRepository _repository
     = new SqlRepository();
 </pre>
+
+<p>Now, we need to evaluate the options we have to pick the best one. What options do you see, Benjamin?</p>
+
+<p><strong>Benjamin:</strong> Well, we could certainly extract an interface from <code>SqlRepository</code> and introduce an if statement to the constructor like this:</p>
+
+<pre>public class CompanyPolicies : IDisposable
+{
+  readonly Repository _repository;
+
+  public CompanyPolicies()
+  {
+    if(...)
+    {
+      _repository = new SqlRepository();
+    }
+    else
+    {
+      _repository = new NoSqlRepository();
+    }
+  }
+</pre>
+
+<p><strong>Johnny:</strong> True, but this option has few deficiencies. First of all, remember we're following the scout rule and by using this option we introduce more complexity to the CommonPolicies class. Also, let's say tommorow someone writes a class for reporting - they will need to make the same decision on repositories. This means we would have to make the same decision in both of these classes, effectively duplicating code. What's our next option?</p>
+
+<p><strong>Benjamin:</strong> Another option would be to change the SqlRepository itself to be just a wrapper around the actual database access, like this:</p>
+
+<pre>public class SqlRepository : IDisposable
+{
+  readonly Repository _repository;
+
+  public CompanyPolicies()
+  {
+    if(...)
+    {
+      _repository = new RealSqlRepository();
+    }
+    else
+    {
+      _repository = new RealNoSqlRepository();
+    }
+  }
+
+  IList&lt;Employee&gt; CurrentEmployees()
+  {
+    return _repository.CurrentEmployees();
+  }
+</pre>
+
+
+
+
+
+
+
+
+<h1>TOOOOOOOOOOOODOOOOOOOOOO</h1>
 
 <p>There are a couple of ways of dealing with this problem, like:</p>
 
