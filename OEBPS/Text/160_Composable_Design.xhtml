@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Test-Driven Development - Extensive Tutorial</title>
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+  <h1>On Objects Composability</h1>
+
+  <p>In this chapter, I will try to outline why objects' composability is a goal worth achieving and how it can be achieved. I am going to start with an example of unmaintainable code and will gradually fix its flaws in the next chapters. In this chapter, we are going to fix just one of the flaws, so the code we will end up will not be perfect by any means, still, it will be better by one quality.</p>
+
+  <h1>TODO make it into a role-play!</h1>
+
+  <h1>Another task for Johnny and Benjamin</h1>
+
+  <p>Remember Johnny and Benjamin? Looks like they managed their previous task and are up to something else. Let us listen to their conversation as they are working on another project...</p>
+
+  <p><strong>Benjamin:</strong> So, what's this assignment about?</p>
+
+  <p><strong>Johnny:</strong> Actually, it's nothing exciting - we'll have to add two features to a legacy application that's not prepared for the changes.</p>
+
+  <p><strong>Benjamin:</strong>What is the code for?</p>
+
+  <p><strong>Johnny:</strong>It is a class that implements company policies. As the company has just started using this automated system and it was started recently, there is only one policy implemented: yearly incentive plan. Many corporations have what they call incentive plans. These plans are used to promote good behaviors and exceeding expectations by employees of a company.</p>
+
+  <p><strong>Benjamin:</strong> You mean, the project has just started and is already in a bad shape?</p>
+
+  <p><strong>Johnny:</strong> Yep. The guys writing it wanted to "keep it simple", whatever that means, and now it's pretty bad.</p>
+
+  <p><strong>Benjamin:</strong> I see...</p>
+
+  <p><strong>Johnny:</strong> By the way, do you like riddles?</p>
+
+  <p><strong>Benjamin:</strong> Always!</p>
+
+  <p><strong>Johnny:</strong> So here's one: how do you call a development phase when you ensure high code quality?</p>
+
+  <p><strong>Benjamin:</strong> ... ... seems I don't have a clue... So what is it called?</p>
+
+  <p><strong>Johnny:</strong> It's called "now".</p>
+
+  <p><strong>Benjamin:</strong> Oh!</p>
+
+  <p><strong>Johnny:</strong> By the way, the company's incentive plan is one of the most stupid ones I've ever seen. Wonder how this company has managed to stay on the market for three years.</p>
+
+  <p>Every employee in the company has a pay grade. An employee can be promoted to a higher pay grade, but the mechanics of how it works is something we are not going to deal with.</p>
+
+  <p>Normally, every year, everyone gets a raise by 10%. But to encourage behaviors that give an employee a higher pay grade, such employee cannot get raises indefinitely on a given pay grade. Each grade has its associated maximum pay. If this amount of money is reached, an employee does not get a raise anymore until they reach a higher pay grade.</p>
+
+  <p>Additionally, every employee on their 5th anniversary of working for the company, gets a special, one-time bonus which is twice their current payment.</p>
+
+  <p><strong>Benjamin:</strong> Looks like the source code repository just finished synchronizing. Let's take a bite at the code!</p>
+
+  <p><strong>Johnny:</strong> Sure, here you go:</p>
+  <pre>public class CompanyPolicies : IDisposable
+{
+  readonly SqlRepository _repository
+    = new SqlRepository();
+  
+  public void ApplyYearlyIncentivePlan()
+  {
+    var employees = _repository.CurrentEmployees();
+
+    foreach(var employee in employees)
+    {
+      var payGrade = employee.GetPayGrade();
+      if(employee.GetSalary() &lt; payGrade.Maximum)
+      {
+        var newSalary 
+          = employee.GetSalary() 
+          + employee.GetSalary() 
+          * 0.1;
+        employee.SetSalary(newSalary);
+      }
+      
+      if(employee.GetYearseOfService() == 5)
+      {
+        var oneTimeBonus = employee.GetSalary() * 2;
+        employee.SetBonusForYear(2014, oneTimeBonus);
+      }
+      
+      employee.Save();
+    }
+  }
+  
+  public void Dispose()
+  {
+    _repository.Dispose();
+  }
+}</pre>
+
+  <p><strong>Benjamin:</strong> Wow, there are a lot of literal constants and functional decomposition is barely done!</p>
+
+  <p><strong>Johnny:</strong> Yeah. We won't be fixing all of that today. Still, we will follow the scout rule and "leave the campground cleaner than we found it".</p>
+
+  <p><strong>Benjamin:</strong> What's our assignment?</p>
+
+  <p><strong>Johnny:</strong> First of all, we need to provide our users a choice between an SQL database and a NoSQL one. To achieve our goal, we need to be somehow able to make the <code>CompanyPolicies</code> class database type-agnostic. For now, as you can see, the implementation is coupled to the specific <code>SqlRepository</code>, because it creates a specific instance itself:</p>
+  <pre>public class CompanyPolicies : IDisposable
+{
+  readonly SqlRepository _repository
+    = new SqlRepository();
+</pre>
+
+  <p>Now, we need to evaluate the options we have to pick the best one. What options do you see, Benjamin?</p>
+
+  <p><strong>Benjamin:</strong> Well, we could certainly extract an interface from <code>SqlRepository</code> and introduce an if statement to the constructor like this:</p>
+  <pre>public class CompanyPolicies : IDisposable
+{
+  readonly Repository _repository;
+
+  public CompanyPolicies()
+  {
+    if(...)
+    {
+      _repository = new SqlRepository();
+    }
+    else
+    {
+      _repository = new NoSqlRepository();
+    }
+  }
+</pre>
+
+  <p><strong>Johnny:</strong> True, but this option has few deficiencies. First of all, remember we're following the scout rule and by using this option we introduce more complexity to the CommonPolicies class. Also, let's say tommorow someone writes a class for reporting - they will need to make the same decision on repositories. This means we would have to make the same decision in both of these classes, effectively duplicating code. What's our next option?</p>
+
+  <p><strong>Benjamin:</strong> Another option would be to change the SqlRepository itself to be just a wrapper around the actual database access, like this:</p>
+  <pre>public class SqlRepository : IDisposable
+{
+  readonly Repository _repository;
+
+  public CompanyPolicies()
+  {
+    if(...)
+    {
+      _repository = new RealSqlRepository();
+    }
+    else
+    {
+      _repository = new RealNoSqlRepository();
+    }
+  }
+
+  IList&lt;Employee&gt; CurrentEmployees()
+  {
+    return _repository.CurrentEmployees();
+  }
+</pre>
+
+  <h1>TOOOOOOOOOOOODOOOOOOOOOO</h1>
+
+  <p>There are a couple of ways of dealing with this problem, like:</p>
+
+  <h1>TOOOOOOOOOODOOOOOOOOO convert the list to separate sections</h1>
+
+  <ol>
+    <li>Creating a constructor with an if statement inside to choose the database - this is a bad idea because other classes in our system use the database as well so the if statement will need to be duplicated.</li>
+
+    <li>Changing the <code>SqlRepository</code> class itself so that it hides the information on the database used behind its own API - this could work, but will lead to every method duplicating the choice between the databases. If we decide to make the choice just once, we don't really need this class, because most of the time it will delegate to its inner implementation.</li>
+
+    <li>Extract interface and pass either of its two implementations through the constructor.</li>
+  </ol>
+
+  <p>The third options seems to be the most compelling, so let us put it to use. We can extract an interface from <code>SqlRepository</code>, called <code>EmployeeSource</code> (TODO why this name?) and pass an instance from outside of the class:</p>
+  <pre>public class CompanyPolicies : IDisposable
+{
+  readonly EmployeeSource _employeeSource;  
+
+  public CompanyPolicies(EmployeeSource source)
+  {
+    _employeeSource = source;
+  }
+  
+  //...code  
+  
+  public void Dispose()
+  {
+    _employeeSource.Dispose();
+  }
+}</pre>
+
+  <p>The <code>CompanyPolicies</code> is used in the code the following way:</p>
+  <pre>
+var policies = new CompanyPolicies(new SqlRepository());
+
+//... somewhere else in the code
+
+policies.ApplyYearlyIncentivePlan();
+
+//... somewhere else in the code
+
+policies.Dispose();
+</pre>
+
+  <p>Note two things: 1) as the employee source instance is passed by 3rd party, <code>CompanyPolicies</code> instances cannot assume the instance is used only by itself. Thus, it cannot neither initialize nor dispose of the instance. These two responsibilities have to be moved outside the class as well:</p>
+  <pre>public class CompanyPolicies
+{
+  readonly EmployeeSource _employeeSource;  
+
+  public CompanyPolicies(EmployeeSource source)
+  {
+    _employeeSource = source;
+  }
+  
+  public void ApplyYearlyIncentivePlan()
+  {
+    var employees = _repository.CurrentEmployees();
+
+    foreach(var employee in employees)
+    {
+      var payGrade = employee.GetPayGrade();
+      if(employee.GetSalary() &lt; payGrade.Maximum)
+      {
+        var newSalary 
+          = employee.GetSalary() 
+          + employee.GetSalary() 
+          * 0.1;
+        employee.SetSalary(newSalary);
+      }
+      
+      if(employee.GetYearseOfService() == 5)
+      {
+        var oneTimeBonus = employee.GetSalary() * 2;
+        employee.SetBonusForYear(2014, oneTimeBonus);
+      }
+
+      employee.Save();
+    }
+  }
+}</pre>
+
+  <p>Note that we got rid of IDisposable, which is always good for abstraction... Now the usage pattern looks the same, only that now the same third party that created employees object, disposes of it. This is good, because one object has complete control over the lifetime of the employees object:</p>
+  <pre>SqlRepository repository = new SqlRepository();
+var policies = new CompanyPolicies(repository);
+
+//... somewhere else in the code
+
+policies.ApplyYearlyIncentivePlan();
+
+//... somewhere else in the code
+
+repository.Dispose();
+</pre>
+
+  <p>What have we achieved? Well, we allowed ourselves to choose the implementation of employees' storage. We did this by making the system composable - i.e. we can achieve different behaviors of the system by changing the way objects are composed together into a system. For example, instead of creating a <code>policies</code> object like this:</p>
+  <pre>SqlRepository repository = new SqlRepository();
+var policies = new CompanyPolicies(repository);</pre>
+
+  <p>we can create it like this:</p>
+  <pre>NoSqlRepository repository = new NoSqlRepository();
+var policies = new CompanyPolicies(repository);</pre>
+
+  <p>Or even, if we later decide to make the repository configurable by a strategy (e.g. there may be different definitions of what it means to get "current" employees) and extract the connection logic even further and make error reporting more configurable, we can do it like this:</p>
+  <pre>Repository repository = new RepositoryConfigurableByPolicies(
+  new SqlDatabase(),
+  new FilterToExcludeProbationEmployeesFromCurrent(),
+  new ErrorReportingToLogFile()
+);
+var policies = new CompanyPolicies(repository);</pre>
+
+  <p>Everything without touching the <code>CompanyPolicies</code> class. Now, let us take the <code>ErrorReportingToLogFile</code> class and assume, that it is passed where an interface is required. We can, again, exchange this to something else, e.g.:</p>
+  <pre>Repository repository = new RepositoryConfigurableByPolicies(
+  new SqlDatabase(),
+  new FilterToExcludeProbationEmployeesFromCurrent(),
+  new ErrorReportingThroughNetwork());
+);</pre>
+
+  <p>Or make it configurable itself, e.g. with different formats and flushing algorithms (for performance purposes):</p>
+  <pre>Repository repository = new RepositoryConfigurableByPolicies(
+  new SqlDatabase(),
+  new FilterToExcludeProbationEmployeesFromCurrent(),
+  new ErrorReportingToLogFile(
+    new XmlLogFormat(),
+    new FlushingDelayedUntilCachedContentIsMoreThan(
+      Kilobytes.Value(5)
+    )
+  )
+);</pre>
+
+  <p>Again, these modifications are all possible without touching the <code>RepositoryConfigurableByPolicies</code> class!</p>
+
+  <h1>Todo write about web of objects and how we can unplug parts of the web and plug in different parts to modify the system behavior without modifying the rest of the web</h1>
+
+  <h1>Todo write about composition root!</h1>
+</body>
+</html>
