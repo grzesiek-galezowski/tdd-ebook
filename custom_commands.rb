@@ -50,5 +50,10 @@ class Git
   def push_changes_to_master
     sh 'git push -u origin master'
   end
+
+  def push_changes
+    sh 'git push'
+  end
+
 end
 

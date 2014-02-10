@@ -50,10 +50,10 @@ task :htmlz, [:commit_message] do | t, args |
   copy local_ebook_variant(:htmlz), "../Pages_TDDEbook/tdd-ebook/book.htmlz"
   unzip! "../Pages_TDDEbook/tdd-ebook/book.htmlz", "../Pages_TDDEbook/tdd-ebook/"
   rm "../Pages_TDDEbook/tdd-ebook/book.htmlz"
-  sh 'cd ../Pages_TDDEbook/tdd-ebook/ && git add --all'
-  sh "cd ../Pages_TDDEbook/tdd-ebook/ && git commit -m \"#{commit_message}\""
-  sh 'cd ../Pages_TDDEbook/tdd-ebook/ && git push'
-
+  git = Git.new "../Pages_TDDEbook/tdd-ebook/"
+  git.add_all
+  git.commit_all args[:commit_message]
+  git.push_changes
 end
 
 
