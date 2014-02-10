@@ -7,7 +7,7 @@ end
 def unzip!(archive, exdir = nil)
   exdir ||= "."
   archive = archive.shellescape
-  sh "unzip -o #{archive} #{exdir}"
+  sh "unzip -o #{archive} -d #{exdir}"
 end
 
 def convert(source_ebook, params)
@@ -27,24 +27,24 @@ end
 class Git
   include FileUtils
 
-  def self.execute
-    Git.new
+  def initialize(path_to_repository)
+    @path = path_to_repository
   end
 
   def add_all()
     begin
-      sh 'git add -all'
+      sh "cd \"#{@path}\" && git add -all"
     rescue 
       puts "Nothing to add to source control"
     end
   end
 
   def add(path)
-    sh "git add #{path}"
+    sh "cd \"#{@path}\" && git add --all #{path}"
   end
 
   def commit_all(commit_message)
-    sh "git commit -a -m \"#{commit_message}\""
+    sh "cd \"#{@path}\" && git commit -a -m \"#{commit_message}\""
   end
  
   def push_changes_to_master

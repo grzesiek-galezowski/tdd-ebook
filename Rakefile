@@ -3,10 +3,11 @@ require 'custom_commands'
 
 desc "Push ebook into source control"
 multitask :push, [:commit_message] => [:unzip_epub, :generate_formats] do | t, args |
-  Git.execute.add_all
-  Git.execute.add "./OEBPS"
-  Git.execute.commit_all args[:commit_message]
-  Git.execute.push_changes_to_master
+  git = Git.new(".")
+  git.add_all
+  git.add "./OEBPS"
+  git.commit_all args[:commit_message]
+  git.push_changes_to_master
   sh 'rm -r ./OEBPS'
 end
 
@@ -16,7 +17,7 @@ task :unzip_epub do
 end
 
 desc "Generate all ebook formats"
-multitask :generate_formats => [:epub, :mobi, :pdf, :azw3, :htmlz] do
+multitask :generate_formats do #=> [:epub, :mobi, :pdf, :azw3, :htmlz] do
 end
 
 desc "Generate epub format"
@@ -43,11 +44,16 @@ task :azw3 do
 end
 
 desc "Generate HTMLZ format to gh-pages branch directory"
-task :htmlz do
+task :htmlz, [:commit_message] do | t, args |
+  commit_message = args[:commit_message] || "updated version"
   convert SOURCE_DOCUMENT, to: :htmlz
   copy local_ebook_variant(:htmlz), "../Pages_TDDEbook/tdd-ebook/book.htmlz"
   unzip! "../Pages_TDDEbook/tdd-ebook/book.htmlz", "../Pages_TDDEbook/tdd-ebook/"
   rm "../Pages_TDDEbook/tdd-ebook/book.htmlz"
+  sh 'cd ../Pages_TDDEbook/tdd-ebook/ && git add --all'
+  sh "cd ../Pages_TDDEbook/tdd-ebook/ && git commit -m \"#{commit_message}\""
+  sh 'cd ../Pages_TDDEbook/tdd-ebook/ && git push'
+
 end
 
 
