@@ -17,7 +17,7 @@ task :unzip_epub do
 end
 
 desc "Generate all ebook formats"
-multitask :generate_formats do #=> [:epub, :mobi, :pdf, :azw3, :htmlz] do
+multitask :generate_formats => [:epub, :mobi, :pdf, :azw3, :htmlz] do
 end
 
 desc "Generate epub format"
