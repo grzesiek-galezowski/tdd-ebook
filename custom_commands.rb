@@ -33,7 +33,7 @@ class Git
 
   def add_all()
     begin
-      sh "cd \"#{@path}\" && git add -all"
+      sh "cd \"#{@path}\" && git add --all"
     rescue 
       puts "Nothing to add to source control"
     end
