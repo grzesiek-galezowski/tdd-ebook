@@ -1,17 +1,5 @@
 ![Cover](https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/cover-small.png)
 
-<!-- Place this tag where you want the +1 button to render. -->
-<div class="g-plusone" data-size="small" data-annotation="inline" data-width="120"></div>
-
-<!-- Place this tag after the last +1 button tag. -->
-<script type="text/javascript">
-  (function() {
-    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-    po.src = 'https://apis.google.com/js/platform.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-  })();
-</script>
-
 ### Book Download Links
 
 <a href="https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.epub">
