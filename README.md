@@ -2,8 +2,6 @@
 
 ### Book Download Links
 
-Dropbox-based:
-
 <a href="https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.epub">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-epub.png" />Epub
 </a>&nbsp;
@@ -20,7 +18,7 @@ Dropbox-based:
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-web.png" />HTML
 </a>
 
-Google Drive-based:
+Alternative links (if dropbox is blocked in your company):
 
 <a href="https://docs.google.com/uc?export=download&id=0B0nzjz32viZmcWhBMzJHVlBCd0k">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-epub.png" />Epub
