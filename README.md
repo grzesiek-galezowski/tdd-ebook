@@ -33,8 +33,6 @@ Alternative links (if dropbox is blocked in your company):
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-pdf.png" />PDF
 </a>
 
-The reason for providing two locations is that some cloud services are blocked in some companies.
-
 ### Additional Links
 
 
