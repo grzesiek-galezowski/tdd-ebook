@@ -1,23 +1,20 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-
+<?xml version='1.0' encoding='utf-8'?>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <title>What is the scope of a&nbsp;unit-level Statement in TDD?</title>
-  <link href="../Styles/Global.css" rel="stylesheet" type="text/css" />
+  <title>What is the scope of a unit-level Statement in TDD?</title>
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
-  <h1>What is the scope of a&nbsp;unit-level Statement in TDD?</h1>
+  <h1>What is the scope of a unit-level Statement in TDD?</h1>
 
-  <p>Ha, now I&nbsp;have to admit that I&nbsp;deferred for a&nbsp;long time an answer to a&nbsp;pretty fundamental question: what should be the scope of a&nbsp;single Statement? If I&nbsp;put the whole system together, can I&nbsp;write a&nbsp;Statement for its behavior? Or maybe the other way round - there should be a&nbsp;Statement for each method of each class, including the private ones? Well, first thing I&nbsp;want to explain is that there are multiple levels we can write write our Statements on. This varies depending on the TDD authority, but in this book, we will cover two of such levels - unit level and acceptance level. For now, let us stick to the unit level, which is what we have done so far anyway. The time will come for the rest.</p>
+  <p>Ha, now I have to admit that I deferred for a long time an answer to a pretty fundamental question: what should be the scope of a single Statement? If I put the whole system together, can I write a Statement for its behavior? Or maybe the other way round - there should be a Statement for each method of each class, including the private ones? Well, first thing I want to explain is that there are multiple levels we can write our Statements on. This varies depending on the TDD authority, but in this book, we will cover two of such levels - unit level and acceptance level. For now, let us stick to the unit level, which is what we have done so far anyway. The time will come for the rest.</p>
 
-  <p>For unit level, let us consider the kind of Statements that you already saw in this book - where we take one object, invoke a&nbsp;method on it and assert on the result. This is actually a&nbsp;special case of unit-level Statement and we will cover more in the coming chapters. This is, however, a&nbsp;good moment to stop and consider the “scope” of a&nbsp;single unit-level Statement in TDD. Is it method scope? Class scope? Feature scope?</p>
+  <p>For unit level, let us consider the kind of Statements that you already saw in this book - where we take one object, invoke a method on it and assert on the result. This is actually a special case of unit-level Statement and we will cover more in the coming chapters. This is, however, a good moment to stop and consider the “scope” of a single unit-level Statement in TDD. Is it method scope? Class scope? Feature scope?</p>
 
   <p>Let us try to answer the question by examining some TDD unit-level Statements:</p>
 
-  <h3 class="sigil_not_in_toc">Is it class scope?</h3>
+  <h3 class="sigil_not_in_toc" id="u06f9b4ca-3b63-475d-81e5-3c2690472b97">Is it class scope?</h3>
 
   <p>Let us see the first example and try to answer this question:</p>
   <pre class="brush: csharp">[Fact] public void
@@ -36,11 +33,11 @@ ShouldThrowValidationExceptionWithFatalErrorLevelWhenValidatedStringIsEmpty()
   Assert.True(exceptionThrown.IsFatalError);
 }</pre>
 
-  <p>This is an example of a&nbsp;well-written unit-level Statement. Ok, so let us see… how many real classes take part in this spec? Three: a&nbsp;string, an exception and the validation. So the class scope is not the most accurate description.</p>
+  <p>This is an example of a well-written unit-level Statement. Ok, so let us see… how many real classes take part in this spec? Three: a string, an exception and the validation. So the class scope is not the most accurate description.</p>
 
-  <h3 class="sigil_not_in_toc">Or a&nbsp;method scope?</h3>
+  <h3 class="sigil_not_in_toc" id="ub669df36-50ac-404a-bcdd-bc0e64845b4b">Or a method scope?</h3>
 
-  <p>So, maybe the scope covers a&nbsp;single method, meaning a&nbsp;Statement always exercises one method of a&nbsp;specified object?</p>
+  <p>So, maybe the scope covers a single method, meaning a Statement always exercises one method of a specified object?</p>
 
   <p>Let us consider the following example:</p>
   <pre class="brush: csharp">[Fact] public void 
@@ -61,11 +58,11 @@ ShouldBeFulfilledWhenEventOccursThreeTimes()
 
   <p>Count with me: how many methods are called? Depending on how we count, it is two (<code>Queued()</code> and <code>IsFulfilled()</code>) or four (<code>Queued(), Queued(), Queued(), IsFulfilled()</code>). In any case, not one. So it is not method scope either.</p>
 
-  <h3 class="sigil_not_in_toc">It is the scope of class behavior!</h3>
+  <h3 class="sigil_not_in_toc" id="ua4cb467d-4cb2-4143-a0d1-9e92c691405c">It is the scope of class behavior!</h3>
 
-  <p>The proper answer is: behavior! Each TDD Statement specifies a&nbsp;single behavior. I&nbsp;like how <a href="http://sustainabletdd.com">Amir Kolsky and Scott Bain</a>&nbsp;phrase it, by saying that each unit-level Statement should “introduce a&nbsp;behavioral distinction not existing before”.</p>
+  <p>The proper answer is: behavior! Each TDD Statement specifies a single behavior. I like how <a href="http://sustainabletdd.com">Amir Kolsky and Scott Bain</a> phrase it, by saying that each unit-level Statement should “introduce a behavioral distinction not existing before”.</p>
 
-  <p>It may look that “behavior” scope is actually broader than method or class levels, since such Statement can span multiple classes and multiple methods. This is only partially true. That is because e.g. Statements with method scope can span multiple behaviors (which, by the way, is a&nbsp;sign of poorly written Statement). Let us take a&nbsp;look at an example:</p>
+  <p>It may look that “behavior” scope is actually broader than method or class levels, since such Statement can span multiple classes and multiple methods. This is only partially true. That is because e.g. Statements with method scope can span multiple behaviors (which, by the way, is a sign of poorly written Statement). Let us take a look at an example:</p>
   <pre class="brush: csharp">[Fact] public void 
 ShouldReportItCanHandleStringWithLengthOf3ButNotOf4AndNotNullString()
 {
@@ -89,7 +86,7 @@ ShouldReportItCanHandleStringWithLengthOf3ButNotOf4AndNotNullString()
   Assert.False(resultForNull);
 }</pre>
 
-  <p>Note that it specifies three (or two - depending on how you count) behaviors: acceptance of string of allowed size, refusal of handling string above the allowed size and a&nbsp;special case of null string. As I&nbsp;said - this is an antipattern and is sometimes called a&nbsp;“check-it-all test”. The issue with this kind of Statement is that it can be evaluated to false for at least two reasons - when the allowed string size changes and when null handling is done in another way. Also, xUnit tools by default stop execution on first error, so, assuming that the first assertion fails, we will not know the outcome of the next assertion unless we fix the previous one (does that mean we have to use a&nbsp;single <code>Assert</code> per Statement? We will take care of this question later. For now, let the answer be: “not necessarily”).</p>
+  <p>Note that it specifies three (or two - depending on how you count) behaviors: acceptance of string of allowed size, refusal of handling string above the allowed size and a special case of null string. As I said - this is an antipattern and is sometimes called a “check-it-all test”. The issue with this kind of Statement is that it can be evaluated to false for at least two reasons - when the allowed string size changes and when null handling is done in another way. Also, xUnit tools by default stop execution on first error, so, assuming that the first assertion fails, we will not know the outcome of the next assertion unless we fix the previous one (does that mean we have to use a single <code>Assert</code> per Statement? We will take care of this question later. For now, let the answer be: “not necessarily”).</p>
 
   <p>On the other hand, Statements with behavior scope do not necessary have to be broader than those with class scope. Let us take the following example that proves it:</p>
   <pre class="brush: csharp">[Fact] public void
@@ -113,6 +110,6 @@ ShouldReportItIsStartedAndItDoesNotYetTransmitVoiceWhenItStarts()
 
   <p>Again, there are two behaviors here: reporting the call status after start and not being able to transmit frames after start. That is why this test should be split into two.</p>
 
-  <p>How to catch that you are writing a&nbsp;Statement about two or more behaviors rather than one? First, take a&nbsp;look at the test name - if it looks strange and contains some “And” or “Or” words, it may (but does not have to) be about more than one behavior. Another way is to write the description of a&nbsp;behavior in a&nbsp;Given-When-Then way. If you have more than one item in the “When” section or the structure is not Given-When-Then, but rather a&nbsp;“Given-When-Then-When-Then” - that is also a&nbsp;signal.</p>
+  <p>How to catch that you are writing a Statement about two or more behaviors rather than one? First, take a look at the test name - if it looks strange and contains some “And” or “Or” words, it may (but does not have to) be about more than one behavior. Another way is to write the description of a behavior in a Given-When-Then way. If you have more than one item in the “When” section or the structure is not Given-When-Then, but rather a “Given-When-Then-When-Then” - that is also a signal.</p>
 </body>
 </html>
