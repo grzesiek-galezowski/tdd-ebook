@@ -20,13 +20,13 @@
 
   <p><strong>Johnny:</strong> Actually, it's nothing exciting - we'll have to add two features to a legacy application that's not prepared for the changes.</p>
 
-  <p><strong>Benjamin:</strong>What is the code for?</p>
+  <p><strong>Benjamin:</strong> What is the code for?</p>
 
-  <p><strong>Johnny:</strong>It is a class that implements company policies. As the company has just started using this automated system and it was started recently, there is only one policy implemented: yearly incentive plan. Many corporations have what they call incentive plans. These plans are used to promote good behaviors and exceeding expectations by employees of a company.</p>
+  <p><strong>Johnny:</strong> It is a class that implements company policies. As the company has just started using this automated system and it was started recently, there is only one policy implemented: yearly incentive plan. Many corporations have what they call incentive plans. These plans are used to promote good behaviors and exceeding expectations by employees of a company.</p>
 
   <p><strong>Benjamin:</strong> You mean, the project has just started and is already in a bad shape?</p>
 
-  <p><strong>Johnny:</strong> Yep. The guys writing it wanted to "keep it simple", whatever that means, and now it's pretty bad.</p>
+  <p><strong>Johnny:</strong> Yep. The guys writing it wanted to "keep it simple", whatever that means, and now it looks pretty bad.</p>
 
   <p><strong>Benjamin:</strong> I see...</p>
 
@@ -65,6 +65,7 @@
     foreach(var employee in employees)
     {
       var payGrade = employee.GetPayGrade();
+      //evaluate raise
       if(employee.GetSalary() &lt; payGrade.Maximum)
       {
         var newSalary 
@@ -74,6 +75,7 @@
         employee.SetSalary(newSalary);
       }
       
+      //evaluate one-time bonus
       if(employee.GetYearseOfService() == 5)
       {
         var oneTimeBonus = employee.GetSalary() * 2;
@@ -90,7 +92,7 @@
   }
 }</pre>
 
-  <p><strong>Benjamin:</strong> Wow, there are a lot of literal constants and functional decomposition is barely done!</p>
+  <p><strong>Benjamin:</strong> Wow, there is a lot of literal constants all around and functional decomposition is barely done!</p>
 
   <p><strong>Johnny:</strong> Yeah. We won't be fixing all of that today. Still, we will follow the scout rule and "leave the campground cleaner than we found it".</p>
 
@@ -123,14 +125,14 @@
   }
 </pre>
 
-  <p><strong>Johnny:</strong> True, but this option has few deficiencies. First of all, remember we're following the scout rule and by using this option we introduce more complexity to the CommonPolicies class. Also, let's say tommorow someone writes a class for reporting - they will need to make the same decision on repositories. This means we would have to make the same decision in both of these classes, effectively duplicating code. What's our next option?</p>
+  <p><strong>Johnny:</strong> True, but this option has few deficiencies. First of all, remember we're trying to follow the scout rule and by using this option we introduce more complexity to the CommonPolicies class. Also, let's say tommorow someone writes a class for reporting - they will need to make the same decision on repositories. This means we would have to make the same decision in both of these classes, effectively duplicating code. What's our next option?</p>
 
   <p><strong>Benjamin:</strong> Another option would be to change the SqlRepository itself to be just a wrapper around the actual database access, like this:</p>
   <pre>public class SqlRepository : IDisposable
 {
   readonly Repository _repository;
 
-  public CompanyPolicies()
+  public SqlRepository()
   {
     if(...)
     {
@@ -147,6 +149,30 @@
     return _repository.CurrentEmployees();
   }
 </pre>
+
+  <p><strong>Johnny:</strong> Sure, this is an approach that could work and would be worth considering for very serious legacy code, as it does not force us to change the <code>CompanyPolicies</code> class. However, there are some issues with it. First of all, the <code>SqlRepository</code> name would be misleading. Second, look at the <code>CurrentEmployees()</code> method - all it does is delegating a call to the implementation chosen in the constructor. With every new method required of the repository, we'll need to add new delegating methods. It isn't such a big deal, but maybe we can do better than that?</p>
+
+  <p><strong>Benjamin:</strong> Let me think, let me think... OK, got it! We could use polymorphism! All we need to do is extract an interface from the <code>SqlRepository</code>, let's call it <code>Repository</code>, and then, instead of creating a repository instance in <code>CompanyPolicies</code> like this:</p>
+
+  <pre>public class CompanyPolicies : IDisposable
+{
+  readonly SqlRepository _repository
+    = new SqlRepository();
+ </pre>
+
+<p>just pass an instance through the constructor, like this:</p>
+
+  <pre>public class CompanyPolicies : IDisposable
+{
+  readonly Repository _repository;
+
+  public CompanyPolicies(Repository repository)
+  {
+    _repository = repository;
+  }
+ </pre>
+
+<p>This way, the <code>CompanyPolicies</code> won't know what exactly is passed to it via constructor and we can pass whatever we like - either an SQL repository or a NoSQL one!</p>
 
   <h1 id="u0b534e02-c756-4dd3-8987-289aecf54d18">TOOOOOOOOOOOODOOOOOOOOOO</h1>
 
