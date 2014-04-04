@@ -156,7 +156,7 @@
 
   <pre>public class CompanyPolicies : IDisposable
 {
-  readonly SqlRepository _repository
+  private readonly SqlRepository _repository
     = new SqlRepository();
  </pre>
 
@@ -164,7 +164,7 @@
 
   <pre>public class CompanyPolicies : IDisposable
 {
-  readonly Repository _repository;
+  private readonly Repository _repository;
 
   public CompanyPolicies(Repository repository)
   {
@@ -173,6 +173,83 @@
  </pre>
 
 <p>This way, the <code>CompanyPolicies</code> won't know what exactly is passed to it via constructor and we can pass whatever we like - either an SQL repository or a NoSQL one!</p>
+
+<p><strong>Johnny:</strong> Great! This is the option we're looking for! For now, just believe me that this approach will lead us to many good things - later, you'll see for yourself.</p>
+
+  <p><strong>Benjamin:</strong> OK, so let me just pull the <code>SqlRepository</code> outside the class and make it an implementation of <code>Repository</code> interface, than create a constructor and pass the real instance through it...</p>
+
+  <pre>public class CompanyPolicies : IDisposable
+{
+  //_repository is now an interface
+  readonly Repository _repository; 
+
+  //New constructor
+  public CompanyPolicies(Repository repository)
+  {
+    _repository = repository;
+  }
+  
+  public void ApplyYearlyIncentivePlan()
+  {
+    //... body of the method. hidden for now
+  }
+  
+  public void Dispose()
+  {
+    _repository.Dispose();
+  }
+}</pre>
+
+  <p><strong>Benjamin:</strong> Ha ha! Look at this! I am SUPREME!</p>
+
+<p><strong>Johnny:</strong> Hey, hey, hold your horses! There is one thing wrong with this code.</p>
+
+  <p><strong>Benjamin:</strong> Huh? I thought this is what we were aiming at.</p>
+
+  <p><strong>Johnny:</strong> Yes, with the exception of the <code>Dispose()</code> method. Look closely at the <code>CompanyPolicies</code> class. it is changed so that it is not responsible for creating a repository for itself, but it still disposes of it. This is wrong because <code>CompanyPolicies</code> instance does not have any right to assume it is the only object that is using the repository.</p>
+
+  <p><strong>Benjamin:</strong> Ok, I get the theory, but why is this bad in practice? Can you give me an example?</p>
+
+  <p><strong>Johnny:</strong> Sure. As soon as you have two instances of <code>CompanyPolicies</code> class, both sharing the same instance of <code>Repository</code>, you're cooked. This is because one instance of <code>CompanyPolicies</code> may dispose of the repository and the other one may still use it.</p>
+
+  <p><strong>Benjamin:</strong> So who is going to dispose of the repository?</p>
+
+<p><strong>Johnny:</strong> The same code that created it. Let me show you an example:</code>
+
+<pre>
+public static void Main(string[] args)
+{
+  using(var repo = new SqlRepository())
+  {
+    var policies = new CompanyPolicies(repo);
+
+    //use policies for anything you like
+  }
+}
+</pre>
+
+<p>This way the repository is created at the start of the program and disposed at the end. Thanks to this, the <code>CompanyPolicies</code> has no disposable fields and it itself does not have to be disposable - we can just delete the <code>Dispose()</code> method:</p>
+</pre>
+
+<pre>//not implementing IDisposable anymore:
+public class CompanyPolicies 
+{
+  //_repository is now an interface
+  readonly Repository _repository; 
+
+  //New constructor
+  public CompanyPolicies(Repository repository)
+  {
+    _repository = repository;
+  }
+  
+  public void ApplyYearlyIncentivePlan()
+  {
+    //... body of the method. hidden for now
+  }
+
+  //no Dispose() method anymore
+}</pre>
 
   <h1 id="u0b534e02-c756-4dd3-8987-289aecf54d18">TOOOOOOOOOOOODOOOOOOOOOO</h1>
 
