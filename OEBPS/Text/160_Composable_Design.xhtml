@@ -214,7 +214,7 @@
 
   <p><strong>Benjamin:</strong> So who is going to dispose of the repository?</p>
 
-<p><strong>Johnny:</strong> The same code that created it. Let me show you an example:</code>
+<p><strong>Johnny:</strong> The same place in the code that created it. Let me show you an example:</code>
 
 <pre>
 public static void Main(string[] args)
@@ -250,6 +250,27 @@ public class CompanyPolicies
 
   //no Dispose() method anymore
 }</pre>
+
+<p><strong>Benjamin:</strong> Cool. So, what now? Seems we have the <code>CompanyPolicies</code> class depending on repository abstraction instead of an actual implementation, like SQL repository. My guess is that we will be able to make another class implementing the interface for NoSQL data access and just pass it through the constructor instead of the original one.</p>
+
+<p><strong>Johnny:</strong> Yes. Speaking in other words, if we have two implementations of the same interface and can pass either to be used a piece of code without having to change this piece of code, we can say that we have achieved composability of those components. </code>
+
+<p><strong>Benjamin:</strong> Composability?</p>
+
+<p><strong>Johnny:</strong> Yes. It's a bit of theory, but in my mind it is crucial to understand it to build maintainable systems. For example, look at <code>CompanyPolicies</code> component. We can compose it with a repository like this:</p>
+
+<pre>var policies 
+  = new CompoanyPolicies(new SqlRepository());</pre>
+
+<p>or like this:</p>
+
+<pre>var policies 
+  = new CompoanyPolicies(new NoSqlRepository());</pre>
+
+<p>which means that <code>CompanyPolicies</code> does not need to know what <code>Repository</code> exactly it is composed with, as long as this <code>Repository</code> follows the required interface and meets expectations of <code>CompanyPolicies</code>. An implementation of <code>Repository</code> may be itself a very complex</p>
+
+
+
 
   <h1 id="u0b534e02-c756-4dd3-8987-289aecf54d18">TOOOOOOOOOOOODOOOOOOOOOO</h1>
 
