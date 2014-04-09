@@ -10,8 +10,6 @@
 
   <p>In this chapter, I will try to outline why objects' composability is a goal worth achieving and how it can be achieved. I am going to start with an example of unmaintainable code and will gradually fix its flaws in the next chapters. In this chapter, we are going to fix just one of the flaws, so the code we will end up will not be perfect by any means, still, it will be better by one quality.</p>
 
-  <h1 id="u303f0ca0-6691-42d4-8868-4c04aa39a43b">TODO make it into a role-play!</h1>
-
   <h1 id="u1b304157-2049-4846-92dc-f3500e72432e">Another task for Johnny and Benjamin</h1>
 
   <p>Remember Johnny and Benjamin? Looks like they managed their previous task and are up to something else. Let us listen to their conversation as they are working on another project...</p>
@@ -178,6 +176,12 @@
 
   <p><strong>Benjamin:</strong> OK, so let me just pull the <code>SqlRepository</code> outside the class and make it an implementation of <code>Repository</code> interface, than create a constructor and pass the real instance through it...</p>
 
+<p><strong>Johnny:</strong> Sure, I'll go get some coffee.</p>
+
+<p><emph>... 10 minutes later</emph></p>
+
+  <p><strong>Benjamin:</strong> Ha ha! Look at this! I am SUPREME!</p>
+
   <pre>public class CompanyPolicies : IDisposable
 {
   //_repository is now an interface
@@ -200,8 +204,6 @@
   }
 }</pre>
 
-  <p><strong>Benjamin:</strong> Ha ha! Look at this! I am SUPREME!</p>
-
 <p><strong>Johnny:</strong> Hey, hey, hold your horses! There is one thing wrong with this code.</p>
 
   <p><strong>Benjamin:</strong> Huh? I thought this is what we were aiming at.</p>
@@ -210,11 +212,11 @@
 
   <p><strong>Benjamin:</strong> Ok, I get the theory, but why is this bad in practice? Can you give me an example?</p>
 
-  <p><strong>Johnny:</strong> Sure. As soon as you have two instances of <code>CompanyPolicies</code> class, both sharing the same instance of <code>Repository</code>, you're cooked. This is because one instance of <code>CompanyPolicies</code> may dispose of the repository and the other one may still use it.</p>
+  <p><strong>Johnny:</strong> Sure. As soon as you have two instances of <code>CompanyPolicies</code> class, both sharing the same instance of <code>Repository</code>, you're cooked. This is because one instance of <code>CompanyPolicies</code> may dispose of the repository while the other one may still want to use it.</p>
 
   <p><strong>Benjamin:</strong> So who is going to dispose of the repository?</p>
 
-<p><strong>Johnny:</strong> The same place in the code that created it. Let me show you an example:</code>
+<p><strong>Johnny:</strong> The same part of the code that created it, for example the <code>Main</code> method. Let me show you an example:</code>
 
 <pre>
 public static void Main(string[] args)
@@ -228,7 +230,7 @@ public static void Main(string[] args)
 }
 </pre>
 
-<p>This way the repository is created at the start of the program and disposed at the end. Thanks to this, the <code>CompanyPolicies</code> has no disposable fields and it itself does not have to be disposable - we can just delete the <code>Dispose()</code> method:</p>
+<p>This way the repository is created at the start of the program and disposed of at the end. Thanks to this, the <code>CompanyPolicies</code> has no disposable fields and it itself does not have to be disposable - we can just delete the <code>Dispose()</code> method:</p>
 </pre>
 
 <pre>//not implementing IDisposable anymore:
@@ -253,159 +255,58 @@ public class CompanyPolicies
 
 <p><strong>Benjamin:</strong> Cool. So, what now? Seems we have the <code>CompanyPolicies</code> class depending on repository abstraction instead of an actual implementation, like SQL repository. My guess is that we will be able to make another class implementing the interface for NoSQL data access and just pass it through the constructor instead of the original one.</p>
 
-<p><strong>Johnny:</strong> Yes. Speaking in other words, if we have two implementations of the same interface and can pass either to be used a piece of code without having to change this piece of code, we can say that we have achieved composability of those components. </code>
+<p><strong>Johnny:</strong> Yes. Speaking in other words, if we have two implementations of the same interface and can pass either to be used a piece of code without having to change this piece of code, we can say that we have achieved composability of those components. </p>
 
 <p><strong>Benjamin:</strong> Composability?</p>
 
 <p><strong>Johnny:</strong> Yes. It's a bit of theory, but in my mind it is crucial to understand it to build maintainable systems. For example, look at <code>CompanyPolicies</code> component. We can compose it with a repository like this:</p>
 
 <pre>var policies 
-  = new CompoanyPolicies(new SqlRepository());</pre>
+  = new CompanyPolicies(new SqlRepository());</pre>
 
 <p>or like this:</p>
 
 <pre>var policies 
-  = new CompoanyPolicies(new NoSqlRepository());</pre>
+  = new CompanyPolicies(new NoSqlRepository());</pre>
 
-<p>which means that <code>CompanyPolicies</code> does not need to know what <code>Repository</code> exactly it is composed with, as long as this <code>Repository</code> follows the required interface and meets expectations of <code>CompanyPolicies</code>. An implementation of <code>Repository</code> may be itself a very complex</p>
+<p>which means that <code>CompanyPolicies</code> does not need to know what <code>Repository</code> exactly it is composed with, as long as this <code>Repository</code> follows the required interface and meets expectations of <code>CompanyPolicies</code> (e.g. does not throw exceptions when it is not supposed to do so). An implementation of <code>Repository</code> may be itself a very complex and composed of another set of classes, for example something like this:</p>
 
+<pre>new SqlRepository(
+  new ConnectionString("..."), 
+  new AccessPrivileges(
+    new Role("Admin"), 
+    new Role("Auditor")),
+  new InMemoryCache());</pre>
 
+<p>but the <code>CompanyPolicies</code> neither knows or cares about this, as long as it can use our new <code>Repository</code> implementation just like other repositories.</p>
 
+<p><strong>Benjamin:</strong> I see... So, getting back to our task, shall we proceed with making a NoSQL implementation of the <code>Repository</code> interface?</p>
 
-  <h1 id="u0b534e02-c756-4dd3-8987-289aecf54d18">TOOOOOOOOOOOODOOOOOOOOOO</h1>
+<p><strong>Johnny:</strong> First, show me the interface that you extracted while I was looking for the coffee.</p>
 
-  <p>There are a couple of ways of dealing with this problem, like:</p>
-
-  <h1 id="u6e123cb8-1045-4908-9fbb-9b4bbc58dbe8">TOOOOOOOOOODOOOOOOOOO convert the list to separate sections</h1>
-
-  <ol>
-    <li>Creating a constructor with an if statement inside to choose the database - this is a bad idea because other classes in our system use the database as well so the if statement will need to be duplicated.</li>
-
-    <li>Changing the <code>SqlRepository</code> class itself so that it hides the information on the database used behind its own API - this could work, but will lead to every method duplicating the choice between the databases. If we decide to make the choice just once, we don't really need this class, because most of the time it will delegate to its inner implementation.</li>
-
-    <li>Extract interface and pass either of its two implementations through the constructor.</li>
-  </ol>
-
-  <p>The third options seems to be the most compelling, so let us put it to use. We can extract an interface from <code>SqlRepository</code>, called <code>EmployeeSource</code> (TODO why this name?) and pass an instance from outside of the class:</p>
-  <pre>public class CompanyPolicies : IDisposable
+<p><strong>Benjamin:</strong> Here: </p>
+  
+<pre>
+public interface Repository
 {
-  readonly EmployeeSource _employeeSource;  
-
-  public CompanyPolicies(EmployeeSource source)
-  {
-    _employeeSource = source;
-  }
-  
-  //...code  
-  
-  public void Dispose()
-  {
-    _employeeSource.Dispose();
-  }
-}</pre>
-
-  <p>The <code>CompanyPolicies</code> is used in the code the following way:</p>
-  <pre>
-var policies = new CompanyPolicies(new SqlRepository());
-
-//... somewhere else in the code
-
-policies.ApplyYearlyIncentivePlan();
-
-//... somewhere else in the code
-
-policies.Dispose();
+  IList&lt;Employee&gt; CurrentEmployees();
+}
 </pre>
 
-  <p>Note two things: 1) as the employee source instance is passed by 3rd party, <code>CompanyPolicies</code> instances cannot assume the instance is used only by itself. Thus, it cannot neither initialize nor dispose of the instance. These two responsibilities have to be moved outside the class as well:</p>
-  <pre>public class CompanyPolicies
-{
-  readonly EmployeeSource _employeeSource;  
+<p><strong>Johnny:</strong> Ok, so we need to create just another implementation and pass it through the constructor depending on what data source is chosen and we're finished with this part of the task.</p>
 
-  public CompanyPolicies(EmployeeSource source)
-  {
-    _employeeSource = source;
-  }
-  
-  public void ApplyYearlyIncentivePlan()
-  {
-    var employees = _repository.CurrentEmployees();
+<p><strong>Benjamin:</strong> You mean there's more? </p>
 
-    foreach(var employee in employees)
-    {
-      var payGrade = employee.GetPayGrade();
-      if(employee.GetSalary() &lt; payGrade.Maximum)
-      {
-        var newSalary 
-          = employee.GetSalary() 
-          + employee.GetSalary() 
-          * 0.1;
-        employee.SetSalary(newSalary);
-      }
-      
-      if(employee.GetYearseOfService() == 5)
-      {
-        var oneTimeBonus = employee.GetSalary() * 2;
-        employee.SetBonusForYear(2014, oneTimeBonus);
-      }
+<p><strong>Johnny:</strong> Yeah, but that's something for tomorrow. I'm exhausted today.</p>
 
-      employee.Save();
-    }
-  }
-}</pre>
 
-  <p>Note that we got rid of IDisposable, which is always good for abstraction... Now the usage pattern looks the same, only that now the same third party that created employees object, disposes of it. This is good, because one object has complete control over the lifetime of the employees object:</p>
-  <pre>SqlRepository repository = new SqlRepository();
-var policies = new CompanyPolicies(repository);
+  <h1>Quick Retrospective</h1>
 
-//... somewhere else in the code
+<p>In this chapter, Benjamin learned to appreciate the composability of objects, i.e. the ability to replace object dependencies, providing different behaviors, without the need to change the code of the object class itself. Thus, an object, given replaced dependencies, starts using the new behaviors without noticing that any change occured at all.</p>
 
-policies.ApplyYearlyIncentivePlan();
+<p>As I said, the code mentioned has some serious flaws. For now, Johnny and Benjamin did not encounter a desperate need to address those flaws, but this is going to chage in the next chapter.</p>
 
-//... somewhere else in the code
+<p>Also, after we part again with Johnny and Benjamin, we are going to reiterate the ideas they stumble upon in a more disciplined manner.</p>
 
-repository.Dispose();
-</pre>
-
-  <p>What have we achieved? Well, we allowed ourselves to choose the implementation of employees' storage. We did this by making the system composable - i.e. we can achieve different behaviors of the system by changing the way objects are composed together into a system. For example, instead of creating a <code>policies</code> object like this:</p>
-  <pre>SqlRepository repository = new SqlRepository();
-var policies = new CompanyPolicies(repository);</pre>
-
-  <p>we can create it like this:</p>
-  <pre>NoSqlRepository repository = new NoSqlRepository();
-var policies = new CompanyPolicies(repository);</pre>
-
-  <p>Or even, if we later decide to make the repository configurable by a strategy (e.g. there may be different definitions of what it means to get "current" employees) and extract the connection logic even further and make error reporting more configurable, we can do it like this:</p>
-  <pre>Repository repository = new RepositoryConfigurableByPolicies(
-  new SqlDatabase(),
-  new FilterToExcludeProbationEmployeesFromCurrent(),
-  new ErrorReportingToLogFile()
-);
-var policies = new CompanyPolicies(repository);</pre>
-
-  <p>Everything without touching the <code>CompanyPolicies</code> class. Now, let us take the <code>ErrorReportingToLogFile</code> class and assume, that it is passed where an interface is required. We can, again, exchange this to something else, e.g.:</p>
-  <pre>Repository repository = new RepositoryConfigurableByPolicies(
-  new SqlDatabase(),
-  new FilterToExcludeProbationEmployeesFromCurrent(),
-  new ErrorReportingThroughNetwork());
-);</pre>
-
-  <p>Or make it configurable itself, e.g. with different formats and flushing algorithms (for performance purposes):</p>
-  <pre>Repository repository = new RepositoryConfigurableByPolicies(
-  new SqlDatabase(),
-  new FilterToExcludeProbationEmployeesFromCurrent(),
-  new ErrorReportingToLogFile(
-    new XmlLogFormat(),
-    new FlushingDelayedUntilCachedContentIsMoreThan(
-      Kilobytes.Value(5)
-    )
-  )
-);</pre>
-
-  <p>Again, these modifications are all possible without touching the <code>RepositoryConfigurableByPolicies</code> class!</p>
-
-  <h1 id="u043cb06f-db76-4bf9-9af2-8b2b80645c84">Todo write about web of objects and how we can unplug parts of the web and plug in different parts to modify the system behavior without modifying the rest of the web</h1>
-
-  <h1 id="u981e4959-b272-498b-9e37-d6d16512974d">Todo write about composition root!</h1>
 </body>
 </html>
