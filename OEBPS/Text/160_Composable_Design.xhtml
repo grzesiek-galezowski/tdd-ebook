@@ -8,7 +8,9 @@
 <body>
   <h1>On Objects Composability</h1>
 
-  <p>In this chapter, I will try to outline why objects' composability is a goal worth achieving and how it can be achieved. I am going to start with an example of unmaintainable code and will gradually fix its flaws in the next chapters. In this chapter, we are going to fix just one of the flaws, so the code we will end up will not be perfect by any means, still, it will be better by one quality.</p>
+  <p>In this chapter, I will try to outline briefly why objects' composability is a goal worth achieving and how it can be achieved. I am going to start with an example of unmaintainable code and will gradually fix its flaws in the next chapters. For now, we are going to fix just one of the flaws, so the code we will end up will not be perfect by any means, still, it will be better by one quality.</p>
+
+<p>In the coming chapters, we will learn more valuable lessons resulting from changing this little piece of code.</p>
 
   <h1 id="u1b304157-2049-4846-92dc-f3500e72432e">Another task for Johnny and Benjamin</h1>
 
@@ -20,7 +22,7 @@
 
   <p><strong>Benjamin:</strong> What is the code for?</p>
 
-  <p><strong>Johnny:</strong> It is a class that implements company policies. As the company has just started using this automated system and it was started recently, there is only one policy implemented: yearly incentive plan. Many corporations have what they call incentive plans. These plans are used to promote good behaviors and exceeding expectations by employees of a company.</p>
+  <p><strong>Johnny:</strong> It is a&nbsp;C#&nbsp;class that implements company policies. As the company has just started using this automated system and it was started recently, there is only one policy implemented: yearly incentive plan. Many corporations have what they call incentive plans. These plans are used to promote good behaviors and exceeding expectations by employees of a company.</p>
 
   <p><strong>Benjamin:</strong> You mean, the project has just started and is already in a bad shape?</p>
 
@@ -34,15 +36,15 @@
 
   <p><strong>Johnny:</strong> So here's one: how do you call a development phase when you ensure high code quality?</p>
 
-  <p><strong>Benjamin:</strong> ... ... seems I don't have a clue... So what is it called?</p>
+  <p><strong>Benjamin:</strong> ... ... No clue... So what is it called?</p>
 
   <p><strong>Johnny:</strong> It's called "now".</p>
 
   <p><strong>Benjamin:</strong> Oh!</p>
 
-  <p><strong>Johnny:</strong> By the way, the company's incentive plan is one of the most stupid ones I've ever seen. Wonder how this company has managed to stay on the market for three years.</p>
+  <p><strong>Johnny:</strong> Getting back to the topic, here's the company incentive plan.</p>
 
-  <p>Every employee in the company has a pay grade. An employee can be promoted to a higher pay grade, but the mechanics of how it works is something we are not going to deal with.</p>
+  <p>Every employee has a pay grade. An employee can be promoted to a higher pay grade, but the mechanics of how that works is something we will not need to deal with.</p>
 
   <p>Normally, every year, everyone gets a raise by 10%. But to encourage behaviors that give an employee a higher pay grade, such employee cannot get raises indefinitely on a given pay grade. Each grade has its associated maximum pay. If this amount of money is reached, an employee does not get a raise anymore until they reach a higher pay grade.</p>
 
@@ -123,7 +125,7 @@
   }
 </pre>
 
-  <p><strong>Johnny:</strong> True, but this option has few deficiencies. First of all, remember we're trying to follow the scout rule and by using this option we introduce more complexity to the CommonPolicies class. Also, let's say tommorow someone writes a class for reporting - they will need to make the same decision on repositories. This means we would have to make the same decision in both of these classes, effectively duplicating code. What's our next option?</p>
+  <p><strong>Johnny:</strong> True, but this option has few deficiencies. First of all, remember we're trying to follow the scout rule and by using this option we introduce more complexity to the CommonPolicies class. Also, let's say tommorow someone writes another class for, say, reporting and this class will also need to access the repository - they will need to make the same decision on repositories in their code as we do in ours. This effectively means duplicating code. Thus, I'd rather evaluate further options and check if we can come up with something better. What's our next option?</p>
 
   <p><strong>Benjamin:</strong> Another option would be to change the SqlRepository itself to be just a wrapper around the actual database access, like this:</p>
   <pre>public class SqlRepository : IDisposable
@@ -148,17 +150,9 @@
   }
 </pre>
 
-  <p><strong>Johnny:</strong> Sure, this is an approach that could work and would be worth considering for very serious legacy code, as it does not force us to change the <code>CompanyPolicies</code> class. However, there are some issues with it. First of all, the <code>SqlRepository</code> name would be misleading. Second, look at the <code>CurrentEmployees()</code> method - all it does is delegating a call to the implementation chosen in the constructor. With every new method required of the repository, we'll need to add new delegating methods. It isn't such a big deal, but maybe we can do better than that?</p>
+  <p><strong>Johnny:</strong> Sure, this is an approach that could work and would be worth considering for very serious legacy code, as it does not force us to change the <code>CompanyPolicies</code> class at all. However, there are some issues with it. First of all, the <code>SqlRepository</code> name would be misleading. Second, look at the <code>CurrentEmployees()</code> method - all it does is delegating a call to the implementation chosen in the constructor. With every new method required of the repository, we'll need to add new delegating methods. In reality, it isn't such a big deal, but maybe we can do better than that?</p>
 
-  <p><strong>Benjamin:</strong> Let me think, let me think... OK, got it! We could use polymorphism! All we need to do is extract an interface from the <code>SqlRepository</code>, let's call it <code>Repository</code>, and then, instead of creating a repository instance in <code>CompanyPolicies</code> like this:</p>
-
-  <pre>public class CompanyPolicies : IDisposable
-{
-  private readonly SqlRepository _repository
-    = new SqlRepository();
- </pre>
-
-<p>just pass an instance through the constructor, like this:</p>
+  <p><strong>Benjamin:</strong> Let me think, let me think... I evaluated the option where <code>CompanyPolicies</code> class makes the choice between repositories. I also evaluated the option where we hack the <code>SqlRepository</code> to makes this choice. The last option I can think of is leaving this choice to another, "3rd party" code, that would choose the repository to use and pass it to the <code>CompanyPolicies</code> via constructor, like this:</p>
 
   <pre>public class CompanyPolicies : IDisposable
 {
@@ -172,9 +166,9 @@
 
 <p>This way, the <code>CompanyPolicies</code> won't know what exactly is passed to it via constructor and we can pass whatever we like - either an SQL repository or a NoSQL one!</p>
 
-<p><strong>Johnny:</strong> Great! This is the option we're looking for! For now, just believe me that this approach will lead us to many good things - later, you'll see for yourself.</p>
+<p><strong>Johnny:</strong> Great! This is the option we're looking for! For now, just believe me that this approach will lead us to many good things - you'll see why later.</p>
 
-  <p><strong>Benjamin:</strong> OK, so let me just pull the <code>SqlRepository</code> outside the class and make it an implementation of <code>Repository</code> interface, than create a constructor and pass the real instance through it...</p>
+  <p><strong>Benjamin:</strong> OK, so let me just pull the <code>SqlRepository</code> instance outside the <code>CompanyPolicies</code> class and make it an implementation of <code>Repository</code> interface, then create a constructor and pass the real instance through it...</p>
 
 <p><strong>Johnny:</strong> Sure, I'll go get some coffee.</p>
 
@@ -187,7 +181,8 @@
   //_repository is now an interface
   readonly Repository _repository; 
 
-  //New constructor
+  // repository is passed from outside.
+  // We don't know what exact implementation it is.
   public CompanyPolicies(Repository repository)
   {
     _repository = repository;
@@ -195,7 +190,7 @@
   
   public void ApplyYearlyIncentivePlan()
   {
-    //... body of the method. hidden for now
+    //... body of the method. Unchanged.
   }
   
   public void Dispose()
@@ -208,15 +203,17 @@
 
   <p><strong>Benjamin:</strong> Huh? I thought this is what we were aiming at.</p>
 
-  <p><strong>Johnny:</strong> Yes, with the exception of the <code>Dispose()</code> method. Look closely at the <code>CompanyPolicies</code> class. it is changed so that it is not responsible for creating a repository for itself, but it still disposes of it. This is wrong because <code>CompanyPolicies</code> instance does not have any right to assume it is the only object that is using the repository.</p>
+  <p><strong>Johnny:</strong> Yes, with the exception of the <code>Dispose()</code> method. Look closely at the <code>CompanyPolicies</code> class. it is changed so that it is not responsible for creating a repository for itself, but it still disposes of it. This is wrong because <code>CompanyPolicies</code> instance does not have any right to assume it is the only object that is using the repository. If so, then it cannot determine the moment when the repository becomes unnecessary and can be safely disposed of.</p>
 
   <p><strong>Benjamin:</strong> Ok, I get the theory, but why is this bad in practice? Can you give me an example?</p>
 
-  <p><strong>Johnny:</strong> Sure. As soon as you have two instances of <code>CompanyPolicies</code> class, both sharing the same instance of <code>Repository</code>, you're cooked. This is because one instance of <code>CompanyPolicies</code> may dispose of the repository while the other one may still want to use it.</p>
+  <p><strong>Johnny:</strong> Sure, let me sketch a quick example. As soon as you have two instances of <code>CompanyPolicies</code> class, both sharing the same instance of <code>Repository</code>, you're cooked. This is because one instance of <code>CompanyPolicies</code> may dispose of the repository while the other one may still want to use it.</p>
 
   <p><strong>Benjamin:</strong> So who is going to dispose of the repository?</p>
 
-<p><strong>Johnny:</strong> The same part of the code that created it, for example the <code>Main</code> method. Let me show you an example:</code>
+<p><strong>Johnny:</strong> The same part of the code that creates it, for example the <code>Main</code> method. Let me show you an example of how this may look:</code>
+
+<h1>TODOTODOTODOTODOTODOTODO</h1>
 
 <pre>
 public static void Main(string[] args)
