@@ -78,6 +78,7 @@ So far the following chapters are considered ready for reading:
  1. Triangulation
 
 *Part2: Test-Driven Development in Object Oriented World*
+ 1. On objects composability
  1. TBD
 
 *Part3: Beyond Objects - TDD on higher levels*
