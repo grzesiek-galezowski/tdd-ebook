@@ -211,9 +211,7 @@
 
   <p><strong>Benjamin:</strong> So who is going to dispose of the repository?</p>
 
-<p><strong>Johnny:</strong> The same part of the code that creates it, for example the <code>Main</code> method. Let me show you an example of how this may look:</code>
-
-<h1>TODOTODOTODOTODOTODOTODO</h1>
+<p><strong>Johnny:</strong> The same part of the code that creates it, for example the <code>Main</code> method. Let me show you an example of how this may look like:</code>
 
 <pre>
 public static void Main(string[] args)
@@ -244,7 +242,7 @@ public class CompanyPolicies
   
   public void ApplyYearlyIncentivePlan()
   {
-    //... body of the method. hidden for now
+    //... body of the method. No changes
   }
 
   //no Dispose() method anymore
@@ -252,11 +250,7 @@ public class CompanyPolicies
 
 <p><strong>Benjamin:</strong> Cool. So, what now? Seems we have the <code>CompanyPolicies</code> class depending on repository abstraction instead of an actual implementation, like SQL repository. My guess is that we will be able to make another class implementing the interface for NoSQL data access and just pass it through the constructor instead of the original one.</p>
 
-<p><strong>Johnny:</strong> Yes. Speaking in other words, if we have two implementations of the same interface and can pass either to be used a piece of code without having to change this piece of code, we can say that we have achieved composability of those components. </p>
-
-<p><strong>Benjamin:</strong> Composability?</p>
-
-<p><strong>Johnny:</strong> Yes. It's a bit of theory, but in my mind it is crucial to understand it to build maintainable systems. For example, look at <code>CompanyPolicies</code> component. We can compose it with a repository like this:</p>
+<p><strong>Johnny:</strong> Yes. For example, look at <code>CompanyPolicies</code> component. We can compose it with a repository like this:</p>
 
 <pre>var policies 
   = new CompanyPolicies(new SqlRepository());</pre>
@@ -266,7 +260,7 @@ public class CompanyPolicies
 <pre>var policies 
   = new CompanyPolicies(new NoSqlRepository());</pre>
 
-<p>which means that <code>CompanyPolicies</code> does not need to know what <code>Repository</code> exactly it is composed with, as long as this <code>Repository</code> follows the required interface and meets expectations of <code>CompanyPolicies</code> (e.g. does not throw exceptions when it is not supposed to do so). An implementation of <code>Repository</code> may be itself a very complex and composed of another set of classes, for example something like this:</p>
+<p>without changing the code of <code>CompanyPolicies</code>. This means that <code>CompanyPolicies</code> does not need to know what <code>Repository</code> exactly it is composed with, as long as this <code>Repository</code> follows the required interface and meets expectations of <code>CompanyPolicies</code> (e.g. does not throw exceptions when it is not supposed to do so). An implementation of <code>Repository</code> may be itself a very complex and composed of another set of classes, for example something like this:</p>
 
 <pre>new SqlRepository(
   new ConnectionString("..."), 
@@ -290,7 +284,7 @@ public interface Repository
 }
 </pre>
 
-<p><strong>Johnny:</strong> Ok, so we need to create just another implementation and pass it through the constructor depending on what data source is chosen and we're finished with this part of the task.</p>
+<p><strong>Johnny:</strong> Ok, so what we need is to create just another implementation and pass it through the constructor depending on what data source is chosen and we're finished with this part of the task.</p>
 
 <p><strong>Benjamin:</strong> You mean there's more? </p>
 
