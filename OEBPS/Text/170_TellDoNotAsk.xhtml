@@ -5,11 +5,91 @@
         <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
     </head>
     <body>
-        <h1>Telling, not asking</h1>
+<h1>Telling, not asking</h1>
 
 <p>In this chapter, we'll get back to Johnny and Benjamin as they introduce another change in the code they were given. In the process, they discover the impact that return values and getters have on composability of objects.</p>
 
+<h1>Contractors</h1>
 
+  <p><strong>Johnny:</strong> G'morning. Ready for another task?</p>
+
+  <p><strong>Benjamin:</strong> Of course! What's next?</p>
+
+  <p><strong>Johnny:</strong> Remember the code we worked yesterday? It container policy for permanent employees of the company. But the company wants to start hiring contractors and needs to include them in the application.</p>
+
+  <p><strong>Benjamin:</strong> So we need to implement company policies for them?</p>
+
+  <p><strong>Johnny:</strong> That's right. And the policies are going to be different for contractors. I mean, just as regular employees, they receive raises and bonuses, just the formulas are different. I made a small table to allow comparing what we have for employees and what we want to add for contractors:</p>
+
+<table>
+ <tr>
+  <th></th>
+  <th>Raise</th>
+  <th>Bonus</th>
+ </tr>
+
+ <tr>
+  <th>Regular Employee</th>
+  <td>+10% of current salary if not reached maximum on a given pay grade</td>
+  <td>+200% of current salary one time after five years</td>
+ </tr>
+
+ <tr>
+  <th>Contractor</th>
+  <td>+5% of average salary calculated for last 3 years of service (or all previous years of service if they have worked for less than 3 years)</td>
+  <td>+10% of current salary when a contractor receives score more than 100 for the previous year</td>
+ </tr>
+</table>
+
+<p>So the workflow is going to be the same for both a regular employee and a contractor:</p>
+
+<ol>
+  <li>Load from repository</li>
+  <li>Evaluate raise</li>
+  <li>Evaluate bonus</li>
+  <li>Save</li>
+</ol>
+
+<p>but the implementation of some of the steps will be different for both.</p>
+
+<pre>public class CompanyPolicies 
+{
+  readonly Repository _repository; 
+
+  public CompanyPolicies(Repository repository)
+  {
+    _repository = repository;
+  }
+  
+  public void ApplyYearlyIncentivePlan()
+  {
+    var employees = _repository.CurrentEmployees();
+
+    foreach(var employee in employees)
+    {
+      var payGrade = employee.GetPayGrade();
+
+      //evaluate raise
+      if(employee.GetSalary() &lt; payGrade.Maximum)
+      {
+        var newSalary 
+          = employee.GetSalary() 
+          + employee.GetSalary() 
+          * 0.1;
+        employee.SetSalary(newSalary);
+      }
+      
+      //evaluate one-time bonus
+      if(employee.GetYearsOfService() == 5)
+      {
+        var oneTimeBonus = employee.GetSalary() * 2;
+        employee.SetBonusForYear(2014, oneTimeBonus);
+      }
+      
+      employee.Save();
+    }
+  }
+}</pre>
 
     </body>
 </html>
