@@ -109,6 +109,59 @@
 
   <p><strong>Johnny:</strong> Also, we would miss our chance to communicate through the code that the sequence of steps is intentionally similar in both cases. Others who read this code in the future will see that the implementation for regular employees follows the steps: load, evaluate raise, evaluate bonus, save. When they look at the implementation for contractors, they will see the same order of steps, but they will be unable to tell whether the similarity is intentional, or is it there by pure accident.</p>
 
+ <p><strong>Benjamin:</strong> So our second option is to put an <code>if</code> statement in every step inside the <code>CompanyPolicies</code> class, to distinguish between regular employees and contractors. The Employee class would have an <code>isContractor()</code> method and depending on what it would return, we would either execute the logic for regular employees or for contractors. Assuming that the current structure of the code looks like this:</p>
+
+<pre>
+foreach(var employee in employees)
+{
+  //evaluate raise
+  ...
+      
+  //evaluate one-time bonus
+  ...
+  
+  //save employee
+}
+</pre>
+
+<p>the new structure would look like this:</p>
+
+<pre>foreach(var employee in employees)
+{
+  if(employee.IsContractor())
+  {
+    //evaluate raise for contractor
+    ...
+  }
+  else
+  {
+    //evaluate raise for regular
+    ...
+  }
+
+  if(employee.IsContractor())
+  {
+    //evaluate one-time bonus for contractor
+    ...
+  }
+  else
+  {
+    //evaluate one-time bonus for regular
+    ...
+  }
+  
+  //save employee
+  ...
+}
+</pre>
+
+<p>this way we would show that the steps are the same, but the implementation is different. Also, this would mostly require us to add code and not move the existing code around.</p>
+
+  <p><strong>Johnny:</strong> The downside is that we would make the class even uglier than it was when we started. So despite initial easiness, we'll be doing a huge disservice for future maintainers. We have at least one another option. What would that be?</p>
+
+ <p><strong>Benjamin:</strong> Let's see... we could move all the details concerning the implementation of the steps from <code>CompanyPolicies</code> class into the <code>Employee</code> class itself, then change it so that <code>Employee</code> could be either a <code>RegularEmployee</code> or <code>ContractorEmployee</code> - both classes would have different implementations of the steps, but the <code>CompanyPolicies</code> would not notice, since it would not be coupled to the implementation of the steps anymore. </p>
+
+
 <p>option 2: 'if' in company policies, option 3: variation in employee</p>
 
     </body>
