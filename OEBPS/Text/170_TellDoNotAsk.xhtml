@@ -159,10 +159,37 @@ foreach(var employee in employees)
 
   <p><strong>Johnny:</strong> The downside is that we would make the class even uglier than it was when we started. So despite initial easiness, we'll be doing a huge disservice for future maintainers. We have at least one another option. What would that be?</p>
 
- <p><strong>Benjamin:</strong> Let's see... we could move all the details concerning the implementation of the steps from <code>CompanyPolicies</code> class into the <code>Employee</code> class itself, then change it so that <code>Employee</code> could be either a <code>RegularEmployee</code> or <code>ContractorEmployee</code> - both classes would have different implementations of the steps, but the <code>CompanyPolicies</code> would not notice, since it would not be coupled to the implementation of the steps anymore. </p>
+ <p><strong>Benjamin:</strong> Let's see... we could move all the details concerning the implementation of the steps from <code>CompanyPolicies</code> class into the <code>Employee</code> class itself, leaving only the names and the order of steps in <code>CompanyPolicies</code>:
+
+<pre>foreach(var employee in employees)
+{
+  employee.EvaluateRaise();
+  employee.EvaluateOneTimeBonus();
+  employee.Save();
+}
+</pre>
 
 
-<p>option 2: 'if' in company policies, option 3: variation in employee</p>
+<p>Then, we could change the <code>Employee</code> into an interface, so that it could be either a <code>RegularEmployee</code> or <code>ContractorEmployee</code> - both classes would have different implementations of the steps, but the <code>CompanyPolicies</code> would not notice, since it would not be coupled to the implementation of the steps anymore - just the names and the order.</p>
+
+  <p><strong>Johnny:</strong> This solution would have one downside - we would need to significantly change the current code, but you know what? I'm willing to do it, especially that I was told today that the logic is covered by some tests which we can run to see if a regression was introduced.</p>
+
+ <p><strong>Benjamin:</strong> Cool, what do we start with?</p>
+
+  <p><strong>Johnny:</strong> The first thing that is between us and our goal are these getters on the <code>Employee</code> Employee class:</p>
+
+<pre>GetSalary();
+GetGrade();
+GetYearsOfService();
+</pre>
+
+<p>They just expose too much information specific to the regular employees. This is also the case with these setters:</p>
+<pre>
+SetSalary(newSalary)
+SetBonusForYear(year, amount);
+</pre>
+
+
 
     </body>
 </html>
