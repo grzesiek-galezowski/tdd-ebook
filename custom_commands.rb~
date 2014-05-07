@@ -1,4 +1,5 @@
 require 'shellwords'
+require 'tmpdir'
 
 def local_ebook_variant(extension)
   "./Test-Driven Development - Extensive Tutorial.#{extension}"
@@ -6,8 +7,18 @@ end
 
 def unzip!(archive, exdir = nil)
   exdir ||= "."
+  exdir = File.expand_path exdir.shellescape
+  exdir = exdir.shellescape
+  temp_directory = "______temp_unzip___"  
+  archive = File.expand_path archive
   archive = archive.shellescape
-  sh "unzip -o #{archive} -d #{exdir}"
+
+  Dir.mktmpdir("____tdd_ebook_unzip____") do |temp_dir|
+    temp_dir = temp_dir.shellescape
+    puts sh("unzip -o #{archive} -d #{temp_dir}")
+    sh "rsync -r #{temp_dir} #{exdir}"
+  end
+  
 end
 
 def convert(source_ebook, params)
@@ -31,32 +42,36 @@ class Git
     @path = path_to_repository
   end
 
+  def execute_in_repository_root(command)
+    sh "cd \"#{@path}\" && #{command}"
+  end
+
   def add_all()
     begin
-      sh "cd \"#{@path}\" && git add --all"
+      execute_in_repository_root "git add --all"
     rescue 
       puts "Nothing to add to source control"
     end
   end
 
   def add(path)
-    sh "cd \"#{@path}\" && git add --all #{path}"
+    execute_in_repository_root "git add --all #{path}"
   end
 
   def commit_all(commit_message)
-    sh "cd \"#{@path}\" && git commit -a -m \"#{commit_message}\""
+    execute_in_repository_root "git commit -a -m \"#{commit_message}\""
   end
 
   def pull
-    sh "cd \"#{@path}\" && git pull"
+    execute_in_repository_root "git pull"
   end 
 
   def push_changes_to_master
-    sh "cd \"#{@path}\" && git push -u origin master"
+    execute_in_repository_root "git push -u origin master"
   end
 
   def push_changes_to_gh_pages
-    sh "cd \"#{@path}\" && git push -u origin gh-pages"
+    execute_in_repository_root "git push -u origin gh-pages"
   end
 
 end

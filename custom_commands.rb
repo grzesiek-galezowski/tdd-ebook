@@ -1,4 +1,5 @@
 require 'shellwords'
+require 'tmpdir'
 
 def local_ebook_variant(extension)
   "./Test-Driven Development - Extensive Tutorial.#{extension}"
@@ -6,8 +7,18 @@ end
 
 def unzip!(archive, exdir = nil)
   exdir ||= "."
+  exdir = File.expand_path exdir.shellescape
+  exdir = exdir.shellescape
+  temp_directory = "______temp_unzip___"  
+  archive = File.expand_path archive
   archive = archive.shellescape
-  sh "unzip -o #{archive} -d #{exdir}"
+
+  Dir.mktmpdir("____tdd_ebook_unzip____") do |temp_dir|
+    temp_dir = temp_dir.shellescape
+    puts sh("unzip -o #{archive} -d #{temp_dir}")
+    sh "rsync -r #{temp_dir}/* #{exdir}"
+  end
+  
 end
 
 def convert(source_ebook, params)
