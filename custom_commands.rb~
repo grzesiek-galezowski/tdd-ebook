@@ -16,7 +16,7 @@ def unzip!(archive, exdir = nil)
   Dir.mktmpdir("____tdd_ebook_unzip____") do |temp_dir|
     temp_dir = temp_dir.shellescape
     puts sh("unzip -o #{archive} -d #{temp_dir}")
-    sh "rsync -r #{temp_dir} #{exdir}"
+    sh "rsync -r #{temp_dir}/* #{exdir}"
   end
   
 end
