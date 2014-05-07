@@ -169,27 +169,109 @@ foreach(var employee in employees)
 }
 </pre>
 
-
 <p>Then, we could change the <code>Employee</code> into an interface, so that it could be either a <code>RegularEmployee</code> or <code>ContractorEmployee</code> - both classes would have different implementations of the steps, but the <code>CompanyPolicies</code> would not notice, since it would not be coupled to the implementation of the steps anymore - just the names and the order.</p>
 
   <p><strong>Johnny:</strong> This solution would have one downside - we would need to significantly change the current code, but you know what? I'm willing to do it, especially that I was told today that the logic is covered by some tests which we can run to see if a regression was introduced.</p>
 
  <p><strong>Benjamin:</strong> Cool, what do we start with?</p>
 
-  <p><strong>Johnny:</strong> The first thing that is between us and our goal are these getters on the <code>Employee</code> Employee class:</p>
+  <p><strong>Johnny:</strong> The first thing that is between us and our goal are these getters on the <code>Employee</code> class:</p>
 
 <pre>GetSalary();
 GetGrade();
 GetYearsOfService();
 </pre>
 
-<p>They just expose too much information specific to the regular employees. This is also the case with these setters:</p>
+<p>They just expose too much information specific to the regular employees. It would be impossible to use different implementations when these are around. This is also the case with these setters:</p>
 <pre>
 SetSalary(newSalary)
 SetBonusForYear(year, amount);
 </pre>
 
+<p>While these are not as bad, we'd better give ourselves more flexibility. Thus, let's hide all of this behind more abstract methods that hide what actually happens, but reveal our intention.</p>
 
+<p>First, take a look at this code:</p>
+
+<pre>//evaluate raise
+if(employee.GetSalary() &lt; payGrade.Maximum)
+{
+  var newSalary 
+    = employee.GetSalary() 
+    + employee.GetSalary() 
+    * 0.1;
+  employee.SetSalary(newSalary);
+}
+</pre>
+
+<p>Each time you see a block of code separated from the rest with blank lines and starting with comment, you see something screaming "I want to be a separate method that contains this code and has a name after the comment!". Let's grant this wish and make it a separate method on the <code>Employee</code> class.</p>
+
+<p><strong>Benjamin:</strong> Ok, wait a minute... here:</p>
+
+<pre>employee.EvaluateRaise();</pre>
+
+<p><strong>Johnny:</strong> Great! Now, we've got another example of this species here:</p>
+
+<pre>//evaluate one-time bonus
+if(employee.GetYearsOfService() == 5)
+{
+  var oneTimeBonus = employee.GetSalary() * 2;
+  employee.SetBonusForYear(2014, oneTimeBonus);
+}</pre>
+
+<p><strong>Benjamin:</strong> This one should be even easier... Ok, take a look:</p>
+
+<pre>employee.EvaluateOneTimeBonus();</pre>
+
+<p><strong>Johnny:</strong> Almost good. I'd only leave out the information that the bonus is one-time from the name.</p>
+
+<p><strong>Benjamin:</strong> Why? Don't we want to write what happens in the method name?</p>
+
+<p><strong>Johnny:</strong> Actually, no. What we want to write is our intention. The bonus being one-time is something specific to the regular employees and we want to abstract away the details about this or that kind of employee, so that we can plug in different implementations without making the method names lie. The names should reflect that we want to evaluate bonus, whatever that means for particular type of employees. Thus, let's make it:</p>
+
+<pre>employee.EvaluateBonus();</pre>
+
+<p><strong>Benjamin:</strong> Ok, I get it. No problem.</p>
+
+<p><strong>Johnny:</strong> Now let's take a look at the full code of the <code>EvaluateIncentivePlan</code> method to see whether it is still coupled to details specific to regular employees. Here's the code:</p>
+
+<pre>public void ApplyYearlyIncentivePlan()
+  {
+    var employees = _repository.CurrentEmployees();
+
+    foreach(var employee in employees)
+    {
+      employee.EvaluateRaise();
+      employee.EvaluateBonus();
+      employee.Save();
+    }
+  }
+</pre>
+
+<p><strong>Benjamin:</strong> It seem that there is no coupling to the details about regular employees. Thus, we can safely make the repository return a combination of regulars and contractors without this code noticing anything. Now I think I understand what you were trying to achieve. If we make interactions between objects happen at abstract level, then we can put in different implementations with less effort.</p>
+
+<p><strong>Johnny:</strong> True. Can you see another thing related to the lack of return values on all of employee's methods?</p>
+
+<p><strong>Benjamin:</strong> Actually, no. Does it matter?</p>
+
+<p><strong>Johnny:</strong> Well, if this code would depend on values returned from <code>Employee</code> methods, all implementations would need to supply return values that match the expectations of the code that calls these methods, whatever the expectations might've been. This would make introducing other kinds of employees harder. But now that there are no return values, we can, for example:</p>
+
+<ul>
+  <li>introduce a <code>TemporaryEmployee</code> that has no raises, by leaving its <code>EvaluateRaise()</code> method empty, and the code that uses employees will not notice.</li>
+  <li>introduce a <code>ProbationEmployee</code> that has no bonus policy, by leaving its <code>EvaluateBonus()</code> method empty, and the code that uses employees will not notice.</li>
+  <li>introduce an <code>InMemoryEmployee</code> that has empty <code>Save()</code> method, and the code that uses employees will not notice.</li>
+</ul>
+
+<p>As you see, by asking the objects less, and telling it more, we get greater flexibility to create alternative implementations and the composability, which we talked about yesterday, increases!</p>
+
+<p><strong>Benjamin:</strong> I see... So telling objects what to do instead of asking it for its data makes the interactions between objects more abstract, and so, more stable, increasing composability of interacting objects. This is a valuable lesson - it is the first time I hear this and it seems a pretty powerful concept.</p>
+
+  <h1>A Quick Retrospective</h1>
+
+<p>In this chapter, Benjamin learned that the composability of objects (not to mention clarity) is reinforced when interactions between them are abstract, logical and stable. Also, he discovered, with Johnny's help, that it is further strengthened by following a design style where objects are told what to do instead of asked for information for somebody who needs to make the decision on their behalf. This is because if abstraction needs to answer questions, the one asking is coupled to both those questions and some aspects of the answers. This makes creating another implementation of abstraction harder. When objects are merely told what their client wants them to do, it is decoupled from most of the details of how this happens. This makes introducing new implementations of abstraction easier - a good example is that it often lets us define implementations with all methods empty and the client does not even notice.</p>
+
+<p>These are all important conclusions that will lead us towards TDD with mock objects.</p>
+
+<p>Time to leave Johnny and Benjamin for now. In the next chapter, I'm going to reiterate on their discoveries and put them in a broader context.</p>
 
     </body>
 </html>
