@@ -2,6 +2,24 @@
 
 ### Book Download Links
 
+<a href="https://docs.google.com/uc?export=download&id=0B0nzjz32viZmcWhBMzJHVlBCd0k">
+  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-epub.png" />Epub
+</a>&nbsp;
+<a href="https://docs.google.com/uc?export=download&id=0B0nzjz32viZmdDZOT1hwTnhCOW8">
+  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-mobi.png" />Mobi
+</a>&nbsp;
+<a href="https://docs.google.com/uc?export=download&id=0B0nzjz32viZmSGlaVVBXTTJHTG8">
+  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-mobi.png" />AZW3
+</a>&nbsp;
+<a href="https://docs.google.com/uc?export=download&id=0B0nzjz32viZmTDhESG9nMThnZk0">
+  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-pdf.png" />PDF
+</a>
+<a href="http://grzesiek-galezowski.github.io/tdd-ebook/">
+  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-web.png" />HTML
+</a>
+
+Alternative links:
+
 <a href="https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.epub">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-epub.png" />Epub
 </a>&nbsp;
@@ -16,21 +34,6 @@
 </a>&nbsp;
 <a href="http://grzesiek-galezowski.github.io/tdd-ebook/">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-web.png" />HTML
-</a>
-
-Alternative links (if dropbox is blocked in your company):
-
-<a href="https://docs.google.com/uc?export=download&id=0B0nzjz32viZmcWhBMzJHVlBCd0k">
-  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-epub.png" />Epub
-</a>&nbsp;
-<a href="https://docs.google.com/uc?export=download&id=0B0nzjz32viZmdDZOT1hwTnhCOW8">
-  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-mobi.png" />Mobi
-</a>&nbsp;
-<a href="https://docs.google.com/uc?export=download&id=0B0nzjz32viZmSGlaVVBXTTJHTG8">
-  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-mobi.png" />AZW3
-</a>&nbsp;
-<a href="https://docs.google.com/uc?export=download&id=0B0nzjz32viZmTDhESG9nMThnZk0">
-  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-pdf.png" />PDF
 </a>
 
 ### Additional Links
