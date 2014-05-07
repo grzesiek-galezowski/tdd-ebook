@@ -2,13 +2,18 @@ $LOAD_PATH.unshift File.dirname(__FILE__)
 require 'custom_commands'
 
 desc "Push ebook into source control"
-multitask :push, [:commit_message] => [:unzip_epub, :generate_formats] do | t, args |
+task :push, [:commit_message] => [:prepare_push_artifacts, :commit_htmlz] do | t, args |
   git = Git.new(".")
   git.add_all
   git.add "./OEBPS"
   git.commit_all args[:commit_message]
   git.push_changes_to_master
   sh 'rm -r ./OEBPS'
+end
+
+
+desc "Prepare artifacts to push into source control"
+multitask :prepare_push_artifacts => [:unzip_epub, :generate_formats] do
 end
 
 desc "Unzip the source epub file structure"
@@ -50,6 +55,10 @@ task :htmlz, [:commit_message] do | t, args |
   copy local_ebook_variant(:htmlz), "../Pages_TDDEbook/tdd-ebook/book.htmlz"
   unzip! "../Pages_TDDEbook/tdd-ebook/book.htmlz", "../Pages_TDDEbook/tdd-ebook/"
   rm "../Pages_TDDEbook/tdd-ebook/book.htmlz"
+end
+
+desc "Commit HTML version to github pages"
+task :commit_htmlz, [:commit_message] do | t, args |
   git = Git.new "../Pages_TDDEbook/tdd-ebook/"
   git.add_all
   git.commit_all args[:commit_message]
