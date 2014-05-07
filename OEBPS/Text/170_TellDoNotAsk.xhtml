@@ -105,7 +105,7 @@
 
   <p><strong>Johnny:</strong> Time to consider our options again. Well?</p>
 
- <p><strong>Benjamin:</strong> I can see two options. The first one would be to create another class like <code>CompanyPolicies</code>, called something like <code>CompanyPoliciesForContractors</code> and implement the new logic there. This would let us leave the original class as is, but we would have to change the places that use <code>CompanyPoliciesForContractors</code> to use both classes. Also, we would have to add a separate method to repository for retrieving the contractors.</p>
+ <p><strong>Benjamin:</strong> I see two options. The first one would be to create another class like <code>CompanyPolicies</code>, called something like <code>CompanyPoliciesForContractors</code> and implement the new logic there. This would let us leave the original class as is, but we would have to change the places that use <code>CompanyPoliciesForContractors</code> to use both classes. Also, we would have to add a separate method to repository for retrieving the contractors.</p>
 
   <p><strong>Johnny:</strong> Also, we would miss our chance to communicate through the code that the sequence of steps is intentionally similar in both cases. Others who read this code in the future will see that the implementation for regular employees follows the steps: load, evaluate raise, evaluate bonus, save. When they look at the implementation for contractors, they will see the same order of steps, but they will be unable to tell whether the similarity is intentional, or is it there by pure accident.</p>
 
