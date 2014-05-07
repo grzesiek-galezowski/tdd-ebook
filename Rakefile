@@ -2,8 +2,9 @@ $LOAD_PATH.unshift File.dirname(__FILE__)
 require 'custom_commands'
 
 desc "Push ebook into source control"
-task :push, [:commit_message] => [:prepare_push_artifacts, :commit_htmlz] do | t, args |
-  git = Git.new(".")
+task :push, [:commit_message] => [:prepare_push_artifacts, :push_htmlz] do | t, args |
+  git = Git.new '.'
+  git.pull
   git.add_all
   git.add "./OEBPS"
   git.commit_all args[:commit_message]
@@ -58,11 +59,12 @@ task :htmlz, [:commit_message] do | t, args |
 end
 
 desc "Commit HTML version to github pages"
-task :commit_htmlz, [:commit_message] do | t, args |
+task :push_htmlz, [:commit_message] => :htmlz do | t, args |
   git = Git.new "../Pages_TDDEbook/tdd-ebook/"
+  git.pull
   git.add_all
   git.commit_all args[:commit_message]
-  git.push_changes
+  git.push_changes_to_gh_pages
 end
 
 

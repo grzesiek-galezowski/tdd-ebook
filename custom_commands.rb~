@@ -46,9 +46,18 @@ class Git
   def commit_all(commit_message)
     sh "cd \"#{@path}\" && git commit -a -m \"#{commit_message}\""
   end
- 
+
+  def pull
+    sh "cd \"#{@path}\" && git pull"
+  end 
+
   def push_changes_to_master
-    sh 'git push -u origin master'
+    sh "cd \"#{@path}\" && git push -u origin master"
   end
+
+  def push_changes_to_gh_pages
+    sh "cd \"#{@path}\" && git push -u origin gh-pages"
+  end
+
 end
 

@@ -31,28 +31,36 @@ class Git
     @path = path_to_repository
   end
 
+  def execute_in_repository_root(command)
+    sh "cd \"#{@path}\" && #{command}"
+  end
+
   def add_all()
     begin
-      sh "cd \"#{@path}\" && git add --all"
+      execute_in_repository_root "git add --all"
     rescue 
       puts "Nothing to add to source control"
     end
   end
 
   def add(path)
-    sh "cd \"#{@path}\" && git add --all #{path}"
+    execute_in_repository_root "git add --all #{path}"
   end
 
   def commit_all(commit_message)
-    sh "cd \"#{@path}\" && git commit -a -m \"#{commit_message}\""
-  end
- 
-  def push_changes_to_master
-    sh 'git push -u origin master'
+    execute_in_repository_root "git commit -a -m \"#{commit_message}\""
   end
 
-  def push_changes
-    sh 'git push'
+  def pull
+    execute_in_repository_root "git pull"
+  end 
+
+  def push_changes_to_master
+    execute_in_repository_root "git push -u origin master"
+  end
+
+  def push_changes_to_gh_pages
+    execute_in_repository_root "git push -u origin gh-pages"
   end
 
 end
