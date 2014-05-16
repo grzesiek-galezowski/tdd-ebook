@@ -82,7 +82,8 @@ So far the following chapters are considered ready for reading:
 
 *Part2: Test-Driven Development in Object Oriented World*
  1. On objects composability
- 1. TBD
+ 1. Telling, not asking
+ 2. TBD
 
 *Part3: Beyond Objects - TDD on higher levels*
  1. TBD
