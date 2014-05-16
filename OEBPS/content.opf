@@ -58,8 +58,8 @@
     <itemref idref="_Triangulation.xhtml"/>
     <itemref idref="id"/>
     <itemref idref="x160_Composable_Design.xhtml"/>
-    <itemref idref="End.xhtml"/>
     <itemref idref="id1"/>
+    <itemref idref="End.xhtml"/>
     <itemref idref="_What_Exactly_Do_We_Specify.xhtml"/>
     <itemref idref="_Tdd_antipatterns.xhtml"/>
     <itemref idref="TODO.xhtml"/>
