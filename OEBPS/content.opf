@@ -39,6 +39,7 @@
     <item href="Text/150_Part2Marker.xhtml" id="id" media-type="application/xhtml+xml"/>
     <item href="Text/160_Composable_Design.xhtml" id="x160_Composable_Design.xhtml" media-type="application/xhtml+xml"/>
     <item href="Text/170_TellDoNotAsk.xhtml" id="id1" media-type="application/xhtml+xml"/>
+    <item href="Text/180_Web_of_objects_explained.xhtml" id="id2" media-type="application/xhtml+xml"/>
   </manifest>
   <spine toc="ncx">
     <itemref idref="Cover.xhtml"/>
@@ -60,6 +61,7 @@
     <itemref idref="x160_Composable_Design.xhtml"/>
     <itemref idref="id1"/>
     <itemref idref="End.xhtml"/>
+    <itemref idref="id2"/>
     <itemref idref="_What_Exactly_Do_We_Specify.xhtml"/>
     <itemref idref="_Tdd_antipatterns.xhtml"/>
     <itemref idref="TODO.xhtml"/>

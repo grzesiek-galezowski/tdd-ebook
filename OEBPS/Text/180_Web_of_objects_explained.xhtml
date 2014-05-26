@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Web of objects explained</title>
+        <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
+    </head>
+    <body>
+
+<h1>Rationale for mock objects explained</h1>
+
+<p>We experienced mock objects in the chapter about tools, although at that point, I gave you an oversimplified and deceiving definition of what mock object is, promising that I will make up for it later. Now is the time.</p>
+
+<p>Mock objects were made with specific goal in mind. In my mind, without understanding the real goal, you will probably misunderstand the means to the goal.</p>
+
+<p>In this chapter, we will explore the qualities of object oriented design which make mock objects a viable tool.</p>
+
+<h1>Composability... again!</h1>
+
+<p>In the two previous chapters, we followed Johnny and Benjamin in discovering the benefits of and prerequisites for composability of objects. Actually, composability is number one quality of the design we're after. After reading Johhny and Benjamin's story, you might have some questions regarding composability. Hopefully, they are among these:</p>
+
+
+<h2>What does it mean to compose objects?</h2>
+
+<p>Basically it means that an object has obtained a reference to another object and is invoking methods on it. By being composed together, two objects form a small system that can be expanded with more objects. Thus, an object oriented system forms a web:</p>
+
+<p>TOOOODOOO: web of objects</p>
+
+<p>TOOOODOOO message passing, network etc.</p>
+
+<p>TOOOODOOO definitions of sender and recipient.</p>
+
+<h2>Why do we need composability?</h2>
+
+<p>TOOOOOOOOOOODOOO substitute classes</p>
+
+<h2>How are objects composed?</h2>
+
+<p>There are various ways to compose two objects depending on how a reference to an object is obtained and how long the composition lasts.</p>
+
+<h3>Constructor</h3>
+
+<p>Two objects can be composed by passing one into the constructor of another:</p>
+
+<pre>sender = new Sender(new ExampleRecipient());</pre>
+
+<p>Here, a sender is composed with a recipient and stores a reference to the recipient in a private field, like this:</p>
+
+<pre>public Sender(Recipient recipient)
+{
+  this._recipient = recipient;
+}</pre>
+
+<p>The code that performs this composition is most often in a totally different place than the client code calling methods on the <code>Sender</code>. Thus, this client code does not need to know that such a composition took place. The existence of <code>Recipient</code> is hidden from it. This basically means that in the implementation of the following call:</p>
+
+<pre>sender.DoSomething()</pre>
+
+<p><code>Sender</code> may send message to <code>Recipient</code> internally, but the code invoking the <code>DoSomething()</code> method is completely unaware of that.</p>
+
+<p>Constructor is a great way to compose sender with a recipient permanently. In order to be able to do this, a <code>Recipient</code> must, of course, exist before a <code>Sender</code> does. Another less obvious requirement for this composition is that <code>Recipient</code> must be usable at least as long as <code>Sender</code> is usable. In other words, the following is nonsense:</p>
+
+<pre>recipient = new ExampleRecipient();
+sender = new Sender(recipient);
+recipient.Dispose(); //but sender is unaware and may still use recipient:
+sender.DoSomething();</pre>
+
+<h3>Method parameter</h3>
+
+<p>Another common way of composing objects together is passing one object as a parameter of another object's method call:</p>
+
+<pre>sender.DoSomethingTo(recipient);</pre>
+
+<p>Here, the objects are most often composed temporarily, just for this single method.</p>
+
+<p>This is a great way to compose objects when we want to use the same sender with different recipients at different times (most often from different parts of the code).</p>
+
+<h3>Factories</h3>
+
+<p>TOOODOOO</p>
+
+<ol>
+  <li>Composition through constructor - a reference is passed by constructor</li>
+  <li>Composition through factory</li>
+  <li>Composition through setter</li>
+  <li>Composition through passed in a method parameter</li>
+</ol>
+
+<h2>Why did I leave out inline creation and singletons? context independence!</h2>
+
+        <ol>
+<li>composability - learned from previous chapters</li>
+<li>what does it mean to compose - obtain reference. Plug objects together - show UML version of composition first, then the version with "plugs".</li>
+<li>composability long term (through constructor or setter) or short term (through parameter)?</li>
+<li>composability - strong or weak a) class vs interface, b)(continuum  -public field, getter, method that does something)</li>
+<li>In order to compose - Protocols vs interfaces</li>
+<li>Abstract protocols are better</li>
+<li>web of composable objects - like a real web - metaphor (when?)</li>
+<li>Tell Don't Ask (when?)</li>
+<li>Why not events? Roles!!!</li>
+<li>discover interfaces - from inside or outside?</li>
+<li>need driven development</li>
+
+				</ol>
+
+    </body>
+</html>
