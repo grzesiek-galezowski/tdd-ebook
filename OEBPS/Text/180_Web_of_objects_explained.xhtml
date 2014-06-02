@@ -6,9 +6,9 @@
     </head>
     <body>
 
-<h1>Rationale for mock objects explained</h1>
+<h1>The need for mock objects</h1>
 
-<p>We experienced mock objects in the chapter about tools, although at that point, I gave you an oversimplified and deceiving definition of what mock object is, promising that I will make up for it later. Now is the time.</p>
+<p>We experienced mock objects in the chapter about tools, although at that point, I gave you an oversimplified and deceiving explanation of what a mock object is, promising that I will make up for it later. Now is the time.</p>
 
 <p>Mock objects were made with specific goal in mind. In my mind, without understanding the real goal, you will probably misunderstand the means to the goal.</p>
 
@@ -41,7 +41,7 @@
 
 <p>Two objects can be composed by passing one into the constructor of another:</p>
 
-<pre>sender = new Sender(new ExampleRecipient());</pre>
+<pre>sender = new Sender(recipient);</pre>
 
 <p>Here, a sender is composed with a recipient and stores a reference to the recipient in a private field, like this:</p>
 
@@ -58,8 +58,7 @@
 
 <p>Constructor is a great way to compose sender with a recipient permanently. In order to be able to do this, a <code>Recipient</code> must, of course, exist before a <code>Sender</code> does. Another less obvious requirement for this composition is that <code>Recipient</code> must be usable at least as long as <code>Sender</code> is usable. In other words, the following is nonsense:</p>
 
-<pre>recipient = new ExampleRecipient();
-sender = new Sender(recipient);
+<pre>sender = new Sender(recipient);
 recipient.Dispose(); //but sender is unaware and may still use recipient:
 sender.DoSomething();</pre>
 
@@ -74,6 +73,163 @@ sender.DoSomething();</pre>
 <p>This is a great way to compose objects when we want to use the same sender with different recipients at different times (most often from different parts of the code).</p>
 
 <h3>Factories</h3>
+
+<p>This method of composing objects uses another intermediary object - a factory. In other words, the sender is first composed with a factory via constructor:</p>
+
+<pre>sender = new Sender(factory);</pre>
+
+<p>and then the factory is used to deliver other objects:</p>
+
+<pre>public class Sender
+{
+  //...
+
+  public DoSomething() 
+  {
+    recipient = _factory.CreateRecipient();
+    recipient.DoSomethingElse();
+  }
+}</pre>
+
+<p>This kind of composition is beneficial when a different recipient is needed each time <code>DoSomething()</code> is called, but at the same time, contrary to passing recipient as a method parameter, the client should not (or cannot) be responsible for supplying a recipient.</p>
+
+<h2>Weaker and better composability</h2>
+
+<p>Some classes are harder to compose with other classes, others are easier. There are numerous factors influencing this:</p>
+
+<h3>Classes vs interfaces</h3>
+
+<p>As we said, an object is composed with another object by obtaining a reference to something. Also, we said that we want the flexibility of plugging in objects of different classes at different times. This is, of course, done using polymorphism, as Johnny and Benjamin did when cleaning up the payroll system. So, what should be the base for polymorphism? Is a class sufficient, or do we rather want to use an interface? In other words, when we plug in an object as a message receipient:</p>
+
+<pre>public Sender(Recipient recipient)
+{
+  this._recipient = recipient;
+}</pre>
+
+<p>Should the Recipient be a class or an interface?</p>
+
+<p>If we assume that Recipient is a class, we can get the composability we want by deriving another class from it and overriding methods. However, using a class as a base for composability has the following weaknesses:</p>
+
+<ol>
+  <li>The superclass may have real dependencies. For example, if <code>Recipient</code> class depends on WCF stack, then everywhere we take our Sender to compose it with different recipients, we must also take our <code>Recipient</code> and its WCF dependency.</li>
+  <li>We force each recipient class we want to compose our sender with to invoke a constructor from superclass, which, depending on the complexity of the superclass, may be smaller or bigger trouble.</li>
+  <li>In languages like C#, when only single inheritance exists all the classes that want to be composed with our <code>Sender</code>, we waste the only inheritance slot, further constraining the inheriting classes.</li>
+  <li>We must take care to make all methods of <code>Recipient</code> superclass virtual to enable overriding by subclasses. otherwise, we won't have full composability.</li>
+</ol>
+
+<p>As you see, there are some difficulties using classes as "slots for composability", even if composition is possible this way. Thus, interfaces are far better, just because they are easier to use for this purpose.</p>
+
+<p>It is decided then, If a sender wants to be composable with recipient, it has to accept a reference to recipient in form of interface reference. We can say that, by being light-weight and implementationless, <strong>interfaces can be treated as "slots" for plugging in different objects</strong>.</p>
+
+<p>In fact, when we look at how interfaces are depicted on UML class diagrams, it seems that the "interface as slot for composition" notion is not unusual:</p>
+
+<p>TODO insert a picture showing one notation of interfaces in UML.</p>
+
+<p>It is just that we try to take the notion of composability to its fullest, as not only a first-class citizen, but as THE most important aspect of our design approach.</p>
+
+<h3>Small interfaces</h3>
+
+<p>Ok, so we said that he interfaces are "the way to go" for reaching the strong composability we're striving for. Is it enough just to "have interfaces"? No, actually, it's not.</p>
+
+<p>One of the other things we need to consider is the size of interfaces. Let's state one thing that is obvious in regard to this:</p>
+
+<p><strong>All other things equal, smaller interfaces are easier to implement that bigger interfaces.</strong></p>
+
+<p>The obvious conclusion from this is that if we want to have really strong composability, our "slots", i.e. interfaces, have to be as small as possible. Of course, we cannot achieve this by removing methods that are needed from the interfaces, e.g. when someone is using an interface implementation like this:</p>
+
+<pre>recipient.SomethingHappened();
+recipient.SomethingElseHappened();</pre>
+
+<p>It is impossible to just remove either method from the interface, or the client will stop compiling.</p>
+
+<p>So, what do we do then? We try to separate different interfaces per client. After all, a class can implement more than one interface, like this:</p>
+
+<pre>public class ImplementingObject 
+: InterfaceForClient1, 
+  InterfaceForClient2,
+  InterfaceForClient3
+{ ... }</pre>
+
+<p>This notion of using a separate interface per client and not one bigger interface for different clients is known as the Interface Segregation Principle.</p>
+
+<h4>A simple example: separation of reading from writing</h4>
+
+<p>For example, we may have a class representing organizational structure in our application. On one hand, the application is notified on any changes that are made from administration interface. On the other hand, it supports client-side operations for ordinary users, e.g. listing all users. The interface for this organizational structure class may look like this:</p>
+
+<pre>public interface 
+OrganizationStructure
+{
+  //administrative part:
+  void Make(Change change);
+  
+  //client-side part:
+  void ListAllEmployees(
+    EmployeeDestination destination);
+}</pre>
+
+<p>but, most certainly, the two sets of methods will be used by different code - one related to handling administrative requests, another related to handling ordinary user requests. Thus, we can use this knowledge to separate the interface into two:</li>
+
+<pre>public interface
+OrganizationalStructureAdminCommands
+{
+  void Make(Change change);
+}
+
+public interface
+OrganizationalStructureClientCommands
+{
+  void ListAllEmployees(
+    EmployeeDestination destination);
+}</pre>
+
+<p>And a real class can implement both of them:</p>
+
+<pre>public class InMemoryOrganizationalStructure
+: OrganizationalStructureAdminCommands,
+  OrganizationalStructureClientCommands
+{
+  //...
+}</pre>
+<p>Sure, there are more interfaces, but that doesn't bother us much, because in return, each interface is easier to implement. In other words, it is easier to make new implementations we can compose users of those interfaces with. This means that composability is enhanced, which is what we want the most. After all, nobody said there will always be a single class implementing both interfaces. One day, we maye get a requirement that all writes to the organizational structure have to be traced. In such case, All we have to do is to create new class implementing <code>OrganizationalStructureAdminCommands</code> which will wrap the original method with a notification to an observer:</p>
+
+<pre>public class NotifyingAdminComands : OrganizationalStructureAdminCommands
+{
+  public NotifyingCommands(
+    OrganizationalStructureAdminCommands wrapped,
+    ChangeObserver observer)
+  {
+    _wrapped = wrapped;
+    _observer = observer;
+  }
+
+  void Make(Change change)
+  { 
+    _wrapped.Make(change);
+    _observer.NotifyOnIntroduced(change);
+  }
+}</pre>
+
+<p>If we did not separate interfaces for admin and client access, in our <code>NotifyingAdminComands</code> class, we would have to implement the <code>ListAllEmployees</code> method and make it delegate to the original wrapped instance. Splitting the interface into two smaller ones spared us this trouble.</p>
+
+<h3>Protocols and interfaces</h3>
+
+<p>So, we said that objects are composed and communicate through interfaces, just as in IP network. There is another similarity though, that's as important.</p>
+
+<p>TODO protocols</p>
+
+<p>protocols must be simple, abstract, logical, small</p>
+
+<h3>multiple interfaces multiple roles</h3>
+
+<p>interfejsy zostaly omowione ale sa jeszcze protokoly</p>
+<p>Protocols must be published! They are not private internal details</p>
+<h3>Tell Don't Ask</h3>
+<h3>Level of abstraction of protocols</h3>
+
+
+<p>weaker = harder to implement another implementation</p>
+
+<p>stad wynika ze lepiej uzywac interfejsow niz klas</p>
 
 <p>TOOODOOO</p>
 
