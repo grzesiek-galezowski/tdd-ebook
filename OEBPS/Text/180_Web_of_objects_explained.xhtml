@@ -190,7 +190,7 @@ OrganizationalStructureClientCommands
 {
   //...
 }</pre>
-<p>Sure, there are more interfaces, but that doesn't bother us much, because in return, each interface is easier to implement. In other words, it is easier to make new implementations we can compose users of those interfaces with. This means that composability is enhanced, which is what we want the most. After all, nobody said there will always be a single class implementing both interfaces. One day, we maye get a requirement that all writes to the organizational structure have to be traced. In such case, All we have to do is to create new class implementing <code>OrganizationalStructureAdminCommands</code> which will wrap the original method with a notification to an observer:</p>
+<p>Sure, there are more interfaces, but that doesn't bother us much, because in return, each interface is easier to implement. In other words, it is easier to make new implementations we can compose users of those interfaces with. This means that composability is enhanced, which is what we want the most. After all, nobody said there will always be a single class implementing both interfaces. One day, we maye get a requirement that all writes to the organizational structure have to be traced. In such case, All we have to do is to create new class implementing <code>OrganizationalStructureAdminCommands</code> which will wrap the original method with a notification to a change observer (that can be either the trace that is required or anything else we like):</p>
 
 <pre>public class NotifyingAdminComands : OrganizationalStructureAdminCommands
 {
@@ -205,19 +205,191 @@ OrganizationalStructureClientCommands
   void Make(Change change)
   { 
     _wrapped.Make(change);
-    _observer.NotifyOnIntroduced(change);
+    _observer.NotifyAbout(change);
   }
 }</pre>
 
 <p>If we did not separate interfaces for admin and client access, in our <code>NotifyingAdminComands</code> class, we would have to implement the <code>ListAllEmployees</code> method and make it delegate to the original wrapped instance. Splitting the interface into two smaller ones spared us this trouble.</p>
 
-<h3>Protocols and interfaces</h3>
+<h3>Protocols</h3>
 
-<p>So, we said that objects are composed and communicate through interfaces, just as in IP network. There is another similarity though, that's as important.</p>
+<p>So, we said that objects are connected (composed) together and communicate through interfaces, just as in IP network. There is another similarity though, that's as important. It's protocols.</p>
 
-<p>TODO protocols</p>
+<h4>Protocols exist</h4>
 
-<p>protocols must be simple, abstract, logical, small</p>
+<p>I do not want to introduce any scientific definition, so let's just establish an understanding that protocols are sets of rules about how objects communicate with each other. Really? Are there any rules? Is it not enough the the objects can be composed together through interfaces? Well, not, it's not enough and let me give you a quick example.</p>
+
+<p>Let us imagine a class <code>Sender</code> that uses <code>Recipient</code> like this:</p>
+
+<pre>if(recipient.ExtractStatusCodeFrom(response) == -1)
+{
+  observer.NotifyErrorOccured();
+}</pre>
+
+<p>Stupid as it is, the example shows one important thing. Whoever the recipient is, it is expected to report error as -1. Otherwise, the <code>Sender</code> will not be able to react to the error situation appropriately. Similarly, the recipient must not report "no error" situation as -1, because if it does, this will be mistakenly recognized as error by <code>Sender</code>. So for example this implementation of <code>Recipient</code>, although implementing the required interface, is wrong from the point of view of <code>Sender</code>:</p>
+
+<pre>public class WrongRecipient : Recipient
+{
+  public int ExtractStatusFrom(Response response)
+  {
+    if( /* success */ )
+    {
+      return -1; // but other than -1 should be used!
+    }
+    else
+    {
+      return 1; // -1 should be used!
+    }
+  }
+}</pre>
+
+<p>So as you see, we cannot just write anything in a class implementing an interface, because of protocol that imposes certain contract on both the sender and recipient. This contract may not only be about return values, it can also be on types of exceptions thrown, or the order of method calls. For example, anybody using some kind of connection object would imagine the following way of using the connection:</p>
+
+<pre>connection.Open();
+connection.Send(data);
+connection.Close();</pre>
+
+<p>Again, if we were to implement a connection that behaves like this:</p>
+
+<pre>public class WrongConnection : Connection
+{
+  public void Open()
+  {
+    //...close connection
+  }
+
+  public void Close()
+  {
+    //...open connection
+  }
+}</pre>
+
+<p>it would compile just fine, but fail badly when executed.</p>
+
+<p>So, again, there are certain rules that restrict the way two objects can communicate. Both sender and recipient of a message must adhere to the rules, or the they will not be able to work together.</p>
+
+<p>The good news is that WE are the ones who design these protocols, along with the interfaces, so we can design them to be harder or easier to adhere to by different implementations of an interface. Of course, we are wholeheartedly for the "easier" part. Thus, we want the communication between objects to be as stable as possible (see next section on the explanation of "as possible").</p>
+
+<h4>Communication patterns stability</h4>
+
+<p>Remember the change Johnny and Benjamin had to make in order to add another kind of employees to the application? In order to do that, they had to change existing interfaces and add new ones. This was a lot of work. We don't want to do this much work every time we make a change. The reason they had to do so much changes was that the protocol between the objects they were dealing with was unstable. And they were unstable because they were:</p>
+
+<ol>
+  <li>complicated instead of simple</li>
+  <li>concrete instead of abstract</li>
+  <li>large instead of small</li>
+</ol>
+
+<p>Driven by why the stability of the protocols is bad, we can come up with some qualities that make protocols stable:</p>
+
+<ol>
+  <li>protocols should be simple</li>
+  <li>protocols should be abstract</li>
+  <li>protocols should be logical</li>
+  <li>protocols should be small</li>
+</ol>
+
+<p>And there are some heuristics that let us get closer to these qualities:</p>
+
+<h4>Short interactions</h4>
+
+<p>TODO may be many small interfaces we interact with. Constructor bloat</p>
+
+<h4>Method calls crafted from the perspective of senders</h4>
+
+<p>The protocols are simpler if they are designed from the perspective of the object that sends the signal, not the one that receives it. In other words, methods should be adjusted to exactly meet the needs of the senders.</p>
+
+<p>As an example, let us look at a code for logging in:</p>
+
+<pre>accessGuard.SetLogin(login);
+accessGuard.SetPassword(password);
+accessGuard.Login();</pre>
+
+<p>In this little snippet, the sender must invoke three methods, even though there is no real need to divide the logic into three steps - they are all executed in the same place anyway. The maker of this class might have thought that this division makes the class more "general purpose", but it seems this is a "premature optimization" that only makes it harder for the sender to work with the <code>accessGuard</code> object. Thus, the protocol that is simpler from the perspective of sender would be:</p>
+
+<pre>accessGuard.LoginWith(login, password);</pre>
+
+<p>Another lesson from the above example is: setters rarely reflect senders' intention. Most often, they reflect the structure of the recipient. <code>myObject.SetX(x)</code> call suggests that <code>myObject</code> holds value X. But it is rarely the intention of objects that use <code>myObject</code> to store information in it (unless it is a data structure, e.g. a collection or a data persistence abstraction), rather, they want <code>myObject</code> to do something for them and the setter is just an intermediate step required by <code>myObject</code>. In such cases, setters should be either avoided or changed to something that reflects the intention better. For example, when dealing with observer pattern, we don't want to say: <code>object.SetObserver(screen)</code>, but rather <code>object.RegisterObserver(screen)</code>.</p>
+
+<p>Another thing is naming. The names of the methods (and interfaces for that matter) should be crafted from the perspective of the sender as well. In other words, the name of the method should not tell <emph>how</emph> thing is done (unless that matters from the perspective of the sender), but rather what is the intention of the sender that invokes the method. I love the example that Scott Bain gives in his <emph>Emergent Design</emph> book: if I told you "give me your driving license number", you might've reacted differently based on whether the driving license is in your pocket, or your wallet, or your bag, or in your home and you have to call someone to give it to you. The point is: I, as a sender of this "give me your driving license number" message, do not care how you get it. I say <code>RetrieveDrivingLicenseNumber()</code>, not <code>OpenYourWalletAndReadTheNumber()</code>. This is important, because if the name represents the sender's intention, the method will not have to be renamed when new classes are created that fulfill this intention in a different way.</p>.
+
+<!--
+<p>The last thing is:</p>
+<p>plus no 15 variants of the same method, unless each is needed by a different client</p>
+<p>Setters should be avoided</p>
+-->
+
+<h4>Interactions should reflect the domain</h4>
+
+<p>Sometimes at work, I am asked to conduct a design workshop. The example I often give to my colleagues is to design a system for order reservation. The thing that struck me the first few times I did this workshop was that nearly none of the attendees had an <code>Order</code> abstraction with <code>Reserve()</code> method on it. Most of the attendees assume that <code>Order</code> is a data structure and handle reservation by adding it to a "collection of reserved items":</p>
+
+<pre>reservedOrders.Add(order)</pre>
+
+<p>While this achieves the functionality they need to implement, it does not reflect the domain. Thus, it can be affected by changes other than domain changes. Thus, the interactions between objects become less stable.</p>
+
+<p>On the other hand, let's assume that we have a code for handling alarms. On each alarm, all gates are closed, sirens are turned on and message is sent to special forces with highest priority. Any error in this procedure leads to shutting down power in the building. If this workflow is coded like this:</p>
+
+<pre>try
+{
+  gates.CloseAll();
+  sirens.TurnOn();
+  specialForces.NotifyWith(Priority.High);
+} 
+catch(SecurityFailure failure)
+{
+  powerSystem.TurnOffBecauseOf(failure);
+}</pre>
+
+<p>Then the risk of this code changing for other reasons than the change of how domain works (e.g. we do not close the gates anymore but activate laser guns instead) is small. Thus, interactions that use abstractions and methods that directly express domain rules are more stable.</p>
+
+<p>Object responsibilities change less often than their data and if they do, they affect the design in a more predictable way. If a design reflects the domain, a change in design that is a result of domain rules change is easier to predict. This contributes to maintainability and stability of the interactions and the design as a whole.</p>
+
+
+<h4>Objects should be told what to do, instead of asked for data</h4>
+
+<p>This is probably one of the most important guidelines. When an object is asked to perform a task instead of asked questions, we have a change of switching the implementation of this task with another one.</p>
+
+<p>So remember the payroll system that Johnny and Benjamin were working on? As long as their code for giving raise looked like this:</p>
+
+<pre>if(employee.GetSalary() &lt; payGrade.Maximum)
+{
+ var newSalary 
+  = employee.GetSalary() 
+  + employee.GetSalary() 
+  * 0.1;
+  employee.SetSalary(newSalary);
+}
+</pre>
+
+<p>They were unable to compose this code with another employees that had different raise rules applied to them, including volountary employees that would not have raises, but may have bonuses.</p>
+
+<p>Again, quoting Scott Bain, "what you hide, you can change". Thus, telling an object what to do requires less knowledge than asking for data and information. Going back to the driver license example: I may ask another person for a driving license number to actually make sure they have the license and that it is valid (by checking the number somewhere). I may also ask another person to provide me with the directions to the place I want the first person to drive. But isn't it easier to just tell "buy me some bread and butter"? Then, whoever I ask, has the freedom to either drive, or walk (if they know a good store nearby) or ask yet another person to do it instead. I don't care as long as tomorrow morning, I find the bread and butter in my fridge.</p>
+
+<h4>Getters should be removed</h4>
+
+<p>what if we get data from network?</p>
+
+
+
+<h4>Returning values should be extremely minimized</h4>
+
+<p>Law of Demeter. Coupling to details of return values.</p>
+
+<p>Size of protocols. Even interface with a single method can return a lot of values. Example: different reports produced.</p>
+
+
+<h4>Protocols should rely on abstractions</h4>
+
+<p>e.g. Id abstraction can be either in or string or a combination of those. The protocol stays stable regardless of these changes</p>
+
+<p>Plural is also an abstraction</p>
+
+
+<p>--------------------------------</p>
+
+
+
+<p>Todo interfaces checked by compiler, protocols not</p>
 
 <h3>multiple interfaces multiple roles</h3>
 
