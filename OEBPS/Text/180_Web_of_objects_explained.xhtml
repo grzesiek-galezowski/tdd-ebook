@@ -127,6 +127,10 @@ sender.DoSomething();</pre>
 
 <p>It is just that we try to take the notion of composability to its fullest, as not only a first-class citizen, but as THE most important aspect of our design approach.</p>
 
+<h3>Events vs interfaces</h3>
+
+<p>TODO TODO TODO TODO</p>
+
 <h3>Small interfaces</h3>
 
 <p>Ok, so we said that he interfaces are "the way to go" for reaching the strong composability we're striving for. Is it enough just to "have interfaces"? No, actually, it's not.</p>
@@ -371,7 +375,52 @@ catch(SecurityFailure failure)
 
 <p>The above stated guideline of "Tell Don't Ask" has a practical implication of getting rid of (almost) all the getters.</p>
 
-<p>For me, this was very extreme at first, but in a short time I learned that this is actually how I am supposed to write object-oriented code. You see, I started learning programming using structural languages such as C, where a program was divided into procedures or functions and data structures. Then I moved on to object-oriented languages that allowed far better abstraction, but my style of coding didn't really change much. I would still have procedures and functions, but now more abstract (divided into objects) and data structures, but now more abstract (i.e. objects with setters, getters and some other query methods). TODO TODO </p>
+<p>For me, this was very extreme at first, but in a short time I learned that this is actually how I am supposed to write object-oriented code. You see, I started learning programming using structural languages such as C, where a program was divided into procedures or functions and data structures. Then I moved on to object-oriented languages that allowed far better abstraction, but my style of coding didn't really change much. I would still have procedures and functions, but now more abstract (divided into objects) and data structures, but now more abstract (i.e. objects with setters, getters and some other query methods).</p>
+
+<p>But what alternatives do we have? Let's say that we have a piece of software that handles user sessions (e.g. modeled using a <code>Session</code> class). We want to be able to display the sessions on the GUI, send the sessions through the network and persist them. How can we do this without getters? Should we put all the code for displaying, sending and storing inside the <code>Session</code> class? If we did that, we would couple a core domain concept (session) to a nasty set of third-party libraries (e.g. a particular GUI library), which would force us to tinker in core domain rules every time some GUI displaying concept changed. Also, if we did that, the <code>Session</code> would be hard to reuse, because every place we would want to reuse the class, we would need to take all these heavy libraries it depends on with us. So, our (not so good, as we will see) remedy may be to introduce getters for the information pieces stored inside a session:</p>
+
+<pre>public class Session
+{
+  string GetOwner();
+  string GetTarget();
+  DateTime GetExpiryTime();
+}</pre>
+
+<p>So yeah, in a way, we have achieved context independence, because we can now pull all the data e.g. in a GUI code and display the data and the <code>Session</code> does not know anything about it:</p>
+
+<pre>// inside GUI code
+foreach(var session in sessions)
+{
+  ownerField.Text = session.GetOwner();
+  targetField.Text = session.GetTarget();
+  expiryTimeField.Text = session.GetExpiryTime();
+}</pre>
+
+<p>It seems we solved the problem. Are we happy? We may be unless we look at how the other parts look like - the sending one:</p>
+
+<pre>//part of sending logic
+foreach(var session in sessions)
+{
+  message.Owner = session.GetOwner();
+  message.Target = session.GetTarget();
+  message.ExpiryTime = session.GetExpiryTime();
+}</pre>
+
+<p>and the storing one:</p>
+
+<pre>//part of storing logic
+foreach(var session in sessions)
+{
+  dataRecord.Owner = session.GetOwner();
+  dataRecord.Target = session.GetTarget();
+  dataRecord.ExpiryTime = session.GetExpiryTime();
+}</pre>
+
+<p>See anything disturbing here? If no, then imagine what happens when we add another piece of information to the <code>Session</code>, say, priority. We now have three places to update and we have to remember to update all of them every time. This is called <emph>"redundancy"</emph> or <emph>"asking for trouble"</emph>.</p>
+
+<p>The reason for this is that we made the <code>Session</code> class effectively as a data structure. It does not implement any domain-related behaviors, just exposes data. This forces all users of this class to define session-related behaviors on behalf of the <code>Session</code>, meaning they are scattered all over the place.</p>
+
+<p>TODO how </p>
 
 <h4>Returning values should be extremely minimized</h4>
 
@@ -379,7 +428,13 @@ catch(SecurityFailure failure)
 
 <p>Size of protocols. Even interface with a single method can return a lot of values. Example: different reports produced.</p>
 
+<h4>Context independence</h4>
+
+<p>TODO</p>
+
 <h4>Instead of pulling the data where context is, pass the context where the data is</h4>
+
+<p>If you are like me, you probably learned programming starting from procedural languages.</p>
 
 <p>this may sound like something non obvious</p>
 
