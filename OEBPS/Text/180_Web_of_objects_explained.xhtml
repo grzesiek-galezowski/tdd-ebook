@@ -396,7 +396,7 @@ foreach(var session in sessions)
   expiryTimeField.Text = session.GetExpiryTime();
 }</pre>
 
-<p>It seems we solved the problem. Are we happy? We may be unless we look at how the other parts look like - the sending one:</p>
+<p>It seems we solved the problem, by pulling data to a place that has the context, i.e. knows what to do with this data. Are we happy? We may be unless we look at how the other parts look like - the sending one:</p>
 
 <pre>//part of sending logic
 foreach(var session in sessions)
@@ -416,9 +416,23 @@ foreach(var session in sessions)
   dataRecord.ExpiryTime = session.GetExpiryTime();
 }</pre>
 
-<p>See anything disturbing here? If no, then imagine what happens when we add another piece of information to the <code>Session</code>, say, priority. We now have three places to update and we have to remember to update all of them every time. This is called <emph>"redundancy"</emph> or <emph>"asking for trouble"</emph>.</p>
+<p>See anything disturbing here? If no, then imagine what happens when we add another piece of information to the <code>Session</code>, say, priority. We now have three places to update and we have to remember to update all of them every time. This is called <emph>"redundancy"</emph> or <emph>"asking for trouble"</emph>. Also, composability of this class is pretty bad, because it will change a lot just because data in a session changes.</p>
 
-<p>The reason for this is that we made the <code>Session</code> class effectively as a data structure. It does not implement any domain-related behaviors, just exposes data. This forces all users of this class to define session-related behaviors on behalf of the <code>Session</code>, meaning they are scattered all over the place.</p>
+<p>The reason for this is that we made the <code>Session</code> class effectively as a data structure. It does not implement any domain-related behaviors, just exposes data. There are two implications of this:</p>
+
+<ol>
+<li>this forces all users of this class to define session-related behaviors on behalf of the <code>Session</code>, meaning these behaviors are scattered all over the place. If one is to make change to the session, they must find all related behaviors and correct them.</li>
+<li>as a set of object behaviors is generally more stable than its internal data (e.g. a session might have more than one target one day, but we will always be starting and stopping sessions), this leads to brittle interfaces and protocols - certainly the opposite of what we are striving for.</li>
+</p>
+
+<p>As we see, the solution is pretty bad. But we seem to be out of solutions. Shouldn't we just accept that there will be problems with this implementation and move on? Thankfully, no. So far, we have found the following options to be troublesome:</p>
+
+<ol>
+  <li>The <code>Session</code> class containing the display, store and send logic - too much coupling to heavy dependencies</li>
+  <li>The <code>Session></code> class to expose its data so that we may pull it where we have enough context to know how to use it - communication is too brittle and redundancy creeps in (by the way, this design will also be bad for multithreading, but that's something for another time)</li>
+</ol>
+
+<p>Thankfully, we have a third alternative, which is better.</p>
 
 <p>TODO how </p>
 
