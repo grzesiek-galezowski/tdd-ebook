@@ -429,7 +429,7 @@ foreach(var session in sessions)
 
 <ol>
   <li>The <code>Session</code> class containing the display, store and send logic - too much coupling to heavy dependencies</li>
-  <li>The <code>Session></code> class to expose its data so that we may pull it where we have enough context to know how to use it - communication is too brittle and redundancy creeps in (by the way, this design will also be bad for multithreading, but that's something for another time)</li>
+  <li>The <code>Session</code> class to expose its data so that we may pull it where we have enough context to know how to use it - communication is too brittle and redundancy creeps in (by the way, this design will also be bad for multithreading, but that's something for another time)</li>
 </ol>
 
 <p>Thankfully, we have a third alternative, which is better.</p>
