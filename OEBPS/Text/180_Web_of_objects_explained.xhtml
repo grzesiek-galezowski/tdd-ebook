@@ -428,13 +428,25 @@ foreach(var session in sessions)
 <p>As we see, the solution is pretty bad. But we seem to be out of solutions. Shouldn't we just accept that there will be problems with this implementation and move on? Thankfully, no. So far, we have found the following options to be troublesome:</p>
 
 <ol>
-  <li>The <code>Session</code> class containing the display, store and send logic - too much coupling to heavy dependencies</li>
+  <li>The <code>Session</code> class containing the display, store and send logic, i.e. all the context needed - too much coupling to heavy dependencies</li>
   <li>The <code>Session</code> class to expose its data so that we may pull it where we have enough context to know how to use it - communication is too brittle and redundancy creeps in (by the way, this design will also be bad for multithreading, but that's something for another time)</li>
 </ol>
 
-<p>Thankfully, we have a third alternative, which is better.</p>
+<p>Thankfully, we have a third alternative, which is better than the two we already mentioned. We can just <strong>pass</strong> the context <strong>into</strong> the <code>Session</code> class. "Isn't this just another way to do what we outlined in point 1? If we pass the context in, isn't <code>Session</code> still coupled to this context?", you may ask. The answer is: no, because we can make <code>Session</code> class depend on interfaces only to make it context-independent.</p>
 
-<p>TODO how </p>
+<p>Let's see how this plays out in practice. First let's remove those ugly getters from the <code>Session</code> and introduce new method called <code>Dump()</code> that will take the <code>Destination</code> interface as parameter and pass all fields into this destination:</code>
+
+<pre>public class Session
+{
+  public void Dump(Destination destination)
+  {
+    destination.AcceptOwner(this.owner);
+    destination.AcceptTarget(this.owner);
+    destination.AcceptExpiryTime(this.owner);
+  }
+}</pre>
+
+<p>TODO write the rest!!</p>
 
 <h4>Returning values should be extremely minimized</h4>
 
