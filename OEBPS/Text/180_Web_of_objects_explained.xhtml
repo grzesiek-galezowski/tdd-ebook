@@ -379,7 +379,7 @@ catch(SecurityFailure failure)
 
 <p>But what alternatives do we have? Let's say that we have a piece of software that handles user sessions (e.g. modeled using a <code>Session</code> class). We want to be able to display the sessions on the GUI, send the sessions through the network and persist them. How can we do this without getters? Should we put all the code for displaying, sending and storing inside the <code>Session</code> class? If we did that, we would couple a core domain concept (session) to a nasty set of third-party libraries (e.g. a particular GUI library), which would force us to tinker in core domain rules every time some GUI displaying concept changed. Also, if we did that, the <code>Session</code> would be hard to reuse, because every place we would want to reuse the class, we would need to take all these heavy libraries it depends on with us. So, our (not so good, as we will see) remedy may be to introduce getters for the information pieces stored inside a session:</p>
 
-<pre>public class Session
+<pre>public interface Session
 {
   string GetOwner();
   string GetTarget();
@@ -391,9 +391,11 @@ catch(SecurityFailure failure)
 <pre>// inside GUI code
 foreach(var session in sessions)
 {
-  ownerField.Text = session.GetOwner();
-  targetField.Text = session.GetTarget();
-  expiryTimeField.Text = session.GetExpiryTime();
+  var tableRow = TableRow.Create();
+  tableRow["owner"] = session.GetOwner();
+  tableRow["target"] = session.GetTarget();
+  tableRow["expiryTime"] = session.GetExpiryTime();
+  table.Add(tableRow);
 }</pre>
 
 <p>It seems we solved the problem, by pulling data to a place that has the context, i.e. knows what to do with this data. Are we happy? We may be unless we look at how the other parts look like - the sending one:</p>
@@ -401,9 +403,11 @@ foreach(var session in sessions)
 <pre>//part of sending logic
 foreach(var session in sessions)
 {
+  var message = Message.Blank();
   message.Owner = session.GetOwner();
   message.Target = session.GetTarget();
   message.ExpiryTime = session.GetExpiryTime();
+  connection.Send(message);
 }</pre>
 
 <p>and the storing one:</p>
@@ -411,9 +415,11 @@ foreach(var session in sessions)
 <pre>//part of storing logic
 foreach(var session in sessions)
 {
+  var record = Record.Blank();
   dataRecord.Owner = session.GetOwner();
   dataRecord.Target = session.GetTarget();
   dataRecord.ExpiryTime = session.GetExpiryTime();
+  database.Save(record);
 }</pre>
 
 <p>See anything disturbing here? If no, then imagine what happens when we add another piece of information to the <code>Session</code>, say, priority. We now have three places to update and we have to remember to update all of them every time. This is called <emph>"redundancy"</emph> or <emph>"asking for trouble"</emph>. Also, composability of this class is pretty bad, because it will change a lot just because data in a session changes.</p>
@@ -434,19 +440,107 @@ foreach(var session in sessions)
 
 <p>Thankfully, we have a third alternative, which is better than the two we already mentioned. We can just <strong>pass</strong> the context <strong>into</strong> the <code>Session</code> class. "Isn't this just another way to do what we outlined in point 1? If we pass the context in, isn't <code>Session</code> still coupled to this context?", you may ask. The answer is: no, because we can make <code>Session</code> class depend on interfaces only to make it context-independent.</p>
 
-<p>Let's see how this plays out in practice. First let's remove those ugly getters from the <code>Session</code> and introduce new method called <code>Dump()</code> that will take the <code>Destination</code> interface as parameter and pass all fields into this destination:</code>
+<p>Let's see how this plays out in practice. First let's remove those ugly getters from the <code>Session</code> and introduce new method called <code>Dump()</code> that will take the <code>Destination</code> interface as parameter:</p> 
+
+<pre>public interface Session
+{
+  void DumpInto(Destination destination);
+}</pre>
+
+<p>Its implementation can pass all fields into this destination like so:</p>
+
+<pre>public class TimedSession : Session
+{
+  //...
+
+  public void DumpInto(Destination destination)
+  {
+    destination.AcceptOwner(this.owner);
+    destination.AcceptTarget(this.target);
+    destination.AcceptExpiryTime(this.expiryTime);
+    destination.Done();
+  }
+
+  //...
+}</pre>
+
+<p>And the looping through sessions now looks like this:</p>
+
+<pre>foreach(var session : sessions)
+{
+  var newDestination = destinationFactory.Create();
+  session.DumpInto(newDestination);
+}</pre>
+
+<p>In this design, <code>Session</code> itself decides which parameters to pass - no one is asking for its data. This <code>Dump()</code> method is fairly general, so we can use it to implement all three mentioned behaviors (displaying, storing, sending), by creating adapters for each type of destination, e.g. for GUI, it might look like this:</p>
+
+<pre>public class GuiDestination : Destination
+{
+  private TableRow _row;
+  private Table _table;
+  
+  public GuiDestination(Table table, TableRow row)
+  {
+    _table = table;
+    _row = row;
+  }
+
+  public void AcceptOwner(string owner)
+  {
+    _row["owner"] = owner;
+  }
+
+  public void AcceptTarget(string target)
+  {
+    _row["target"] = target;
+  }
+
+  public void AcceptExpiryTime(DateTime expiryTime)
+  {
+    _row["expiryTime"] = expiryTime;
+  }
+
+  public void Done()
+  {
+    _table.Add(_row);
+  }
+
+}</pre>
+
+<p>Note that with the current design, adding new property to the <code>Session</code> that would need to be displayed, stored or sent, means adding new method to the <code>Destination</code> interface. All implementing classes must implement this new method, or they stop compiling, so there is no way to mistakenly forget about one of them.</p>
+
+<p>Also, unnoticeably, the protocol got more stable. Previously, when we had the getters in the <code>Session</code> class:</p>
 
 <pre>public class Session
 {
-  public void Dump(Destination destination)
-  {
-    destination.AcceptOwner(this.owner);
-    destination.AcceptTarget(this.owner);
-    destination.AcceptExpiryTime(this.owner);
-  }
+  string GetOwner();
+  string GetTarget();
+  DateTime GetExpiryTime();
 }</pre>
 
-<p>TODO write the rest!!</p>
+<p>the getters <strong>had to</strong> return <strong>something</strong>. So what if we didn't want to display, send and store expired timed sessions anymore? we would have to add another getter, called <code>IsExpired()</code> and checking it everywhere... you see where this is going. On the other hand, with the current design of the <code>Session</code> interface, we can e.g. introduce a feature where the expired sessions are not processed at all:</p>
+
+<pre>public class TimedSession : Session
+{
+  //...
+
+  public void DumpInto(Destination destination)
+  {
+    if(!IsExpired())
+    {
+      destination.AcceptOwner(this.owner);
+      destination.AcceptTarget(this.target);
+      destination.AcceptExpiryTime(this.expiryTime);
+      destination.Done();
+    }
+  }
+
+  //...
+}</pre>
+
+<p>and there is no need to change any other code to get this working.</p>
+
+<p>TODO</p>
 
 <h4>Returning values should be extremely minimized</h4>
 
