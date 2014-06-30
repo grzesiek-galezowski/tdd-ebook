@@ -45,8 +45,9 @@ else if(message-&gt;kind == MESSAGE_B)
 else if(message-&gt;kind == MESSAGE_C)
 {
   preprocessMessageB((MessageC*)message);
-}
-</pre>
+}</pre>
+
+<p>And in another place, if we wanted to do another thing differently based on the message type, the choice of the message type would be duplicated, but with different set of actions to perform:</p>
 
 <pre>if(message-&gt;kind == MESSAGE_A)
 {
@@ -59,11 +60,41 @@ else if(message-&gt;kind == MESSAGE_B)
 else if(message-&gt;kind == MESSAGE_C)
 {
   storeMessageB((MessageC*)message);
+}</pre>
+
+<p> Procedural programming languages had some answers to those concerns, but they were mostly awkward. Object oriented programming, along with polymorphism, has brought a possibility to more easily change behavior. Instead of repeating an 'if-else' chain everytime it was necessary to differentiate, a programmer could make the differentiation once and store it inside an object:</p>
+
+<pre>Message message = null;
+
+if(kindOfMessage == MESSAGE_A)
+{
+  //polymorphic assignment
+  message = new MessageA();
 }
-</pre>
+else if(kindOfMessage == MESSAGE_B)
+{
+  //polymorphic assignment
+  message = new MessageB();
+}
+else if(kindOfMessage == MESSAGE_C)
+{
+  //polymorphic assignment
+  message = new MessageC();
+}</pre>
 
+<p>Of course, this worked only when we were able to come up with a common way of communicating all these objects, i.e. a common interface. Then, the preprocessing code could just look like this:</p>
 
-<p> Object oriented programming, along with polymorphism, brings a possibility to more easily change behavior.</p>
+<pre>message.Preprocess();</pre>
+
+<p>and storing code could look like this:</p>
+
+<pre>message.Store();</pre>
+
+<p>without needing to having to take into account the difference between different message, because the difference was already in the object and polymorphism allowed seeing instance of each class as an instance of a common superclass.</p>
+
+<p>This allowed making whole classes that worked with interfaces only and did not ever have to make an 'if' over what type an object really was. There was one condition, however - the creation of the objects that were to be accessed polymorphically must have been moved out of such class. That's because to create an object using e.g. a new operator, a piece of code had to know the exact type. TODO TODO</p>
+
+<pre>Message m = new MessageA();</pre>
 
 <h2>How are objects composed?</h2>
 
