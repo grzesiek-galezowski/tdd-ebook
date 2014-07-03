@@ -18,16 +18,6 @@
 
 <p>In the two previous chapters, we followed Johnny and Benjamin in discovering the benefits of and prerequisites for composability of objects. Actually, composability is number one quality of the design we're after. After reading Johhny and Benjamin's story, you might have some questions regarding composability. Hopefully, they are among these:</p>
 
-<h2>What does it mean to compose objects?</h2>
-
-<p>Basically it means that an object has obtained a reference to another object and is invoking methods on it. By being composed together, two objects form a small system that can be expanded with more objects. Thus, an object oriented system forms a web:</p>
-
-<p>TOOOODOOO: web of objects</p>
-
-<p>Each of the objects in the web can receive messages and most of them send messages to other objects. Throughout this chapter, I will refer to an object sending a message as sender and an object receiving a message as recipient.</p>
-
-<p>TOOOODOOO definitions of sender and recipient.</p>
-
 <h2>Why do we need composability?</h2>
 
 <p>it might seem stupid to ask this question here - if you managed to stay with me this far, then you're probably motivated enough not to need a justification? Well, anyway, it's still worth discussing it a little.</p>
@@ -62,7 +52,7 @@ else if(message-&gt;kind == MESSAGE_C)
   storeMessageB((MessageC*)message);
 }</pre>
 
-<p> Procedural programming languages had some answers to those concerns, but they were mostly awkward. Object oriented programming, along with polymorphism, has brought a possibility to more easily change behavior. Instead of repeating an 'if-else' chain everytime it was necessary to differentiate, a programmer could make the differentiation once and store it inside an object:</p>
+<p> Procedural programming languages had some answers to those concerns, but they were mostly awkward. Object oriented programming, along with polymorphism, has brought a possibility to more easily change behavior. Instead of repeating an 'if-else' chain every time it was necessary to differentiate, a programmer can now make the differentiation once and store it inside an object:</p>
 
 <pre>Message message = null;
 
@@ -82,19 +72,34 @@ else if(kindOfMessage == MESSAGE_C)
   message = new MessageC();
 }</pre>
 
-<p>Of course, this worked only when we were able to come up with a common way of communicating all these objects, i.e. a common interface. Then, the preprocessing code could just look like this:</p>
+<p>Of course, this works only when we are able to come up with a common way of communicating with all these objects, i.e. a common interface. Then, the preprocessing code can just look like this:</p>
 
 <pre>message.Preprocess();</pre>
 
-<p>and storing code could look like this:</p>
+<p>and storing code can look like this:</p>
 
 <pre>message.Store();</pre>
 
-<p>without needing to having to take into account the difference between different message, because the difference was already in the object and polymorphism allowed seeing instance of each class as an instance of a common superclass.</p>
+<p>In those two pieces of code, we do not need to take into account the difference between different messages anymore, because the difference is already encoded in the real type of the object and polymorphism allows using an instance of such concrete type without knowing the concrete type.</p>
 
-<p>This allowed making whole classes that worked with interfaces only and did not ever have to make an 'if' over what type an object really was. There was one condition, however - the creation of the objects that were to be accessed polymorphically must have been moved out of such class. That's because to create an object using e.g. a new operator, a piece of code had to know the exact type. TODO TODO</p>
+<p>This allows coding classes in such a way that can communicate with other objects without any awareness of the real types of these objects - only by knowing a common supertype. If we are able to do that, we can add new implementations of this supertype and make our objects work with these new implementations without having to change these objects. There is one condition, however - the creation of the objects that our class talks to must be moved out of our class. That's because to use a <code>new</code> operator, a piece of code has to know the exact type of the object it is creating, which is exactly what we are trying to avoid.</p>
 
-<pre>Message m = new MessageA();</pre>
+<p>Moving creation of objects away from the classes that use those objects brings up an interesting problem - if an object does not create its own dependencies, then who does it? A solution is to make a special place in the code that assembles a system from loosely coupled objects.</p>
+
+<p>TODO add example</p>
+
+<p>If we are able to achieve this, it gives us an important advantage - in order to make our existing objects work with new implementations of abstractions they depend upon, all we need to do (aside of coding the new implementations in the right way - more on this later) is to modify the code that is putting the system together (i.e. <strong>composing objects into a system</strong>) and all other objects may remain untouched. This is important in evolutionary, incremental design, where we want to evolve some pieces of code with as little as possible other pieces of code having to realize that the evolution takes place.</p>
+
+<h2>What does it mean to compose objects?</h2>
+
+<p>Basically it means that an object has obtained a reference to another object and is invoking methods on it. By being composed together, two objects form a small system that can be expanded with more objects. Thus, an object oriented system forms a web:</p>
+
+<p>TOOOODOOO: web of objects</p>
+
+<p>Each of the objects in the web can receive messages and most of them send messages to other objects. Throughout this chapter, I will refer to an object sending a message as sender and an object receiving a message as recipient.</p>
+
+<p>TOOOODOOO definitions of sender and recipient.</p>
+
 
 <h2>How are objects composed?</h2>
 
