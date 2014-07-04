@@ -88,17 +88,60 @@ else if(kindOfMessage == MESSAGE_C)
 
 <p>TODO add example</p>
 
-<p>If we are able to achieve this, it gives us an important advantage - in order to make our existing objects work with new implementations of abstractions they depend upon, all we need to do (aside of coding the new implementations in the right way - more on this later) is to modify the code that is putting the system together (i.e. <strong>composing objects into a system</strong>) and all other objects may remain untouched. This is important in evolutionary, incremental design, where we want to evolve some pieces of code with as little as possible other pieces of code having to realize that the evolution takes place.</p>
+<p>If we are able to separate object creation from usage, it gives us an important advantage - in order to make our existing objects work with new implementations of abstractions they depend upon, all we need to do (aside of coding the new implementations the right way - more on this later) is to modify the code that is putting the system together (i.e. <strong>composing objects into a system</strong>) and all other objects may remain untouched. This is important in evolutionary, incremental design, where we want to evolve some pieces of code with as little as possible other pieces of code having to realize that the evolution takes place.</p>
 
-<h2>What does it mean to compose objects?</h2>
+<h2>So, again, what does it mean to compose objects?</h2>
 
-<p>Basically it means that an object has obtained a reference to another object and is invoking methods on it. By being composed together, two objects form a small system that can be expanded with more objects. Thus, an object oriented system forms a web:</p>
+<p>Basically it means that an object has obtained a reference to another object and is invoking methods on it. By being composed together, two objects form a small system that can be expanded with more objects. Thus, a bigger object oriented system forms something that reminds of a web:</p>
 
 <p>TOOOODOOO: web of objects</p>
+
+<p>If we take the metaphor a little bit further, we can note some similarities to e.g. a TCP network:</p>
+
+<ol>
+  <li>An object can send <strong>messages</strong> to other objects (i.e. call methods on them) using <strong>interfaces</strong>. Each message has a <strong>sender</strong> and a <strong>recipient</strong>.</li>
+  <li>In order to do that, an object has to acquire an <strong>address</strong> of another object, which, in object oriented world, we call a reference.</li>
+  <li>A communication between objects has to obey certain <strong>protocol</strong> (more on this later).</li>
+</ol>
+
+<p>Let us try this out on an example. Let's say that we have an alarm that, when triggered, makes all lifts go to bottom floor, opens them and then disables them.</p>
+
+<p>First, an alarm has to acquire "addresses" of the lifts. We can pass them e.g. through a constructor:</p>
+
+<pre>public class Alarm
+{
+  //references are stored
+  private readonly IEnumerable&ltlLift&gt; _lifts;
+
+  public Alarm(IEnumerable&ltlLift&gt; lifts)
+  {
+    _lifts = lifts;
+  }
+}</pre>
+
+<p>Then, the alarm can send three messages: <code>GoToBottomFloor()</code>, <code>OpenDoor()</code>, and <code>DisablePower()</code> to all the lifts through the <code>Lift</code> interface:</p>
+
+<pre>public void Trigger()
+{
+  foreach(var lift in _lifts)
+  {
+    lift.GoToBottomFloor();
+    lift.OpenDoor();
+    lift.DisablePower();
+  }
+}</pre>
+
+<p>In this communication, <code>Alarm</code> is a sender and <code>Lift</code> is a recipient.</p>
+
+<p>TODO TODO TODO TODO TODO</p>
+
+<p>we are effectively sending a <code>Close</code> message to door and we count on the door to handle that message in a way that is mostly unknown to us. Thus, in object oriented world, there is a separation of message (visible via class/interface signature) and its handling (visible to the receiving object only). TODO TODO</p>
 
 <p>Each of the objects in the web can receive messages and most of them send messages to other objects. Throughout this chapter, I will refer to an object sending a message as sender and an object receiving a message as recipient.</p>
 
 <p>TOOOODOOO definitions of sender and recipient.</p>
+
+<p>As I said, there is a special place in the code where the web is assembled from context-independent objects. This place is sometimes called "composition root".</p>
 
 
 <h2>How are objects composed?</h2>
