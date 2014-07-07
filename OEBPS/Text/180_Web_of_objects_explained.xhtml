@@ -94,7 +94,7 @@ else if(kindOfMessage == MESSAGE_C)
 
 <p>Basically it means that an object has obtained a reference to another object and is invoking methods on it. By being composed together, two objects form a small system that can be expanded with more objects. Thus, a bigger object oriented system forms something that reminds of a web:</p>
 
-<img alt="Obraz" src="../Images/lolek.svg" />
+<img alt="Obraz" src="../Images/WebOfObjects.svg" />
 
 <p>If we take the metaphor a little bit further, we can note some similarities to e.g. a TCP network:</p>
 
@@ -132,6 +132,8 @@ else if(kindOfMessage == MESSAGE_C)
 }</pre>
 
 <p>In this communication, <code>Alarm</code> is a sender - it knows what it is sending, but does not know how exactly the message will be handled. This is left to <code>Lift</code> objects that are recipients - they do not know who they got the message from, but they know how to react, based on what the message is and what's its content (i.e. method arguments).</p>
+
+<img alt="Obraz" src="../Images/SenderRecipientMessage.svg" />
 
 <p>Also, it has been decided that whenever any malfunction happens when executing the alarm emergency procedure, a <code>Lift</code> object is going to report this by throwing an exception called <code>LiftUnoperationalException</code>. The <code>Alarm</code>, thus, needs to know this and be able to handle this, e.g.</p>
 
