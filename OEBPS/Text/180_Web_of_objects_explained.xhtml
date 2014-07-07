@@ -94,7 +94,7 @@ else if(kindOfMessage == MESSAGE_C)
 
 <p>Basically it means that an object has obtained a reference to another object and is invoking methods on it. By being composed together, two objects form a small system that can be expanded with more objects. Thus, a bigger object oriented system forms something that reminds of a web:</p>
 
-<p>TOOOODOOO: web of objects</p>
+<img alt="Obraz" src="../Images/lolek.svg" />
 
 <p>If we take the metaphor a little bit further, we can note some similarities to e.g. a TCP network:</p>
 
@@ -131,18 +131,35 @@ else if(kindOfMessage == MESSAGE_C)
   }
 }</pre>
 
-<p>In this communication, <code>Alarm</code> is a sender and <code>Lift</code> is a recipient.</p>
+<p>In this communication, <code>Alarm</code> is a sender - it knows what it is sending, but does not know how exactly the message will be handled. This is left to <code>Lift</code> objects that are recipients - they do not know who they got the message from, but they know how to react, based on what the message is and what's its content (i.e. method arguments).</p>
 
-<p>TODO TODO TODO TODO TODO</p>
+<p>Also, it has been decided that whenever any malfunction happens when executing the alarm emergency procedure, a <code>Lift</code> object is going to report this by throwing an exception called <code>LiftUnoperationalException</code>. The <code>Alarm</code>, thus, needs to know this and be able to handle this, e.g.</p>
 
-<p>we are effectively sending a <code>Close</code> message to door and we count on the door to handle that message in a way that is mostly unknown to us. Thus, in object oriented world, there is a separation of message (visible via class/interface signature) and its handling (visible to the receiving object only). TODO TODO</p>
+<pre>public void Trigger()
+{
+  foreach(var lift in _lifts)
+  {
+    try
+    {
+      lift.GoToBottomFloor();
+      lift.OpenDoor();
+      lift.DisablePower();
+    }
+    catch(LiftUnoperationalException e)
+    {
+      report.ThatCannotSecure(lift);
+    }
+  }
+}</pre>
+
+<p>In other words, there is a protocol between <code>Alarm</code> and <code>Lift</code> that must be adhered to. <code>Lift</code> is expected to report issues in a certain way and <code>Alarm</code> is expected to be able to handle the issues.</p>
+
 
 <p>Each of the objects in the web can receive messages and most of them send messages to other objects. Throughout this chapter, I will refer to an object sending a message as sender and an object receiving a message as recipient.</p>
 
-<p>TOOOODOOO definitions of sender and recipient.</p>
-
 <p>As I said, there is a special place in the code where the web is assembled from context-independent objects. This place is sometimes called "composition root".</p>
 
+<p>TODO</p>
 
 <h2>How are objects composed?</h2>
 
@@ -203,6 +220,10 @@ sender.DoSomething();</pre>
 }</pre>
 
 <p>This kind of composition is beneficial when a different recipient is needed each time <code>DoSomething()</code> is called, but at the same time, contrary to passing recipient as a method parameter, the client should not (or cannot) be responsible for supplying a recipient.</p>
+
+<h3>Register methods</h3>
+
+<p>e.g. setters, register(), add() etc.</p>
 
 <h2>Weaker and better composability</h2>
 
@@ -735,13 +756,12 @@ foreach(var session in sessions)
 
 <p>--------------------------------</p>
 
-
+<h4>Interactions are not an implementation detail</h4>
 
 <p>Todo interfaces checked by compiler, protocols not</p>
 
 <h3>multiple interfaces multiple roles</h3>
 
-<p>interfejsy zostaly omowione ale sa jeszcze protokoly</p>
 <p>Protocols must be published! They are not private internal details</p>
 <h3>Tell Don't Ask</h3>
 <h3>Level of abstraction of protocols</h3>
