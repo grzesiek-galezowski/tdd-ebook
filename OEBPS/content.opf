@@ -44,10 +44,12 @@
     <item href="Images/WebOfObjects.svg" id="id5" media-type="image/svg+xml"/>
     <item href="Images/RedGreenRefactor.svg" id="id3" media-type="image/svg+xml"/>
     <item href="Images/RedGreenRefactor2.svg" id="id6" media-type="image/svg+xml"/>
+    <item href="../015_Thanks.xhtml" id="id7" media-type="application/xhtml+xml"/>
   </manifest>
   <spine toc="ncx">
     <itemref idref="Cover.xhtml"/>
     <itemref idref="_Dedication.xhtml"/>
+    <itemref idref="id7"/>
     <itemref idref="_Part1Marker.xhtml"/>
     <itemref idref="_Motivations.xhtml"/>
     <itemref idref="_Three_Essential_Tools.xhtml"/>
