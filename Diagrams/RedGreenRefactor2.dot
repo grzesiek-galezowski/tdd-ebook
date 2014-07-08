@@ -1,0 +1,16 @@
+digraph G {
+	graph [fontsize=11 overlap=false splines=true fontname="Ubuntu"];
+	node [fontsize=11];
+	edge [fontsize=11];
+	Red [label=<Write an <B>unfulfilled</B><br/> Statement> shape=Mrecord pos="2,2!"]
+	Green [label = "Fulfill it" shape=Mrecord pos="4.2,2!"]
+	Refactor [label="Refactor" shape=Mrecord pos="3,1!"]
+	Begin [ style=invisible label="" pos="0,2!" shape=square width=0.1 height=0.1]
+	
+ 	Begin->Red;
+    Red->Green;
+    Green->Refactor;
+    Refactor->Red;	
+    
+    
+}

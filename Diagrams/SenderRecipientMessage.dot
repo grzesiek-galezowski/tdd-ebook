@@ -1,0 +1,25 @@
+strict digraph G {
+	graph [fontsize=5 overlap=false splines=true fontname="Ubuntu"];
+	node [fontsize=10];
+	edge [fontsize=10];
+	
+	subgraph g1{
+		Sender[shape=circle pos="1,2!"]
+		Recipient[shape=circle pos="9.7,2!" label="Concrete\nRecipient"]
+		square [label="Recipient\n(Interface)" shape=Mdiamond pos="4.4,2!"]
+		
+		Sender -> square [taillabel="Recipient::DoSomething()..."];
+		square -> Recipient [taillabel="...ConcreteRecipient::DoSomething()"];
+	}
+
+	subgraph g2{
+		Alarm[shape=circle pos="1,1!"]
+		AutoLift[shape=circle pos="9.7,1!" label="AutoLift"]
+		Lift [label="Lift\n(Interface)" shape=Mdiamond pos="4.4,1!"]
+		
+		Alarm -> Lift [taillabel="Lift::GoToBottomFloor()..."];
+		Lift -> AutoLift [taillabel="...AutoLift::GoToBottomFloor()"];
+	}
+
+
+}
