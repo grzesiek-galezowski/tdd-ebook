@@ -42,6 +42,8 @@
     <item href="Text/180_Web_of_objects_explained.xhtml" id="id2" media-type="application/xhtml+xml"/>
     <item href="Images/SenderRecipientMessage.svg" id="id4" media-type="image/svg+xml"/>
     <item href="Images/WebOfObjects.svg" id="id5" media-type="image/svg+xml"/>
+    <item href="Images/RedGreenRefactor.svg" id="id3" media-type="image/svg+xml"/>
+    <item href="Images/RedGreenRefactor2.svg" id="id6" media-type="image/svg+xml"/>
   </manifest>
   <spine toc="ncx">
     <itemref idref="Cover.xhtml"/>
