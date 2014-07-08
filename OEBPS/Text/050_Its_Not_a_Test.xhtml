@@ -1,0 +1,107 @@
+<?xml version='1.0' encoding='utf-8'?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>It is Not a Test</title>
+  <link href="../Styles/Global.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<body>
+  <h1>It is not a test</h1>
+
+  <p>Up to now, I was cheating on you. I told you that the little executable snippets of code are ‘tests’ and that they’re here to ‘check’ or ‘verify’ something. Now it is time to reveal the truth.</p>
+
+  <h2 id="sigil_toc_id_3">When a test becomes something else</h2>
+
+  <p>I studied in Łódź, a large city in the center of Poland. As probably all other students in all other countries, we have had lectures, exercises and exams. The exams were pretty hard, especially considered that my computer science group was on the faculty of electronic and electric engineering, so we had to grasp a lot of classes that did not have anything to do with programming, for instance electrotechnics, solid-state physics or electronic and electrical metrology.</p>
+
+  <p>Knowing that the exams were difficult and that it was hard to learn everything during preparation, the lecturers would give us exemplary exams from previous years. The questions were different than during actual exams, but the structure and types of questions asked (practice vs. theory etc.) was similar. We would usually get these exemplary questions before we started learning really hard (which was usually at the end of semester). Guess what happened then? As you might suspect, we did not use the tests we received just to ‘verify’ or ‘check’ our knowledge after we finished learning. Those tests were actually the first thing we went to before even starting to learn. Why was that so? What use were the tests when we knew we would not know most of the answers?</p>
+
+  <p>I guess my lecturers would disagree with me, but I find it quite amusing that what we were really doing back then was ‘Lean’. Lean is an approach where, among others, there is a rigorous emphasis on eliminating waste. Every feature or product that is produced while not being needed by anyone is considered waste. That is because if something is not needed, there is no reason to assume it will ever be needed. In such case the entire feature or product is a waste - it has no value. Even if it WILL be ever needed, it will require some rework anyway to fit the real customer needs. In this case, the initial amount of work that went into the parts of solution that had to be replaced by another parts anyway is a waste - it never brought any money (I am not talking about such things as customer demos, but finished, polished features or products).</p>
+
+  <p>So, in order to eliminate waste, there is huge pressure nowadays to “pull features from demand” instead of “pushing them” into the product. In other words, every feature is there to satisfy concrete need. If not, the effort is considered wasted and the money drown.</p>
+
+  <p>Going back to the exams, why the approach of first looking through the exemplary tests can be considered ‘lean’? That is because, when we treat passing an exam as our goal, then everything that does not put us closer to this goal is considered a waste. Let us suppose the exam is theory only - why then practice the exercises? It would probably pay off a lot more to study theoretical side of the topics. Such knowledge could be obtained from those exemplary tests. So, the tests were a kind of specification of what was needed to pass the exam, letting us pull the value (i.e. our knowledge) from demand (information obtained from a realistic tests) rather that pushing it from implementation (i.e. learning everything in a course book chapter after chapter).</p>
+
+  <p>So the tests became something else. They proved very valuable before the ‘implementation’ (i.e. learning for the exam) because:</p>
+
+  <ol>
+    <li>they helped us focus on what was needed to reach our goal</li>
+
+    <li>they brought our attention away from what was <strong>not</strong> needed to reach our goal</li>
+  </ol>
+
+  <p>That was the value of a test before learning. Note that the tests we would usually receive were not exactly what we would encounter at the time of exam, so we still had to guess. Still, the role of a <strong>test as specification of a need</strong> was already visible.</p>
+
+  <h2 id="sigil_toc_id_4">Taking It To The Software Development Land</h2>
+
+  <p>I chose this lengthy metaphor to show you that ‘test’ is really another way of specifying a requirement or a need and that it is not something that is counter-intuitive - it occurs in our everyday lives. This is also true in software development. Let us take the following ‘test’ and see what kind of needs it specifies:</p>
+  <pre>var reporting = new ReportingFeature();
+var anyPowerUser = Any.Of(Users.Admin, Users.Auditor);
+Assert.True(reporting.CanBePerformedBy(anyPowerUser));
+</pre>
+
+  <p>(In this example, we used <code>Any.Of()</code> method that returns any enumeration value from the specified list. Here, we say “give me a value that is either <code>Users.Admin</code> or <code>Users.Auditor</code>“.)</p>
+
+  <p>Let us look at those (only!) three lines of code, imagining that the production code that makes this ‘test’ pass does not exist yet. What can we learn from these three lines about what the code needs to supply? Count with me:</p>
+
+  <ol>
+    <li>We need a reporting feature</li>
+
+    <li>We need to support a notion of users and privileges</li>
+
+    <li>We need to support a domain concept of power user, who is either an administrator or an auditor</li>
+
+    <li>Power users will need to be privileged to use the reporting feature (note that it does not specify which other users should or should not be able to use this feature - we would need a separate ‘test’ for that).</li>
+  </ol>
+
+  <p>Also, are already after the phase of designing an API that will fulfill the need. Don’t you think it is pretty much information about the application from just three lines of code?</p>
+
+  <div class="achievement">
+    <h3 class="sigil_not_in_toc" id="u1e31ddb7-e7d5-4ee6-927f-ef6356a916bc">Lean &amp; Mean</h3>
+
+    <p>You now see some connotations between Test-Driven Development and Lean movement. There are more if you are interested, so be sure to pick up a good read bout lean software development!</p>
+  </div>
+
+  <h2 id="sigil_toc_id_5">A Specification Instead of a Test Suite</h2>
+
+  <p>I hope that you can see now that what we called ‘a test’ is really a kind of specification. The discovery is very recent, so there isn’t a clear terminology on it yet. Some like to call the process of using tests as specifications: Specification By Example, to say that the tests are really examples that help specify and clarify the behavior of developed part of functionality. The terminology is still not rock-solid, so you might encounter different naming for different things. For example, a ‘test’ is often referred to as ‘spec’, or an ‘example’, or a ‘behavior description’, or a ‘specification statement’ or a ‘fact about the developed system’ (the xUnit.NET framework marks each ‘test’ with a <code>[Fact]</code> attribute, suggesting that by writing it, we are stating a single fact about developed code. By the way, xUnit.NET also allows us to state ‘theories’ about our code, but let us leave it for now).</p>
+
+  <p>The time has come to make a deal: I will establish some naming conventions for this book to be consistent, but leave you with the freedom to follow your own if you so desire. Let us agree that for the sake of this book:</p>
+
+  <dl>
+    <dt><strong>Specification Statement</strong> (or simply <strong>Statement</strong>, starting with capital letter)</dt>
+
+    <dd>will be used instead of ‘test’ or ‘test method’</dd>
+
+    <dt><strong>Specification</strong> (or simply <strong>Spec</strong>), also starting with capital letter</dt>
+
+    <dd>will be used instead of ‘test suite’ or ‘test list’</dd>
+
+    <dt><strong>Unfulfilled Statement</strong></dt>
+
+    <dd>will be used instead of ‘failing test’</dd>
+
+    <dt><strong>Fulfilled Statement</strong></dt>
+
+    <dd>will be used instead of ‘passing test’</dd>
+  </dl>
+
+  <p>From time to time, I will refer back to the ‘traditional’ terminology, because it is better established and you’ve probably heard some terms already and may wonder how it should be understood in context of thinking of tests as specification.</p>
+
+  <p>From your experience, you may know paper or word specifications, written in plain English or other spoken language. Our specification is different than these specifications in at least few ways:</p>
+
+  <ol>
+    <li>it is not written fully up-front (more on this in the next chapters).</li>
+
+    <li>it is executable - you can run it to see whether the code adheres to the specification or not.</li>
+
+    <li>it is written in source code rather than in spoken language - which is both good (less room for misunderstanding - source code is the most formal and structured way of writing specifications) and bad (great care must be taken to keep the specification readable).</li>
+  </ol>
+
+  <div class="achievement">
+    <h3 class="sigil_not_in_toc" id="u89fae145-4c35-4510-a4ec-51498f8aaa0d">Enlightened</h3>
+
+    <p>You are starting to see Test-Driven Development in a new light - not as a testing technique, but as a mean to specify the behaviors of the code under development.</p>
+  </div>
+</body>
+</html>
