@@ -2,7 +2,7 @@
 
 require 'rubygems'
 require 'graphviz'
-graph_g = GraphViz.digraph( "G" ) { |graph_g|
+graph_g = GraphViz.digraph( "G", :use => :neato ) { |graph_g|
   graph_g[:fontname] = 'Ubuntu'
   graph_g[:fontsize] = '11'
   graph_g[:overlap] = 'false'
