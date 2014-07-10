@@ -3,4 +3,4 @@
 *.azw3
 *.htmlz
 /.project
-/Diagrams/*.svg
+Diagrams/*.svg
