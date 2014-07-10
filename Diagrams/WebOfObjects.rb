@@ -2,38 +2,51 @@
 
 require 'rubygems'
 require 'graphviz'
-graph_g = GraphViz.digraph( "G", :use => :neato ) { |graph_g|
-  graph_g[:fontsize] = '5'
-  graph_g[:overlap] = 'false'
-  graph_g[:splines] = 'true'
-  node_o1 = graph_g.add_nodes( "o1", :fontsize => '10', :label => '', :shape => 'circle', :style => '' )
-  graph_g.add_edges( "o1", "o3", :len => '', :style => '' )
-  node_o2 = graph_g.add_nodes( "o2", :fontsize => '10', :label => '', :shape => 'circle', :style => '' )
-  graph_g.add_edges( "o2", "o13", :len => '', :style => 'dashed' )
-  node_o3 = graph_g.add_nodes( "o3", :fontsize => '10', :label => '', :shape => 'circle', :style => '' )
-  graph_g.add_edges( "o3", "o2", :len => '', :style => '' )
-  graph_g.add_edges( "o3", "o7", :len => '', :style => '' )
-  node_o4 = graph_g.add_nodes( "o4", :fontsize => '10', :label => '', :shape => 'circle', :style => '' )
-  graph_g.add_edges( "o4", "o3", :len => '', :style => '' )
-  node_o5 = graph_g.add_nodes( "o5", :fontsize => '10', :label => '', :shape => 'circle', :style => '' )
-  graph_g.add_edges( "o5", "o4", :len => '', :style => '' )
-  node_o6 = graph_g.add_nodes( "o6", :fontsize => '10', :label => '', :shape => 'circle', :style => '' )
-  graph_g.add_edges( "o6", "o5", :len => '', :style => '' )
-  node_o7 = graph_g.add_nodes( "o7", :fontsize => '10', :label => '', :shape => 'circle', :style => '' )
-  graph_g.add_edges( "o7", "o6", :len => '', :style => '' )
-  graph_g.add_edges( "o7", "o8", :len => '1.1', :style => '' )
-  graph_g.add_edges( "o7", "o11", :len => '', :style => '' )
-  node_o8 = graph_g.add_nodes( "o8", :fontsize => '10', :label => '', :shape => 'circle', :style => '' )
-  graph_g.add_edges( "o8", "o9", :len => '', :style => '' )
-  node_o9 = graph_g.add_nodes( "o9", :fontsize => '10', :label => '', :shape => 'circle', :style => '' )
-  graph_g.add_edges( "o9", "o14", :len => '', :style => 'dashed' )
-  node_o10 = graph_g.add_nodes( "o10", :fontsize => '10', :label => '', :shape => 'circle', :style => '' )
-  graph_g.add_edges( "o10", "o6", :len => '', :style => '' )
-  node_o11 = graph_g.add_nodes( "o11", :fontsize => '10', :label => '', :shape => 'circle', :style => '' )
-  graph_g.add_edges( "o11", "o9", :len => '', :style => '' )
-  graph_g.add_edges( "o11", "o10", :len => '', :style => '' )
-  node_o12 = graph_g.add_nodes( "o12", :fontsize => '10', :label => '', :shape => '', :style => 'invisible' )
-  graph_g.add_edges( "o12", "o1", :len => '', :style => 'dashed' )
-  node_o13 = graph_g.add_nodes( "o13", :fontsize => '10', :label => '', :shape => '', :style => 'invisible' )
-  node_o14 = graph_g.add_nodes( "o14", :fontsize => '10', :label => '', :shape => '', :style => 'invisible' )
+require './Config'
+
+def add_object(name, graph)
+  graph.add_nodes name, fontsize: $DEFAULT_FONT_SIZE, label: '', shape: :circle
+end
+
+def add_invisible(name, graph)
+  graph.add_nodes name, fontsize: $DEFAULT_FONT_SIZE, label: '', style: :invisible 
+end
+
+
+graph_g = GraphViz.digraph( "G", use: :neato ) { |graph_g|
+  apply_config_to graph_g
+  graph_g[:fontsize] = 5
+  
+  o1 = add_object "o1", graph_g
+  o2 = add_object "o2", graph_g
+  o3 = add_object "o3", graph_g
+  o4 = add_object "o4", graph_g
+  o5 = add_object "o5", graph_g
+  o6 = add_object "o6", graph_g
+  o7 = add_object "o7", graph_g
+  o8 = add_object "o8", graph_g
+  o9 = add_object "o9", graph_g
+  o10 = add_object "o10", graph_g
+  o11 = add_object "o11", graph_g
+  o12 = add_invisible "o12", graph_g
+  o13 = add_invisible "o13", graph_g
+  o14 = add_invisible "o14", graph_g
+  
+  graph_g.add_edges o1, o3
+  graph_g.add_edges o3, o2
+  graph_g.add_edges o3, o7
+  graph_g.add_edges o4, o3
+  graph_g.add_edges o5, o4
+  graph_g.add_edges o6, o5
+  graph_g.add_edges o7, o6
+  graph_g.add_edges o7, o8, len: '1.1'
+  graph_g.add_edges o7, o11
+  graph_g.add_edges o8, o9
+  graph_g.add_edges o10, o6
+  graph_g.add_edges o11, o9
+  graph_g.add_edges o11, o10
+  graph_g.add_edges o2, o13, style: :dashed 
+  graph_g.add_edges o9, o14, style: :dashed 
+  graph_g.add_edges o12, o1, style: :dashed 
+  
 }.output(:svg => "WebOfObjects.svg")

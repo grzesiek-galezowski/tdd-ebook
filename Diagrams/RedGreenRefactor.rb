@@ -2,17 +2,19 @@
 
 require 'rubygems'
 require 'graphviz'
-graph_g = GraphViz.digraph( "G", :use => :neato) { |graph_g|
-  graph_g[:fontname] = 'Ubuntu'
-  graph_g[:fontsize] = '11'
-  graph_g[:overlap] = 'false'
-  graph_g[:splines] = 'true'
-  node_red = graph_g.add_nodes( "Red", :fontsize => '11', :height => '', :label => '<Write a <b>failing</b><br/> test>', :pos => '2,2!', :shape => 'Mrecord', :style => '', :width => '' )
-  graph_g.add_edges( "Red", "Green", :fontsize => '11' )
-  node_green = graph_g.add_nodes( "Green", :fontsize => '11', :height => '', :label => 'Make it pass', :pos => '4.2,2!', :shape => 'Mrecord', :style => '', :width => '' )
-  graph_g.add_edges( "Green", "Refactor", :fontsize => '11' )
-  node_refactor = graph_g.add_nodes( "Refactor", :fontsize => '11', :height => '', :label => 'Refactor', :pos => '3,1!', :shape => 'Mrecord', :style => '', :width => '' )
-  graph_g.add_edges( "Refactor", "Red", :fontsize => '11' )
-  node_begin = graph_g.add_nodes( "Begin", :fontsize => '11', :height => '0.1', :label => '', :pos => '0,2!', :shape => 'square', :style => 'invisible', :width => '0.1' )
-  graph_g.add_edges( "Begin", "Red", :fontsize => '11' )
+require './Config'
+
+g = GraphViz.digraph( "G", :use => :neato) { |g|
+  apply_config_to g
+  
+  red = g.add_nodes "Red", fontsize: $DEFAULT_FONT_SIZE, label: '<Write a <b>failing</b><br/> test>', pos: '2,2!', :shape => 'Mrecord'
+  green = g.add_nodes "Green", fontsize: $DEFAULT_FONT_SIZE, label: 'Make it pass', pos: '4.2,2!', shape: 'Mrecord'
+  refactor = g.add_nodes "Refactor", fontsize: $DEFAULT_FONT_SIZE, label: 'Refactor', pos: '3,1!', shape: 'Mrecord'
+  begin_node = g.add_nodes "Begin", fontsize: $DEFAULT_FONT_SIZE, height: '0.1', width: '0.1', label: '', pos: '0,2!', shape: :square, style: 'invisible' 
+  
+  g.add_edges red, green, fontsize: $DEFAULT_FONT_SIZE 
+  g.add_edges green, refactor, fontsize: $DEFAULT_FONT_SIZE 
+  g.add_edges refactor, red, fontsize: $DEFAULT_FONT_SIZE 
+  g.add_edges begin_node, red, fontsize: $DEFAULT_FONT_SIZE 
+  
 }.output(:svg => "RedGreenRefactor.svg")
