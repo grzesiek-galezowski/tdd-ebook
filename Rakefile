@@ -67,5 +67,7 @@ task :push_htmlz, [:commit_message] => :htmlz do | t, args |
   git.push_changes_to_gh_pages
 end
 
-
-
+desc "Regenerates all SVG diagrams from source and puts them in the source directory"
+task :regenerate_diagrams do
+  puts `cd ./Diagrams/ && ruby ./Generate.rb`
+end
