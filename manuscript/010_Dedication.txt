@@ -1,0 +1,22 @@
+---
+title:
+- type: main
+  text: Test-Driven Development
+- type: subtitle
+  text: Extensive Tutorial
+creator:
+- role: author
+  text: Grzegorz Gałęzowski
+- role: editor
+  text: To be defined
+publisher:  Leanpub
+rights:  Creative Commons
+language: en-US
+...
+
+Dedications
+===========
+
+*Ad Deum qui laetificat iuventutem meam.*
+
+*To my beloved wife Monika.*

@@ -80,21 +80,36 @@ So far the following chapters are considered ready for reading:
  1. Specifying Boundaries and Conditions
  1. Triangulation
 
-*Part2: Test-Driven Development in Object Oriented World*
+*Part 2: Test-Driven Development in Object Oriented World*
  1. On objects composability
  1. Telling, not asking
- 2. TBD
-
-*Part3: Beyond Objects - TDD on higher levels*
+ 1. The need for mock o objects
+ 1. Why do we need composability?
  1. TBD
 
-At least four or five more chapters are planned
+*Part 3: Beyond Objects - TDD on higher levels*
+ 1. TBD
+ 
+*Part 4: Tools of test-driven developer*
+ 1. TBD
+
+*Part 5: FAQ and nuances*
+ 1. TBD
+
+At least ten or twenty more chapters are planned, so there is still 
+lots to do! Your input is crucial!
 
 ### Contributing
 
-If you see a grammar error or a sentence that can be phrased better, or something that's not clear, please submit an issue. Also if you've got some questions, topic requests, would like to submit better exercises or correct the existing ones, please submit an issue as well.
+The source code is now in markdown, so it is easier to contribute than 
+ever! I welcome issues and pull requests about typos, better phrasing, 
+requests for clearer explanation etc. Also if you've got some 
+questions, topic requests, would like to submit better (or new) 
+exercises or correct the existing ones, please submit an issue as well.
 
-You are welcome to fork this ebook and make customized version for the programming language of your choice.
+You are welcome to fork this ebook and make customized version for the 
+programming language of your choice or edit the terminology or 
+conventions if you do not like what I decided on. It's Open Source!
 
 ### Credits
 

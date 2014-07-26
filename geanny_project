@@ -1,0 +1,52 @@
+[file_prefs]
+final_new_line=true
+ensure_convert_new_lines=false
+strip_trailing_spaces=false
+replace_tabs=false
+
+[indentation]
+indent_width=2
+indent_type=0
+indent_hard_tab_width=8
+detect_indent=false
+detect_indent_width=false
+indent_mode=2
+
+[project]
+name=TddEbook
+base_path=/home/netbook/Google Drive/Shared/Raporty i prezentacje/TDDEBook/
+description=
+file_patterns=*.*\;Rakefile;
+
+[long line marker]
+long_line_behaviour=1
+long_line_column=72
+
+[files]
+current_page=1
+FILE_NAME_0=0;Ruby;0;EUTF-8;0;1;0;%2Fhome%2Fnetbook%2FGoogle%20Drive%2FShared%2FRaporty%20i%20prezentacje%2FTDDEBook%2FRakefile;0;2
+FILE_NAME_1=2110;Ruby;0;EUTF-8;0;1;0;%2Fhome%2Fnetbook%2FGoogle%20Drive%2FShared%2FRaporty%20i%20prezentacje%2FTDDEBook%2Fcustom_commands.rb;0;2
+
+[VTE]
+last_dir=/home/netbook/Google Drive/Shared/Raporty i prezentacje/TDDEBook
+
+[build-menu]
+MarkdownFT_00_LB=epub
+MarkdownFT_00_CM=rake epub
+MarkdownFT_00_WD=
+MarkdownFT_01_LB=html
+MarkdownFT_01_CM=rake html
+MarkdownFT_01_WD=
+MarkdownFT_02_LB=all
+MarkdownFT_02_CM=rake all_formats
+MarkdownFT_02_WD=
+filetypes=Markdown;Ruby;
+RubyFT_00_LB=epub
+RubyFT_00_CM=rake epub
+RubyFT_00_WD=
+RubyFT_01_LB=html
+RubyFT_01_CM=rake html
+RubyFT_01_WD=
+RubyFT_02_LB=all
+RubyFT_02_CM=rake all_formats
+RubyFT_02_WD=

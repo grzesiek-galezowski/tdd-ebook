@@ -49,4 +49,7 @@ graph_g = GraphViz.digraph( "G", use: :neato ) { |graph_g|
   graph_g.add_edges o9, o14, style: :dashed 
   graph_g.add_edges o12, o1, style: :dashed 
   
-}.output(:svg => "WebOfObjects.svg")
+}
+
+graph_g.output(:svg => "WebOfObjects.svg")
+graph_g.output(:png => "WebOfObjects.png")

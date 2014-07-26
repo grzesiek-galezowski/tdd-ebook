@@ -46,4 +46,7 @@ graph_g = GraphViz.digraph( "G", :strict => true, :use => :neato ) { |g|
   g1.add_edges square, recipient, fontsize: $SMALL_FONT_SIZE, taillabel: '...ConcreteRecipient::DoSomething()' 
   g2.add_edges alarm, lift, fontsize: $SMALL_FONT_SIZE, taillabel: 'Lift::GoToBottomFloor()...' 
   g2.add_edges lift, auto_lift, fontsize: $SMALL_FONT_SIZE, taillabel: '...AutoLift::GoToBottomFloor()' 
-}.output(svg: "SenderRecipientMessage.svg")
+}
+
+graph_g.output(svg: "SenderRecipientMessage.svg")
+graph_g.output(png: "SenderRecipientMessage.png")
