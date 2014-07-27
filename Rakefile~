@@ -12,6 +12,7 @@ end
 desc "Push ebook into source control"
 task :push_ebook, [:commit_message] => ['formats:all', 'dropbox_deployment:all'] do | t, args |
   #TODO repair this
+  remove_pandoc_manuscript
   git = Git.new $ROOT
   git.pull
   git.add_all
@@ -59,9 +60,15 @@ namespace :diagrams do
   desc "Regenerates all SVG diagrams from source and puts them in the source directory"
   task :regenerate do
     puts sh("cd ./Diagrams/ && ruby ./Generate.rb")
-    puts move(Dir.glob('./Diagrams/*.svg'), $PD_MANUSCRIPT_IMAGES_DIR, :verbose => true)
-    puts move(Dir.glob('./Diagrams/*.png'), $PD_MANUSCRIPT_IMAGES_DIR, :verbose => true)
+    puts move(Dir.glob('./Diagrams/*.svg'), $MANUSCRIPT_IMAGES_DIR, :verbose => true)
+    puts move(Dir.glob('./Diagrams/*.png'), $MANUSCRIPT_IMAGES_DIR, :verbose => true)
   end
+end
+
+task :clone_manuscript => 'diagrams:regenerate' do 
+  remove_pandoc_manuscript
+  cp_r $MANUSCRIPT_DIR, $PD_MANUSCRIPT_DIR
+  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri '/\\{lang=/d' *.txt")
 end
 
 namespace :formats do
@@ -76,9 +83,9 @@ namespace :formats do
   task :calibre => ['formats:mobi', 'formats:pdf', 'formats:azw3']
 
   desc "Generate epub format"
-  task :epub do
-    copy $MANUSCRIPT_GLOBAL_STYLESHEET, $EPUB_DEFAULT_STYLESHEET
-    generate_epub $MANUSCRIPT_DIR, local_ebook_variant(:epub)
+  task :epub => :clone_manuscript do
+    copy $PD_MANUSCRIPT_GLOBAL_STYLESHEET, $EPUB_DEFAULT_STYLESHEET
+    generate_epub $PD_MANUSCRIPT_DIR, local_ebook_variant(:epub)
   end
 
   desc "Generate older Kindle format"
@@ -97,7 +104,7 @@ namespace :formats do
   end
 
   desc "Generate single-page HTML document to gh-pages branch directory"
-  task :html do | t, args |
+  task :html => :clone_manuscript do | t, args |
     generate_html $PD_MANUSCRIPT_DIR, $HTML_INDEX
     move $ROOT + $HTML_INDEX, $PAGES_PATH
     cp_r $PD_MANUSCRIPT_IMAGES_DIR, $PAGES_PATH
@@ -106,13 +113,17 @@ namespace :formats do
   end
 
   desc "Generate PDF format"
-  task :alt_pdf do
+  task :alt_pdf => :clone_manuscript do
     generate_pdf $PD_MANUSCRIPT_DIR, local_ebook_variant(:pdf)
   end
 
   desc "Generate ODT format"
-  task :odt do
+  task :odt => :clone_manuscript do
     generate_pdf $PD_MANUSCRIPT_DIR, local_ebook_variant(:odt)
   end
+end
+
+def remove_pandoc_manuscript
+  rm_rf($PD_MANUSCRIPT_DIR) if $PD_MANUSCRIPT_DIR.exist?
 end
 

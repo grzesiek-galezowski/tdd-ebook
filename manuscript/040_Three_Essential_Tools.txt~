@@ -41,7 +41,7 @@ framework.
 
 Let us assume that our application looks like this:
 
-{lang=csharp}
+{lang="csharp"}
 ~~~
 public static void Main(string[] args) 
 {
@@ -68,6 +68,7 @@ line with some exemplary arguments, check the output to the console and
 compare it with what we expect to see. Such session could look like
 this:
 
+{lang="text"}
 ~~~
 C:\MultiplicationApp\MultiplicationApp.exe 3 7
 21
@@ -86,6 +87,7 @@ do this for us! In order to do this, we will create a second application
 that will also use the Multiplication class, but in a little different
 way:
 
+{lang="csharp"}
 ~~~
 public static void Main(string[] args) 
 {
@@ -104,6 +106,7 @@ Sounds easy, right? Let us take another step and extract the result
 check into something more reusable - after all, we will be adding
 division in a second, remember? So here goes:
 
+{lang="csharp"}
 ~~~
 public static void Main(string[] args) 
 {
@@ -130,6 +133,7 @@ back to the naming soon, for now just assume that this is just a good
 name for the method. Let us take one last round and put the test into
 its own method:
 
+{lang="csharp"}
 ~~~
 public static void Main(string[] args) 
 {
@@ -208,6 +212,7 @@ Quite to our joy, those three elements are present in xUnit frameworks
 as well. To illustrate it, here is (finally!) the same test we wrote,
 but with an xUnit framework (this one is called XUnit.Net):
 
+{lang="csharp"}
 ~~~
 [Fact] public void 
 Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
@@ -283,6 +288,7 @@ Let us pretend that we have the following code for adding new set of
 orders for products to a database and handling exceptions (by writing
 a message to a log) when it fails:
 
+{lang="csharp"}
 ~~~
 public class OrderProcessing
 {
@@ -309,6 +315,7 @@ shaking your head and saying: “Let us just create this database, invoke
 this method and see if the record is added properly". In such case, the
 first test would look like this:
 
+{lang="csharp"}
 ~~~
 [Fact]
 public void ShouldInsertNewOrderToDatabase()
@@ -382,6 +389,7 @@ object, which is an instance of another custom class that implements the
 same interface as MySqlOrderDatabase, but does not write to a database
 at all - it only stores the inserted records in a list:
 
+{lang="csharp"}
 ~~~
 public class FakeOrderDatabase : OrderDatabase
 {
@@ -402,6 +410,7 @@ public class FakeOrderDatabase : OrderDatabase
 Now, we can substitute the real implementation of order database with
 the fake instance:
 
+{lang="csharp"}
 ~~~
 [Fact] public void 
 ShouldInsertNewOrderToDatabase()
@@ -430,6 +439,7 @@ quicker now. But, that is not the end! We can easily write a test for an
 exception situation. How do we do it? Just make another fake object
 implemented like this:
 
+{lang="csharp"}
 ~~~
 public class ExplodingOrderDatabase : OrderDatabase
 {
@@ -450,6 +460,7 @@ method or argument added will need to be propagated to all these
 objects. We can spare some coding by making our mocks a little more
 generic so their behavior can be configured using lambda expressions:
 
+{lang="csharp"}
 ~~~
 public class ConfigurableOrderDatabase : OrderDatabase
 {
@@ -472,6 +483,7 @@ Now, we do not have to create additional classes for new scenarios, but
 our syntax gets awkward. See for yourself how we configure the fake
 order database to remember and yield the inserted order:
 
+{lang="csharp"}
 ~~~
 var db = new ConfigurableOrderDatabase();
 Order gotOrder = null;
@@ -481,10 +493,11 @@ db.doWhenSelectAllOrdersCalled = () => new List<Order>() { gotOrder };
 
 And if we want it to throw an exception when anything is inserted:
 
+{lang="csharp"}
 ~~~
 var db = new ConfigurableOrderDatabase();
 db.doWhenInsertCalled = o => {throw new Exception();};
-~~~      
+~~~
 
 Thankfully, some smart programmers created frameworks that provide
 further automation in such scenarios. One of them is called
@@ -494,6 +507,7 @@ used to it).
 
 Using NSubstitute, out first test can be rewritten as such:
 
+{lang="csharp"}
 ~~~
 [Fact] public void 
 ShouldInsertNewOrderToDatabase()
@@ -541,6 +555,7 @@ these values are, although it does not (the database does, but we
 already got rid of it from the test). Let us move it to a method with
 descriptive name:
 
+{lang="csharp"}
 ~~~
 [Fact] public void 
 ShouldInsertNewOrderToDatabase()
@@ -581,6 +596,7 @@ them for us? Susprise, surprise, there is one! It is called
 Data Builder pattern, but let us skip this discussion here). After
 refactoring our test to use AutoFixture, we arrive at the following:
 
+{lang="csharp"}
 ~~~
 [Fact] public void 
 ShouldInsertNewOrderToDatabase()
@@ -603,6 +619,7 @@ private Fixture any = new Fixture();
 Nice, huh? AutoFixture has a lot of advanced features, but personally
 I am conservative and wrap it behind a static class called `Any`:
 
+{lang="csharp"}
 ~~~
 public static class Any
 {
