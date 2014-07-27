@@ -100,7 +100,7 @@ languages available:
 So, in case of our alarms, we could make an interface with the following
 signature:
 
-~~~
+~~~ cs
 public interface Alarm
 {
   void Trigger();
@@ -111,7 +111,7 @@ public interface Alarm
 and then make two classes: `LoudAlarm` and `SilentAlarm`, both
 implementing the `Alarm` interface. Example for `LoudAlarm`:
 
-~~~
+~~~ cs
 public class LoudAlarm : Alarm
 {
   public void Trigger()
@@ -142,7 +142,7 @@ else if(alarm->kind == SILENT_ALARM)
 
 becomes just:
 
-~~~
+~~~ cs
 alarm.Trigger();
 ~~~~
 
@@ -183,7 +183,7 @@ solution is to make some special place in the code that assembles a
 system from loosely coupled objects. We saw this already as Johnny was
 explaining composability to Benjamin. He used the following example:
 
-~~~
+~~~ cs
 new SqlRepository(
   new ConnectionString("..."), 
   new AccessPrivileges(
@@ -207,7 +207,7 @@ that has three buildings with different alarm policies:
 
 The composition of objects fulfilling these needs could look like this:
 
-~~~
+~~~ cs
 new SecureArea(
   new OfficeBuilding(
     new DayNightSwitchedAlarm(
@@ -236,7 +236,7 @@ this allows us to change the alarm behaviors in many interesting ways
 using the parts we already have, but composing them together
 differently. For example, we might have, as in the above example:
 
-~~~
+~~~ cs
 new DayNightSwitchAlarm(
   new SilentAlarm(), 
   new LoudAlarm());
@@ -245,7 +245,7 @@ new DayNightSwitchAlarm(
 which would mean triggering silent alarm during a day and loud one
 during night. However, instead of this combination, we might use:
 
-~~~
+~~~ cs
 new DayNightSwitchAlarm(
   new SilentAlarm(),
   new HybridAlarm(
@@ -263,7 +263,7 @@ during the day, we could use a special class called `NoAlarm` that would
 implement `Alarm` interface, but have both `Trigger` and `Disable`
 methods do nothing. The composition code would look like this:
 
-~~~
+~~~ cs
 new DayNightSwitchAlarm(
   new NoAlarm(), // no alarm during day
   new HybridAlarm(
@@ -276,7 +276,7 @@ new DayNightSwitchAlarm(
 And, last but not least, we could completely remove all alarms from the
 guards building using the following code:
 
-~~~
+~~~ cs
 new GuardsBuilding(
   new NoAlarm()
 )

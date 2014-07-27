@@ -80,7 +80,7 @@ that is counter-intuitive - it occurs in our everyday lives. This is
 also true in software development. Let us take the following ‘test’ and
 see what kind of needs it specifies:
 
-~~~ cs
+~~~
 var reporting = new ReportingFeature();
 var anyPowerUser = Any.Of(Users.Admin, Users.Auditor);
 Assert.True(reporting.CanBePerformedBy(anyPowerUser));

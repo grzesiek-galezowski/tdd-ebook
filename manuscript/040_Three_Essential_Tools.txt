@@ -41,7 +41,7 @@ framework.
 
 Let us assume that our application looks like this:
 
-~~~ cs
+~~~
 public static void Main(string[] args) 
 {
   try
@@ -85,7 +85,7 @@ do this for us! In order to do this, we will create a second application
 that will also use the Multiplication class, but in a little different
 way:
 
-~~~ cs
+~~~
 public static void Main(string[] args) 
 {
   var multiplication = new Multiplication(3,7);
@@ -103,7 +103,7 @@ Sounds easy, right? Let us take another step and extract the result
 check into something more reusable - after all, we will be adding
 division in a second, remember? So here goes:
 
-~~~ cs
+~~~
 public static void Main(string[] args) 
 {
   var multiplication = new Multiplication(3,7);
@@ -129,7 +129,7 @@ back to the naming soon, for now just assume that this is just a good
 name for the method. Let us take one last round and put the test into
 its own method:
 
-~~~ cs
+~~~
 public static void Main(string[] args) 
 {
   Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers();
@@ -282,7 +282,7 @@ Let us pretend that we have the following code for adding new set of
 orders for products to a database and handling exceptions (by writing
 a message to a log) when it fails:
 
-~~~ cs
+~~~
 public class OrderProcessing
 {
   //other code...
@@ -308,7 +308,7 @@ shaking your head and saying: “Let us just create this database, invoke
 this method and see if the record is added properly". In such case, the
 first test would look like this:
 
-~~~ cs
+~~~
 [Fact]
 public void ShouldInsertNewOrderToDatabase()
 {
@@ -381,7 +381,7 @@ object, which is an instance of another custom class that implements the
 same interface as MySqlOrderDatabase, but does not write to a database
 at all - it only stores the inserted records in a list:
 
-~~~ cs
+~~~
 public class FakeOrderDatabase : OrderDatabase
 {
   public Order _receivedArgument;
@@ -401,7 +401,7 @@ public class FakeOrderDatabase : OrderDatabase
 Now, we can substitute the real implementation of order database with
 the fake instance:
 
-~~~ cs
+~~~
 [Fact] public void 
 ShouldInsertNewOrderToDatabase()
 {
@@ -429,7 +429,7 @@ quicker now. But, that is not the end! We can easily write a test for an
 exception situation. How do we do it? Just make another fake object
 implemented like this:
 
-~~~ cs
+~~~
 public class ExplodingOrderDatabase : OrderDatabase
 {
   public void Insert(Order order)
@@ -449,7 +449,7 @@ method or argument added will need to be propagated to all these
 objects. We can spare some coding by making our mocks a little more
 generic so their behavior can be configured using lambda expressions:
 
-~~~ cs
+~~~
 public class ConfigurableOrderDatabase : OrderDatabase
 {
   public Action<Order> doWhenInsertCalled;
@@ -471,7 +471,7 @@ Now, we do not have to create additional classes for new scenarios, but
 our syntax gets awkward. See for yourself how we configure the fake
 order database to remember and yield the inserted order:
 
-~~~ cs
+~~~
 var db = new ConfigurableOrderDatabase();
 Order gotOrder = null;
 db.doWhenInsertCalled = o => {gotOrder = o;};
@@ -480,7 +480,7 @@ db.doWhenSelectAllOrdersCalled = () => new List<Order>() { gotOrder };
 
 And if we want it to throw an exception when anything is inserted:
 
-~~~ cs
+~~~
 var db = new ConfigurableOrderDatabase();
 db.doWhenInsertCalled = o => {throw new Exception();};
 ~~~      
@@ -493,7 +493,7 @@ used to it).
 
 Using NSubstitute, out first test can be rewritten as such:
 
-~~~ cs
+~~~
 [Fact] public void 
 ShouldInsertNewOrderToDatabase()
 {
@@ -540,7 +540,7 @@ these values are, although it does not (the database does, but we
 already got rid of it from the test). Let us move it to a method with
 descriptive name:
 
-~~~ cs
+~~~
 [Fact] public void 
 ShouldInsertNewOrderToDatabase()
 {
@@ -602,7 +602,7 @@ private Fixture any = new Fixture();
 Nice, huh? AutoFixture has a lot of advanced features, but personally
 I am conservative and wrap it behind a static class called `Any`:
 
-~~~ cs
+~~~
 public static class Any
 {
   private static any = new Fixture();

@@ -130,7 +130,7 @@ implementation of `Lift` interface that would just ignore the messages
 it got from the alarm (or fake that it did what it was asked for)
 and the alarm will not even notice.
 
-![Sender, interface, and recipient](./images/SenderRecipientMessage.png)
+![Sender, interface, and recipient](images/SenderRecipientMessage.png)
 
 Ok, I hope we got that part straight. Time for some new requirements.
 It has been decided that whenever any malfunction happens in the

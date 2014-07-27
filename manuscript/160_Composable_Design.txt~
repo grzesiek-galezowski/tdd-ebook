@@ -75,7 +75,7 @@ synchronizing. Let's take a bite at the code!
 
 **Johnny:** Sure, here you go:
 
-~~~
+~~~ cs
 public class CompanyPolicies : IDisposable
 {
   readonly SqlRepository _repository
@@ -131,7 +131,7 @@ somehow able to make the `CompanyPolicies` class database type-agnostic.
 For now, as you can see, the implementation is coupled to the specific
 `SqlRepository`, because it creates a specific instance itself:
 
-~~~
+~~~ cs
 public class CompanyPolicies : IDisposable
 {
   readonly SqlRepository _repository
@@ -145,7 +145,7 @@ options do you see, Benjamin?
 `SqlRepository` and introduce an if statement to the constructor like
 this:
 
-~~~
+~~~ cs
 public class CompanyPolicies : IDisposable
 {
   readonly Repository _repository;
@@ -176,7 +176,7 @@ next option?
 **Benjamin:** Another option would be to change the SqlRepository itself
 to be just a wrapper around the actual database access, like this:
 
-~~~
+~~~ cs
 public class SqlRepository : IDisposable
 {
   readonly Repository _repository;
@@ -216,7 +216,7 @@ choice. The last option I can think of is leaving this choice to
 another, "3rd party" code, that would choose the repository to use and
 pass it to the `CompanyPolicies` via constructor, like this:
 
-~~~
+~~~ cs
 public class CompanyPolicies : IDisposable
 {
   private readonly Repository _repository;
@@ -246,7 +246,7 @@ instance through it...
 
 **Benjamin:** Ha ha! Look at this! I am SUPREME!
 
-~~~
+~~~ cs
 public class CompanyPolicies : IDisposable
 {
   //_repository is now an interface
@@ -298,7 +298,7 @@ still want to use it.
 **Johnny:** The same part of the code that creates it, for example the
 `Main` method. Let me show you an example of how this may look like:
 
-~~~
+~~~ cs
 public static void Main(string[] args)
 {
   using(var repo = new SqlRepository())
@@ -316,7 +316,7 @@ disposed of at the end. Thanks to this, the `CompanyPolicies` has no
 disposable fields and it itself does not have to be disposable - we can
 just delete the `Dispose()` method:
 
-~~~
+~~~ cs
 //not implementing IDisposable anymore:
 public class CompanyPolicies 
 {
@@ -347,14 +347,14 @@ just pass it through the constructor instead of the original one.
 **Johnny:** Yes. For example, look at `CompanyPolicies` component. We
 can compose it with a repository like this:
 
-~~~
+~~~ cs
 var policies 
   = new CompanyPolicies(new SqlRepository());
 ~~~
 
 or like this:
 
-~~~
+~~~ cs
 var policies 
   = new CompanyPolicies(new NoSqlRepository());
 ~~~
@@ -367,7 +367,7 @@ throw exceptions when it is not supposed to do so). An implementation of
 `Repository` may be itself a very complex and composed of another set of
 classes, for example something like this:
 
-~~~
+~~~ cs
 new SqlRepository(
   new ConnectionString("..."), 
   new AccessPrivileges(
@@ -390,7 +390,7 @@ looking for the coffee.
 
 **Benjamin:** Here:
 
-~~~
+~~~ cs
 public interface Repository
 {
   IList<Employee> CurrentEmployees();

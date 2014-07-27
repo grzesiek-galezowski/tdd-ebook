@@ -24,7 +24,7 @@ too long, because these questions are the topic of this chapter.
 Before we take a deep dive, let's try to answer these questions for a 
 really simple example code of a console application:
 
-~~~ cs
+~~~
 public static void Main(string[] args)
 {
   var sender = new Sender(new Recipient());
@@ -50,14 +50,14 @@ There are few ways, each of them useful in certain circumstances:
 Two objects can be composed by passing one into the constructor of
 another:
 
-~~~ cs
+~~~
 sender = new Sender(recipient);
 ~~~
 
 A sender is composed with a recipient and saves a reference to
 the recipient in a private field for later, like this:
 
-~~~ cs
+~~~
 public Sender(Recipient recipient)
 {
   this._recipient = recipient;
@@ -71,7 +71,7 @@ Thus, the code using `Sender` is not aware that `Sender` stores a
 reference to `Recipient` inside it. This
 basically means that when `Sender` is used, e.g. like this:
 
-~~~ cs
+~~~
 sender.DoSomething()
 ~~~
 
@@ -82,13 +82,13 @@ that the `Sender` needs not use the `Recipient` to do its duty, the
 code that uses `Sender` does not need to change at all - it still uses 
 the `Sender` the same way:
 
-~~~ cs
+~~~
 sender.DoSomething()
 ~~~
 
 All we have to change is the composition code:
 
-~~~ cs
+~~~
 //no need to pass a reference to Recipient anymore
 sender = new Sender();
 ~~~
@@ -99,7 +99,7 @@ course, exist before a `Sender` does. Another less obvious requirement
 for this composition is that `Recipient` must be usable at least as long
 as `Sender` is usable. In other words, the following is nonsense:
 
-~~~ cs
+~~~
 sender = new Sender(recipient);
 recipient.Dispose(); //but sender is unaware of it 
                      //and may still use recipient in:
@@ -111,14 +111,14 @@ sender.DoSomething();
 Another common way of composing objects together is passing one object
 as a parameter of another object's method call:
 
-~~~ cs
+~~~
 sender.DoSomethingWithHelpOf(recipient);
 ~~~
 
 In such case, the objects are most often composed temporarily, just for 
 the time of execution of this single method:
 
-~~~ cs
+~~~
 public void DoSomethingWithHelpOf(Recipient recipient)
 {
   //... perform some logic
@@ -133,7 +133,7 @@ This is a great way to compose objects when we want to use the same
 sender with different recipients at different times (most often from
 different parts of the code):
 
-~~~ cs
+~~~
 //in one place
 sender.DoSomethingWithHelpOf(recipient);
 
@@ -153,13 +153,13 @@ same arguments). Most often, the sender is given a reference to this
 intermediary object as a constructor parameter (an approach we already 
 discussed):
 
-~~~ cs
+~~~
 sender = new Sender(factory);
 ~~~
 
 and then the intermediary object is used to deliver other objects:
 
-~~~ cs
+~~~
 public class Sender
 {
   //...
@@ -182,7 +182,7 @@ needed each time `DoSomething()` is called (much like in case of
 To be more clear, here is a comparison of two approaches: passing 
 recipient inside a message:
 
-~~~ cs
+~~~
 //user of Sender passes a recipient:
 public DoSomething(Recipient recipient) 
 {
@@ -192,7 +192,7 @@ public DoSomething(Recipient recipient)
 
 and obtaining from factory:
 
-~~~ cs
+~~~
 //user of Sender does not know about Recipient
 public DoSomething() 
 {
@@ -224,7 +224,7 @@ because mean value is based on historical data and someone might
 register for it at any time, right? So, part of the definition of such 
 a sensor could look like this:
 
-~~~ cs
+~~~
 public class TemperatureSensor
 {
   private TemperatureObserver _observer 
@@ -256,7 +256,7 @@ calculated values. This means we need to have a method inside the
 `TemperatureSensor` class to overwrite this default "do-nothing"
 observer with one that we provide:
 
-~~~ cs
+~~~
 public void FromNowOnReportTo(TemperatureObserver observer)
 {
   _observer = observer;
@@ -286,7 +286,7 @@ calculations). This can be achieved in two ways.
 The first way would be to just hold a collection of observers in our 
 sensor, and add to this collection whenever a new observer is registered:
 
-~~~ cs
+~~~
 IList<TemperatureObserver> _observers 
   = new List<TemperatureObserver>();
 
@@ -298,7 +298,7 @@ public void FromNowOnReportTo(TemperatureObserver observer)
 
 In such case, reporting would mean iterating over the observers list:
 
-~~~ cs
+~~~
 ...
 foreach(var observer in _observers)
 {
@@ -313,7 +313,7 @@ observer" that would hold collection of other observers (welcome
 composability!) and broadcast the values to them every time it itself 
 receives those values. It could be created and registered like this:
 
-~~~ cs
+~~~
 var broadcastingObserver 
   = new BroadcastingObserver(
       new DisplayingObserver(),
@@ -329,7 +329,7 @@ might introduce `ParallelBroadcastObserver` that would notify each observer
 asynchronously instead of sequentially and put it to use by changing 
 the composition code only:
 
-~~~ cs
+~~~
 var broadcastingObserver 
   = new ParallelBroadcastObserver(
       new DisplayingObserver(),
@@ -377,7 +377,7 @@ For simplification, let's take an example of a console application.
 Usually, when not using any framework, your application is symbolized 
 as a class:
 
-~~~ cs
+~~~
 public static void Main(string[] args)
 {
   var myApplication = new MyApplication();
@@ -407,7 +407,7 @@ that it receives an object of that type.
 
 Let's say we have a factory like this:
 
-~~~ cs
+~~~
 public class Version1ProtocolMessageFactory
 {
   public Message createFrom(MessageData rawData)
@@ -431,7 +431,7 @@ Note that the factory can create many different types of messages
 depending on what is in the raw data, but for the user of the factory, 
 this is irrelevant. All that is seen by the user is this:
 
-~~~ cs
+~~~
 var message = _messageFactory.NewInstanceFrom(rawData);
 message.ValidateUsing(_primitiveValidations);
 message.ApplyTo(_sessions);
@@ -451,7 +451,7 @@ composable.
 
 We may have a class that uses a factory:
 
-~~~ cs
+~~~
 public class MessageInbound
 {
   private MessageFactory _factory;
@@ -473,7 +473,7 @@ public class MessageInbound
 Object of this class needs to be composed with factory implementing 
 the `MessageFactory` interface in a composition root like this:
 
-~~~ cs
+~~~
 new MessageInbound(new BinaryMessageFactory());
 ~~~
 
@@ -491,7 +491,7 @@ Thankfully, thanks to the factory, we can use the `MessageInbound`
 just as it is, but compose it with a different factory. So, we will 
 have to instances of `MessageInbound` class in our composition root:
 
-~~~ cs
+~~~
 var binaryMessageInbound
   = new MessageInbound(
       new BinaryMessageFactory(), 

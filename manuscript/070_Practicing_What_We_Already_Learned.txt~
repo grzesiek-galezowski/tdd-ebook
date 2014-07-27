@@ -330,7 +330,7 @@ should the calculator do?
 **Johnny:** In our case, “turning on" is creating a calculator. Let us
 write it down as a method name:
 
-~~~
+~~~ cs
 public class CalculatorSpecification
 {
 
@@ -362,7 +362,7 @@ displaying “0", right? So let us just write it in form of an assertion.
 
 **Benjamin:** You mean something like this?
 
-~~~
+~~~ cs
 public class CalculatorSpecification
 {
 
@@ -392,7 +392,7 @@ displayed value from?
 
 **Johnny:** like this:
 
-~~~
+~~~ cs
 public class CalculatorSpecification
 {
 
@@ -415,7 +415,7 @@ step. Is this how it works?
 
 **Benjamin:** Ok then, here goes:
 
-~~~
+~~~ cs
 public class CalculatorSpecification
 {
 
@@ -441,7 +441,7 @@ the `Calculator` class at all...
 
 **Benjamin:** OK.
 
-~~~
+~~~ cs
 public class Calculator
 {
 }
@@ -450,7 +450,7 @@ public class Calculator
 **Benjamin:** Looks like the `Display()` method is missing too. I will
 add it.
 
-~~~
+~~~ cs
 public class Calculator
 {
   public string Display()
@@ -470,7 +470,7 @@ and that is exactly what the code you wrote does. Before we arrive at
 this point, let us make sure this Statement can ever be evaluates as
 false. So for now, let us change it to this:
 
-~~~
+~~~ cs
 public class Calculator
 {
   public string Display()
@@ -502,7 +502,7 @@ what do we do now?
 
 **Benjamin:** like this?
 
-~~~
+~~~ cs
 public class Calculator
 {
   public string Display()
@@ -549,7 +549,7 @@ duplicated between the Statement and the code?
 **Benjamin:** both of them contain the literal “0". The Statement has it
 here:
 
-~~~
+~~~ cs
 Assert.Equal("0", displayedResult);
 ~~~
 
@@ -562,7 +562,7 @@ return "0";
 **Johnny:** Good, let us eliminate this duplication by introducing
 a constant called `InitialValue`. The Statement will now look like this:
 
-~~~
+~~~ cs
 [Fact] public void
 ShouldDisplayInitialValueWhenCreated()
 {
@@ -576,7 +576,7 @@ ShouldDisplayInitialValueWhenCreated()
 
 and the implementation:
 
-~~~
+~~~ cs
 public class Calculator
 {
   public const string InitialValue = "0";
@@ -616,7 +616,7 @@ behavior?
 
 **Benjamin:** I will try. Here goes:
 
-~~~
+~~~ cs
 [Fact] public void 
 ShouldDisplayEnteredDigits()
 {
@@ -663,7 +663,7 @@ used:
 
 Hence, I propose the following:
 
-~~~
+~~~ cs
 [Fact] public void 
 ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 {
@@ -737,7 +737,7 @@ I will tell you more about later.
 is going on - we can talk about the principles, pros and cons later. By
 the way, the following sequence of casts looks a little bit ugly:
 
-~~~
+~~~ cs
 string.Format("{0}{1}{2}", 
  (int)nonZeroDigit, 
  (int)anyDigit1, 
@@ -755,7 +755,7 @@ is the result?
 **Johnny:** Good, now let us write some code to make this Statement
 true. First, let us introduce an enumeration of digits:
 
-~~~
+~~~ cs
 public enum DigitKeys
 {
  Zero = 0,
@@ -791,7 +791,7 @@ effortless.
 **Johnny:** Now for the implementation. Just to remind you - up to now,
 it looked like this:
 
-~~~
+~~~ cs
 public class Calculator
 {
  public const string InitialValue = "0";
@@ -806,7 +806,7 @@ This is not enough to support displaying multiple digits (as we saw,
 because the Statement saying they should be supported was evaluated to
 false). So let us evolve the code to handle this case:
 
-~~~
+~~~ cs
 public class Calculator
 {
  private int _result = 0;
@@ -827,7 +827,7 @@ public class Calculator
 **Johnny:** Now the Statement is true so we can go back to it and make
 it a little bit prettier. Let us take a second look at it:
 
-~~~
+~~~ cs
 [Fact] public void 
 ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 {
@@ -864,7 +864,7 @@ more general - we will need a way of constructing expected displayed
 output in many of our future Statements. Here is my go at this helper
 method:
 
-~~~
+~~~ cs
 string StringConsistingOf(params DigitKeys[] digits)
 {
  var result = string.Empty;
@@ -880,7 +880,7 @@ string StringConsistingOf(params DigitKeys[] digits)
 Note that this is more general as it supports any number of parameters.
 And the Statement after this extraction looks like this:
 
-~~~
+~~~ cs
 [Fact] public void 
 ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 {
@@ -910,7 +910,7 @@ true, which means we got it right, did we not?
 extra careful. Let us comment out the body of the `Enter()` method and
 see if this Statement can still be made false by the implementation:
 
-~~~
+~~~ cs
 public void Enter(DigitKeys digit)
  {
   //_result *= 10;
@@ -930,7 +930,7 @@ it. It is really a variation of previous Statement.
 
 **Benjamin:** Let me try... ok, here it is:
 
-~~~
+~~~ cs
 [Fact] public void 
 ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipleTimes()
 {
@@ -962,7 +962,7 @@ modification to make it true again. This isn’t as obvious as previously,
 so let me do it. I will mark all the added lines with `//+` comment so
 that you can see them easily:
 
-~~~
+~~~ cs
 public class Calculator
 {
  int _result = 0;

@@ -138,7 +138,7 @@ Let us take xUnit.Net as an example. As I stated previously, In
 xUnit.Net, to turn a method into a Statement, you mark it with `[Fact]`
 attribute the following way:
 
-~~~ cs
+~~~
 public class CalculatorSpecification
 {
   [Fact]
@@ -162,7 +162,7 @@ pass, test - all pass, test - all pass... Hopefully, you use some kind of
 snippets mechanism for creating new Statements, but if not (and many do
 not actually do this), once in a while, you do something like this:
 
-~~~ cs
+~~~
 public class CalculatorSpecification
 {
   //... some Statements here
@@ -207,7 +207,7 @@ Let us take a look at the following Statement saying that setting
 a value higher than allowed to a field of a frame should produce error
 result:
 
-~~~ cs
+~~~
 [Fact]
 public void ShouldRecognizeTimeSlotAboveMaximumAllowedAsInvalid()
 {
@@ -250,7 +250,7 @@ risking regression, then just test my changes and it is all good...").
 So, you start writing the new Statement. The Specification class already
 contains a field member like this:
 
-~~~ cs
+~~~
 public class XmlConfigurationSpecification
 {
   XmlConfiguration config = new XmlConfiguration(xmlFixtureString);
@@ -268,7 +268,7 @@ does not need all this crap that is inside this string. So, you decide
 to start fresh and create a separate object of `XmlConfiguration` class
 with your own, minimal string. Your Statement begins like this:
 
-~~~ cs
+~~~
 string customFixture = CreateMyOwnFixtureForThisTestOnly();
 var configuration = new XmlConfiguration(customFixture);
 ...
@@ -278,7 +278,7 @@ And it passes - cool... not. Ok, what is wrong with this? Nothing big,
 unless you read the source code of XmlConfiguration class carefully.
 Inside, you can see, how the xml string is stored:
 
-~~~ cs
+~~~
 private static string xmlText; //note the static keyword!
 ~~~
 
