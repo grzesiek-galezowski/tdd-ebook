@@ -217,7 +217,7 @@ a user should be equal to another when it has the same name as the other
 one:
 
 {lang="gherkin"}
-~~~~ {style="padding: 1em; border: dashed thin gray;"}
+~~~~
 GIVEN a user with any name
 WHEN I compare it to another user with the same name
 THEN it should appear equal to this other user
@@ -228,7 +228,7 @@ Let us start with the translation
 The first line:
 
 {lang="gherkin"}
-~~~~ {style="padding: 1em; border: dashed thin gray;"}
+~~~~
 GIVEN a user with any name
 ~~~~
 
@@ -242,7 +242,7 @@ var user = new User(anyName);
 Then the second line:
 
 {lang="gherkin"}
-~~~~ {style="padding: 1em; border: dashed thin gray;"}
+~~~~
 WHEN I compare it to another user with the same name
 ~~~~
 
@@ -256,7 +256,7 @@ user.Equals(anotherUserWithTheSameName);
 Great! Now the last line:
 
 {lang="gherkin"}
-~~~~ {style="padding: 1em; border: dashed thin gray;"}
+~~~~
 THEN it should appear equal to this other user
 ~~~~
 
