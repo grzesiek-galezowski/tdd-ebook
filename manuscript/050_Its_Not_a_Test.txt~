@@ -145,7 +145,8 @@ my hope is that using this terminology throughout the book will let you
 look differently at some things. So, let us agree that for the sake of 
 this book:
 
-**Specification Statement** (or simply **Statement**, starting with capital letter)
+**Specification Statement** (or simply **Statement**, starting with 
+capital letter)
 :   will be used instead of ‘test’ or ‘test method’
 **Specification** (or simply **Spec**), also starting with capital letter
 :   will be used instead of ‘test suite’ or ‘test list’

@@ -66,21 +66,13 @@ practice and introduce an expanded version, but in the meantime, its
 sufficient to say that:
 
 Write a Statement you wish was true but is not
-:   means that the Statement evaluates to false (it shows on the test
-    list as failing - in most xUnit frameworks, it will be marked
-    with red color)
+:   means that the Statement evaluates to false (it shows on the test list as failing - in most xUnit frameworks, it will be marked with red color)
+
 Add code to make it true
-:   means that we write just enough code to make the Statement true (in
-    most xUnit frameworks, the true Statement will be marked with
-    green color). Later in the course of the book, you will see how
-    small can be “just enough"
+:   means that we write just enough code to make the Statement true (in most xUnit frameworks, the true Statement will be marked with green color). Later in the course of the book, you will see how small can be “just enough"
+
 Refactor
-:   is a step that I have silently discarded so far (and will do so for
-    at least few next chapters. Do not worry, we will get back to it
-    eventually). Basically, it boils down to using the safety net of
-    executable specification we already have in place to safely enhance
-    the quality of the covered code while all mistakes we make in the
-    process are quickly discovered by the running Specification.
+:   is a step that I have silently discarded so far (and will do so for at least few next chapters. Do not worry, we will get back to it     eventually). Basically, it boils down to using the safety net of executable specification we already have in place to safely enhance the quality of the covered code while all mistakes we make in the process are quickly discovered by the running Specification.
 
 By the way, this process is sometimes referred to as
 “Red-Green-Refactor". I am just mentioning it here for the record - I am
@@ -138,7 +130,8 @@ Let us take xUnit.Net as an example. As I stated previously, In
 xUnit.Net, to turn a method into a Statement, you mark it with `[Fact]`
 attribute the following way:
 
-~~~ cs
+{lang="csharp"}
+~~~
 public class CalculatorSpecification
 {
   [Fact]
@@ -162,7 +155,8 @@ pass, test - all pass, test - all pass... Hopefully, you use some kind of
 snippets mechanism for creating new Statements, but if not (and many do
 not actually do this), once in a while, you do something like this:
 
-~~~ cs
+{lang="csharp"}
+~~~
 public class CalculatorSpecification
 {
   //... some Statements here
@@ -207,7 +201,8 @@ Let us take a look at the following Statement saying that setting
 a value higher than allowed to a field of a frame should produce error
 result:
 
-~~~ cs
+{lang="csharp"}
+~~~
 [Fact]
 public void ShouldRecognizeTimeSlotAboveMaximumAllowedAsInvalid()
 {
@@ -250,7 +245,8 @@ risking regression, then just test my changes and it is all good...").
 So, you start writing the new Statement. The Specification class already
 contains a field member like this:
 
-~~~ cs
+{lang="csharp"}
+~~~
 public class XmlConfigurationSpecification
 {
   XmlConfiguration config = new XmlConfiguration(xmlFixtureString);
@@ -268,7 +264,8 @@ does not need all this crap that is inside this string. So, you decide
 to start fresh and create a separate object of `XmlConfiguration` class
 with your own, minimal string. Your Statement begins like this:
 
-~~~ cs
+{lang="csharp"}
+~~~
 string customFixture = CreateMyOwnFixtureForThisTestOnly();
 var configuration = new XmlConfiguration(customFixture);
 ...
@@ -278,7 +275,8 @@ And it passes - cool... not. Ok, what is wrong with this? Nothing big,
 unless you read the source code of XmlConfiguration class carefully.
 Inside, you can see, how the xml string is stored:
 
-~~~ cs
+{lang="csharp"}
+~~~
 private static string xmlText; //note the static keyword!
 ~~~
 

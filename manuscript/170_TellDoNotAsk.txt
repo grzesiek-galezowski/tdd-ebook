@@ -26,24 +26,11 @@ raises and bonuses, the rules will be different. I made a small table to
 allow comparing what we have for regular employees and what we want to
 add for contractors:
 
-+---------------------+-----------------------+------------------------+
+
 | Employee Type       | Raise                 |     Bonus              |
-+=====================+=======================+========================+
-| Regular Employee    | +10% of current       | +200% of current       |
-|                     | salary if not         | salary one time after  |
-|                     | reached maximum on a  | five years             |
-|                     | given pay grade       |                        |
-+---------------------+-----------------------+------------------------+
-| Contractor          | +5% of average salary | +10% of current salary |
-|                     | calculated for last 3 | when a contractor      |
-|                     | years of service (or  | receives score more    |
-|                     | all previous years of | than 100 for the       |
-|                     | service if they have  | previous year          |
-|                     | worked for less than  |                        |
-|                     | 3 years)              |                        |
-+---------------------+-----------------------+------------------------+
-
-
+|---------------------|-----------------------|------------------------|
+| Regular Employee    | +10% of current salary if not reached maximum on a given pay grade | +200% of current salary one time after five years     |
+| Contractor          | +5% of average salary calculated for last 3 years of service (or all previous years of service if they have worked for less than 3 years | +10% of current salary when a contractor receives score more than 100 for the previous year             |
 
 So while the workflow is going to be the same for both a regular
 employee and a contractor:

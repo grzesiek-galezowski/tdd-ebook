@@ -23,7 +23,7 @@ scope?
 Let us try to answer the question by examining some TDD unit-level
 Statements:
 
-### Is it class scope? {#u06f9b4ca-3b63-475d-81e5-3c2690472b97 .sigil_not_in_toc}
+### Is it class scope? 
 
 Let us see the first example and try to answer this question:
 
@@ -50,7 +50,7 @@ see... how many real classes take part in this spec? Three: a string, an
 exception and the validation. So the class scope is not the most
 accurate description.
 
-### Or a method scope? {#ub669df36-50ac-404a-bcdd-bc0e64845b4b .sigil_not_in_toc}
+### Or a method scope?
 
 So, maybe the scope covers a single method, meaning a Statement always
 exercises one method of a specified object?

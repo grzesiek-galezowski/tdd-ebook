@@ -47,17 +47,17 @@ public static void Main(string[] args)
 {
   try
   {
-	int firstNumber = Int32.Parse(args[0]);
-	int secondNumber = Int32.Parse(args[1]);
+    int firstNumber = Int32.Parse(args[0]);
+    int secondNumber = Int32.Parse(args[1]);
 
-	var result = 
-	  new Multiplication(firstNumber, secondNumber).Perform();
+    var result = 
+      new Multiplication(firstNumber, secondNumber).Perform();
 
-	Console.WriteLine("Result is: " + result);
+    Console.WriteLine("Result is: " + result);
   }
   catch(Exception e)
   {
-	Console.WriteLine("Addition failed because of: " + e);
+    Console.WriteLine("Addition failed because of: " + e);
   } 
 }
 ~~~
@@ -97,7 +97,7 @@ public static void Main(string[] args)
   
   if(result != 21)
   {
-	throw new Exception("Failed! Expected: 21 but was: " + result);
+    throw new Exception("Failed! Expected: 21 but was: " + result);
   }
 }
 ~~~
@@ -122,8 +122,8 @@ public static void AssertTwoIntegersAreEqual(
 {
   if(actual != expected)
   {
-	throw new Exception(
-	  "Failed! Expected: " + expected + " but was: " + actual);
+    throw new Exception(
+      "Failed! Expected: " + expected + " but was: " + actual);
   }
 }
 ~~~
@@ -158,8 +158,8 @@ public static void AssertTwoIntegersAreEqual(
 {
   if(actual != expected)
   {
-	throw new Exception(
-	  "Failed! Expected: " + expected + " but was: " + actual);
+    throw new Exception(
+    "Failed! Expected: " + expected + " but was: " + actual);
   }
 }
 ~~~
@@ -296,14 +296,14 @@ public class OrderProcessing
 
   public void Place(Order order)
   {
-	try
-	{
-	  this.orderDatabase.Insert(order);
-	}
-	catch(Exception e)
-	{
-	  this.log.Write("Could not insert an order. Reason: " + e);
-	}
+    try
+    {
+      this.orderDatabase.Insert(order);
+    }
+    catch(Exception e)
+    {
+      this.log.Write("Could not insert an order. Reason: " + e);
+    }
   }
 
   //other code...
@@ -326,11 +326,11 @@ public void ShouldInsertNewOrderToDatabase()
   orderDatabase.Clean();
   var orderProcessing = new OrderProcessing(orderDatabase, new FileLog());
   var order = new Order(
-	name: "Grzesiek", 
-	surname: "Galezowski", 
-	product: "Agile Acceptance Testing", 
-	date: DateTime.Now,
-	quantity: 1);
+    name: "Grzesiek", 
+    surname: "Galezowski", 
+    product: "Agile Acceptance Testing", 
+    date: DateTime.Now,
+    quantity: 1);
 
   //WHEN
   orderProcessing.Place(order);
@@ -397,12 +397,12 @@ public class FakeOrderDatabase : OrderDatabase
 
   public void Insert(Order order)
   {
-	_receivedArgument = order;
+    _receivedArgument = order;
   }
 
   public List<Order> SelectAllOrders()
   {
-	return new List<Order>() { _receivedOrder; };
+    return new List<Order>() { _receivedOrder; };
   }
 }
 ~~~
@@ -419,11 +419,11 @@ ShouldInsertNewOrderToDatabase()
   var orderDatabase = new FakeOrderDatabase();
   var orderProcessing = new OrderProcessing(orderDatabase, new FileLog());
   var order = new Order(
-	name: "Grzesiek", 
-	surname: "Galezowski", 
-	product: "Agile Acceptance Testing", 
-	date: DateTime.Now,
-	quantity: 1);
+    name: "Grzesiek", 
+    surname: "Galezowski", 
+    product: "Agile Acceptance Testing", 
+    date: DateTime.Now,
+    quantity: 1);
 
   //WHEN
   orderProcessing.Place(order);
@@ -445,7 +445,7 @@ public class ExplodingOrderDatabase : OrderDatabase
 {
   public void Insert(Order order)
   {
-	throw new Exception();
+    throw new Exception();
   }
 
   public List<Order> SelectAllOrders()
@@ -469,12 +469,12 @@ public class ConfigurableOrderDatabase : OrderDatabase
 
   public void Insert(Order order)
   {
-	doWhenInsertCalled(order);
+    doWhenInsertCalled(order);
   }
 
   public List<Order> SelectAllOrders()
   {
-	return doWhenSelectAllOrdersCalled();
+    return doWhenSelectAllOrdersCalled();
   }
 }
 ~~~
@@ -516,11 +516,11 @@ ShouldInsertNewOrderToDatabase()
   var orderDatabase = new Substitute.For<OrderDatabase>();
   var orderProcessing = new OrderProcessing(orderDatabase, new FileLog());
   var order = new Order(
-	name: "Grzesiek", 
-	surname: "Galezowski", 
-	product: "Agile Acceptance Testing", 
-	date: DateTime.Now,
-	quantity: 1);
+    name: "Grzesiek", 
+    surname: "Galezowski", 
+    product: "Agile Acceptance Testing", 
+    date: DateTime.Now,
+    quantity: 1);
 
   //WHEN
   orderProcessing.Place(order);

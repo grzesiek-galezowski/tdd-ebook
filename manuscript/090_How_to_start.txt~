@@ -24,7 +24,7 @@ because the Statements are considered as tests and second-level citizens
 they are considered sufficient. We will take a look at some examples of
 bad names and then I will introduce to you some rules of good naming.
 
-### Consequences of bad naming {#ue6b820a0-8d47-4bcc-8594-e14d112faf7e .sigil_not_in_toc}
+### Consequences of bad naming
 
 As I said, many people do not really care how their Statements are
 named. This is a symptom of treating the Specification as garbage or
@@ -103,7 +103,8 @@ Note few things about the name of the Statement:
     names. Sure, we could put all the information in the comment instead
     of Statement name and leave the name short, like this:
 
-    ~~~ cs
+    {lang="csharp"}
+    ~~~
     [Fact]
     //Notifies listeners that server 
     //is unavailable when cannot connect
@@ -161,7 +162,8 @@ The name of the Specification (i.e. class name) answers the question
 and want to say that it “should sort all items in ascending order when
 performed", I say it like this:
 
-~~~ cs
+{lang="csharp"}
+~~~
 public class SortingOperationSpecification
 {
  [Fact] public void
@@ -208,12 +210,13 @@ THEN parts and translating them into code in almost literal, brute-force
 way, then add all the missing pieces that are required for the code to
 compile and run.
 
-### A Simple Example {#uebece5ad-cd6e-42a9-b43e-dfb05633af88 .sigil_not_in_toc}
+### A Simple Example
 
 Let us take a simple example of comparing two users. We assume that
 a user should be equal to another when it has the same name as the other
 one:
 
+{lang="gherkin"}
 ~~~~ {style="padding: 1em; border: dashed thin gray;"}
 GIVEN a user with any name
 WHEN I compare it to another user with the same name
@@ -224,36 +227,42 @@ Let us start with the translation
 
 The first line:
 
+{lang="gherkin"}
 ~~~~ {style="padding: 1em; border: dashed thin gray;"}
 GIVEN a user with any name
 ~~~~
 
 can be translated literally to code like this:
 
-~~~~ cs
+{lang="csharp"}
+~~~~
 var user = new User(anyName);
 ~~~~
 
 Then the second line:
 
+{lang="gherkin"}
 ~~~~ {style="padding: 1em; border: dashed thin gray;"}
 WHEN I compare it to another user with the same name
 ~~~~
 
 can be written as:
 
-~~~~ cs
+{lang="csharp"}
+~~~~
 user.Equals(anotherUserWithTheSameName);
 ~~~~
 
 Great! Now the last line:
 
+{lang="gherkin"}
 ~~~~ {style="padding: 1em; border: dashed thin gray;"}
 THEN it should appear equal to this other user
 ~~~~
 
 and its translation into the code:
 
+{lang="csharp"}
 ~~~~ 
 Assert.True(areUsersEqual);
 ~~~~
@@ -261,7 +270,8 @@ Assert.True(areUsersEqual);
 Ok, so we have made the translation, now let us summarize this and see
 what is missing to make this code compile:
 
-~~~~ cs
+{lang="csharp"}
+~~~~
 [Fact] public void 
 ShouldAppearEqualToAnotherUserWithTheSameName()
 {
@@ -308,7 +318,8 @@ boils down to making a few trivial declarations and assignments:
 
 Putting it all together:
 
-~~~~ cs
+{lang="csharp"}
+~~~~
 [Fact] public void 
 ShouldAppearEqualToAnotherUserWithTheSameName()
 {
@@ -350,7 +361,8 @@ in our domain the access can be either granted or denied. Let us take
 the successful case (just because it is the first one we can think of)
 and, starting backwards, start with the following assertion:
 
-~~~ cs
+{lang="csharp"}
+~~~
 //THEN
 Assert.True(accessGranted);
 ~~~
@@ -370,7 +382,8 @@ Statements - it will only throw you off the track and steal your focus
 from what is important. The key to doing TDD successfully is to learn to
 use something that does not exist yet like it existed):
 
-~~~ cs
+{lang="csharp"}
+~~~
 //WHEN
 var accessGranted 
  = authorization.IsAccessToReportingGrantedTo(
@@ -397,7 +410,8 @@ call it? The instance name is `authorization`, so it is quite
 straightforward to name the class `Authorization` and instantiate it in
 the simplest way we can think of:
 
-~~~ cs
+{lang="csharp"}
+~~~
 //GIVEN
 var authorization = new Authorization();
 ~~~
@@ -410,7 +424,8 @@ of this variable. As for the type, there are various ways we can model
 a role, but the most obvious one for a type that has few possible values
 is an enum. So:
 
-~~~ cs
+{lang="csharp"}
+~~~
 //GIVEN
 var roleAllowedToUseReporting = Any.Of(Roles.Admin, Roles.Auditor);
 ~~~
@@ -419,7 +434,8 @@ And so, working our way backwards, we have arrived at the final solution
 (we still need to give this Statement a name, but, provided what we
 already know, this is an easy task):
 
-~~~ cs
+{lang="csharp"}
+~~~
 [Fact] public void
 ShouldAllowAccessToReportingWhenAskedForEitherAdministratorOrAuditor()
 {
@@ -456,7 +472,8 @@ please sit down and enjoy your coffee for a few minutes as we take time
 to import your database" (given user name is Johnny). The class that
 implements it looks like this:
 
-~~~ cs
+{lang="csharp"}
+~~~
 public class FriendlyMessages
 {
   public string 
@@ -481,7 +498,8 @@ instance of another class implementing this interface when the
 application discovers that it is being run as a trial version. The
 extracted interface looks like this:
 
-~~~ cs
+{lang="csharp"}
+~~~
 public interface Messages
 {
   string HoldOnASecondWhileWeImportYourDatabase(string userName);
@@ -492,7 +510,8 @@ So our new implementation is forced to support the
 `HoldOnASecondWhileWeImportYourDatabase` method. Thus, we when
 implementing the class, we start with the following:
 
-~~~ cs
+{lang="csharp"}
+~~~
 public class TrialVersionMessages : Messages
 {
  public string HoldOnASecondWhileWeImportYourDatabase(string userName)
@@ -506,7 +525,8 @@ Now, we are ready to start writing a Statement. Assuming we do not know
 where to start, we just start with creating an object and invoking the
 method that needs to be implemented:
 
-~~~ cs
+{lang="csharp"}
+~~~
 [Fact] 
 public void TODO()
 {
@@ -533,7 +553,8 @@ what is its role in the behavior triggered by the
 name and we want it to be somewhere in the result of the method. Thus,
 we can add it to the Statement like this:
 
-~~~ cs
+{lang="csharp"}
+~~~
 [Fact] 
 public void TODO()
 {
@@ -557,7 +578,8 @@ a real assertion for a real expected result. The return value of the
 need to do is to come up with the message that we expect in case of
 trial version:
 
-~~~ cs
+{lang="csharp"}
+~~~
 [Fact] 
 public void TODO()
 {

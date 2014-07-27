@@ -18,7 +18,7 @@ and a silent alarm (that does not play any sound, but instead silently
 contacts the security), then usually, we could find a piece of code like
 the following to achieve that:
 
-~~~ c
+~~~
 if(alarm->kind == LOUD_ALARM)
 {
   triggerLoudAlarm((LoudAlarm*)alarm);
@@ -34,7 +34,7 @@ a second decision based on the alarm kind, we would need to query for
 the alarm kind again, duplicating the code, just with different set of
 actions to perform depending on what kind of alarm we are dealing with:
 
-~~~ c
+~~~
 if(alarm->kind == LOUD_ALARM)
 {
   disableLoudAlarm((LoudAlarm*)alarm);
@@ -129,7 +129,7 @@ public class LoudAlarm : Alarm
 Now, we can make parts of code use the alarm without having to know its
 type, so what we previously had:
 
-~~~ c
+~~~
 if(alarm->kind == LOUD_ALARM)
 {
   triggerLoudAlarm((LoudAlarm*)alarm);

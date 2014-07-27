@@ -129,7 +129,7 @@ about starting from Statement rather than code. I like to put the
 structure explicitly in my Statements - I find that it makes them more
 readable. So most of my unit-level Statements follow this template:
 
-~~~ cs
+~~~
 [Fact]
 public void Should__BEHAVIOR__()
 {
@@ -148,7 +148,7 @@ Sometimes the WHEN and THEN sections are not so easily separable - then
 I join them, like in case of the following Statement specifying that an
 object throws an exception when asked to store null:
 
-~~~ cs
+~~~
 [Fact]
 public void ShouldThrowExceptionWhenAskedToStoreNull()
 {
