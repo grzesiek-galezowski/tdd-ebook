@@ -250,7 +250,7 @@ can take various forms, e.g. it can be a console application, a GUI
 application or a plugin to our IDEs. Here is an example of a stand-alone
 runner for xUnit.NET framework:
 
-![XUnit.NET window](./Images/XUnit_NET_Window.png)
+![XUnit.NET window](./images/XUnit_NET_Window.png)
 
 <div class="achievement">
 ### Sprinter

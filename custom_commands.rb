@@ -9,13 +9,13 @@ end
 $ROOT = Pathname.pwd
 $USER_HOME = Pathname.new Dir.home
 $MANUSCRIPT_DIR = $ROOT + "manuscript"
-$MANUSCRIPT_IMAGES_DIR = $MANUSCRIPT_DIR + "Images"
-$MANUSCRIPT_COVER_IMAGE = $MANUSCRIPT_IMAGES_DIR + "cover.png"
+$MANUSCRIPT_IMAGES_DIR = $MANUSCRIPT_DIR + "images"
+$MANUSCRIPT_COVER_IMAGE = $MANUSCRIPT_IMAGES_DIR + "title_page.png"
 $MANUSCRIPT_STYLESHEETS_DIR = $MANUSCRIPT_DIR + "Stylesheets"
 $GLOBAL_MANUSCRIPT_STYLESHEET = $MANUSCRIPT_STYLESHEETS_DIR + "Global.css"
 $EPUB_DEFAULT_STYLESHEET = Pathname.new(Dir.home) + ".pandoc"
 $PAGES_PATH = $ROOT + "../Pages_TDDEbook/tdd-ebook"
-$PAGES_IMAGES_PATH = $PAGES_PATH + "Images"
+$PAGES_IMAGES_PATH = $PAGES_PATH + "images"
 $HTML_INDEX = "index.html"
 $ROOT_DIR_COVER_IMAGE = $ROOT + "cover_real.png"
 
