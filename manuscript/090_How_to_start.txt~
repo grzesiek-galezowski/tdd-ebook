@@ -72,7 +72,8 @@ what circumstances. Let us take a look at one of the names Steve freeman
 and Nat Pryce came up in their great book Growing Object Oriented
 Software Guided By Tests:
 
-~~~ java
+{lang="java"}
+~~~ 
 notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort()
 ~~~
 
@@ -216,7 +217,7 @@ Let us take a simple example of comparing two users. We assume that
 a user should be equal to another when it has the same name as the other
 one:
 
-{lang="gherkin"}
+{lang="text"}
 ~~~~
 GIVEN a user with any name
 WHEN I compare it to another user with the same name
@@ -227,7 +228,7 @@ Let us start with the translation
 
 The first line:
 
-{lang="gherkin"}
+{lang="text"}
 ~~~~
 GIVEN a user with any name
 ~~~~
@@ -241,7 +242,7 @@ var user = new User(anyName);
 
 Then the second line:
 
-{lang="gherkin"}
+{lang="text"}
 ~~~~
 WHEN I compare it to another user with the same name
 ~~~~
@@ -255,7 +256,7 @@ user.Equals(anotherUserWithTheSameName);
 
 Great! Now the last line:
 
-{lang="gherkin"}
+{lang="text"}
 ~~~~
 THEN it should appear equal to this other user
 ~~~~

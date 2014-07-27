@@ -72,7 +72,8 @@ what circumstances. Let us take a look at one of the names Steve freeman
 and Nat Pryce came up in their great book Growing Object Oriented
 Software Guided By Tests:
 
-~~~ java
+{lang="java"}
+~~~ 
 notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort()
 ~~~
 
