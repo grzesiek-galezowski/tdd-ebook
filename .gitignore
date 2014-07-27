@@ -1,6 +1,8 @@
 *.pdf
+*.epub
 *.mobi
 *.azw3
 *.htmlz
+*.svg
 /.project
-Diagrams/*.svg
+
