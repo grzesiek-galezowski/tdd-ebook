@@ -8,15 +8,28 @@ end
 
 $ROOT = Pathname.pwd
 $USER_HOME = Pathname.new Dir.home
+
+#leanpub manuscript paths
 $MANUSCRIPT_DIR = $ROOT + "manuscript"
 $MANUSCRIPT_IMAGES_DIR = $MANUSCRIPT_DIR + "images"
 $MANUSCRIPT_COVER_IMAGE = $MANUSCRIPT_IMAGES_DIR + "title_page.png"
 $MANUSCRIPT_STYLESHEETS_DIR = $MANUSCRIPT_DIR + "Stylesheets"
-$GLOBAL_MANUSCRIPT_STYLESHEET = $MANUSCRIPT_STYLESHEETS_DIR + "Global.css"
+$MANUSCRIPT_GLOBAL_STYLESHEET = $MANUSCRIPT_STYLESHEETS_DIR + "Global.css"
+
+#pandoc paths
+$PD_MANUSCRIPT_DIR = $ROOT + "manuscript"
+$PD_MANUSCRIPT_IMAGES_DIR = $PD_MANUSCRIPT_DIR + "images"
+$PD_MANUSCRIPT_COVER_IMAGE = $PD_MANUSCRIPT_IMAGES_DIR + "title_page.png"
+$PD_MANUSCRIPT_STYLESHEETS_DIR = $PD_MANUSCRIPT_DIR + "Stylesheets"
+$PD_MANUSCRIPT_GLOBAL_STYLESHEET = $PD_MANUSCRIPT_STYLESHEETS_DIR + "Global.css"
+
 $EPUB_DEFAULT_STYLESHEET = Pathname.new(Dir.home) + ".pandoc"
+
+#HTML paths
 $PAGES_PATH = $ROOT + "../Pages_TDDEbook/tdd-ebook"
 $PAGES_IMAGES_PATH = $PAGES_PATH + "images"
 $HTML_INDEX = "index.html"
+
 $ROOT_DIR_COVER_IMAGE = $ROOT + "cover_real.png"
 
 SOURCE_DOCUMENT = local_ebook_variant(:epub)
@@ -67,9 +80,9 @@ end
 
 $common_pandoc_opts = "--toc --toc-depth=2 --smart"
 $pandoc_highlight_opts = "--highlight-style=pygments"
-$epub_cover_image = "--epub-cover-image=#{$MANUSCRIPT_COVER_IMAGE.to_s.shellescape}"
-$epub_stylesheet = "--epub-stylesheet=#{$GLOBAL_MANUSCRIPT_STYLESHEET.to_s.shellescape}"
-$global_css = "--css=#{$GLOBAL_MANUSCRIPT_STYLESHEET.to_s.shellescape}"
+$epub_cover_image = "--epub-cover-image=#{$PD_MANUSCRIPT_COVER_IMAGE.to_s.shellescape}"
+$epub_stylesheet = "--epub-stylesheet=#{$PD_MANUSCRIPT_GLOBAL_STYLESHEET.to_s.shellescape}"
+$global_css = "--css=#{$PD_MANUSCRIPT_GLOBAL_STYLESHEET.to_s.shellescape}"
 
 def generate_epub(subdir, filename)
   options = [
