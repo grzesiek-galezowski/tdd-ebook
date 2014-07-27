@@ -48,13 +48,13 @@ Reading so much about cycles, it is probably no surprise to you that the
 traditional illustration of the TDD process is modeled visually as
 a circle-like flow:
 
-![Basic TDD cycle](./images/RedGreenRefactor.png)
+![Basic TDD cycle](images/RedGreenRefactor.png)
 
 Note that the above form uses the traditional terminology of TDD, so
 before I explain the steps, I will translate it to use our terms of
 Specification and Statements:
 
-![Basic TDD cycle with changed terminology](./images/RedGreenRefactor2.png)
+![Basic TDD cycle with changed terminology](images/RedGreenRefactor2.png)
 
 The second version seems more like common sense than the first one -
 specifying how something should behave before putting that behavior in

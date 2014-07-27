@@ -14,7 +14,7 @@ objects form a small system that can be expanded with more objects as
 needed. Thus, a bigger object oriented system forms something similar to
 a web:
 
-![Web of objects](./images/WebOfObjects.png)
+![Web of objects](images/WebOfObjects.png)
 
 where the circles are the objects and the arrows are methods invocations
 from one object on another.
@@ -130,7 +130,7 @@ implementation of `Lift` interface that would just ignore the messages
 it got from the alarm (or fake that it did what it was asked for)
 and the alarm will not even notice.
 
-![Sender, interface, and recipient](./images/SenderRecipientMessage.png)
+![Sender, interface, and recipient](images/SenderRecipientMessage.png)
 
 Ok, I hope we got that part straight. Time for some new requirements.
 It has been decided that whenever any malfunction happens in the

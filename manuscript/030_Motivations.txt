@@ -49,7 +49,7 @@ hidden characters, mini-games etc. took about a day. Some could say the
 game had nothing to offer since then. Why then did we spend over a year
 on it?\
 
-![Tekken3](./images/Tekken3-gray.png)\
+![Tekken3](images/Tekken3-gray.png)\
 
 It is because each fighter in the game had a lot of combos, kicks and
 punches that could be mixed in a variety of ways. Some were only usable
