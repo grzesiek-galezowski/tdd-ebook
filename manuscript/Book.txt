@@ -22,5 +22,3 @@ End.txt
 200_What_does_it_mean_to_compose_objects.txt
 210_How_are_objects_composed.txt
 220_Weaker_and_better_composabiity.txt
-998_Copyright_Notice.txt
-999_License.txt

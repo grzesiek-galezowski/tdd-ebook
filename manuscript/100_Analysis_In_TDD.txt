@@ -55,19 +55,15 @@ current point of focus.
 An example TODO list from the middle of implementation may look like
 this (do not read through it, I put it here only to give you a glimpse):
 
-1.  ~~Create entry point to the module (top-level abstraction)~~
-2.  ~~Implement main workflow of the module~~
-3.  ~~Implement Message interface~~
-4.  ~~Implement MessageFactory interface~~
+1.  --- Create entry point to the module (top-level abstraction)
+2.  --- Implement main workflow of the module
+3.  --- Implement Message interface
+4.  --- Implement MessageFactory interface
 5.  Implement ValidationRules interface
-6.  ~~Implement behavior required from Wrap method in
-    LocationMessageFactory class~~
-7.  Implement behavior required from ValidateWith method in
-    LocationMessage class for Speed field
-8.  Implement behavior required from ValidateWith method in
-    LocationMessage class for Age field
-9.  Implement behavior required from ValidateWith method in
-    LocationMessage class for Sender field
+6.  --- Implement behavior required from Wrap method in LocationMessageFactory class
+7.  Implement behavior required from ValidateWith method in LocationMessage class for Speed field
+8.  Implement behavior required from ValidateWith method in LocationMessage class for Age field
+9.  Implement behavior required from ValidateWith method in LocationMessage class for Sender field
 
 Note that some items are already crossed out as done, while other remain
 undone and waiting to be addressed.
