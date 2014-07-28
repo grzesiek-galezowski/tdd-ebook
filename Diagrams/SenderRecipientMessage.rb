@@ -28,7 +28,7 @@ graph_g = GraphViz.digraph( "G", :strict => true, :use => :neato ) { |g|
     shape: :Mdiamond )
   alarm = g2.add_nodes "Alarm", 
     fontsize: $SMALL_FONT_SIZE, 
-    label: '', 
+    label: 'Alarm', 
     pos: '1,1!', 
     shape: :circle
   auto_lift = g2.add_nodes "AutoLift", 
