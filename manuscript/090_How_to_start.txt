@@ -219,9 +219,9 @@ one:
 
 {lang="gherkin"}
 ~~~
-GIVEN a user with any name
-WHEN I compare it to another user with the same name
-THEN it should appear equal to this other user
+Given a user with any name
+When I compare it to another user with the same name
+Then it should appear equal to this other user
 ~~~
 
 Let us start with the translation
@@ -230,7 +230,7 @@ The first line:
 
 {lang="gherkin"}
 ~~~~
-GIVEN a user with any name
+Given a user with any name
 ~~~~
 
 can be translated literally to code like this:
@@ -244,7 +244,7 @@ Then the second line:
 
 {lang="gherkin"}
 ~~~~
-WHEN I compare it to another user with the same name
+When I compare it to another user with the same name
 ~~~~
 
 can be written as:
@@ -258,7 +258,7 @@ Great! Now the last line:
 
 {lang="gherkin"}
 ~~~~
-THEN it should appear equal to this other user
+Then it should appear equal to this other user
 ~~~~
 
 and its translation into the code:
