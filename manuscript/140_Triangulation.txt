@@ -31,6 +31,7 @@ implementation in response to a Statetement. If the implementation is
 simple, this approach makes a lot of sense. Let’s take a trivial example
 of adding two numbers:
 
+{lang="csharp"}
 ~~~
 [Fact] public void
 ShouldAddTwoNumbersTogether()
@@ -53,6 +54,7 @@ sufficient to make the Statement true. Instead, we can decide that the
 logic is so obvious, that we can just write it based on this one
 Statement:
 
+{lang="csharp"}
 ~~~
 public class Sum
 {
@@ -71,6 +73,7 @@ most (if not all) Statements we wrote so far in previous chapters, uses
 this approach because of this fact. Let’s take a look at how the above
 Statement would look if we used Constrained Non-Determinism:
 
+{lang="csharp"}
 ~~~
 [Fact] public void
 ShouldAddTwoNumbersTogether()
@@ -116,6 +119,7 @@ Let us apply Fake It to the same addition example as before (I promise,
 for triangulation, I will give you better one). The Statement looks the
 same as before:
 
+{lang="csharp"}
 ~~~
 [Fact] public void
 ShouldAddTwoNumbersTogether()
@@ -135,6 +139,7 @@ Only this time, we are going to use the simplest implementation
 possible. As I wrote, this simplest implementation is almost always to
 return a constant:
 
+{lang="csharp"}
 ~~~
 public class Sum
 {
@@ -157,6 +162,7 @@ implementation - the implementation returns it and the Statement asserts
 on it. To reduce this duplication, let us break the 8 in the
 implementation into a sum:
 
+{lang="csharp"}
 ~~~
 public class Sum
 {
@@ -177,6 +183,7 @@ specified behavior - constructor parameters, fields etc. in contrast to
 result which we normally do not know until we invoke the behavior). The
 duplication of number 3 can be eliminated this way:
 
+{lang="csharp"}
 ~~~
 public class Sum
 {
@@ -192,6 +199,7 @@ transfer the value of 3 from Statement method to the `Of`
 implementation, so we have it in one place now. Let us do the same with
 5:
 
+{lang="csharp"}
 ~~~
 public class Sum
 {
@@ -253,6 +261,7 @@ list. Let’s assume that we have no idea how to design the internals of
 our custom list class so that it fulfills its responsibility. Thus, we
 start with the simplest example of calculating a sum of 0 elements:
 
+{lang="csharp"}
 ~~~~
 [Fact] public void 
 ShouldReturn0AsASumOfNoElements()
@@ -272,6 +281,7 @@ ShouldReturn0AsASumOfNoElements()
 Remember we want to write just enough code to make the Statement true.
 We can achieve it with just returning 0 from the `SumOfElements` method:
 
+{lang="csharp"}
 ~~~~
 public class ListWithAggregateOperations
 {
@@ -285,6 +295,7 @@ public class ListWithAggregateOperations
 This is not yet the implementation we are happy with, which makes us add
 another Statement - this time for a single element:
 
+{lang="csharp"}
 ~~~~
 [Fact] public void 
 ShouldReturnTheSameElementAsASumOfSingleElement()
@@ -304,6 +315,7 @@ ShouldReturnTheSameElementAsASumOfSingleElement()
 
 The naive implementation can be as follows:
 
+{lang="csharp"}
 ~~~~
 public class ListWithAggregateOperations
 {
@@ -342,6 +354,7 @@ number of elements. The third example will move us further along this
 axis - so it will use two elements instead of one or zero. This is how
 it looks like:
 
+{lang="csharp"}
 ~~~~
 [Fact] public void 
 ShouldReturnSumOfTwoElementsAsASumWhenTwoElementsAreSupplied()
@@ -362,6 +375,7 @@ ShouldReturnSumOfTwoElementsAsASumWhenTwoElementsAreSupplied()
 
 And the naive implementation will look like this:
 
+{lang="csharp"}
 ~~~~
 public class ListWithAggregateOperations
 {
@@ -404,6 +418,7 @@ addition of multiple elements? A foreach loop through the collection!
 Thankfully, C\# supports `params` keyword, that let us use it to remove
 the redundant constructor like this:
 
+{lang="csharp"}
 ~~~~
 public class ListWithAggregateOperations
 {
@@ -436,6 +451,7 @@ for the same reason. So as the next step, I will write a Statement to
 replace these examples (I leave them in though, until I get this one to
 evaluate to true).
 
+{lang="csharp"}
 ~~~~
 [Fact]
 public void 
@@ -482,8 +498,8 @@ What we will do is to modify the implementation slightly to make it
 badly implemented and see how our Statement will react (we expect it to
 evaluate to false):
 
+{lang="csharp"}
 ~~~~
-public class ListWithAggregateOperations
 public int SumOfElements()
 {
   //changed

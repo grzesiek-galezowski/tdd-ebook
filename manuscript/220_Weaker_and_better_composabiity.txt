@@ -15,6 +15,7 @@ polymorphism? Is a class sufficient, or do we rather want to use an
 interface? In other words, when we plug in an object as a message
 receipient:
 
+{lang="csharp"}
 ~~~
 public Sender(Recipient recipient)
 {
@@ -80,6 +81,7 @@ mention explicitly until now. This aspect is: roles.
 When we take an example method that sends some messages to some
 recipients:
 
+{lang="csharp"}
 ~~~
 recipient1.DoX();
 recipient1.DoY();
@@ -89,6 +91,7 @@ recipient2.DoZ();
 and we compare it with similar effect achieved using event/callback
 invocation:
 
+{lang="csharp"}
 ~~~
 DoX.Invoke();
 DoY.Invoke();
@@ -141,6 +144,7 @@ handled cohesively). Of course, we cannot achieve this by just removing
 methods that are needed from the interfaces, e.g. when someone is using
 an interface implementation like this:
 
+{lang="csharp"}
 ~~~
 recipient.SomethingHappened();
 recipient.SomethingElseHappened();
@@ -153,6 +157,7 @@ So, what do we do then? We try to separate different interfaces per
 client. After all, a class can implement more than one interface, like
 this:
 
+{lang="csharp"}
 ~~~
 public class ImplementingObject 
 : InterfaceForClient1, 
@@ -174,6 +179,7 @@ it supports client-side operations for ordinary users, e.g. listing all
 users. The interface for this organizational structure class may look
 like this:
 
+{lang="csharp"}
 ~~~
 public interface 
 OrganizationStructure
@@ -192,6 +198,7 @@ code - one related to handling administrative requests, another related
 to handling ordinary user requests. Thus, we can use this knowledge to
 separate the interface into two:
 
+{lang="csharp"}
 ~~~
 public interface
 OrganizationalStructureAdminCommands
@@ -209,6 +216,7 @@ OrganizationalStructureClientCommands
 
 And a real class can implement both of them:
 
+{lang="csharp"}
 ~~~
 public class InMemoryOrganizationalStructure
 : OrganizationalStructureAdminCommands,
@@ -230,6 +238,7 @@ implementing `OrganizationalStructureAdminCommands` which will wrap the
 original method with a notification to a change observer (that can be
 either the trace that is required or anything else we like):
 
+{lang="csharp"}
 ~~~
 public class NotifyingAdminComands : OrganizationalStructureAdminCommands
 {
@@ -263,6 +272,7 @@ the class that is implementing the interface, it may still contain some
 other things not abstracted, especially implementation details. Let's
 look at the following interface:
 
+{lang="csharp"}
 ~~~
 public interface Basket
 {
@@ -282,6 +292,7 @@ around concrete dependencies and mostly will not be able to work around
 that if we want something different. Thus, it is essential to rely on
 abstractions:
 
+{lang="csharp"}
 ~~~
 public interface Basket
 {
@@ -313,6 +324,7 @@ Well, not, it's not enough and let me give you a quick example.
 
 Let us imagine a class `Sender` that uses `Recipient` like this:
 
+{lang="csharp"}
 ~~~
 if(recipient.ExtractStatusCodeFrom(response) == -1)
 {
@@ -329,6 +341,7 @@ because if it does, this will be mistakenly recognized as error by
 implementing the required interface, is wrong from the point of view of
 `Sender`:
 
+{lang="csharp"}
 ~~~
 public class WrongRecipient : Recipient
 {
@@ -353,6 +366,7 @@ it can also be on types of exceptions thrown, or the order of method
 calls. For example, anybody using some kind of connection object would
 imagine the following way of using the connection:
 
+{lang="csharp"}
 ~~~
 connection.Open();
 connection.Send(data);
@@ -361,6 +375,7 @@ connection.Close();
 
 Again, if we were to implement a connection that behaves like this:
 
+{lang="csharp"}
 ~~~
 public class WrongConnection : Connection
 {
@@ -426,6 +441,7 @@ senders.
 
 As an example, let us look at a code for logging in:
 
+{lang="csharp"}
 ~~~
 accessGuard.SetLogin(login);
 accessGuard.SetPassword(password);
@@ -440,6 +456,7 @@ but it seems this is a "premature optimization" that only makes it
 harder for the sender to work with the `accessGuard` object. Thus, the
 protocol that is simpler from the perspective of sender would be:
 
+{lang="csharp"}
 ~~~
 accessGuard.LoginWith(login, password);
 ~~~
@@ -484,6 +501,7 @@ abstraction with `Reserve()` method on it. Most of the attendees assume
 that `Order` is a data structure and handle reservation by adding it to
 a "collection of reserved items":
 
+{lang="csharp"}
 ~~~
 reservedOrders.Add(order)
 ~~~
@@ -499,6 +517,7 @@ sent to special forces with highest priority. Any error in this
 procedure leads to shutting down power in the building. If this workflow
 is coded like this:
 
+{lang="csharp"}
 ~~~
 try
 {
@@ -533,6 +552,7 @@ implementation of this task with another one.
 So remember the payroll system that Johnny and Benjamin were working on?
 As long as their code for giving raise looked like this:
 
+{lang="csharp"}
 ~~~
 if(employee.GetSalary() < payGrade.Maximum)
 {
@@ -594,6 +614,7 @@ libraries it depends on with us. So, our (not so good, as we will see)
 remedy may be to introduce getters for the information pieces stored
 inside a session:
 
+{lang="csharp"}
 ~~~
 public interface Session
 {
@@ -607,6 +628,7 @@ So yeah, in a way, we have achieved context independence, because we can
 now pull all the data e.g. in a GUI code and display the data and the
 `Session` does not know anything about it:
 
+{lang="csharp"}
 ~~~
 // inside GUI code
 foreach(var session in sessions)
@@ -623,6 +645,7 @@ It seems we solved the problem, by pulling data to a place that has the
 context, i.e. knows what to do with this data. Are we happy? We may be
 unless we look at how the other parts look like - the sending one:
 
+{lang="csharp"}
 ~~~
 //part of sending logic
 foreach(var session in sessions)
@@ -637,6 +660,7 @@ foreach(var session in sessions)
 
 and the storing one:
 
+{lang="csharp"}
 ~~~
 //part of storing logic
 foreach(var session in sessions)
@@ -696,6 +720,7 @@ Let's see how this plays out in practice. First let's remove those ugly
 getters from the `Session` and introduce new method called `Dump()` that
 will take the `Destination` interface as parameter:
 
+{lang="csharp"}
 ~~~
 public interface Session
 {
@@ -705,6 +730,7 @@ public interface Session
 
 Its implementation can pass all fields into this destination like so:
 
+{lang="csharp"}
 ~~~
 public class TimedSession : Session
 {
@@ -724,6 +750,7 @@ public class TimedSession : Session
 
 And the looping through sessions now looks like this:
 
+{lang="csharp"}
 ~~~
 foreach(var session : sessions)
 {
@@ -738,6 +765,7 @@ we can use it to implement all three mentioned behaviors (displaying,
 storing, sending), by creating adapters for each type of destination,
 e.g. for GUI, it might look like this:
 
+{lang="csharp"}
 ~~~
 public class GuiDestination : Destination
 {
@@ -782,6 +810,7 @@ mistakenly forget about one of them.
 Also, unnoticeably, the protocol got more stable. Previously, when we
 had the getters in the `Session` class:
 
+{lang="csharp"}
 ~~~
 public class Session
 {
@@ -798,6 +827,7 @@ everywhere... you see where this is going. On the other hand, with the
 current design of the `Session` interface, we can e.g. introduce a
 feature where the expired sessions are not processed at all:
 
+{lang="csharp"}
 ~~~
 public class TimedSession : Session
 {
@@ -827,6 +857,7 @@ not displayed at all, but retain the rest of the session functionality.
 We may implement it as a proxy, that forwards all messages received to
 the original, wrapped `Session` object, while discarding the Dump calls:
 
+{lang="csharp"}
 ~~~
 public class HiddenSession : Session
 {

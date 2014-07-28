@@ -49,6 +49,7 @@ with both `AutoLift` and `MechanicalLift`. Through this interface,
 an alarm will be able to send messages to both types of lifts without 
 having to know a difference between them.
 
+{lang="csharp"}
 ~~~
 public interface Lift
 {
@@ -70,6 +71,7 @@ Next, to be able to communicate with specific lifts through the `Lift`
 interface, an alarm object has to acquire **"addresses"** of the lift objects
  (i.e. references to them). We can pass them e.g. through a constructor:
 
+{lang="csharp"}
 ~~~
 public class Alarm
 {
@@ -89,6 +91,7 @@ Then, the alarm can send three kinds of **messages**: `GoToBottomFloor()`,
 `OpenDoor()`, and `DisablePower()` to any of the lifts through the
 `Lift` interface:
 
+{lang="csharp"}
 ~~~
 public interface Lift
 {
@@ -100,6 +103,7 @@ public interface Lift
 
 and, as a matter of fact, it sends all these messages when triggered:
 
+{lang="csharp"}
 ~~~
 public void Trigger()
 {
@@ -146,6 +150,7 @@ of `Lift`:
 
 Here is an exemplary code of `Alarm` handling the malfunction reports:
 
+{lang="csharp"}
 ~~~
 public void Trigger()
 {

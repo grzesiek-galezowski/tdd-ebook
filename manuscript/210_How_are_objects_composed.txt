@@ -24,6 +24,7 @@ too long, because these questions are the topic of this chapter.
 Before we take a deep dive, let's try to answer these questions for a 
 really simple example code of a console application:
 
+{lang="csharp"}
 ~~~
 public static void Main(string[] args)
 {
@@ -50,6 +51,7 @@ There are few ways, each of them useful in certain circumstances:
 Two objects can be composed by passing one into the constructor of
 another:
 
+{lang="csharp"}
 ~~~
 sender = new Sender(recipient);
 ~~~
@@ -57,6 +59,7 @@ sender = new Sender(recipient);
 A sender is composed with a recipient and saves a reference to
 the recipient in a private field for later, like this:
 
+{lang="csharp"}
 ~~~
 public Sender(Recipient recipient)
 {
@@ -71,6 +74,7 @@ Thus, the code using `Sender` is not aware that `Sender` stores a
 reference to `Recipient` inside it. This
 basically means that when `Sender` is used, e.g. like this:
 
+{lang="csharp"}
 ~~~
 sender.DoSomething()
 ~~~
@@ -82,12 +86,14 @@ that the `Sender` needs not use the `Recipient` to do its duty, the
 code that uses `Sender` does not need to change at all - it still uses 
 the `Sender` the same way:
 
+{lang="csharp"}
 ~~~
 sender.DoSomething()
 ~~~
 
 All we have to change is the composition code:
 
+{lang="csharp"}
 ~~~
 //no need to pass a reference to Recipient anymore
 sender = new Sender();
@@ -99,6 +105,7 @@ course, exist before a `Sender` does. Another less obvious requirement
 for this composition is that `Recipient` must be usable at least as long
 as `Sender` is usable. In other words, the following is nonsense:
 
+{lang="csharp"}
 ~~~
 sender = new Sender(recipient);
 recipient.Dispose(); //but sender is unaware of it 
@@ -111,6 +118,7 @@ sender.DoSomething();
 Another common way of composing objects together is passing one object
 as a parameter of another object's method call:
 
+{lang="csharp"}
 ~~~
 sender.DoSomethingWithHelpOf(recipient);
 ~~~
@@ -118,6 +126,7 @@ sender.DoSomethingWithHelpOf(recipient);
 In such case, the objects are most often composed temporarily, just for 
 the time of execution of this single method:
 
+{lang="csharp"}
 ~~~
 public void DoSomethingWithHelpOf(Recipient recipient)
 {
@@ -133,6 +142,7 @@ This is a great way to compose objects when we want to use the same
 sender with different recipients at different times (most often from
 different parts of the code):
 
+{lang="csharp"}
 ~~~
 //in one place
 sender.DoSomethingWithHelpOf(recipient);
@@ -153,12 +163,14 @@ same arguments). Most often, the sender is given a reference to this
 intermediary object as a constructor parameter (an approach we already 
 discussed):
 
+{lang="csharp"}
 ~~~
 sender = new Sender(factory);
 ~~~
 
 and then the intermediary object is used to deliver other objects:
 
+{lang="csharp"}
 ~~~
 public class Sender
 {
@@ -182,6 +194,7 @@ needed each time `DoSomething()` is called (much like in case of
 To be more clear, here is a comparison of two approaches: passing 
 recipient inside a message:
 
+{lang="csharp"}
 ~~~
 //user of Sender passes a recipient:
 public DoSomething(Recipient recipient) 
@@ -192,6 +205,7 @@ public DoSomething(Recipient recipient)
 
 and obtaining from factory:
 
+{lang="csharp"}
 ~~~
 //user of Sender does not know about Recipient
 public DoSomething() 
@@ -224,6 +238,7 @@ because mean value is based on historical data and someone might
 register for it at any time, right? So, part of the definition of such 
 a sensor could look like this:
 
+{lang="csharp"}
 ~~~
 public class TemperatureSensor
 {
@@ -256,6 +271,7 @@ calculated values. This means we need to have a method inside the
 `TemperatureSensor` class to overwrite this default "do-nothing"
 observer with one that we provide:
 
+{lang="csharp"}
 ~~~
 public void FromNowOnReportTo(TemperatureObserver observer)
 {
@@ -286,6 +302,7 @@ calculations). This can be achieved in two ways.
 The first way would be to just hold a collection of observers in our 
 sensor, and add to this collection whenever a new observer is registered:
 
+{lang="csharp"}
 ~~~
 IList<TemperatureObserver> _observers 
   = new List<TemperatureObserver>();
@@ -298,6 +315,7 @@ public void FromNowOnReportTo(TemperatureObserver observer)
 
 In such case, reporting would mean iterating over the observers list:
 
+{lang="csharp"}
 ~~~
 ...
 foreach(var observer in _observers)
@@ -313,6 +331,7 @@ observer" that would hold collection of other observers (welcome
 composability!) and broadcast the values to them every time it itself 
 receives those values. It could be created and registered like this:
 
+{lang="csharp"}
 ~~~
 var broadcastingObserver 
   = new BroadcastingObserver(
@@ -329,6 +348,7 @@ might introduce `ParallelBroadcastObserver` that would notify each observer
 asynchronously instead of sequentially and put it to use by changing 
 the composition code only:
 
+{lang="csharp"}
 ~~~
 var broadcastingObserver 
   = new ParallelBroadcastObserver(
@@ -377,6 +397,7 @@ For simplification, let's take an example of a console application.
 Usually, when not using any framework, your application is symbolized 
 as a class:
 
+{lang="csharp"}
 ~~~
 public static void Main(string[] args)
 {
@@ -407,6 +428,7 @@ that it receives an object of that type.
 
 Let's say we have a factory like this:
 
+{lang="csharp"}
 ~~~
 public class Version1ProtocolMessageFactory
 {
@@ -431,6 +453,7 @@ Note that the factory can create many different types of messages
 depending on what is in the raw data, but for the user of the factory, 
 this is irrelevant. All that is seen by the user is this:
 
+{lang="csharp"}
 ~~~
 var message = _messageFactory.NewInstanceFrom(rawData);
 message.ValidateUsing(_primitiveValidations);
@@ -451,6 +474,7 @@ composable.
 
 We may have a class that uses a factory:
 
+{lang="csharp"}
 ~~~
 public class MessageInbound
 {
@@ -473,6 +497,7 @@ public class MessageInbound
 Object of this class needs to be composed with factory implementing 
 the `MessageFactory` interface in a composition root like this:
 
+{lang="csharp"}
 ~~~
 new MessageInbound(new BinaryMessageFactory());
 ~~~
@@ -491,6 +516,7 @@ Thankfully, thanks to the factory, we can use the `MessageInbound`
 just as it is, but compose it with a different factory. So, we will 
 have to instances of `MessageInbound` class in our composition root:
 
+{lang="csharp"}
 ~~~
 var binaryMessageInbound
   = new MessageInbound(

@@ -59,6 +59,7 @@ have now before we plan further steps.
 
 **Benjamin:** Let me just open my IDE... OK, here it is:
 
+{lang="csharp"}
 ~~~
 public class CompanyPolicies 
 {
@@ -132,6 +133,7 @@ we would either execute the logic for regular employees or for
 contractors. Assuming that the current structure of the code looks like
 this:
 
+{lang="csharp"}
 ~~~
 foreach(var employee in employees)
 {
@@ -147,6 +149,7 @@ foreach(var employee in employees)
 
 the new structure would look like this:
 
+{lang="csharp"}
 ~~~
 foreach(var employee in employees)
 {
@@ -191,6 +194,7 @@ implementation of the steps from `CompanyPolicies` class into the
 `Employee` class itself, leaving only the names and the order of steps
 in `CompanyPolicies`:
 
+{lang="csharp"}
 ~~~
 foreach(var employee in employees)
 {
@@ -216,6 +220,7 @@ some tests which we can run to see if a regression was introduced.
 **Johnny:** The first thing that is between us and our goal are these
 getters on the `Employee` class:
 
+{lang="csharp"}
 ~~~
 GetSalary();
 GetGrade();
@@ -226,6 +231,7 @@ They just expose too much information specific to the regular employees.
 It would be impossible to use different implementations when these are
 around. These setters don't help much:
 
+{lang="csharp"}
 ~~~
 SetSalary(newSalary)
 SetBonusForYear(year, amount);
@@ -237,6 +243,7 @@ actually happens, but reveal our intention.
 
 First, take a look at this code:
 
+{lang="csharp"}
 ~~~
 //evaluate raise
 if(employee.GetSalary() < payGrade.Maximum)
@@ -257,12 +264,14 @@ comment!". Let's grant this wish and make it a separate method on the
 
 **Benjamin:** Ok, wait a minute... here:
 
+{lang="csharp"}
 ~~~
 employee.EvaluateRaise();
 ~~~
 
 **Johnny:** Great! Now, we've got another example of this species here:
 
+{lang="csharp"}
 ~~~
 //evaluate one-time bonus
 if(employee.GetYearsOfService() == 5)
@@ -274,6 +283,7 @@ if(employee.GetYearsOfService() == 5)
 
 **Benjamin:** This one should be even easier... Ok, take a look:
 
+{lang="csharp"}
 ~~~
 employee.EvaluateOneTimeBonus();
 ~~~
@@ -292,6 +302,7 @@ making the method name lie. The names should reflect that we want to
 evaluate a bonus, whatever that means for a particular type of employee.
 Thus, let's make it:
 
+{lang="csharp"}
 ~~~
 employee.EvaluateBonus();
 ~~~
@@ -302,6 +313,7 @@ employee.EvaluateBonus();
 `EvaluateIncentivePlan` method to see whether it is still coupled to
 details specific to regular employees. Here's the code:
 
+{lang="csharp"}
 ~~~
 public void ApplyYearlyIncentivePlan()
 {

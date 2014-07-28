@@ -228,7 +228,7 @@ Let us start with the translation
 
 The first line:
 
-{lang="text"}
+{lang="gherkin"}
 ~~~~
 GIVEN a user with any name
 ~~~~
@@ -242,7 +242,7 @@ var user = new User(anyName);
 
 Then the second line:
 
-{lang="text"}
+{lang="gherkin"}
 ~~~~
 WHEN I compare it to another user with the same name
 ~~~~
@@ -256,7 +256,7 @@ user.Equals(anotherUserWithTheSameName);
 
 Great! Now the last line:
 
-{lang="text"}
+{lang="gherkin"}
 ~~~~
 THEN it should appear equal to this other user
 ~~~~

@@ -50,6 +50,7 @@ reader the rules according to which objects and functions work. The
 following oversimplified example shows a Statement where it is not
 explicitly stated what is the relationship between input and output:
 
+{lang="csharp"}
 ~~~
 [Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostName()
@@ -84,6 +85,7 @@ specified functionality. In our case, we can pass whatever string we
 want (the object is not responsible for input validation), so we will
 name our method `AnyString()`:
 
+{lang="csharp"}
 ~~~
 [Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostName()
@@ -134,6 +136,7 @@ To better document the relationship between input and output, we have to
 simply derive the expected value we assert on from the input value. Here
 is the same Statement with the assertion changed:
 
+{lang="csharp"}
 ~~~
 [Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostName()
@@ -181,6 +184,7 @@ pattern must change as well to include this information. Of course, we
 are trying to use the anonymous input again as a proven technique and we
 end up with:
 
+{lang="csharp"}
 ~~~
 [Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostNameAndUserName()
@@ -214,6 +218,7 @@ when user name is used instead of host name in specified production
 code. This means that if we still want to use the anonymous input
 effectively, we have to make the two values distinct, e.g. like this:
 
+{lang="csharp"}
 ~~~
 [Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostNameAndUserName()
@@ -248,6 +253,7 @@ However, this, as you can see, is not a very scalable solution. Thus,
 let us try to reduce the amount of helper methods for string generation
 to one and make it return a different value each time:
 
+{lang="csharp"}
 ~~~
 [Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostNameAndUserName()
@@ -294,6 +300,7 @@ going to use a constant that is already defined somewhere else in the
 application (this way we also avoid duplication of this version number
 across the application):
 
+{lang="csharp"}
 ~~~
 [Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostNameAndUserNameAndVersion()
@@ -330,6 +337,7 @@ that should be specified itself!
 To keep everyone happy, we write a single Statement just for the
 constant to specify what the value should be:
 
+{lang="csharp"}
 ~~~
 [Fact] public void 
 ShouldContainNumberEqualTo1_0()
@@ -361,14 +369,17 @@ Anonymous Input
 :   moving the output out of the Statement code and hide it behind
     a method that to emphasize the constrain on the data used rather
     than what is its value
+    
 Derived Values
 :   defining expected output in terms of the input in order to document
     the relationship between input and output
+    
 Distinct Generated Values
 :   When using Anonymous Input, generate a distinct value each time (in
     case of types that have very few values, like boolean, try at least
     not to generate the same value twice in a row) in order to make the
     Statement more reliable.
+    
 Constant Specification
 :   Write a separate Statement for a constant and use the constant
     instead of its literal value in all other Statements to create
@@ -399,6 +410,7 @@ Seemann himself has invented the AutoFixture library for C\# that is [freely
 available to download](https://github.com/AutoFixture/AutoFixture). Here is a shortest possible
 snippet to generate an anonymous integer using AutoFixture:
 
+{lang="csharp"}
 ~~~
 Fixture fixture = new Fixture();
 var anonymousInteger = fixture.Create<int>();

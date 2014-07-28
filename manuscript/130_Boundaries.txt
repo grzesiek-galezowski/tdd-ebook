@@ -24,7 +24,7 @@ methods. An example would be an addition of two numbers - whatever
 numbers we would supply, the answer would always be a sum of those
 numbers:
 
-{lang=\"csharp\"\}
+{lang="csharp"}
 ~~~
 [Fact] public void
 ShouldCalculateTheSumOfTwoNumbers()
@@ -74,6 +74,7 @@ Statements: one for the mediocre rating and other for all the others.
 Here is the Statement for mediocre grade (let us imagine that all grades
 are members of an enum):
 
+{lang="csharp"}
 ~~~
 [Fact] public void
 ShouldNotPassTheExamWhenGradeIsMediocre()
@@ -97,6 +98,7 @@ The second Statement is for all the other cases. Here, we are going to
 use another method of the `Any` class for generating ay enum member
 other than specified:
 
+{lang="csharp"}
 ~~~
 [Fact] public void
 ShouldPassTheExamWhenGradeIsOtherThanMediocre()
@@ -173,6 +175,7 @@ assuming we’re implementing the mentioned absolute value calculation for
 integers. The first Statement is for values smaller than 0 and we want
 to use the left edge value here ilke this:
 
+{lang="csharp"}
 ~~~
 [Fact] public void
 ShouldNegateTheNumberWhenItIsLessThan0()
@@ -192,6 +195,7 @@ ShouldNegateTheNumberWhenItIsLessThan0()
 And the next Statement for values at least 0 and we want to use the
 right edge value:
 
+{lang="csharp"}
 ~~~
 [Fact] public void
 ShouldNotNegateTheNumberWhenItIsGreaterOrEqualTo0()
@@ -234,6 +238,7 @@ perform this exercise now and see what happens.
 
 First, let us document the named constant:
 
+{lang="csharp"}
 ~~~
 [Fact] public void
 ShouldIncludeSmallestValueNotToNegateSetToZero()
@@ -245,6 +250,7 @@ ShouldIncludeSmallestValueNotToNegateSetToZero()
 Now we have got everything we need to rewrite the two Statements we
 wrote earlier. The first would look like this:
 
+{lang="csharp"}
 ~~~
 [Fact] public void
 ShouldNegateTheNumberWhenItIsLessThanSmallestValueNotToNegate()
@@ -264,6 +270,7 @@ ShouldNegateTheNumberWhenItIsLessThanSmallestValueNotToNegate()
 
 And the second Statement for values at least 0:
 
+{lang="csharp"}
 ~~~
 [Fact] public void
 ShouldNotNegateNumberWhenItIsGreaterOrEqualToSmallestValueNotToNegate()
@@ -331,6 +338,7 @@ functionality basically means that we can write the code of the
 Statement once, but make the xUnit framework invoke it twice with
 different sets of input values. Let’s see an example in XUnit.net:
 
+{lang="csharp"}
 ~~~
 [Theory]
 [InlineData(17, QueryResults.TooYoung)]
