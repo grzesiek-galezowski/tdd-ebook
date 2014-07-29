@@ -1,7 +1,6 @@
 Specifying Boundaries and Conditions
 ====================================
 
-<div class="disclaimer">
 ### A Disclaimer
 
 Before I begin, I have to admit that this chapter is mostly based on the
@@ -13,7 +12,6 @@ these guidelines. I placed it here so that you have all the important
 topics covered in one place, but I encourage you to read the original
 blog posts on this subject on http://www.sustainabletdd.com (and the
 upcoming book).
-</div>
 
 Sometimes, Anonymous Value Is Not Enough
 ----------------------------------------
