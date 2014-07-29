@@ -375,6 +375,7 @@ exception.
 While some xUnit frameworks, like NUnit, allow us to handle both cases
 with one Statement by writing something like this:
 
+{lang="csharp"}
 ~~~
 //NOTE: this is an example in NUnit framework!
 [TestCase(Hours.Min, Result=Hours.Min)]
@@ -405,6 +406,7 @@ to solve it by writing two parameterized Statements - one where a value
 is returned (for valid cases) and one where exception is thrown (for
 invalid cases). The first would look like this:
 
+{lang="csharp"}
 ~~~
 [Theory]
 [InlineData(Hours.Min)]
@@ -426,6 +428,7 @@ ShouldBeAbleToSetHourBetweenMinAndMax(int inputHour)
 
 and the second:
 
+{lang="csharp"}
 ~~~
 [Theory]
 [InlineData(Hours.Min-1)]
