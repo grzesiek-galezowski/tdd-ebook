@@ -109,15 +109,6 @@ Also, are already after the phase of designing an API that will fulfill
 the need. Don’t you think it is pretty much information about the
 application from just three lines of code?
 
-<div class="achievement">
-### Lean & Mean 
-
-You now see some connotations between Test-Driven Development and Lean
-movement. There are more if you are interested, so be sure to pick up
-a good read about lean software development!
-
-</div>
-
 A Specification Instead of a Test Suite
 ---------------------------------------
 
@@ -171,11 +162,3 @@ different than these specifications in at least few ways:
     is both good (less room for misunderstanding - source code is the
     most formal and structured way of writing specifications) and bad
     (great care must be taken to keep the specification readable).
-
-<div class="achievement">
-### Enlightened 
-
-You are starting to see Test-Driven Development in a new light - not as
-a testing technique, but as a mean to specify the behaviors of the code
-under development.
-</div>
