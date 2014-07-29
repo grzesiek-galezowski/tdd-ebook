@@ -52,4 +52,4 @@ graph_g = GraphViz.digraph( "G", use: :neato ) { |graph_g|
 }
 
 graph_g.output(:svg => "WebOfObjects.svg")
-graph_g.output(:png => "WebOfObjects.png")
+

@@ -20,4 +20,3 @@ g = GraphViz.digraph( "G", :use => :neato ) { |g|
 }
 
 g.output(:svg => "RedGreenRefactor2.svg")
-g.output(:png => "RedGreenRefactor2.png")

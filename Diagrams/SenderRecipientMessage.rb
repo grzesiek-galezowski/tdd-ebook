@@ -49,4 +49,4 @@ graph_g = GraphViz.digraph( "G", :strict => true, :use => :neato ) { |g|
 }
 
 graph_g.output(svg: "SenderRecipientMessage.svg")
-graph_g.output(png: "SenderRecipientMessage.png")
+
