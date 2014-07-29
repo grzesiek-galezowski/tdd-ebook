@@ -27,12 +27,12 @@ tools we will be using throughout this book.
 Our shiny tools
 ---------------
 
-<div class="disclaimer">
-A disclaimer - in this chapter, I will oversimplify some things just to
+### A disclaimer 
+
+In this chapter, I will oversimplify some things just to
 get you up and running without getting into the philosophy of TDD yet
 (think: physics lessons in primary school). Do not worry about it :-),
 we will fix that in the coming chapters!
-</div>
 
 ### xUnit framework
 
@@ -257,12 +257,6 @@ application or a plugin to our IDEs. Here is an example of a stand-alone
 runner for xUnit.NET framework:
 
 ![XUnit.NET window](images/XUnit_NET_Window.png)
-
-<div class="achievement">
-### Sprinter
-
-You sure know how to run your tests. Automatically!
-</div>
 
 ### Mocking framework
 
@@ -539,12 +533,6 @@ once with order object as parameter.
 I will get back to mocks, since, as I said, there is a huge philosophy
 behind them and we have only scratched the surface here.
 
-<div class="achievement">
-### Pretender
-
-You have managed to use a mock instead of a real object in unit test!
-</div>
-
 ### Anonymous values generator
 
 Look at the test in the previous section. Does it not trouble you that
@@ -637,14 +625,6 @@ from the `Any` type. The more you use this class, the more it grows with
 other methods for creating customized objects. For now, however, let us
 stop here.
 
-<div class="achievement">
-### Anonymous 
-
-The values you use in your unit tests move like a shadow, unnoticed by
-anyone and until it is really necessary.
-
-</div>
-
 ### Summary 
 
 In this chapter, I tried to show you the three essential tools which we
@@ -656,12 +636,3 @@ want you to get familiar with the tools themselves and their syntax. Go
 on, download these tools, launch them, try to write something simple
 with them. You do not need to understand their full purpose yet, just go
 out and play :-).
-
-<div class="achievement">
-
-### Equipped 
-
-You are now able to understand most of the code examples throughout this
-book!
-
-</div>
