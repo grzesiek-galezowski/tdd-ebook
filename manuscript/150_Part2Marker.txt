@@ -1,5 +1,4 @@
-**Part 2: Test-Driven Development in Object Oriented World**
-========================================================
+-# Part 2: Test-Driven Development in Object Oriented World
 
 Most of the examples I gave you during the previous part were about
 a single object that did not have dependencies on other objects (with an
