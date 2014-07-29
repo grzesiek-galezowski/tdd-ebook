@@ -94,10 +94,3 @@ business analysis, but hey! I have a new technique that makes my coding
 career challenging again! And it’s not something I can use only when
 I pay to Microsoft or Oracle or anybody else - it’s quite portable,
 making me a better developer overall!
-
-<div class="achievement">
-### Student
-
-You have started travelling the way of masters with conviction,
-determination and pride.
-</div>
