@@ -94,6 +94,7 @@ def generate_epub(subdir, filename)
 end
 
 def generate_html(subdir, filename)
+  
   options = [
     $global_css,
     $pandoc_highlight_opts,
@@ -102,6 +103,7 @@ def generate_html(subdir, filename)
     "./Cover.md"
   ]
   generate_format subdir, filename, options
+  
 end
 
 def generate_pdf(subdir, filename)
@@ -133,7 +135,6 @@ def generate_format(subdir, filename, additional_options)
   cmd_end = "#{all_chapters_string(subdir)} -o ../#{filename}"
   puts sh( cmd_begin + cmd_custom + cmd_end)
 end
-
 
 class Git
   include FileUtils

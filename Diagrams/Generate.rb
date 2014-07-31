@@ -20,7 +20,7 @@ end
 to_png "RedGreenRefactor.svg", :density => 150
 to_png "RedGreenRefactor2.svg", :density => 150
 to_png "SenderRecipientMessage.svg", :density => 150
-to_png "WebOfObjects.rb", :density => 95
+to_png "WebOfObjects.svg", :density => 95
 
 
 #Pathname.glob("./*.svg") do |svg_image|

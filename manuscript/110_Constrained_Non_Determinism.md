@@ -21,7 +21,7 @@ and maybe two others that contain chapters on TDD. All of this sums up
 to about two or three thousands of paper pages, plus numerous posts on
 many blogs. And you know what I noticed? No two authors use exactly the
 same sets of techniques for test-driving their code! I mean, sometimes,
-when you look techniques they are suggesting, the suggestions from two
+when you look at the techniques they are suggesting, two
 authorities contradict each other. As each authority has their
 followers, it is not uncommon to observe and take part in discussions
 about whether this or that technique is better than a competing one or
@@ -34,8 +34,7 @@ There are certain sets of techniques that work together and choosing one
 technique leaves us with issues we have to resolve by adopting other
 techniques. This is how a style is created.
 
-Developing a style starts with underlying set of principles. These
-principles lead us to adopt our first technique, which makes us adopt
+Developing a style starts with a set of problems to solve and an underlying set of principles we consider important. These principles lead us to adopt our first technique, which makes us adopt
 another one and, ultimately, a coherent style emerges. Using Constrained
 Non-Determinism as an example, I will try to show you how part of
 a style gets derived from a technique that is derived from a principle.
@@ -122,7 +121,7 @@ hand, for a behavior that occurs for all values other than
 
 Now that the Statement itself is freed from the knowledge of the
 concrete value of `hostName` variable, the concrete value of
-“backup\_MY\_HOST\_NAME.zip" looks kinda weird. There is no clear
+“backup\_MY\_HOST\_NAME.zip" looks kind of weird. There is no clear
 indication of the kind of relationship between input and output and
 whether there is any at all (one may reason whether the output is always
 the same string or maybe it depends on the string length). It is unclear
