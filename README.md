@@ -62,11 +62,11 @@ This ebook is an attempt to create open-source extensive tutorial on Test-Driven
 The following parts are planned. Current table of content is available on [Leanpub](https://leanpub.com/tdd-ebook)
 
 
-*Part 1: Just The Basics*
-*Part 2: Test-Driven Development in Object Oriented World*
-*Part 3: Beyond Objects - TDD on higher levels*
-*Part 4: Tools of test-driven developer*
-*Part 5: FAQ and nuances*
+*  *Part 1: Just The Basics*
+*  *Part 2: Test-Driven Development in Object Oriented World*
+*  *Part 3: Beyond Objects - TDD on higher levels*
+*  *Part 4: Tools of test-driven developer*
+*  *Part 5: FAQ and nuances*
 
 The book is already over 150 pages, but there is still lots to do! Your input is crucial!
 
