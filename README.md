@@ -35,24 +35,6 @@ The book binaries [are now hosted on Leanpub](https://leanpub.com/tdd-ebook), as
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-web.png" />HTML
 </a>
 
-Alternative links:
-
-<a href="https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.epub">
-  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-epub.png" />Epub
-</a>&nbsp;
-<a href="https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.mobi">
-  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-mobi.png" />Mobi
-</a>&nbsp;
-<a href="https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.azw3">
-  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-mobi.png" />AZW3
-</a>&nbsp;
-<a href="https://dl.dropboxusercontent.com/u/220139/Test-Driven%20Development%20-%20Extensive%20Tutorial.pdf">
-  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-pdf.png" />PDF
-</a>&nbsp;
-<a href="http://grzesiek-galezowski.github.io/tdd-ebook/">
-  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-web.png" />HTML
-</a>
-
 ### Additional Links
 
 
@@ -75,46 +57,18 @@ Alternative links:
 
 This ebook is an attempt to create open-source extensive tutorial on Test-Driven Development. It's work in progress and any contribution is welcome.
 
-The main destination format is epub, conversion to mobi is done using calibre's 'ebook-convert' utility. Both formats are readily available for download, so please feel free to do so.
+### Book plan
 
-### Table of Content
-
-So far the following chapters are considered ready for reading:
+The following parts are planned. Current table of content is available on [Leanpub](https://leanpub.com/tdd-ebook)
 
 
 *Part 1: Just The Basics*
-
- 1. Motivation - the first step to learning TDD
- 1. The three most essential tools
- 1. It's not a test
- 1. Statement-First programming
- 1. Practicing what we already learned
- 1. Sorting out the bits
- 1. How to start?
- 1. How is TDD about analysis and what's with the GIVEN-WHEN-THEN structure?
- 1. Developing TDD style and Constrained Non-Determinism
- 1. What is the scope of a unit-level Statement in TDD?
- 1. Specifying Boundaries and Conditions
- 1. Triangulation
-
 *Part 2: Test-Driven Development in Object Oriented World*
- 1. On objects composability
- 1. Telling, not asking
- 1. The need for mock o objects
- 1. Why do we need composability?
- 1. TBD
-
 *Part 3: Beyond Objects - TDD on higher levels*
- 1. TBD
- 
 *Part 4: Tools of test-driven developer*
- 1. TBD
-
 *Part 5: FAQ and nuances*
- 1. TBD
 
-At least ten or twenty more chapters are planned, so there is still 
-lots to do! Your input is crucial!
+The book is already over 150 pages, but there is still lots to do! Your input is crucial!
 
 ### Contributing
 
