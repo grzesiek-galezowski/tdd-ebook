@@ -213,7 +213,7 @@ compile and run.
 
 ### Example
 
-Let us try this on a simple problem of comparing two users. We assume that
+Let us try this on a simple example of comparing two users. We assume that
 a user should be equal to another when it has the same name as the other
 one:
 

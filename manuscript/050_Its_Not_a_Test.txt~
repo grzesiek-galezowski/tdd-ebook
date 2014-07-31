@@ -71,7 +71,7 @@ would usually receive were not exactly what we would encounter at the
 time of exam, so we still had to guess. Still, the role of a **test as
 specification of a need** was already visible.
 
-Taking it to the software development land
+Taking It To The Software Development Land
 ------------------------------------------
 
 I chose this lengthy metaphor to show you that ‘test’ is really another
@@ -109,7 +109,7 @@ Also, are already after the phase of designing an API that will fulfill
 the need. Don’t you think it is pretty much information about the
 application from just three lines of code?
 
-A Specification instead of a Test Suite
+A Specification Instead of a Test Suite
 ---------------------------------------
 
 I hope that you can see now that what we called ‘a test’ is really

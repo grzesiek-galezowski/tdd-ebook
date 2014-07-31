@@ -78,7 +78,7 @@ By the way, this process is sometimes referred to as
 “Red-Green-Refactor". I am just mentioning it here for the record - I am
 not planning to use this term further in the book.
 
-The benefit of failure
+The Benefit of Failure
 ----------------------
 
 When I showed you a drawing with a TDD process, I specifically said 
