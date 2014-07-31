@@ -70,9 +70,9 @@ task :clone_manuscript => 'diagrams:regenerate' do
   cp_r $MANUSCRIPT_DIR, $PD_MANUSCRIPT_DIR
   
   # remove leanpub code language markers
-  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri '/\\{lang=/d' *.txt")
+  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri '/\\{lang=/d' *.md")
   # replace leanpub parts with chapters
-  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/^-# /# /' *.txt")
+  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/^-# /# /' *.md")
 end
 
 namespace :formats do

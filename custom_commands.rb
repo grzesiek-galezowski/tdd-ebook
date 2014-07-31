@@ -99,7 +99,7 @@ def generate_html(subdir, filename)
     $pandoc_highlight_opts,
     "--standalone",
     "-t html",
-    "./Cover.txt"
+    "./Cover.md"
   ]
   generate_format subdir, filename, options
 end
