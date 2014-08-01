@@ -24,18 +24,28 @@ void triggerAlarm(Alarm* alarm)
 {
   if(alarm->kind == LOUD_ALARM)
   {
-    playLoudSound((LoudAlarm*)alarm);
+    playLoudSound();
   }
   else if(alarm->kind == SILENT_ALARM)
   {
-    notifyPolice((SilentAlarm*)alarm);
+    notifyPolice();
   }
 }
 ~~~
-The code queries the alarm kind which is embedded in the alarm structure
-and makes decision based on this kind. Unfortunately, if we wanted make
+
+The code queries the alarm kind which is embedded in the alarm structure:
+
+{lang="c"}
+~~~
+struct Alarm
+{
+  int kind;
+};
+~~~
+
+and decides what do do based on this kind. Unfortunately, if we wanted to make
 a second decision based on the alarm kind, we would need to query for
-the alarm kind again, duplicating the conditional code, just with different set of
+the alarm kind again. This would mean duplicating the conditional code, just with different set of
 actions to perform depending on what kind of alarm we were dealing with:
 
 {lang="c"}
@@ -44,11 +54,11 @@ void disableAlarm(Alarm* alarm)
 {
   if(alarm->kind == LOUD_ALARM)
   {
-    stopLoudSound((LoudAlarm*)alarm);
+    stopLoudSound();
   }
   else if(alarm->kind == SILENT_ALARM)
   {
-    stopNotfyingPolice((SilentAlarm*)alarm);
+    stopNotfyingPolice();
   }
 }
 ~~~
@@ -142,11 +152,11 @@ type, so what we previously had:
 ~~~
 if(alarm->kind == LOUD_ALARM)
 {
-  playLoudSound((LoudAlarm*)alarm);
+  playLoudSound();
 }
 else if(alarm->kind == SILENT_ALARM)
 {
-  notifyPolice((SilentAlarm*)alarm);
+  notifyPolice();
 }
 ~~~
 
