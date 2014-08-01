@@ -24,11 +24,11 @@ void triggerAlarm(Alarm* alarm)
 {
   if(alarm->kind == LOUD_ALARM)
   {
-    playLoudSound();
+    playLoudSound(alarm);
   }
   else if(alarm->kind == SILENT_ALARM)
   {
-    notifyPolice();
+    notifyPolice(alarm);
   }
 }
 ~~~
@@ -40,6 +40,7 @@ The code queries the alarm kind which is embedded in the alarm structure:
 struct Alarm
 {
   int kind;
+  //other data
 };
 ~~~
 
@@ -54,11 +55,11 @@ void disableAlarm(Alarm* alarm)
 {
   if(alarm->kind == LOUD_ALARM)
   {
-    stopLoudSound();
+    stopLoudSound(alarm);
   }
   else if(alarm->kind == SILENT_ALARM)
   {
-    stopNotfyingPolice();
+    stopNotfyingPolice(alarm);
   }
 }
 ~~~
@@ -152,11 +153,11 @@ type, so what we previously had:
 ~~~
 if(alarm->kind == LOUD_ALARM)
 {
-  playLoudSound();
+  playLoudSound(alarm);
 }
 else if(alarm->kind == SILENT_ALARM)
 {
-  notifyPolice();
+  notifyPolice(alarm);
 }
 ~~~
 
