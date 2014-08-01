@@ -5,12 +5,13 @@ I would like to thank the following people (listed alphabetically by
 name) for valuable feedback, suggestions, typo fixes and other 
 contributions:
 
--   Donghyun Lee
+-   Brad Appleton
 -   Daniel Żołopa
+-   Donghyun Lee
 -   Michael Whelan
 -   Reuven Yagel
 -   Sławomir Pająk
--   Brad Appleton
+-   Wiktor Żołnowski
 
 This book is not original at all. It presents various topics that others 
 invented and I just picked up. Thus, I would also like to thank my mentors 
@@ -21,8 +22,8 @@ that I gained all my knowledge from (listed alphabetically by name):
 -   Dan North
 -   Ken Pugh
 -   Kent Beck
--   Martin Fowler
 -   Mark Seemann
+-   Martin Fowler
 -   Nat Pryce
 -   Scott Bain
 -   Steve Freeman
