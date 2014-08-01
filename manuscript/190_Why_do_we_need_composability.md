@@ -310,12 +310,12 @@ new GuardsBuilding(
 )
 ~~~
 
-Noticed something funny about the section you are reading now? So far,
-we have twisted the behaviors of our application in wacky ways, but all
+Noticed something funny about the last few examples? If not, here goes an explanation:
+in the last few examples, we have twisted the behaviors of our application in wacky ways, but all
 of this took place in the composition code! We did not have to modify
 any other existing classes! True, we had to write a new class called
 `NoAlarm`, but did not need to modify any other code than the
-composition code to put this new class into use!
+composition code to make objects if this new class work with objects of existing classes!
 
 This ability to change the behavior of our application just by changing
 the way objects are composed together is extremely powerful (although
