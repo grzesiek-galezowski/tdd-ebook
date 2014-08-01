@@ -12,38 +12,44 @@ Pre-object oriented approaches
 
 Back in the days of procedural programming, when we wanted to execute a
 different code based on some factor, it was usually achieved using an
-'if' statement. For example, if our application was able to use
-different kinds of alarms, e.g. a loud alarm (that plays a loud sound)
+'if' statement. For example, if our application was in need to be able to use
+different kinds of alarms, like a loud alarm (that plays a loud sound)
 and a silent alarm (that does not play any sound, but instead silently
-contacts the security), then usually, we could find a piece of code like
-the following to achieve that:
+contacts the security) interchangeably, then usually, we could achieve this using a piece of code like
+the following:
 
 {lang="c"}
 ~~~
-if(alarm->kind == LOUD_ALARM)
+void triggerAlarm(Alarm* alarm)
 {
-  triggerLoudAlarm((LoudAlarm*)alarm);
-}
-else if(alarm->kind == SILENT_ALARM)
-{
-  triggerSilentAlarm((SilentAlarm*)alarm);
+  if(alarm->kind == LOUD_ALARM)
+  {
+    playLoudSound((LoudAlarm*)alarm);
+  }
+  else if(alarm->kind == SILENT_ALARM)
+  {
+    notifyPolice((SilentAlarm*)alarm);
+  }
 }
 ~~~
 The code queries the alarm kind which is embedded in the alarm structure
 and makes decision based on this kind. Unfortunately, if we wanted make
 a second decision based on the alarm kind, we would need to query for
-the alarm kind again, duplicating the code, just with different set of
-actions to perform depending on what kind of alarm we are dealing with:
+the alarm kind again, duplicating the conditional code, just with different set of
+actions to perform depending on what kind of alarm we were dealing with:
 
 {lang="c"}
 ~~~
-if(alarm->kind == LOUD_ALARM)
+void disableAlarm(Alarm* alarm)
 {
-  disableLoudAlarm((LoudAlarm*)alarm);
-}
-else if(alarm->kind == SILENT_ALARM)
-{
-  disableSilentAlarm((SilentAlarm*)alarm);
+  if(alarm->kind == LOUD_ALARM)
+  {
+    stopLoudSound((LoudAlarm*)alarm);
+  }
+  else if(alarm->kind == SILENT_ALARM)
+  {
+    stopNotfyingPolice((SilentAlarm*)alarm);
+  }
 }
 ~~~
 
@@ -52,24 +58,23 @@ apologies then, but I'll tell you anyway. The duplication means that
 every time a new kind of alarm is introduced, a developer has to
 remember to update both places that contain 'if-else' - the compiler
 will not force this. As you are probably aware, in the context of teams,
-where one developer picks up work that another left and where there is a
-notion of attrition, expecting someone to "remember" to update all the
+where one developer picks up work that another left and where, from time to time, people leave to find another job, expecting someone to "remember" to update all the
 places where the logic is duplicated is asking for trouble.
 
-Here's the reason for this duplication: We have two things we do with
-our alarms: triggering and disabling. Each alarm has different way of
-doing all these things - resulting in having a set of "answers" for the
-same set of questions associated with each alarm kind:
+So we see that the duplication is bad, but can we do something about it?
+To answer this question, let us take a look at the reason it was introduced.
+The reason is: We have two things we do with
+our alarms: triggering and disabling. In other words, we have a set of questions we want to be able to ask an alarm. Each kind of alarm has a different way of
+answering these questions - resulting in having a set of "answers" specific to each alarm kind:
 
-1.  Loud Alarm
-    1.  triggering: `triggerLoudAlarm()`
-    1.  disabling: `disableLoudAlarm()`
-1.  SilentAlarm
-    1.  triggering: `triggerSilentAlarm()`
-    1.  disabling: `disableSilentAlarm()`
+| Alarm Kind          | Triggering                 |     Disabling              |
+|---------------------|----------------------------|------------------------|
+| Loud Alarm          | `playLoudSound()`     | `notifyPolice()` |
+| Silent Alarm          | `stopLoudSound()`     | `stopNotfyingPolice()` | 
 
 So, at least conceptually, as soon as we know the alarm kind, we already
-know which set of behaviors it needs. We could just decide the alarm
+know which set of behaviors (represented as a row in the above table) it needs. 
+We could just decide the alarm
 kind once and associate the right set of behaviors with the data
 structure. Then, we would not have to query the alarm data again as we
 did, but instead, we could say: "execute triggering the alarm from the
@@ -137,11 +142,11 @@ type, so what we previously had:
 ~~~
 if(alarm->kind == LOUD_ALARM)
 {
-  triggerLoudAlarm((LoudAlarm*)alarm);
+  playLoudSound((LoudAlarm*)alarm);
 }
 else if(alarm->kind == SILENT_ALARM)
 {
-  triggerSilentAlarm((SilentAlarm*)alarm);
+  notifyPolice((SilentAlarm*)alarm);
 }
 ~~~
 
