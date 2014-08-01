@@ -33,10 +33,7 @@ $HTML_INDEX = "index.html"
 $ROOT_DIR_COVER_IMAGE = $ROOT + "cover_real.png"
 
 SOURCE_DOCUMENT = local_ebook_variant(:epub)
-PUBLISH_FOLDER = $USER_HOME + 'Dropbox/Public/'
 PDF_CONVERSION_OPTIONS = "--margin-bottom 20 --margin-top 20 --margin-left 20 --margin-right 20 --change-justification justify"
-
-PUBLISH_FOLDER.mkpath unless PUBLISH_FOLDER.exist? and PUBLISH_FOLDER.readable?
 
 class String
   def without_endline

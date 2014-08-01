@@ -8,9 +8,8 @@ desc "Push all deliverables into source control"
 task :push, [:commit_message] => [:push_ebook, :push_html] do | t, args |
 end
 
-
 desc "Push ebook into source control"
-task :push_ebook, [:commit_message] => ['formats:all', 'dropbox_deployment:all'] do | t, args |
+task :push_ebook, [:commit_message] => ['formats:all'] do | t, args |
   #TODO repair this
   remove_pandoc_manuscript
   git = Git.new $ROOT
@@ -18,32 +17,6 @@ task :push_ebook, [:commit_message] => ['formats:all', 'dropbox_deployment:all']
   git.add_all
   git.commit_all args[:commit_message]
   git.push_changes_to_master
-end
-
-namespace :dropbox_deployment do
-
-  desc 'publish all items in dropbox folder'
-  multitask :all => ['dropbox_deployment:epub', 'dropbox_deployment:mobi', 'dropbox_deployment:azw3', 'dropbox_deployment:pdf']
-
-  desc 'puts epub version in dropbox folder'
-  task :epub => 'formats:epub' do
-    copy SOURCE_DOCUMENT, PUBLISH_FOLDER
-  end
-
-  desc 'puts mobi version in dropbox folder'
-  task :mobi => 'formats:mobi' do
-    copy local_ebook_variant(:mobi), PUBLISH_FOLDER
-  end
-
-  desc 'puts azw3 version in dropbox folder'
-  task :azw3 => 'formats:azw3' do
-    copy local_ebook_variant(:azw3), PUBLISH_FOLDER
-  end
-
-  desc 'puts pdf version in dropbox folder'
-  task :pdf => 'formats:pdf' do
-    copy local_ebook_variant(:pdf), PUBLISH_FOLDER
-  end
 end
 
 desc "Commit HTML version to github pages"
