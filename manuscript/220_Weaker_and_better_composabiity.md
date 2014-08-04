@@ -50,7 +50,7 @@ purpose.
 
 It is decided then, If a sender wants to be composable with recipient,
 it has to accept a reference to recipient in form of interface
-reference. We can say that, by being light-weight and
+reference. We can say that, by being lightweight and
 implementationless, **interfaces can be treated as "slots" for plugging
 in different objects**.
 
