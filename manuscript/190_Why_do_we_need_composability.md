@@ -338,6 +338,4 @@ on composability.
 In the next chapter, we will take a closer look at composing objects
 itself.
 
-[^skipfunc]: I am smiplifying the discussion on purpose, leaving out 
-e.g. functional languages and assuming that "pre-object oriented" means procedural or structural. While this is not true in general, 
-this is how the reality looked like for many of us. If you are good at functional programming, you already understand the benefits of composability
+[^skipfunc]: I am smiplifying the discussion on purpose, leaving out e.g. functional languages and assuming that "pre-object oriented" means procedural or structural. While this is not true in general, this is how the reality looked like for many of us. If you are good at functional programming, you already understand the benefits of composability
