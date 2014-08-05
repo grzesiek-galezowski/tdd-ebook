@@ -200,11 +200,7 @@ The power of composition
 
 Moving creation of alarm instances away from the classes that use those
 alarms brings up an interesting problem - if an object does not create
-the objects it uses, then who does it? I have cleverly avoided
-answering this question so far, so let's tackle this issue now. A
-solution is to make some special place in the code that assembles a
-system from loosely coupled objects. We saw this already as Johnny was
-explaining composability to Benjamin. He used the following example:
+the objects it uses, then who does it? A solution is to make some special places in the code that are only responsible for composing a system from context-independent objects[^moreonindependence]. We saw this already as Johnny was explaining composability to Benjamin. He used the following example:
 
 {lang="csharp"}
 ~~~
@@ -221,50 +217,114 @@ new SqlRepository(
 We can do the same with our alarms. Let's say that we have a secure area
 that has three buildings with different alarm policies:
 
--   Office building - the alarm should be silent during the day (to keep
-    office staff from panicking) and loud in the night, when guards are
-    on patrol.
--   Storage building - as it is quite far and the workers are few, we
-    want to trigger loud and silent alarms at the same time
--   Guards building - as the guards are there, no need to notify them
-    with silent alarm, but a loud alarm is desired
+-   Office building - the alarm should silently notify guards during the day (to keep office staff from panicking) and loud during the night, when guards are on patrol.
+-   Storage building - as it is quite far and the workers are few, we want to trigger loud and silent alarms at the same time
+-   Guards building - as the guards are there, no need to notify them. However, a silent alarm should call police for help instead, and a loud alarm is desired as well
 
-The composition of objects fulfilling these needs could look like this:
+Note that besides just triggering loud or silent alarm, we have a requirement for a combination ("loud and silent alarms at the same time") and a conditional ("silent during the day and loud during the night"). we could just hardcode some `for`s and `if-else`s in our code, but instead, let's factor out these two operations (combination and choice) into separate classes implementing the alarm interface.
+
+Let's call the class implementing the choice between two alarms `DayNightSwitchedAlarm`. Here is the source code:
+
+{lang="csharp"}
+~~~
+public class DayNightSwitchedAlarm : Alarm
+{
+  private readonly Alarm _dayAlarm;
+  private readonly Alarm _nightAlarm;
+  
+  public DayNightSwitchedAlarm(
+    Alarm dayAlarm,
+    Alarm nightAlarm)
+  {
+    _dayAlarm = dayAlarm;
+    _nightAlarm = nightAlarm;
+  }
+  
+  public void Trigger()
+  {
+    if(/* is day */)
+    {
+      _dayAlarm.Trigger();
+    }
+    else
+    {
+      _nightAlarm.Trigger();
+    }
+  }
+
+  public void Disable()
+  {
+    _dayAlarm.Disable();
+    _nightAlarm.Disable();
+  }
+}
+~~~
+
+Studying the above code, it is apparent that this is not an alarm *per se*, e.g. it does not raise any sound or notification, but rather, it contains some rules on how to use other alarms. This is the same concept as power splitters in real life, which act as electric devices but do not do anything other than redirecting the electricity to other devices. 
+
+Next, let's use the same approach and model the combination of two alarms as a class called `HybridAlarm`. Here is the source code:
+
+{lang="csharp"}
+~~~
+public class HybridAlarm : Alarm
+{
+  private readonly Alarm _alarm1;
+  private readonly Alarm _alarm2;
+  
+  public HybridAlarm(
+    Alarm alarm1,
+    Alarm alarm2)
+  {
+    _alarm1 = alarm1;
+    _alarm2 = alarm2;
+  }
+  
+  public void Trigger()
+  {
+    _alarm1.Trigger();
+    _alarm2.Trigger();
+  }
+
+  public void Disable()
+  {
+    _alarm1.Disable();
+    _alarm2.Disable();
+  }
+}
+~~~
+
+Using these two classes along with already existing alarms, we can implement the requirements by composing instances of those classes like this:
 
 {lang="csharp"}
 ~~~
 new SecureArea(
   new OfficeBuilding(
     new DayNightSwitchedAlarm(
-      new SilentAlarm(), 
+      new SilentAlarm("222-333-444"), 
       new LoudAlarm()
     )
   ),
   new StorageBuilding(
     new HybridAlarm(
-      new SilentAlarm(),
+      new SilentAlarm("222-333-444"),
       new LoudAlarm()
     )
   ),
   new GuardsBuilding(
-    new LoudAlarm()
+    new HybridAlarm(
+      new SilentAlarm("919"), //call police
+      new LoudAlarm()
+    )
   )
 );
 ~~~
 
-The parts I would like to turn your attention to are: `HybridAlarm` and
-`DayNightSwitchedAlarm`. These are both classes implementing the `Alarm`
-interface, at the same time taking `Alarm` implementations as their
-constructor arguments. For example, `DayNightSwitchedAlarm` uses
-different alarm during the day and another during the night. Note that
-this allows us to change the alarm behaviors in many interesting ways
-using the parts we already have, but composing them together
-differently. For example, we might have, as in the above example:
+Note that the fact that we implemented combination and choice of alarms as separate objects implementing the `Alarm` interface allows us to define new, interesting alarm behaviors using the parts we already have, but composing them together differently. For example, we might have, as in the above example:
 
 {lang="csharp"}
 ~~~
 new DayNightSwitchAlarm(
-  new SilentAlarm(), 
+  new SilentAlarm("222-333-444"), 
   new LoudAlarm());
 ~~~
 
@@ -274,28 +334,32 @@ during night. However, instead of this combination, we might use:
 {lang="csharp"}
 ~~~
 new DayNightSwitchAlarm(
-  new SilentAlarm(),
+  new SilentAlarm("222-333-444"),
   new HybridAlarm(
-    new SilentAlarm(),
+    new SilentAlarm("919"),
     new LoudAlarm()
   )
 )
 ~~~
 
-Which would mean that we use silent alarm during the day, but a
-combination of silent and loud during the night.
+Which would mean that we use silent alarm to notify the guards during the day, but a combination of silent (notifying police) and loud during the night. Of course, we are not limited to combining a silent alarm with a loud one only. We can as well combine two silent ones:
 
-Additionally, if we suddenly decided that we do not want alarm at all
-during the day, we could use a special class called `NoAlarm` that would
-implement `Alarm` interface, but have both `Trigger` and `Disable`
-methods do nothing. The composition code would look like this:
+{lang="csharp"}
+~~~
+new HybridAlarm(
+  new SilentAlarm("919"),
+  new SilentAlarm("222-333-444")
+)
+~~~
+
+Additionally, if we suddenly decided that we do not want alarm at all during the day, we could use a special class called `NoAlarm` that would implement `Alarm` interface, but have both `Trigger` and `Disable` methods do nothing. The composition code would look like this:
 
 {lang="csharp"}
 ~~~
 new DayNightSwitchAlarm(
-  new NoAlarm(), // no alarm during day
+  new NoAlarm(), // no alarm during the day
   new HybridAlarm(
-    new SilentAlarm(),
+    new SilentAlarm("919"),
     new LoudAlarm()
   )
 )
@@ -311,31 +375,17 @@ new GuardsBuilding(
 )
 ~~~
 
-Noticed something funny about the last few examples? If not, here goes an explanation:
-in the last few examples, we have twisted the behaviors of our application in wacky ways, but all
-of this took place in the composition code! We did not have to modify
-any other existing classes! True, we had to write a new class called
-`NoAlarm`, but did not need to modify any other code than the
-composition code to make objects if this new class work with objects of existing classes!
+Noticed something funny about the last few examples? If not, here goes an explanation: in the last few examples, we have twisted the behaviors of our application in wacky ways, but all of this took place in the composition code! We did not have to modify any other existing classes! True, we had to write a new class called `NoAlarm`, but did not need to modify any other code than the composition code to make objects if this new class work with objects of existing classes!
 
-This ability to change the behavior of our application just by changing
-the way objects are composed together is extremely powerful (although
-you will always be able to achieve it only to certain extent),
-especially in evolutionary, incremental design, where we want to evolve
-some pieces of code with as little as possible other pieces of code
-having to realize that the evolution takes place..
+This ability to change the behavior of our application just by changing the way objects are composed together is extremely powerful (although you will always be able to achieve it only to certain extent), especially in evolutionary, incremental design, where we want to evolve some pieces of code with as little as possible other pieces of code having to realize that the evolution takes place. This ability can be achieved only if our system consists of composable objects, thus the need for composability - an answer to a question raised at the beginning of this chapter.
 
 Summary - are you still with me?
 --------------------------------
 
-Although we started with what seemed to be a repetition from basic
-object oriented programming class, using a basic example. It was
-necessary though to make a fluent transition to the benefits of
-composability we eventually introduced at the end. I hope you did not
-get overwhelmed and can understand now why I am putting so much stress
-on composability.
+We started with what seemed to be a repetition from basic object oriented programming course, using a basic example. It was necessary though to make a fluent transition to the benefits of composability we eventually introduced at the end. I hope you did not get overwhelmed and can understand now why I am putting so much stress on composability.
 
-In the next chapter, we will take a closer look at composing objects
-itself.
+In the next chapter, we will take a closer look at composing objects itself.
 
-[^skipfunc]: I am smiplifying the discussion on purpose, leaving out e.g. functional languages and assuming that "pre-object oriented" means procedural or structural. While this is not true in general, this is how the reality looked like for many of us. If you are good at functional programming, you already understand the benefits of composability
+[^skipfunc]: I am simplifying the discussion on purpose, leaving out e.g. functional languages and assuming that "pre-object oriented" means procedural or structural. While this is not true in general, this is how the reality looked like for many of us. If you are good at functional programming, you already understand the benefits of composability.
+
+[^moreonindependence]: More on context-independence and what these "special places" are, in the next chapters.
