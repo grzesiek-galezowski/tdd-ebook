@@ -18,7 +18,7 @@
 170_TellDoNotAsk.md
 180_Web_of_objects_explained.md
 190_Why_do_we_need_composability.md
-End.md
 200_What_does_it_mean_to_compose_objects.md
+End.md
 210_How_are_objects_composed.md
 220_Weaker_and_better_composabiity.md

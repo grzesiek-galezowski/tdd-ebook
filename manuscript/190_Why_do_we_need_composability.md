@@ -15,8 +15,7 @@ different code based on some factor, it was usually achieved using an
 'if' statement. For example, if our application was in need to be able to use
 different kinds of alarms, like a loud alarm (that plays a loud sound)
 and a silent alarm (that does not play any sound, but instead silently
-contacts the police) interchangeably, then usually, we could achieve this using a conditional like in 
-the following function:
+contacts the police) interchangeably, then usually, we could achieve this using a conditional like in the following function:
 
 {lang="c"}
 ~~~

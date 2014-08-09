@@ -4,22 +4,19 @@ Composing a web of objects
 Three important questions
 -------------------------
 
-Ok, I told you that there is such a thing as a web of objects exists, 
-that there are connections, protocols and such, but there is one thing 
-I left out: how does a web of objects come into existence?
+Ok, I told you that such a thing as a web of objects exists, that there are connections, protocols and such, but there is one thing I left out: how does a web of objects come into existence?
 
-This is, of course, a fundamental question, because if we are not able 
-to build a web, we do not have a web. The question itself is a little 
-more tricky that you may think and it contains three other questions 
-that we need to answer:
+This is, of course, a fundamental question, because if we are not able to build a web, we do not have a web. In addition, this is a question that is a little more tricky that you may think and it contains three other questions that we need to answer:
 
-1.  How does an object obtain a reference to another one in the web?
-2.  When are objects composed?
-3.  Where are objects composed?
+1.  How does an object obtain a reference to another one in the web (i.e. how a connection is made)?
+2.  When are objects composed (i.e. when a connection is made)?
+3.  Where are objects composed (i.e. where a connection is made)?
 
 For now, you may have some trouble understanding why these questions 
 are important, but the good news is that you won't have to trust me 
-too long, because these questions are the topic of this chapter.
+too long, because these questions are the topic of this chapter. Let's go!
+
+## A preview
 
 Before we take a deep dive, let's try to answer these questions for a 
 really simple example code of a console application:
@@ -33,20 +30,20 @@ public static void Main(string[] args)
 ~~~
 
 1.  How does an object (`Sender`) obtain a reference to another one 
-(`Recipient`)? The reference is passed through constructor.
-2.  When are objects composed? During application startup.
-3.  Where are objects composed? At application entry point (`Main()` 
+(`Recipient`)? Answer: the reference is passed through constructor.
+2.  When are objects composed? Answer: during application startup.
+3.  Where are objects composed? Answer: at application entry point (`Main()` 
 method)
 
-Depending on circumstances, we have sets of best answers to these 
-questions. But first, let us take the questions on one by one.
+Depending on circumstances, we have different sets of best answers to these 
+questions. To find them, let us take the questions on one by one.
 
-How does sender obtain a reference to recipient?
+How does sender obtain a reference to recipient (i.e. how a connection is made)?
 ------------------------------------------------
 
-There are few ways, each of them useful in certain circumstances:
+There are few ways this happens, each of them useful in certain circumstances:
 
-### Pass as constructor parameter
+### Receive as constructor parameter
 
 Two objects can be composed by passing one into the constructor of
 another:
@@ -56,8 +53,7 @@ another:
 sender = new Sender(recipient);
 ~~~
 
-A sender is composed with a recipient and saves a reference to
-the recipient in a private field for later, like this:
+A sender then saves a reference to the recipient in a private field for later, like this:
 
 {lang="csharp"}
 ~~~
@@ -67,43 +63,32 @@ public Sender(Recipient recipient)
 }
 ~~~
 
-Composing using constructors has one significant advantage. The code 
-that passes `Recipient` to `Sender` through constructor is most often 
-in a totally different place than the code using `Sender`.
-Thus, the code using `Sender` is not aware that `Sender` stores a 
-reference to `Recipient` inside it. This
-basically means that when `Sender` is used, e.g. like this:
+Composing using constructors has one significant advantage. The code that passes `Recipient` to `Sender` through constructor is most often in a totally different place than the code using `Sender`. Thus, the code using `Sender` is not aware that `Sender` stores a reference to `Recipient` inside it. This basically means that when `Sender` is used, e.g. like this:
 
 {lang="csharp"}
 ~~~
 sender.DoSomething()
 ~~~
 
-`Sender` may send message to `Recipient` internally, but the code
-invoking the `DoSomething()` method is completely unaware of that. 
-Which is good, because "what you hide, you can change" - if we decide 
-that the `Sender` needs not use the `Recipient` to do its duty, the 
-code that uses `Sender` does not need to change at all - it still uses 
-the `Sender` the same way:
+the `Sender` may then react by sending message to `Recipient`, but the code invoking the `DoSomething()` method is completely unaware of that. 
+Which is good, because "what you hide, you can change"[^kolskybain] - if we decide that the `Sender` needs not use the `Recipient` to do its duty (or pass in a different implementation of `Sender` that does not need the `Recipient`), the code that uses `Sender` does not need to change at all - it still uses the `Sender` the same way:
 
 {lang="csharp"}
 ~~~
 sender.DoSomething()
 ~~~
 
-All we have to change is the composition code:
+All we have to change is the composition code to remove `Recipient`:
 
 {lang="csharp"}
 ~~~
 //no need to pass a reference to Recipient anymore
-sender = new Sender();
+new Sender();
 ~~~
 
-Passing into constructor is a great way to compose sender with a recipient
-permanently. In order to be able to do this, a `Recipient` must, of
-course, exist before a `Sender` does. Another less obvious requirement
-for this composition is that `Recipient` must be usable at least as long
-as `Sender` is usable. In other words, the following is nonsense:
+Another advantage of the constructor approach is that if `Recipient` is required for a `Sender` to work correctly and it does not make sense to create a `Sender` without a `Recipient`, the signature of the constructor makes it explicit - the compiler will not let us create a `Sender` without passing *something* as a `Recipient`.
+
+Passing into constructor is a great solution in cases we want to compose sender with a recipient permanently (i.e. for the lifetime of `Sender`). In order to be able to do this, a `Recipient` must, of course, exist before a `Sender` does. Another less obvious requirement for this composition is that `Recipient` must be usable at least as long as `Sender` is usable. In other words, the following is nonsense:
 
 {lang="csharp"}
 ~~~
@@ -113,7 +98,7 @@ recipient.Dispose(); //but sender is unaware of it
 sender.DoSomething();
 ~~~
 
-### Pass inside a message (i.e. as a method parameter)
+### Receive inside a message (i.e. as a method parameter)
 
 Another common way of composing objects together is passing one object
 as a parameter of another object's method call:
@@ -138,9 +123,7 @@ public void DoSomethingWithHelpOf(Recipient recipient)
 }
 ~~~
 
-This is a great way to compose objects when we want to use the same
-sender with different recipients at different times (most often from
-different parts of the code):
+Contrary to the constructor approach, where a `Sender` could hide from its user the fact that it needs `Recipient`, in this case the user of `Sender` is explicitly responsible for supplying a `Recipient`. It may look like the coupling of user to `Recipient` is a disadvantage, but there are scenarios where it is actually **required** for a code using `Sender` to be able to provide its own `Recipient` - it lets us use the same sender with different recipients at different times (most often from different parts of the code):
 
 {lang="csharp"}
 ~~~
@@ -154,14 +137,11 @@ sender.DoSomethingWithHelpOf(anotherRecipient);
 sender.DoSomethingWithHelpOf(yetAnotherRecipient);
 ~~~
 
-### Return recipient from a method
+If this ability is not required, the constructor approach is better as it removes the then unnecessary coupling between code using `Sender` and a `Recipient`.
 
-This method of composing objects uses another intermediary object - a
-factory (that creates new recipient instance on each call) or a cache 
-(that usually yields the same object many times when asked with the 
-same arguments). Most often, the sender is given a reference to this 
-intermediary object as a constructor parameter (an approach we already 
-discussed):
+### Get recipient in response to message (i.e. as method return value)
+
+This method of composing objects uses another intermediary object - often a factory (that creates new recipient instance on each call)[^gofcreationpatterns]. Most often, the sender is given a reference to this intermediary object as a constructor parameter (an approach we already discussed):
 
 {lang="csharp"}
 ~~~
@@ -184,12 +164,7 @@ public class Sender
 }
 ~~~
 
-This kind of composition is beneficial when a different recipient is 
-needed each time `DoSomething()` is called (much like in case of 
- previously discussed approach of passing recipient as a method 
- parameter), but at the same time (contrary to passing recipient as a 
- method parameter), the code using the `Sender` should not (or cannot) be 
- responsible for supplying a recipient.
+This kind of composition is beneficial when a new recipient is needed each time `DoSomething()` is called (much like in case of previously discussed approach of receiving a recipient as a method parameter), but at the same time (contrary to the mentioned approach), it is not the code using the `Sender` that should (or can) be responsible for supplying a recipient.
 
 To be more clear, here is a comparison of two approaches: passing 
 recipient inside a message:
@@ -222,30 +197,38 @@ This means passing a recipient to an **already created** sender
 passed **during** creation) as a parameter of a method that stores the 
 reference for later use. This may be a "setter" method, although I do 
 not like naming it according to convention "setWhatever()" - after Kent 
-Beck (Implementation Patterns book) I find this convention too much 
+Beck[^implementationpatterns] I find this convention too much 
 implementaion-focused instead of purpose-focused. Thus, I pick 
 different names based on what domain concept is modeled by the 
 registration method or what is its purpose.
 
-Note that this is similar to "pass inside a message" approach, only 
-this time, the passed recipient is not used immediately and forgotten, 
-but rather remembered for later use.
+Note that this is similar to "pass inside a message" approach, only this time, the passed recipient is not used immediately and forgotten, but rather remembered for later use.
 
-Anyway, a quick example. Suppose we have a temperature sensor that can
-report its current and historically mean value for the current date to 
-whoever registers with it. If no one registers, it still does its job, 
-because mean value is based on historical data and someone might 
-register for it at any time, right? So, part of the definition of such 
-a sensor could look like this:
+I hope I can clear up the confusion with a quick example. Suppose we have a temperature sensor that can report its current and historically mean value for the current date to whoever registers with it. If no one registers, it still does its job, because it still has to be able to give a history-based mean value to whoever registers at whatever time, right? 
+
+We may solve the problem by introducing an observer registration mechanism in the sensor implementation. If no observer is registered, the values are not reported (in other words, a registered observer is not required for the object to function, but if there is one, it can take advantage of the reports). For this purpose, let's make our sensor depend on an interface called `TemperatureObserver` that could be implemented by various custom observers:
+
+{lang="csharp"}
+~~~
+public interface TemperatureObserver
+{
+  void NotifyOn(
+    Temperature currentValue,
+    Temperature meanValue);  
+}
+~~~
+
+Now we are ready to look at the sensor implementation. Let's make it a class called `TemperatureSensor`. Part of its definition could look like this:
 
 {lang="csharp"}
 ~~~
 public class TemperatureSensor
 {
   private TemperatureObserver _observer 
-    = new NullObserver(); //ignores values by default
+    = new NullObserver(); //ignores reported values
   private Temperature _meanValue = Temperature.Zero();
-  //+ maybe more fields related to storing historical data
+  
+  // + maybe more fields related to storing historical data
 
   public void Run()
   {
@@ -262,14 +245,10 @@ public class TemperatureSensor
 }
 ~~~
 
-As you can see, by default, the sensor reports its values to nowhere
-(`NullObserver`), which is a safe default value (using a `null` 
-instead would cause exceptions or force us to put an ugly null check 
-inside the `Run()` method). Still, we want to be able to supply our own 
-observer one day, when we start caring about the measured and 
-calculated values. This means we need to have a method inside the 
-`TemperatureSensor` class to overwrite this default "do-nothing"
-observer with one that we provide:
+As you can see, by default, the sensor reports its values to nowhere (`NullObserver`), which is a safe default value (using a `null` instead would cause exceptions or force us to put an ugly null check inside the `Run()` method). We have already seen such "null objects" a few times before (e.g. in the previous chapter, when we introduced the `NoAlarm` class) - `NullObserver` is just another incarnation of this pattern.
+
+
+ Still, we want to be able to supply our own observer one day, when someone starts caring about the measured and calculated values (this may be indicated to our application e.g. with a network message or an event from the user interface). This means we need to have a method inside the `TemperatureSensor` class to overwrite this default "do-nothing" observer with a custom one **after** the `TemperatureSensor` instance is created. As I said, I do not like the "SetXYZ()" convention, so I will name the registration method `FromNowOnReportTo()` and make the observer an argument:
 
 {lang="csharp"}
 ~~~
@@ -280,16 +259,26 @@ public void FromNowOnReportTo(TemperatureObserver observer)
 ~~~
 
 This lets us overwrite the observer with a new one should we ever need 
-to do it. 
+to do it. Note that, as I mentioned, this is the place where registration approach differs from the "pass inside a message" approach, where we also receive a recipient in a message, but for immediate use. Here, we don't use the recipient (i.e. the observer) when we get it, but instead we save it for later.
 
-Time for a general remark. Allowing registering recipients after a 
-sender is created is a way of saying: "the recipient is optional - if 
-you provide one, fine, if not, I will do my work without it". Please, 
-do not use this kind of mechanism for required recipients - these 
-should all be passed through constructor, making it harder to create 
-invalid objects that are only partially ready to work. Placing a 
-recipient in a constructor signature is effectively saying that "I will 
-not work without it". 
+TODO make below a side note
+
+Time for a general remark. Allowing registering recipients after a sender is created is a way of saying: "the recipient is optional - if you provide one, fine, if not, I will do my work without it". Please, do not use this kind of mechanism for **required** recipients - these should all be passed through constructor, making it harder to create invalid objects that are only partially ready to work. Placing a 
+recipient in a constructor signature is effectively saying that "I will not work without it". Look at how the following class members signatures talk to you:
+
+{lang="csharp"}
+~~~
+public class Sender
+{
+  //"I will not work without a Recipient1"
+  public Sender(Recipient1 recipient1) {...}
+  
+  //"I will do fine without Recipient2 but you
+  //can overwrite the default here to take advantage
+  //of some features"
+  public void Register(Recipient2 recipient2) {...}
+}
+~~~ 
 
 Now, the observer API we just skimmed over gives us the possibility to
 have a single observer at any given time. When we register new observer,
@@ -325,31 +314,54 @@ foreach(var observer in _observers)
 ...
 ~~~
 
-Another, more flexible option, is not to introduce this collection in 
-the sensor, but instead, create a special kind of "broadcasting 
-observer" that would hold collection of other observers (welcome 
-composability!) and broadcast the values to them every time it itself 
-receives those values. It could be created and registered like this:
+Another, more flexible option, is to use something like we did in the previous chapter with a `HybridAlarm` (remember? It was an alarm aggregating other alarms) - i.e. instead of introducing a collection in the sensor, create a special kind of "broadcasting observer" that would hold collection of other observers (hurrah composability!) and broadcast the values to them every time it itself receives those values:
 
 {lang="csharp"}
 ~~~
+public class BroadcastingObserver 
+  : TemperatureObserver
+{
+  private readonly 
+    TemperatureObserver[] _observers;
+  
+  public BroadcastingObserver(
+    params TemperatureObserver[] observers)
+  {
+    _observers = observers;
+  }
+
+  public void NotifyOn(
+    Temperature currentValue,
+    Temperature meanValue)
+  {
+    foreach(var observer in _observers)
+    {
+      observer.NotifyOn(currentValue, meanValue);
+    }
+  }  
+} 
+~~~
+
+This `BroadcastingObserver` could be instantiated and registered like this:
+
+{lang="csharp"}
+~~~
+//instantiation:
 var broadcastingObserver 
   = new BroadcastingObserver(
       new DisplayingObserver(),
       new StoringObserver(),
       new CalculatingObserver());
 
+//registration:
 sensor.FromNowOnReportTo(broadcastingObserver);
 ~~~
 
-This would let us change the broadcasting implementation without
-touching either the sensor code or the other observers. For example, we 
-might introduce `ParallelBroadcastObserver` that would notify each observer
-asynchronously instead of sequentially and put it to use by changing 
-the composition code only:
+This would let us change the broadcasting policy without touching either the sensor code or the other observers. For example, we might introduce `ParallelBroadcastObserver` that would notify each observer asynchronously instead of sequentially and put it to use by changing the composition code only:
 
 {lang="csharp"}
 ~~~
+//now using parallel observer
 var broadcastingObserver 
   = new ParallelBroadcastObserver(
       new DisplayingObserver(),
@@ -359,50 +371,44 @@ var broadcastingObserver
 sensor.FromNowOnReportTo(broadcastingObserver);
 ~~~
 
-Anyway, as I said, use registering instances very wisely and only if you
-specifically need it. Also, if you do use it, evaluate how allowing
-changing observers at runtime is affected by multithreading scenarios.
-This is because maintaining a changeable field (or a collection) 
-throughout the object lifetime means that multiple thread might access 
-it and get in each other's way.
+Anyway, as I said, use registering instances very wisely and only if you specifically need it. Also, if you do use it, evaluate how allowing changing observers at runtime is affecting your multithreading scenarios. This is because maintaining a changeable field (or a collection) throughout the object lifetime means that multiple thread might access it and get in each others' ways.
 
 Where are objects composed?
 ---------------------------
 
-Ok, we went over some ways of passing a recipient to a sender. The big 
-question is: which code is going to pass the reference?
+Ok, we went through some ways of passing a recipient to a sender. The big 
+question is: which code should pass the recipient?
 
 For almost all of the approaches described above there is no 
-limitation - you pass the reference where you need to pass it.
+limitation - you pass the recipient from where you need to pass it.
 
 There is one approach, however, that is more limited, and this approach 
 is **passing as constructor parameter**.
 
 Why is that? Well, remember we were talking about separating objects 
 usage from construction, right? And invoking constructor 
-imples creating an object, right? Which implies that we can assemble 
-objects using constructors only in the places we separated creation of 
-objects to.
+implies creating an object, right? Which means that we can assemble 
+objects using constructors only in the places where we moved the creation of 
+the objects to.
 
 Typically, there are two such types of places: **composition root** and 
-**factories**. Let us take them one by one.
+**factories** (or other creational design pattern incarnations). Let's start with the first one.
 
 ### Composition Root
 
 A composition root is a location near application entry point where 
 you compose the part of the system on which you invoke your `Run()`, 
-`Execute()`,  `Go()` or whatever.
+`Execute()`,  `Go()` or whatever, i.e. the part of the web that is necessary for the application to start running.
 
 For simplification, let's take an example of a console application. 
-Usually, when not using any framework, your application is symbolized 
-as a class:
+In such case, your application usually has some kind of a single top-level class that serves as a starting point. In this example, I called it `MyApplication`:
 
 {lang="csharp"}
 ~~~
 public static void Main(string[] args)
 {
   var myApplication = new MyApplication();
-  myApplication.RunWith(args);
+  myApplication.Run();
 }
 ~~~
 
@@ -412,25 +418,71 @@ TODO
 
 ### Factories
 
-Factories are objects responsible for creating other objects. They are 
-a layer of abstraction over constructors. A lot of times I talk with 
-people, they do not understand the benefits of using factories "since 
-we already have the `new` operator". But factories present a number of 
-benefits:
+Factories are objects responsible for creating other objects. They are a level of indirection placed above constructors to achieve flexibility (as you will see in the examples in this section). 
 
-TODO what a factory is? a small example?
-
-#### They allow creating objects polymorphically
-
-Typically, a return type of a factory is an interface or, at worst, an 
-abstract class. This means that whatever uses the factory, knows only 
-that it receives an object of that type.
-
-Let's say we have a factory like this:
+The simplest possible example of a factory is something along the following lines:
 
 {lang="csharp"}
 ~~~
-public class Version1ProtocolMessageFactory
+public class MyMessageFactory
+{
+  public MyMessage CreateMyMessage()
+  {
+    return new MyMessage();
+  }
+}
+~~~
+
+Although in this shape, the usefulness of the factory is quite limited, because there is not much indirection in here. More often, when talking about simple factories, we think about something like this:
+
+{lang="csharp"}
+~~~
+//let's assume MessageFactory 
+//and Message are interfaces
+public class XmlMessageFactory : MessageFactory
+{
+  public Message CreateSessionInitialization()
+  {
+    return new XmlSessionInitialization(_serialization);
+  }
+}
+~~~
+
+Note the two things that the factory in the second example has that the one in the first example does not:
+
+* it implements an interface (one level of indirection)
+* its `CreateSessionInitialization()` method declares a return type to be an interface (another level of indirection)
+
+In order for you to use factories effectively, I need you to understand why this indirection is useful, especially that when I talk with people, they often do not understand the benefits of using factories, "because we already have the `new` operator to create objects". So, here are the benefits of using factories:
+
+#### Factories allow creating objects polymorphically (encapsulation of type)
+
+When we invoke a `new` operator, we have to put a name of a concrete type next to it:
+
+{lang="csharp"}
+~~~
+new List<int>(); //OK!
+new IList<int>(); //won't compile...
+~~~
+
+Factories are different. Because we get objects from factories by invoking a method, not by saying which class we want to get instantiated, we can take advantage of polymorhism, i.e. our factory may have a method like this:
+
+{lang="csharp"}
+~~~
+IList<int> createContainerForData() {...}
+~~~
+
+and everything is well as long as the code of this method returns an instance of a real class (say, `List<int>`).
+
+It is typical for a return type of a factory to be an interface or, at worst, an abstract class. This means that whatever uses the factory, it knows only 
+that it receives an object of that type. This means that a factory may return objects of different types at different times, depending on some rules only they know.
+
+Time to look at some more realistic example of how to apply this. Let's say we have a factory of messages like this:
+
+{lang="csharp"}
+~~~
+public class Version1ProtocolMessageFactory 
+  : MessageFactory
 {
   public Message createFrom(MessageData rawData)
   {
@@ -450,8 +502,8 @@ public class Version1ProtocolMessageFactory
 ~~~
 
 Note that the factory can create many different types of messages 
-depending on what is in the raw data, but for the user of the factory, 
-this is irrelevant. All that is seen by the user is this:
+depending on what is inside the raw data, but for the user of the factory, 
+this is irrelevant. All that it knows is that it gets a `Message`, thus, it (and additional code operating on messages for that matter) can be written as general-purpose logic:
 
 {lang="csharp"}
 ~~~
@@ -460,12 +512,34 @@ message.ValidateUsing(_primitiveValidations);
 message.ApplyTo(_sessions);
 ~~~
 
-So, whatever is going on in the factory, it is hidden from the users 
-of the factory. 
+Note that while the above code needs to change when the rule "first validate, then apply to sessions" changes, it does not need to change when all we do is adding new type of message that complies with the current logic. The only place we need to change in such case is the factory: 
 
-TODO no need to change if rule changes
+~~~
+public class Version1ProtocolMessageFactory
+  : MessageFactory
+{
+  public Message createFrom(MessageData rawData)
+  {
+    switch(rawData.MessageType)
+    {
+      case Messages.SessionInit:
+        return new SessionInit(rawData);
+      case Messages.SessionEnd:
+        return new SessionEnd(rawData);
+      case Messages.SessionPayload:
+        return new SessionPayload(rawData);
+      case Messages.SessionRefresh: //new message type!
+        return new SessionRefresh(rawData);
+      default:
+        throw new UnknownMessage(rawData);
+    }
+  }
+}
+~~~
 
-#### They are themselves polymorphic
+This makes maintaining code easier, because there is less code to change when adding new types of messages to the system or removing existing ones (e.g. in case when we do not need to initiate a session anymore) [^encapsulatewhatvaries].
+
+#### Factories are themselves polymorphic (encapsulation of rule)
 
 So far, I keep talking about composability over and over again so much 
 that you're probably already sick of the word. But hey, here comes 
@@ -540,6 +614,8 @@ created type):
 objects (lower coupling)
 1.  They allow naming rulesets for object creation (better readability)
 
+#### They allow to hide some of the constructor parameters from their users (encapsulation of dependencies)
+
 When are objects composed?
 --------------------------
 
@@ -570,9 +646,6 @@ inside messages and by using the **Observer** pattern.
 Where are objects composed?
 ---------------------------
 
-
-
-
 First, let's take a look at different ways of acquiring an object by
 another object:
 
@@ -581,3 +654,14 @@ Now that we discussed how to pass a reference to recipient into a
 sender, let's take a look at places it can be done:
 
 TODO factory and composition root
+
+
+[^kolskybain]: I got this saying from Amir Kolsky and Scott Bain
+
+[^implementationpatterns]: Kent Beck, Implementation Patterns
+
+[^gofcreationpatterns]: While factory is the most often used, other creational patterns such as builder also fall into this category. Other than this, we may have caches, that usually hold ready to use objects and yields them when requested.
+
+[^encapsulatewhatvaries] Note that this is an application of Gang of Four guideline: "encapsulate what varies"
+
+

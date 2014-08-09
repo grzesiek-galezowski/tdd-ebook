@@ -15,7 +15,7 @@ graph_g = GraphViz.digraph( "G", :strict => true, :use => :neato ) { |g|
   g1[:fontsize] = 5
   g2[:fontsize] = 5
   
-  sender = g1.add_nodes "Sender", fontsize: $SMALL_FONT_SIZE, label: '', pos: '1,2!', shape: :circle
+  sender = g1.add_nodes "Sender", fontsize: $SMALL_FONT_SIZE, label: 'Sender', pos: '1,2!', shape: :circle
   recipient = g1.add_nodes "Recipient", 
     fontsize: $SMALL_FONT_SIZE, 
     label: 'Concrete\nRecipient', 
