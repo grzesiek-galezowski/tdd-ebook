@@ -4,8 +4,6 @@ Composing a web of objects
 Three important questions
 -------------------------
 
-łódź
-
 Ok, I told you that such a thing as a web of objects exists, that there are connections, protocols and such, but there is one thing I left out: how does a web of objects come into existence?
 
 This is, of course, a fundamental question, because if we are not able to build a web, we do not have a web. In addition, this is a question that is a little more tricky that you may think and it contains three other questions that we need to answer:
@@ -378,41 +376,163 @@ Anyway, as I said, use registering instances very wisely and only if you specifi
 Where are objects composed?
 ---------------------------
 
-Ok, we went through some ways of passing a recipient to a sender. The big 
-question is: which code should pass the recipient?
+Ok, we went through some ways of passing a recipient to a sender. The big question is: which code should pass the recipient?
 
-For almost all of the approaches described above there is no 
-limitation - you pass the recipient from where you need to pass it.
+For almost all of the approaches described above there is no limitation - you pass the recipient from where you need to pass it.
 
-There is one approach, however, that is more limited, and this approach 
-is **passing as constructor parameter**.
+There is one approach, however, that is more limited, and this approach is **passing as constructor parameter**.
 
-Why is that? Well, remember we were talking about separating objects 
-usage from construction, right? And invoking constructor 
-implies creating an object, right? Which means that we can assemble 
-objects using constructors only in the places where we moved the creation of 
-the objects to.
+Why is that? Because, we are trying to be true to the principle of "separating objects creation from usage". If an object cannot both use and create another object, we have to make special objects just for creating other objects (there are some design patterns for how to design such objects, but the most popular and useful is a factory) or defer the creation up to the application entry point (there is also a pattern for this, called **composition root**).
 
-Typically, there are two such types of places: **composition root** and 
-**factories** (or other creational design pattern incarnations). Let's start with the first one.
+Let's start with the second one.
 
 ### Composition Root
 
-A composition root is a location near application entry point where 
-you compose the part of the system on which you invoke your `Run()`, 
-`Execute()`,  `Go()` or whatever, i.e. the part of the web that is necessary for the application to start running.
+Let us assume for fun that we are creating a mobile game when a player has to defend a castle. This game has two levels. Each level has a castle. So, we have three classes: a `Game` that has two `Level`s and each of them that contain a `Castle`. Let us also assume that the first two classes violate the principle of separating usage from construction.
 
-For simplification, let's take an example of a console application. 
-In such case, your application usually has some kind of a single top-level class that serves as a starting point. In this example, I called it `MyApplication`:
+A `Game` class is created in the `Main()` method of the application:
 
 {lang="csharp"}
 ~~~
 public static void Main(string[] args)
 {
-  var myApplication = new MyApplication();
-  myApplication.Run();
+  var game = new Game();
+  
+  game.Play();
 }
 ~~~
+
+The `Game` creates its own `Level` objects of specific classes implementing the `Level` interface and storing them in an array:
+
+{lang="csharp"}
+~~~
+public class Game
+{
+  private Level[] _levels = new[] { 
+    new Level1(), new Level2()
+  };
+  
+  //some methods here that use the levels
+}
+~~~
+
+And the `Level` implementations create their own castles and assign them to fields of interface type `Castle`:
+
+{lang="csharp"}
+~~~
+public class Level1
+{
+  private Castle _castle = new SmallCastle();
+  
+  //some methods here that use the castle
+}
+
+public class Level2
+{
+  private Castle _castle = new BigCastle();
+  
+  //some methods here that use the castle
+}
+~~~
+
+We can try to make them more compliant with the principle. First, let us refactor the `Level1` and `Level2` by moving instantiation of their castles out of these classes. As castles are required by the levels to make sense, we will use the approach of passing them through constructor:
+
+{lang="csharp"}
+~~~
+public class Level1
+{
+  private Castle _castle;
+  
+  public Level1(Castle castle)
+  {
+    _castle = castle;
+  }
+  
+  //some methods here that use the castle
+}
+
+public class Level2
+{
+  private Castle _castle;
+  
+  public Level2(Castle castle)
+  {
+    _castle = castle;
+  }
+  
+  //some methods here that use the castle
+}
+~~~
+
+This was easy, wasn't it? The only problem is that if the instantiation of castles is not in `Level1` and `Level2` anymore, then they have to be passed by whoever creates the levels. In our case - the `Game` class:
+ 
+{lang="csharp"}
+~~~
+public class Game
+{
+  private Level[] _levels = new[] { 
+    new Level1(new SmallCastle()), 
+    new Level2(new BigCastle())
+  };
+  
+  //some methods here that use the levels
+}
+~~~
+
+But remember - this class suffers from the same violation of not separating objects use from construction. Thus, we have to move the creation of levels out of this class:
+
+{lang="csharp"}
+~~~
+public class Game
+{
+  private Level[] _levels;
+  
+  public Game(Level[] levels)
+  {
+    _levels = levels;
+  }
+  
+  //some methods here that use the levels
+}
+~~~
+
+There, we did it, but again, the levels now must be supplied by whoever creates the `Game`. In our case, this is the `Main()` method of our application:
+
+{lang="csharp"}
+~~~
+public static void Main(string[] args)
+{
+  var game = 
+    new Game(
+      new Level[] { 
+        new Level1(new SmallCastle()), 
+        new Level2(new BigCastle())
+  });
+  
+  game.Play();
+}
+~~~
+
+By the way, the `Level1` and `Level2` differed only by the castles, so we can now use a single class and call it e.g. `TimedLevel` (because it is considered passed when we defend our castle for a specific period of time). Now, we have:
+
+{lang="csharp"}
+~~~
+public static void Main(string[] args)
+{
+  var game = 
+    new Game(
+      new Level[] { 
+        new TimedLevel(new SmallCastle()), 
+        new TimedLevel(new BigCastle())
+  });
+  
+  game.Play();
+}
+~~~
+
+TODO this violates as well...
+
+~
 
 The above is a simple composition root.
 
@@ -621,29 +741,12 @@ objects (lower coupling)
 When are objects composed?
 --------------------------
 
-Most of our system is assembled up-front when the application
-starts and stays this way until the application finishes executing. But 
-not all of it. Let's call this part the static part of the web. We 
-will talk about **composition root** pattern that guides definition of 
-that part.
+Most of our system is assembled up-front when the application starts and stays this way until the application finishes executing. Let's call this part the static part of the web. We will talk about **composition root** pattern that guides definition of that part.
 
-Apart from that, there's the dynamic part. The first thing that leads 
-to this dynamism is the lifetime of the objects that are connected. 
-Some objects represent requests that arrive during the application 
-runtime, are processed and then discarded. When there is no need to 
-process such a request anymore, the objects representing it are 
-discarded as well. Other objects represent items in the cache that live 
-for some time and then expire etc. so it's impossible to define these 
-objects up-front. Soon, we will talk about the **Factory** pattern that 
-will let us handle creation and composition of such short-lived objects.
+Apart from that, there's the dynamic part. The first thing that leads to this dynamism is the lifetime of the objects that are connected. Some objects represent requests that arrive during the application runtime, are processed and then discarded. When there is no need to process such a request anymore, the objects representing it are discarded as well. Other objects represent items in the cache that live for some time and then expire etc. so it's impossible to define these 
+objects up-front. Soon, we will talk about the **Factory** pattern that will let us handle creation and composition of such short-lived objects.
 
-Another thing affecting the dynamic part of the web is the temporary 
-character of connections themselves. The objects may have a lifespan 
-as long as the application itself, but be connected only the needs of a 
-single interaction (e.g. when one object is passed to a method of 
-another as an argument) or at some point during the application 
-runtime. We will talk about doing these things by passing objects 
-inside messages and by using the **Observer** pattern.
+Another thing affecting the dynamic part of the web is the temporary character of connections themselves. The objects may have a lifespan as long as the application itself, but be connected only for the needs of a single interaction (e.g. when one object is passed to a method of another as an argument) or at some point during the application runtime. We will talk about doing these things by passing objects inside messages and by using the **Observer** pattern.
 
 Where are objects composed?
 ---------------------------
