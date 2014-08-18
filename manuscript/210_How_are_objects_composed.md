@@ -402,7 +402,7 @@ public static void Main(string[] args)
 }
 ~~~
 
-The `Game` creates its own `Level` objects of specific classes implementing the `Level` interface and storing them in an array:
+The `Game` creates its own `Level` objects of specific classes implementing the `Level` interface and stores them in an array:
 
 {lang="csharp"}
 ~~~
@@ -435,7 +435,7 @@ public class Level2
 }
 ~~~
 
-We can try to make them more compliant with the principle. First, let us refactor the `Level1` and `Level2` by moving instantiation of their castles out of these classes. As castles are required by the levels to make sense, we will use the approach of passing them through constructor:
+We can try to make them more compliant with the principle. First, let us refactor the `Level1` and `Level2` by moving instantiation of their castles out of these classes. Existence of a castle is required for a level to make sense at all to make sense - we will say this in code using the approach of passing them through constructor:
 
 {lang="csharp"}
 ~~~
@@ -443,6 +443,8 @@ public class Level1
 {
   private Castle _castle;
   
+  //now castle is received as
+  //constructor parameter
   public Level1(Castle castle)
   {
     _castle = castle;
@@ -455,6 +457,8 @@ public class Level2
 {
   private Castle _castle;
   
+  //now castle is received as
+  //constructor parameter
   public Level2(Castle castle)
   {
     _castle = castle;
@@ -470,7 +474,8 @@ This was easy, wasn't it? The only problem is that if the instantiation of castl
 ~~~
 public class Game
 {
-  private Level[] _levels = new[] { 
+  private Level[] _levels = new[] {
+    //now castles are created here as well: 
     new Level1(new SmallCastle()), 
     new Level2(new BigCastle())
   };
@@ -479,7 +484,7 @@ public class Game
 }
 ~~~
 
-But remember - this class suffers from the same violation of not separating objects use from construction. Thus, we have to move the creation of levels out of this class:
+But remember - this class suffers from the same violation of not separating objects use from construction as the levels. Thus, to make this class compliant as well, we have to move the creation of levels out of it:
 
 {lang="csharp"}
 ~~~
@@ -487,6 +492,8 @@ public class Game
 {
   private Level[] _levels;
   
+  //now levels are received as 
+  //constructor parameter
   public Game(Level[] levels)
   {
     _levels = levels;
@@ -496,7 +503,7 @@ public class Game
 }
 ~~~
 
-There, we did it, but again, the levels now must be supplied by whoever creates the `Game`. In our case, this is the `Main()` method of our application:
+There, we did it, but again, the levels now must be supplied by whoever creates the `Game`. Where do we put them? In our case, the only choice left is the `Main()` method of our application, so this is exactly what we are going to do:
 
 {lang="csharp"}
 ~~~
@@ -530,15 +537,20 @@ public static void Main(string[] args)
 }
 ~~~
 
-TODO this violates as well...
+Looking at the code above, we might come to another funny conclusion - this violates the principle of separating usage from construction as well! First, we create and connect the web of objects and then send the `Play()` message to the `game` object. Shouldn't we fix this as well? 
 
-~
+The answer is "no", for two reasons:
 
-The above is a simple composition root.
+ 1. There is no further place we can defer the creation. Sure, we could move the creation of the `Game` object and its dependencies into a separate object responsible only for the creation (we call such object **a factory**), but that would leave us with the question: where where do we instantiate this factory?
+ 2. The whole point of the principle we are trying to apply is decoupling, i.e. giving ourselves the ability to change one thing without having to change another. When we think of it, there is no point of decoupling the entry point of the application since this is the most application-specific and non-reusable part of the application we can imagine.
 
-TODO
+What is important is that we reached a place where the web of objects is created using constructor approach and we have no place left to defer the the creation of the web (in other words, it is as close as possible to application entry point). Such place is called **a composition root**.  
+
+The composition root above looks quite small, but you can imagine it grow a lot in bigger applications. There are techniques of refactoring the composition root to make it more readable and reusable and we will explore those techniques in further chapters.
 
 ### Factories
+
+TODO
 
 Factories are objects responsible for creating other objects. They are a level of indirection placed above constructors to achieve flexibility (as you will see in the examples in this section). 
 
