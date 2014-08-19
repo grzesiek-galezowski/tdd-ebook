@@ -78,8 +78,8 @@ answering these questions - resulting in having a set of "answers" specific to e
 
 | Alarm Kind          | Triggering                 |     Disabling              |
 |---------------------|----------------------------|------------------------|
-| Loud Alarm          | `playLoudSound()`     | `notifyPolice()` |
-| Silent Alarm          | `stopLoudSound()`     | `stopNotfyingPolice()` | 
+| Loud Alarm          | `playLoudSound()`     | `stopLoudSound()` |
+| Silent Alarm          | `notifyPolice()`     | `stopNotfyingPolice()` | 
 
 So, at least conceptually, as soon as we know the alarm kind, we already
 know which set of behaviors (represented as a row in the above table) it needs. 
