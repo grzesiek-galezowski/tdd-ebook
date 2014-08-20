@@ -226,7 +226,8 @@ public class TemperatureSensor
 {
   private TemperatureObserver _observer 
     = new NullObserver(); //ignores reported values
-  private Temperature _meanValue = Temperature.Zero();
+  private Temperature _meanValue 
+    = Temperature.Celsius(0);
   
   // + maybe more fields related to storing historical data
 
@@ -280,16 +281,10 @@ public class Sender
 }
 ~~~ 
 
-Now, the observer API we just skimmed over gives us the possibility to
-have a single observer at any given time. When we register new observer,
-the reference to the old one is overwritten. This is not really useful 
-in our context, is it? With real sensors, we often want them to report 
-their measurements to multiple places (e.g. we want the measurements 
-printed on screen, saved to database, used as part of more complex 
-calculations). This can be achieved in two ways.
+Now, the observer API we just skimmed over gives us the possibility to have a single observer at any given time. When we register new observer, the reference to the old one is overwritten. This is not really useful in our context, is it? With real sensors, we often want them to report 
+their measurements to multiple places (e.g. we want the measurements printed on screen, saved to database, used as part of more complex calculations). This can be achieved in two ways.
 
-The first way would be to just hold a collection of observers in our 
-sensor, and add to this collection whenever a new observer is registered:
+The first way would be to just hold a collection of observers in our sensor, and add to this collection whenever a new observer is registered:
 
 {lang="csharp"}
 ~~~
@@ -435,7 +430,7 @@ public class Level2
 }
 ~~~
 
-We can try to make them more compliant with the principle. First, let us refactor the `Level1` and `Level2` by moving instantiation of their castles out of these classes. Existence of a castle is required for a level to make sense at all to make sense - we will say this in code using the approach of passing them through constructor:
+We can try to make them more compliant with the principle. First, let us refactor the `Level1` and `Level2` by moving instantiation of their castles out of these classes. Existence of a castle is required for a level to make sense at all to make sense - we will say this in code by using the approach of passing them through constructor:
 
 {lang="csharp"}
 ~~~
@@ -520,7 +515,7 @@ public static void Main(string[] args)
 }
 ~~~
 
-By the way, the `Level1` and `Level2` differed only by the castles, so we can now use a single class and call it e.g. `TimedLevel` (because it is considered passed when we defend our castle for a specific period of time). Now, we have:
+By the way, the `Level1` and `Level2` differed only by the castles and this difference is no more, so we can make them a single class and call it e.g. `TimedLevel` (because it is considered passed when we defend our castle for a specific period of time). Now, we have:
 
 {lang="csharp"}
 ~~~
@@ -542,17 +537,124 @@ Looking at the code above, we might come to another funny conclusion - this viol
 The answer is "no", for two reasons:
 
  1. There is no further place we can defer the creation. Sure, we could move the creation of the `Game` object and its dependencies into a separate object responsible only for the creation (we call such object **a factory**), but that would leave us with the question: where where do we instantiate this factory?
- 2. The whole point of the principle we are trying to apply is decoupling, i.e. giving ourselves the ability to change one thing without having to change another. When we think of it, there is no point of decoupling the entry point of the application since this is the most application-specific and non-reusable part of the application we can imagine.
+ 2. The whole point of the principle we are trying to apply is decoupling, i.e. giving ourselves the ability to change one thing without having to change another. When we think of it, there is no point of decoupling the entry point of the application from the application itself, since this is the most application-specific and non-reusable part of the application we can imagine.
 
 What is important is that we reached a place where the web of objects is created using constructor approach and we have no place left to defer the the creation of the web (in other words, it is as close as possible to application entry point). Such place is called **a composition root**.  
+
+Apart from the constructor invocations, the composition root may also contain registrations of observers (see registration approach to passing recipients) if such registrations are already known at this point.
 
 The composition root above looks quite small, but you can imagine it grow a lot in bigger applications. There are techniques of refactoring the composition root to make it more readable and reusable and we will explore those techniques in further chapters.
 
 ### Factories
 
-TODO
+As I previously said, it is not always possible to pass everything through the constructor. One of the approach we discussed that we can use in such cases is **a factory**.
 
-Factories are objects responsible for creating other objects. They are a level of indirection placed above constructors to achieve flexibility (as you will see in the examples in this section). 
+#### Example  
+
+Consider the following code that receives a frame from the network (as raw data), then packs it into an object, validates and applies to the system:
+ 
+{lang="csharp"}
+~~~
+public class MessageInbound
+{
+  //...initialization code here...
+  
+  public void Handle(Frame frame)
+  {
+    // determine the type of message
+    // and wrap it with an object
+    ChangeMessage change = null;
+    if(frame.Type == FrameTypes.Update)
+    {
+      change = new UpdateRequest(frame);
+    }
+    else if(frame.Type == FrameTypes.Insert)
+    {
+      change = new InsertRequest(frame);
+    }  
+    else
+    {
+      throw 
+        new InvalidRequestException(frame.Type);
+    }
+    
+    change.ValidateUsing(_validationRules);
+    _system.Apply(change);
+  }
+}
+~~~
+
+Note that, again, this code violates the principle of separating usage from construction. The `change` is first created, depending on the frame type, and then used (validated and applied). On the other hand, it is impossible to pass an instance of the `ChangeMessage` through the `MessageInbound` constructor, because this would require us to create the `ChangeMessage` before we create the `MessageInbound`. This is impossible, because we can only create messages when we know the frame data which the `MessageInbound` is supposed to receive.
+
+Thus, our choice is to make a special object that we would move the creation of new messages to. It would produce the new instances when requested, hence the name **factory**. This object itself can be passed through constructor, since it does not need the framer to exist - it only needs one when it is asked to create a message.
+
+Knowing this, we can refactor the above code to the following:
+
+{lang="csharp"}
+~~~
+public class MessageInbound
+{
+  private readonly 
+    MessageFactory _messageFactory;
+  private readonly 
+    ValidationRules _validationRules;
+  private readonly 
+    ProcessingSystem _system;
+  
+  public MessageInbound(
+    //this is the factory:
+    MessageFactory messageFactory,
+    ValidationRules validationRules,
+    ProcessingSystem system)
+  {
+    _messageFactory = messageFactory;
+    _validationRules = validationRules;
+    _system = system;
+  }
+  
+  public void Handle(Frame frame)
+  {
+    var change = _messageFactory.CreateFrom(frame);  
+    change.ValidateUsing(_validationRules);
+    _system.Apply(change);
+  }
+}
+~~~
+
+This way we have separated message construction from its usage. The factory looks like this:
+
+{lang="csharp"}
+~~~
+public class InboundMessageFactory
+ : MessageFactory
+{
+  ChangeMessage CreateFrom(Frame frame)
+  {
+    if(frame.Type == FrameTypes.Update)
+    {
+      return new UpdateRequest(frame);
+    }
+    else if(frame.Type == FrameTypes.Insert)
+    {
+      return new InsertRequest(frame);
+    }    
+    else
+    {
+      throw 
+        new InvalidRequestException(frame.Type);
+    }
+  }
+}
+~~~
+
+This is it for a simple factory example, now on to the more general explanation.
+
+#### Explanation of the factory
+
+As you saw in the example, factories are objects responsible for creating other objects. They are used to achieve the separation of usage from construction when not all of the information necessary to create objects is known at the time when composition root is executed. Another reason is that we need to create a new object per some kind of request. Both these reasons were present in our example:
+
+ 1. We were unable to create a message without knowing the frame.
+ 2. For each frame, we needed to create a new message instance. 
 
 The simplest possible example of a factory is something along the following lines:
 
@@ -567,7 +669,7 @@ public class MyMessageFactory
 }
 ~~~
 
-Although in this shape, the usefulness of the factory is quite limited, because there is not much indirection in here. More often, when talking about simple factories, we think about something like this:
+Even in this primitive shape the factory already has some value (e.g. we can make `MyMessage` an abstract type and return instances of its subclasses from the factory, and the only place we need to change is the factory). More often, however, when talking about simple factories, we think about something like this:
 
 {lang="csharp"}
 ~~~
@@ -577,7 +679,7 @@ public class XmlMessageFactory : MessageFactory
 {
   public Message CreateSessionInitialization()
   {
-    return new XmlSessionInitialization(_serialization);
+    return new XmlSessionInitialization();
   }
 }
 ~~~
