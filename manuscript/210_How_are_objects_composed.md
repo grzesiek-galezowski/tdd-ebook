@@ -262,8 +262,6 @@ public void FromNowOnReportTo(TemperatureObserver observer)
 This lets us overwrite the observer with a new one should we ever need 
 to do it. Note that, as I mentioned, this is the place where registration approach differs from the "pass inside a message" approach, where we also receive a recipient in a message, but for immediate use. Here, we don't use the recipient (i.e. the observer) when we get it, but instead we save it for later.
 
-TODO make below a side note
-
 Time for a general remark. Allowing registering recipients after a sender is created is a way of saying: "the recipient is optional - if you provide one, fine, if not, I will do my work without it". Please, do not use this kind of mechanism for **required** recipients - these should all be passed through constructor, making it harder to create invalid objects that are only partially ready to work. Placing a 
 recipient in a constructor signature is effectively saying that "I will not work without it". Look at how the following class members signatures talk to you:
 
@@ -539,9 +537,11 @@ The answer is "no", for two reasons:
  1. There is no further place we can defer the creation. Sure, we could move the creation of the `Game` object and its dependencies into a separate object responsible only for the creation (we call such object **a factory**), but that would leave us with the question: where where do we instantiate this factory?
  2. The whole point of the principle we are trying to apply is decoupling, i.e. giving ourselves the ability to change one thing without having to change another. When we think of it, there is no point of decoupling the entry point of the application from the application itself, since this is the most application-specific and non-reusable part of the application we can imagine.
 
-What is important is that we reached a place where the web of objects is created using constructor approach and we have no place left to defer the the creation of the web (in other words, it is as close as possible to application entry point). Such place is called **a composition root**.  
+What is important is that we reached a place where the web of objects is created using constructor approach and we have no place left to defer the the creation of the web (in other words, it is as close as possible to application entry point). Such place is called **a composition root**.
 
-Apart from the constructor invocations, the composition root may also contain registrations of observers (see registration approach to passing recipients) if such registrations are already known at this point.
+We say that composition root is "as close as possible" to application entry point, because there may be different frameworks in control of your application and you will not always have the `Main()` method at your disposal[^seemanndi].
+
+Apart from the constructor invocations, the composition root may also contain registrations of observers (see registration approach to passing recipients) if such observers are already known at this point.
 
 The composition root above looks quite small, but you can imagine it grow a lot in bigger applications. There are techniques of refactoring the composition root to make it more readable and reusable and we will explore those techniques in further chapters.
 
@@ -651,10 +651,10 @@ This is it for a simple factory example, now on to the more general explanation.
 
 #### Explanation of the factory
 
-As you saw in the example, factories are objects responsible for creating other objects. They are used to achieve the separation of usage from construction when not all of the information necessary to create objects is known at the time when composition root is executed. Another reason is that we need to create a new object per some kind of request. Both these reasons were present in our example:
+As you saw in the example, factories are objects responsible for creating other objects. They are used to achieve the separation object construction from its usage when not all of the information necessary to create objects is known at the time the composition root is executed (as the full context for object creation is not available, we puts the part of the context we know in the factory, and supply the rest by factory method parameters when it is available). Another reason is that we need to create a new object each time some kind of request is made (a message is received from the network or someone clicks a button). Both these reasons were present in our example:
 
- 1. We were unable to create a message without knowing the frame.
- 2. For each frame, we needed to create a new message instance. 
+ 1. We were unable to create a `ChangeMessage` before knowing the actual `Frame`.
+ 2. For each `Frame` received, we needed to create a new `ChangeMessage` instance. 
 
 The simplest possible example of a factory is something along the following lines:
 
@@ -669,7 +669,7 @@ public class MyMessageFactory
 }
 ~~~
 
-Even in this primitive shape the factory already has some value (e.g. we can make `MyMessage` an abstract type and return instances of its subclasses from the factory, and the only place we need to change is the factory). More often, however, when talking about simple factories, we think about something like this:
+Even in this primitive shape the factory already has some value (e.g. we can make `MyMessage` an abstract type and return instances of its subclasses from the factory, and the only place we need to change is the factory[^essentialskills]). More often, however, when talking about simple factories, we think about something like this:
 
 {lang="csharp"}
 ~~~
@@ -689,11 +689,11 @@ Note the two things that the factory in the second example has that the one in t
 * it implements an interface (one level of indirection)
 * its `CreateSessionInitialization()` method declares a return type to be an interface (another level of indirection)
 
-In order for you to use factories effectively, I need you to understand why this indirection is useful, especially that when I talk with people, they often do not understand the benefits of using factories, "because we already have the `new` operator to create objects". So, here are the benefits of using factories:
+In order for you to use factories effectively, I need you to understand why and how this indirection is useful, especially that when I talk with people, they often do not understand the benefits of using factories, "because we already have the `new` operator to create objects". So, here are the benefits of using factories:
 
 #### Factories allow creating objects polymorphically (encapsulation of type)
 
-When we invoke a `new` operator, we have to put a name of a concrete type next to it:
+Each time we invoke a `new` operator, we have to put a name of a concrete type next to it:
 
 {lang="csharp"}
 ~~~
@@ -701,17 +701,25 @@ new List<int>(); //OK!
 new IList<int>(); //won't compile...
 ~~~
 
-Factories are different. Because we get objects from factories by invoking a method, not by saying which class we want to get instantiated, we can take advantage of polymorhism, i.e. our factory may have a method like this:
+Factories are different. Because we get objects from factories by invoking a method, not by saying which class we want to get instantiated, we can take advantage of polymorphism, i.e. our factory may have a method like this:
 
 {lang="csharp"}
 ~~~
-IList<int> createContainerForData() {...}
+IList<int> CreateContainerForData() {...}
 ~~~
 
-and everything is well as long as the code of this method returns an instance of a real class (say, `List<int>`).
+and everything is well as long as the code of this method returns an instance of a real class (say, `List<int>`):
 
-It is typical for a return type of a factory to be an interface or, at worst, an abstract class. This means that whatever uses the factory, it knows only 
-that it receives an object of that type. This means that a factory may return objects of different types at different times, depending on some rules only they know.
+{lang="csharp"}
+~~~
+public /*interface in declaration: */ IList<int> 
+CreateContainerForData() 
+{
+  return /* instance of concrete class: */ List<int>();
+}
+~~~
+
+Of course, it makes little sense for the return type of the factory to be a library class or interface (rather, we use factories to create our own classes), but you get the idea, right? Anyway, it is typical for a return type of a factory to be an interface or, at worst, an abstract class. This means that whatever uses the factory, it knows only that it receives an object of that type. Thus,  a factory may return objects of different types at different times, depending on some rules only it knows.
 
 Time to look at some more realistic example of how to apply this. Let's say we have a factory of messages like this:
 
@@ -737,9 +745,7 @@ public class Version1ProtocolMessageFactory
 }
 ~~~
 
-Note that the factory can create many different types of messages 
-depending on what is inside the raw data, but for the user of the factory, 
-this is irrelevant. All that it knows is that it gets a `Message`, thus, it (and additional code operating on messages for that matter) can be written as general-purpose logic:
+Note that the factory can create many different types of messages depending on what is inside the raw data, but for the user of the factory, this is irrelevant. All that it knows is that it gets a `Message`, thus, it (and additional code operating on messages for that matter) can be written as general-purpose logic:
 
 {lang="csharp"}
 ~~~
@@ -748,7 +754,7 @@ message.ValidateUsing(_primitiveValidations);
 message.ApplyTo(_sessions);
 ~~~
 
-Note that while the above code needs to change when the rule "first validate, then apply to sessions" changes, it does not need to change when all we do is adding new type of message that complies with the current logic. The only place we need to change in such case is the factory: 
+Note that, while the above code needs to change when the rule "first validate, then apply to sessions" changes, it does not need to change in case we want to add a new type of message that complies with the current logic. The only place we need to change in such case is the factory. Let's see how it would look like if we decided to add a session refresh message: 
 
 ~~~
 public class Version1ProtocolMessageFactory
@@ -773,9 +779,11 @@ public class Version1ProtocolMessageFactory
 }
 ~~~
 
-This makes maintaining code easier, because there is less code to change when adding new types of messages to the system or removing existing ones (e.g. in case when we do not need to initiate a session anymore) [^encapsulatewhatvaries].
+Using the factory to hide the real type of message returned makes maintaining the code easier, because there is less code to change when adding new types of messages to the system or removing existing ones (e.g. in case when we do not need to initiate a session anymore) [^encapsulatewhatvaries] - the factory hides that.
 
 #### Factories are themselves polymorphic (encapsulation of rule)
+
+TODO
 
 So far, I keep talking about composability over and over again so much 
 that you're probably already sick of the word. But hey, here comes 
@@ -851,6 +859,8 @@ objects (lower coupling)
 1.  They allow naming rulesets for object creation (better readability)
 
 #### They allow to hide some of the constructor parameters from their users (encapsulation of dependencies)
+#### They help eliminate redundancy
+#### They help in readability
 
 When are objects composed?
 --------------------------
@@ -881,6 +891,9 @@ TODO factory and composition root
 
 [^gofcreationpatterns]: While factory is the most often used, other creational patterns such as builder also fall into this category. Other than this, we may have caches, that usually hold ready to use objects and yields them when requested.
 
-[^encapsulatewhatvaries] Note that this is an application of Gang of Four guideline: "encapsulate what varies"
+[^encapsulatewhatvaries] Note that this is an application of Gang of Four guideline: "encapsulate what varies".
 
+[^seemanndi] For details, check Dependency Injection in .NET by Mark Seemann.
+
+[^essentialskills] A. Shalloway et al., Essential Skills For The Agile Developer
 
