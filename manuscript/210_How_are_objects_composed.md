@@ -783,14 +783,12 @@ Using the factory to hide the real type of message returned makes maintaining th
 
 #### Factories are themselves polymorphic (encapsulation of rule)
 
-TODO
-
-So far, I keep talking about composability over and over again so much 
+So far, I have kept talking about composability over and over again so much 
 that you're probably already sick of the word. But hey, here comes 
 another benefit of the factory - in contrast to constructors, they are 
 composable.
 
-We may have a class that uses a factory:
+We may have a class that takes a factory as a constructor parameter like the following `MessageInbound`:
 
 {lang="csharp"}
 ~~~
@@ -798,9 +796,12 @@ public class MessageInbound
 {
   private MessageFactory _factory;
   
-  public MessageInbound(MessageFactory factory)
+  public MessageInbound(
+    MessageFactory factory,
+    /* other arguments */ )
   {
     _factory = factory;
+    /* other assignments */
   }
   
   public void Process(MessageData data)
@@ -812,27 +813,18 @@ public class MessageInbound
 }
 ~~~
 
-Object of this class needs to be composed with factory implementing 
-the `MessageFactory` interface in a composition root like this:
+In order to work, an object of the `MessageInbound` class needs to be composed with a factory implementing the `MessageFactory` interface, e.g like this:
 
 {lang="csharp"}
 ~~~
 new MessageInbound(new BinaryMessageFactory());
 ~~~
 
-Suppose that one day we need to reuse the logic of `MessageInbound` in 
-another place, but make it create XML messages instead of binary 
-messages. If we used a constructor to create messages, we would need 
-to either copy-paste the `MessageInbound` class code and change the 
-line where message is created, or we would need to make an `if` 
-statement inside the `MessageInbound` to choose which message we are 
-required to create.
+The above code composes the `MessageInbound` with a factory that creates binary-encoded messages. Suppose that one day we need to reuse `MessageInbound` in another place in the same application, but we need it to create XML messages instead of binary messages. If the `MessageInbound` did not use a factory to create messages but just invoked a constructor, it would be coupled to the actual types of messages created. In such case, we would need to either copy-paste the `MessageInbound` class code and change the line where message is created, or we would need to make an `if` statement inside the `MessageInbound` to choose which message we are required to create.
 
-This is not reuse - this is hacking.
+Neither of those two options can be marked as "reuse" - they are plain hacking.
 
-Thankfully, thanks to the factory, we can use the `MessageInbound` 
-just as it is, but compose it with a different factory. So, we will 
-have to instances of `MessageInbound` class in our composition root:
+Thankfully, thanks to the factory, we can use the `MessageInbound` just as it is, but compose it with a different factory. So, can have two instances of `MessageInbound` class in our composition root, each composed with a defferent factory:
 
 {lang="csharp"}
 ~~~
@@ -846,6 +838,7 @@ var xmlMessageInbound
       new XmlMessageFactory(), 
       XmlListenAddress);
 ~~~
+
 
 TODO make each a subchapter of L4
 
