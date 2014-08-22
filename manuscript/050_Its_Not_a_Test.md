@@ -137,12 +137,19 @@ look differently at some things. So, let us agree that for the sake of
 this book:
 
 **Specification Statement** (or simply **Statement**, starting with capital letter)
+
 :   will be used instead of ‘test’ or ‘test method’
+
 **Specification** (or simply **Spec**), also starting with capital letter
+
 :   will be used instead of ‘test suite’ or ‘test list’
+
 **False Statement**
+
 :   will be used instead of ‘failing test’
+
 **True Statement**
+
 :   will be used instead of ‘passing test’
 
 From time to time, I will refer back to the ‘traditional’ terminology,
