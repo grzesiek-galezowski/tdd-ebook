@@ -783,10 +783,46 @@ Using the factory to hide the real type of message returned makes maintaining th
 
 #### Factories are themselves polymorphic (encapsulation of rule)
 
-So far, I have kept talking about composability over and over again so much 
-that you're probably already sick of the word. But hey, here comes 
-another benefit of the factory - in contrast to constructors, they are 
-composable.
+Another benefit of factories over constructors is that they are composable themselves. This allows replacing the rule used to create objects with another one.
+
+For example, let's say that we are writing a video player application that we are about to release in US and Europe. Also, let us imagine that law restrictions do not allow us to play movies in US format with the application version sold in Europe and at the same time, we are not allowed to play movies in Erope format with the version sold in US.
+
+So we have a rule of deciding whether to play a video or not and this rule is different. We can encode this rule in a factory.
+
+First, let's code the player so that it delegates creating movies to a factory:
+
+{lang="csharp"}
+~~~
+public class VideoPlayer
+{
+  private VideoFactory _videoFactory;
+  
+  public VideoPlayer(VideoFactory videoFactory)
+  {
+    _videoFactory = videoFactory;
+  }
+  
+  //...
+  
+  public void Play(VideoTitle title)
+  {
+    var video = _videoFactory.CreateBy(title);
+    video.Play();
+  }
+}
+~~~
+
+where the `VideoFactory` is an interface:
+
+{lang="csharp"}
+~~~
+public interface VideoFactory
+{
+  Video CreateBy(VideoTitle title);
+}
+~~~
+
+TODO
 
 We may have a class that takes a factory as a constructor parameter like the following `MessageInbound`:
 
@@ -838,6 +874,8 @@ var xmlMessageInbound
       new XmlMessageFactory(), 
       XmlListenAddress);
 ~~~
+
+
 
 
 TODO make each a subchapter of L4
