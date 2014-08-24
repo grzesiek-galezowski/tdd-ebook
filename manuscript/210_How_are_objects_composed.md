@@ -729,7 +729,7 @@ and everything is well as long as the code of this method returns an instance of
 public /*interface in declaration: */ IList<int> 
 CreateContainerForData() 
 {
-  return /* instance of concrete class: */ List<int>();
+  return /* instance of concrete class: */ new List<int>();
 }
 ~~~
 
@@ -1001,9 +1001,9 @@ TODO
 
 [^gofcreationpatterns]: While factory is the most often used, other creational patterns such as builder also fall into this category. Other than this, we may have caches, that usually hold ready to use objects and yields them when requested.
 
-[^encapsulatewhatvaries] Note that this is an application of Gang of Four guideline: "encapsulate what varies".
+[^encapsulatewhatvaries]: Note that this is an application of Gang of Four guideline: "encapsulate what varies".
 
-[^seemanndi] For details, check Dependency Injection in .NET by Mark Seemann.
+[^seemanndi]: For details, check Dependency Injection in .NET by Mark Seemann.
 
-[^essentialskills] A. Shalloway et al., Essential Skills For The Agile Developer
+[^essentialskills]: A. Shalloway et al., Essential Skills For The Agile Developer
 
