@@ -728,7 +728,7 @@ Time to look at some more realistic example of how to apply this. Let's say we h
 public class Version1ProtocolMessageFactory 
   : MessageFactory
 {
-  public Message createFrom(MessageData rawData)
+  public Message NewInstanceFrom(MessageData rawData)
   {
     switch(rawData.MessageType)
     {
@@ -739,7 +739,7 @@ public class Version1ProtocolMessageFactory
       case Messages.SessionPayload:
         return new SessionPayload(rawData);
       default:
-        throw new UnknownMessage(rawData);
+        throw new UnknownMessageException(rawData);
     }
   }
 }
@@ -760,7 +760,7 @@ Note that, while the above code needs to change when the rule "first validate, t
 public class Version1ProtocolMessageFactory
   : MessageFactory
 {
-  public Message createFrom(MessageData rawData)
+  public Message NewInstanceFrom(MessageData rawData)
   {
     switch(rawData.MessageType)
     {
@@ -773,7 +773,7 @@ public class Version1ProtocolMessageFactory
       case Messages.SessionRefresh: //new message type!
         return new SessionRefresh(rawData);
       default:
-        throw new UnknownMessage(rawData);
+        throw new UnknownMessageException(rawData);
     }
   }
 }
@@ -785,98 +785,207 @@ Using the factory to hide the real type of message returned makes maintaining th
 
 Another benefit of factories over constructors is that they are composable themselves. This allows replacing the rule used to create objects with another one.
 
-For example, let's say that we are writing a video player application that we are about to release in US and Europe. Also, let us imagine that law restrictions do not allow us to play movies in US format with the application version sold in Europe and at the same time, we are not allowed to play movies in Erope format with the version sold in US.
-
-So we have a rule of deciding whether to play a video or not and this rule is different. We can encode this rule in a factory.
-
-First, let's code the player so that it delegates creating movies to a factory:
+In the example in the previous section, we examined a situation where we extended the existing factory with a `SessionRefresh` message. This was done with assumption that we do not need the previous version of the factory. But consider a situation where we need both versions of the behavior. The "version 1" of the factory looking like this:
 
 {lang="csharp"}
 ~~~
-public class VideoPlayer
+public class Version1ProtocolMessageFactory 
+  : MessageFactory
 {
-  private VideoFactory _videoFactory;
-  
-  public VideoPlayer(VideoFactory videoFactory)
+  public Message NewInstanceFrom(MessageData rawData)
   {
-    _videoFactory = videoFactory;
-  }
-  
-  //...
-  
-  public void Play(VideoTitle title)
-  {
-    var video = _videoFactory.CreateBy(title);
-    video.Play();
+    switch(rawData.MessageType)
+    {
+      case Messages.SessionInit:
+        return new SessionInit(rawData);
+      case Messages.SessionEnd:
+        return new SessionEnd(rawData);
+      case Messages.SessionPayload:
+        return new SessionPayload(rawData);
+      default:
+        throw new UnknownMessageException(rawData);
+    }
   }
 }
 ~~~
 
-where the `VideoFactory` is an interface:
+and the "version 2" looking like this:
 
 {lang="csharp"}
 ~~~
-public interface VideoFactory
+//note that now it is a version 2 protocol factory
+public class Version2ProtocolMessageFactory
+  : MessageFactory
 {
-  Video CreateBy(VideoTitle title);
+  public Message NewInstanceFrom(MessageData rawData)
+  {
+    switch(rawData.MessageType)
+    {
+      case Messages.SessionInit:
+        return new SessionInit(rawData);
+      case Messages.SessionEnd:
+        return new SessionEnd(rawData);
+      case Messages.SessionPayload:
+        return new SessionPayload(rawData);
+      case Messages.SessionRefresh: //new message type!
+        return new SessionRefresh(rawData);
+      default:
+        throw new UnknownMessageException(rawData);
+    }
+  }
 }
 ~~~
 
-TODO
-
-We may have a class that takes a factory as a constructor parameter like the following `MessageInbound`:
+Depending on what the user chooses in the configuration, we give them either a version 1 protocol support which does not support session refreshing, or a version 2 protocol support that does. Assuming the configuration is only read once during the application start, we may have the following code in our composition root:
 
 {lang="csharp"}
 ~~~
-public class MessageInbound
+MessageFactory messageFactory = configuration.Version == 1 ?
+  new Version1ProtocolMessageFactory() : 
+  new Version2ProtocolMessageFactory() ;
+  
+var messageProcessing = new MessageProcessing(messageFactory);
+~~~
+
+The above code composes a `MessageProcessing` instance with either a `Version1ProtocolMessageFactory` or a `Version2ProtocolMessageFactory`, depending on the configuration. 
+
+This example shows something I like calling "encapsulation of rule". The logic inside the factory is actually a rule on how, when and which objects to create. Thus, if we make our factory implement an interface and have other objects depend on this interface, we will be able to switch the rules of object creation without these objects realizing it.
+
+#### Factories can hide some of the created object dependencies (encapsulation of global context)
+
+Let us consider a simple example. We have an application that, again, can process messages. One of the things that is done with those messages is saving them in a database and another is validation. The processing of message is, like in previous examples, handled by a `MessageProcessing` class, which, this time, does not use any factory, but creates the messages based on the frame data itself. let us look at this class:
+
+{lang="csharp"}
+~~~
+public class MessageProcessing
+{
+  private DataDestination _database;
+  private ValidationRules _validation;
+  
+  public MessageProcessing(
+    DataDestination database,
+    ValidationRules validation)
+  {
+    _database = database;
+    _validation = validation;
+  } 
+  
+  public void ApplyTo(MessageData data)
+  {
+    //note this creation:
+    var message = 
+      new Message(data, _database, _validation);
+    
+    message.Vaidate();
+    message.Persist();
+    
+    //... other actions 
+  }
+}
+~~~
+
+There is one noticeable thing about the `MessageProcessing` class. It depends on both `DataDestination` and `ValidationRules` interfaces, but does not use them itself. The only thing it needs those interfaces is to supply them as parameters to the constructor. Thus, the class gets polluted by something that it does not need directly.
+
+We can remove these dependencies by introducing a factory. If we manage to move the creation of the `Message` to the factory, we will be need to pass `DataDestination` and `ValidationRules` to the factory only. The factory may look like this:
+
+{lang="csharp"}
+~~~
+public class MessageFactory
+{
+  private DataDestination _database;
+  private ValidationRules _validation;
+  
+  public MessageFactory(
+    DataDestination database,
+    ValidationRules validation)
+  {
+    _database = database;
+    _validation = validation;
+  } 
+
+  public Message CreateFrom(MessageData data)
+  {
+    return 
+      new Message(data, _database, _validation);
+  }
+}
+~~~
+
+Now, note that the creation of messages was moved to the factory, along with the dependencies needed for this. The `MessageProcessing` does not need to take these dependencies anymore, and can stay more true to its real purpose:
+
+{lang="csharp"}
+~~~
+public class MessageProcessing
 {
   private MessageFactory _factory;
   
-  public MessageInbound(
-    MessageFactory factory,
-    /* other arguments */ )
+  //now we depend on the factory only:
+  public MessageProcessing(
+    MessageFactory factory)
   {
     _factory = factory;
-    /* other assignments */
-  }
+  } 
   
-  public void Process(MessageData data)
+  public void ApplyTo(MessageData data)
   {
-    Message message = _factory.NewMessageFrom(data);
-    message.ValidateUsing(_primitiveValidations);
-    message.ApplyTo(_system);
+    //no need to pass database and validation
+    //since they already are inside the factory:
+    var message = _factory.CreateFrom(data);
+    
+    message.Vaidate();
+    message.Persist();
+    
+    //... other actions 
   }
 }
 ~~~
 
-In order to work, an object of the `MessageInbound` class needs to be composed with a factory implementing the `MessageFactory` interface, e.g like this:
+So, instead of `DataDestination` and `ValidationRules` interfaces, the `MessageProcessing` depends only on the factory. This may not sound as a very attractive tradeoff (taking away two dependencies and introducing one), but note that whenever the `MessageFactory` needs another dependency that is like the existing two, the factory is all that will need to change. The `MessageProcessing` will remain untouched and still coupled only to the factory.
+
+The last thing that needs to be said is that not all dependencies can be hidden inside a factory. Note that the factory still needs to receive the `MessageData` from whoever is asking for a `Message`, because the `MessageData` is not available when the factory is created. I call such dependencies a **local context** (because it is different everytime the factory is asked to create something). On the other hand, what a factory accepts through the constructor can be called a **global context** (because it is the same throughout the factory lifetime). Using this terminology, the local context cannot be hidden, but the global context can. Thanks to this, the classes using the factory do not need to know about the global context and can stay cleaner, coupled to less things and more focused.
+
+#### Factories help eliminate redundancy
+
+Redundancy in code means that at least two things need to change for the same reason in the same way[^essentialskills]. Usually it is understood as code duplication, but actually, "conceptual duplication" is a better term. For example, the following two methods are not redundant, even though the code seems duplicated (by the way, the following is not an example of good code, just a simple illustration):
 
 {lang="csharp"}
 ~~~
-new MessageInbound(new BinaryMessageFactory());
-~~~
+public int MetersToCentimeters(int value)
+{
+  return value*100;
+}
 
-The above code composes the `MessageInbound` with a factory that creates binary-encoded messages. Suppose that one day we need to reuse `MessageInbound` in another place in the same application, but we need it to create XML messages instead of binary messages. If the `MessageInbound` did not use a factory to create messages but just invoked a constructor, it would be coupled to the actual types of messages created. In such case, we would need to either copy-paste the `MessageInbound` class code and change the line where message is created, or we would need to make an `if` statement inside the `MessageInbound` to choose which message we are required to create.
+public int DollarsToCents(int value)
+{
+  return value*100;
+}
+~~~ 
 
-Neither of those two options can be marked as "reuse" - they are plain hacking.
+As I said, this is not redundancy, because the two methods represent different concepts. Even if we were to extract "common logic" from the two methods, the only sensible name we could come up with would be something like `MultiplyBy100()` which wouldn't add any value at all.
 
-Thankfully, thanks to the factory, we can use the `MessageInbound` just as it is, but compose it with a different factory. So, can have two instances of `MessageInbound` class in our composition root, each composed with a defferent factory:
+Note that up to now, we considered three things factories encapsulate about creation of objects:
+
+ 1. Type
+ 2. Rule
+ 3. Global context
+
+Thus, if factories didn't exist, all these concepts would leak to sorrounding classes (we saw an example when we were talking about encapsulation of global context). Now, as soon as there is more than one class that needs to create instances, these things leak to all of these classes, creating redundancy. In such case, any change to how instances are created would mean a change to all classes needing those instances.
+
+Thankfully, by having a factory - an object that takes care of creating other objects and nothing else, we can reuse the ruleset, the global context and the type-related decisions across many classes without any unnecessary overhead. All we need to do is reference the factory and ask it for an object.
+
+#### Factories allow named rulesets
+
+A constructor of a class is always invoked using a class name:
 
 {lang="csharp"}
 ~~~
-var binaryMessageInbound
-  = new MessageInbound(
-      new BinaryMessageFactory(), 
-      BinListenAddress); 
-
-var xmlMessageInbound
-  = new MessageInbound(
-      new XmlMessageFactory(), 
-      XmlListenAddress);
+List<int> list = new List<int>();
 ~~~
 
+This is not always as readable as it could be. For example, the above code creates an empty list, but this is not written explicitly - it is a convention that we, as programmers, have come to adopt and understand. But for the classes we write, there are usually no well-known conventions.
 
-
+TODO
+TODO
 
 TODO make each a subchapter of L4
 
@@ -895,6 +1004,8 @@ objects (lower coupling)
 
 When are objects composed?
 --------------------------
+
+TODO as early as possible
 
 Most of our system is assembled up-front when the application starts and stays this way until the application finishes executing. Let's call this part the static part of the web. We will talk about **composition root** pattern that guides definition of that part.
 
