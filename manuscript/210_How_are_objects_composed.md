@@ -8,8 +8,8 @@ Ok, I told you that such a thing as a web of objects exists, that there are conn
 
 This is, of course, a fundamental question, because if we are not able to build a web, we do not have a web. In addition, this is a question that is a little more tricky that you may think and it contains three other questions that we need to answer:
 
-1.  How does an object obtain a reference to another one in the web (i.e. how a connection is made)?
-2.  When are objects composed (i.e. when a connection is made)?
+1.  When are objects composed (i.e. when a connection is made)?
+2.  How does an object obtain a reference to another one in the web (i.e. how a connection is made)?
 3.  Where are objects composed (i.e. where a connection is made)?
 
 For now, you may have some trouble understanding why these questions 
@@ -29,14 +29,28 @@ public static void Main(string[] args)
 }
 ~~~
 
-1.  How does an object (`Sender`) obtain a reference to another one 
+1.  When are objects composed? Answer: up-front, during application startup.
+2.  How does an object (`Sender`) obtain a reference to another one 
 (`Recipient`)? Answer: the reference is passed through constructor.
-2.  When are objects composed? Answer: during application startup.
 3.  Where are objects composed? Answer: at application entry point (`Main()` 
 method)
 
 Depending on circumstances, we have different sets of best answers to these 
 questions. To find them, let us take the questions on one by one.
+
+When are objects composed?
+--------------------------
+
+The quick answer to this question is: as early as possible.
+
+Most of our system is assembled up-front when the application starts and stays this way until the application finishes executing. Let's call this part the **static part** of the web. We will talk about the **composition root** pattern that handles this part. 
+
+Apart from that, there's the **dynamic part**. There are two reasons this dynamic part exists:
+
+1. Some objects represent requests that arrive during the application runtime, are processed and then discarded. These objects cannot be created up-front, but can be created only as soon as the necessary event occurs. Also, these objects do not live until the application is terminated, but are discarded as soon as the processing of a request is finished. Other objects represent items in the cache that live for some time and then expire etc. so it's impossible to define these objects up-front. All of these objects come and go, making temporary connections. We will talk about **getting recipients in response to a message** approach (which will largely be about **factories**) that is made for such situations.
+2. There are objects that have a lifespan as long as the application itself, but be connected only for the needs of a single interaction (e.g. when one object is passed to a method of another as an argument) or at some point during the application runtime. We will talk about **passing objects inside messages** and **registering objects** approaches that allow us manage such connections.
+
+There can be situations when an object is part of both static and dynamic part - some of its connections may be made up-front, while others may be created later.
 
 How does sender obtain a reference to recipient (i.e. how a connection is made)?
 ------------------------------------------------
@@ -973,58 +987,12 @@ Thus, if factories didn't exist, all these concepts would leak to sorrounding cl
 
 Thankfully, by having a factory - an object that takes care of creating other objects and nothing else, we can reuse the ruleset, the global context and the type-related decisions across many classes without any unnecessary overhead. All we need to do is reference the factory and ask it for an object.
 
-#### Factories allow named rulesets
+There are more benefits of factories, but I hope I already convinced you that this is a pretty darn beneficial concept for such a reasonably low cost.
 
-A constructor of a class is always invoked using a class name:
-
-{lang="csharp"}
-~~~
-List<int> list = new List<int>();
-~~~
-
-This is not always as readable as it could be. For example, the above code creates an empty list, but this is not written explicitly - it is a convention that we, as programmers, have come to adopt and understand. But for the classes we write, there are usually no well-known conventions.
+Summary
+-------------------------
 
 TODO
-TODO
-
-TODO make each a subchapter of L4
-
-1.  They allow creating objects polymorphically (hiding of 
-created type):
-1.  They are themselves polymorphic (hiding of object creation rule)
-1.  They allow putting more complex creation logic in one place 
-(reduce redundancy)
-1.  They allow decoupling from some of the dependencies of created 
-objects (lower coupling)
-1.  They allow naming rulesets for object creation (better readability)
-
-#### They allow to hide some of the constructor parameters from their users (encapsulation of dependencies)
-#### They help eliminate redundancy
-#### They help in readability
-
-When are objects composed?
---------------------------
-
-TODO as early as possible
-
-Most of our system is assembled up-front when the application starts and stays this way until the application finishes executing. Let's call this part the static part of the web. We will talk about **composition root** pattern that guides definition of that part.
-
-Apart from that, there's the dynamic part. The first thing that leads to this dynamism is the lifetime of the objects that are connected. Some objects represent requests that arrive during the application runtime, are processed and then discarded. When there is no need to process such a request anymore, the objects representing it are discarded as well. Other objects represent items in the cache that live for some time and then expire etc. so it's impossible to define these 
-objects up-front. Soon, we will talk about the **Factory** pattern that will let us handle creation and composition of such short-lived objects.
-
-Another thing affecting the dynamic part of the web is the temporary character of connections themselves. The objects may have a lifespan as long as the application itself, but be connected only for the needs of a single interaction (e.g. when one object is passed to a method of another as an argument) or at some point during the application runtime. We will talk about doing these things by passing objects inside messages and by using the **Observer** pattern.
-
-Where are objects composed?
----------------------------
-
-First, let's take a look at different ways of acquiring an object by
-another object:
-
-
-Now that we discussed how to pass a reference to recipient into a
-sender, let's take a look at places it can be done:
-
-TODO factory and composition root
 
 
 [^kolskybain]: I got this saying from Amir Kolsky and Scott Bain
