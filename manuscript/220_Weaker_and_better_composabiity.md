@@ -1,4 +1,4 @@
-Worse and better composability
+Achieving the best composability
 ===============================
 
 Some classes are harder to compose with other classes, others are

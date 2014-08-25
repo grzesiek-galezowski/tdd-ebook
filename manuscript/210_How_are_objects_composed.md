@@ -992,7 +992,9 @@ There are more benefits of factories, but I hope I already convinced you that th
 Summary
 -------------------------
 
-TODO
+In this chapter, I tried to show you a variety of ways of composing objects together. Do not worry if you feel overwhelmed, for the most part, just remember to follow the principle of separating use from construction and you will be fine.
+
+The rules outlined here apply to the overwhelming part of the objects in our application. Wait, did I say overwhelming? Not all? So there are exceptions? Yes, there are and we'll talk about them shortly, but first, we need to further examine the influence composability has on our object-oriented design approach.
 
 
 [^kolskybain]: I got this saying from Amir Kolsky and Scott Bain
