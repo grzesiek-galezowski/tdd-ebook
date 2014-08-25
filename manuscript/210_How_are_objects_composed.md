@@ -960,7 +960,7 @@ The last thing that needs to be said is that not all dependencies can be hidden 
 
 #### Factories help eliminate redundancy
 
-Redundancy in code means that at least two things need to change for the same reason in the same way [^essentialskills]. Usually it is understood as code duplication, but actually, "conceptual duplication" is a better term. For example, the following two methods are not redundant, even though the code seems duplicated (by the way, the following is not an example of good code, just a simple illustration):
+Redundancy in code means that at least two things need to change for the same reason in the same way[^essentialskills]. Usually it is understood as code duplication, but actually, "conceptual duplication" is a better term. For example, the following two methods are not redundant, even though the code seems duplicated (by the way, the following is not an example of good code, just a simple illustration):
 
 {lang="csharp"}
 ~~~
