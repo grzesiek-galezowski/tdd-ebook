@@ -59,8 +59,8 @@ counterattacks. You could side-step to evade enemy’s attacks and, most
 of all, you could kick another fighter up in the air where they could
 not block your attacks and you were able to land some nice attacks on
 them before they fell down. These in-the-air techniques were called
-“juggles". There were magazines that published a list of new possible
-juggles each month and the hype stayed in the gaming community for well
+“juggles". There were magazines that published lists of new possible
+juggles each month and the hype has stayed in the gaming community for well
 over a year.
 
 Yes, Tekken was easy to learn - you could put one hour into training the
@@ -72,15 +72,7 @@ counterattack etc. No wonder that soon, many tournaments sprang, where
 players could clash for glory, fame and rewards. Even today, you can
 watch some of the matches on youtube.
 
-TDD is like Tekken. You have probably heard the mantra
-“red-green-refactor" or the general advice “write your test first, then
-the code", maybe you even did some experiments on your own where you
-were trying to implement a bubble-sort algorithm or other simple stuff
-by starting with a test. But that is all like practicing Tekken by
-trying out each move on its own on dummy opponent, without the context
-of real-world issues that make the fight really challenging. And while
-I think such exercises are (somewhat) useful, you need to understand the
-bigger picture.
+TDD is like Tekken. You have probably heard the mantra “red-green-refactor" or the general advice “write your test first, then the code", maybe you even did some experiments on your own where you were trying to implement a bubble-sort algorithm or other simple stuff by starting with a test. But that is all like practicing Tekken by trying out each move on its own on dummy opponent, without the context of real-world issues that make the fight really challenging. And while I think such exercises are useful (especially at the beginning), you need to understand the bigger picture as well.
 
 Some people I talk with about TDD sum up what I say to them as: “That is
 really demotivating - there are so many things I have to watch out for
