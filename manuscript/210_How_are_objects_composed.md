@@ -26,12 +26,16 @@ really simple example code of a console application:
 public static void Main(string[] args)
 {
   var sender = new Sender(new Recipient());
+  
+  sender.Work();
 }
 ~~~
 
+And here are the answers to our questions:
+
 1.  When are objects composed? Answer: up-front, during application startup.
 2.  How does an object (`Sender`) obtain a reference to another one 
-(`Recipient`)? Answer: the reference is passed through constructor.
+(`Recipient`)? Answer: the reference is obtained as a constructor parameter.
 3.  Where are objects composed? Answer: at application entry point (`Main()` 
 method)
 
@@ -41,9 +45,9 @@ questions. To find them, let us take the questions on one by one.
 When are objects composed?
 --------------------------
 
-The quick answer to this question is: as early as possible.
+The quick answer to this question is: as early as it makes sense. Now, that wasn't too helpful, was it? So here goes a clarification.
 
-Most of our system is assembled up-front when the application starts and stays this way until the application finishes executing. Let's call this part the **static part** of the web. We will talk about the **composition root** pattern that handles this part. 
+Most of our system is assembled up-front when the application starts and stays this way until the application finishes executing (unless we are doing a web app - then most of the important stuff happens "per request"). Let's call this part the **static part** of the web. We will talk about the **composition root** pattern that handles this part. 
 
 Apart from that, there's the **dynamic part**. There are two reasons this dynamic part exists:
 
