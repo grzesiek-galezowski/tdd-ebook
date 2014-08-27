@@ -8,18 +8,15 @@ Ok, I told you that such a thing as a web of objects exists, that there are conn
 
 This is, of course, a fundamental question, because if we are not able to build a web, we do not have a web. In addition, this is a question that is a little more tricky that you may think and it contains three other questions that we need to answer:
 
-1.  When are objects composed (i.e. when a connection is made)?
-2.  How does an object obtain a reference to another one in the web (i.e. how a connection is made)?
-3.  Where are objects composed (i.e. where a connection is made)?
+1.  When are objects composed (i.e. when connections are made)?
+2.  How does an object obtain a reference to another one in the web (i.e. how connections made)?
+3.  Where are objects composed (i.e. where connections are made)?
 
-For now, you may have some trouble understanding why these questions 
-are important, but the good news is that you won't have to trust me 
-too long, because these questions are the topic of this chapter. Let's go!
+For now, you may have some trouble understanding the difference between those questions, but the good news is that they are the topic of this chapter, so I hope we will have that cleared shortly. Let's go!
 
 ## A preview
 
-Before we take a deep dive, let's try to answer these questions for a 
-really simple example code of a console application:
+Before we take a deep dive, let's try to answer these three questions for a really simple example code of a console application:
 
 {lang="csharp"}
 ~~~
@@ -39,39 +36,46 @@ And here are the answers to our questions:
 3.  Where are objects composed? Answer: at application entry point (`Main()` 
 method)
 
-Depending on circumstances, we have different sets of best answers to these 
-questions. To find them, let us take the questions on one by one.
+Depending on circumstances, we have different sets of best answers. To find them, let us take the questions on one by one.
 
 When are objects composed?
 --------------------------
 
-The quick answer to this question is: as early as it makes sense. Now, that wasn't too helpful, was it? So here goes a clarification.
+The quick answer to this question is: as early as possible. Now, that wasn't too helpful, was it? So here goes a clarification.
 
-Most of our system is assembled up-front when the application starts and stays this way until the application finishes executing (unless we are doing a web app - then most of the important stuff happens "per request"). Let's call this part the **static part** of the web. We will talk about the **composition root** pattern that handles this part. 
+Many of the objects we use in our applications can be created and connected up-front when the application starts and can stay this way until the application finishes executing (unless we are doing a web app - then most of the important stuff happens "per request"). Let's call this part the **static part** of the web.
 
-Apart from that, there's the **dynamic part**. There are two reasons this dynamic part exists:
+Apart from that, there's a **dynamic part** - a part that undergoes constant changes - objects are created, destroyed, connected temporarily, and then disconnected. There are at least two reasons this dynamic part exists:
 
-1. Some objects represent requests that arrive during the application runtime, are processed and then discarded. These objects cannot be created up-front, but can be created only as soon as the necessary event occurs. Also, these objects do not live until the application is terminated, but are discarded as soon as the processing of a request is finished. Other objects represent items in the cache that live for some time and then expire etc. so it's impossible to define these objects up-front. All of these objects come and go, making temporary connections. We will talk about **getting recipients in response to a message** approach (which will largely be about **factories**) that is made for such situations.
-2. There are objects that have a lifespan as long as the application itself, but be connected only for the needs of a single interaction (e.g. when one object is passed to a method of another as an argument) or at some point during the application runtime. We will talk about **passing objects inside messages** and **registering objects** approaches that allow us manage such connections.
+1. Some objects represent requests or user actions that arrive during the application runtime, are processed and then discarded. These objects cannot be composed up-front (because they do not exist yet), but only as early as the events they represent occur. Also, these objects do not live until the application is terminated, but are discarded as soon as the processing of a request is finished. Other objects represent e.g. items in cache that live for some time and then expire, so, again, we do not have these objects up-front and they often do not live as long as the application itself. All of these objects come and go, making temporary connections. 
+2. There are objects that have a lifespan as long as the application itself, but are connected only for the needs of a single interaction (e.g. when one object is passed to a method of another as an argument) or at some point during the application runtime. 
 
-There can be situations when an object is part of both static and dynamic part - some of its connections may be made up-front, while others may be created later.
+It is perfectly possible for an object to be part of both static and dynamic part - some of its connections may be made up-front, while others may be created later, e.g. when it is passed inside a message sent to another object (i.e. passed as method parameter).
 
-How does sender obtain a reference to recipient (i.e. how a connection is made)?
+How does a sender obtain a reference to a recipient (i.e. how connections are made)?
 ------------------------------------------------
 
-There are few ways this happens, each of them useful in certain circumstances:
+There are few ways this can happen, each of them useful in certain circumstances. These ways are:
+
+1. Receive as constructor parameter
+2. Receive inside a message (i.e. as a method parameter)
+3. Receive in response to message (i.e. as method return value)
+4. Register a recipient with already created sender
+
+Let us have a closer look at what each of them is about and which one to choose in what circumstances. 
 
 ### Receive as constructor parameter
 
-Two objects can be composed by passing one into the constructor of
-another:
+TODO TODO
+
+Two objects can be composed by passing one into the constructor of another:
 
 {lang="csharp"}
 ~~~
 sender = new Sender(recipient);
 ~~~
 
-A sender then saves a reference to the recipient in a private field for later, like this:
+A sender that received the recipient then saves a reference to it in a private field for later, like this:
 
 {lang="csharp"}
 ~~~
@@ -157,7 +161,7 @@ sender.DoSomethingWithHelpOf(yetAnotherRecipient);
 
 If this ability is not required, the constructor approach is better as it removes the then unnecessary coupling between code using `Sender` and a `Recipient`.
 
-### Get recipient in response to message (i.e. as method return value)
+### Receive in response to a message (i.e. as method return value)
 
 This method of composing objects uses another intermediary object - often a factory (that creates new recipient instance on each call)[^gofcreationpatterns]. Most often, the sender is given a reference to this intermediary object as a constructor parameter (an approach we already discussed):
 
@@ -208,7 +212,7 @@ public DoSomething()
 }
 ~~~
 
-### "Register" a recipient with already created sender
+### Register a recipient with already created sender
 
 This means passing a recipient to an **already created** sender 
 (contrary to passing as constructor parameter where recipient was 
