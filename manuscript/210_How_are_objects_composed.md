@@ -66,8 +66,6 @@ Let us have a closer look at what each of them is about and which one to choose 
 
 ### Receive as constructor parameter
 
-TODO TODO
-
 Two objects can be composed by passing one into the constructor of another:
 
 {lang="csharp"}
@@ -75,32 +73,49 @@ Two objects can be composed by passing one into the constructor of another:
 sender = new Sender(recipient);
 ~~~
 
-A sender that received the recipient then saves a reference to it in a private field for later, like this:
+A sender that receives the recipient then saves a reference to it in a private field for later, like this:
 
 {lang="csharp"}
 ~~~
+private Recipient _recipient;
+
 public Sender(Recipient recipient)
 {
-  this._recipient = recipient;
+  _recipient = recipient;
 }
 ~~~
 
-Composing using constructors has one significant advantage. The code that passes `Recipient` to `Sender` through constructor is most often in a totally different place than the code using `Sender`. Thus, the code using `Sender` is not aware that `Sender` stores a reference to `Recipient` inside it. This basically means that when `Sender` is used, e.g. like this:
+Starting from this point, the `Sender` may send messages to `Recipient` at will:
+
+{lang="csharp"}
+~~~
+public DoSomething()
+{
+  //... other code
+  
+  _recipient.DoSomethingElse();
+  
+  //... other code
+}
+~~~
+
+#### Advantage: "what you hide, you can change" 
+
+Composing using constructors has one significant advantage. By separating object usage from construction, we end up with the code that creates a `Sender` being in a totally different place than the code that uses it. And, as `Recipient` is passed to `Sender` during its creation, it is the only place external to the `Sender` that needs to know that `Sender` uses `Recipient`. The part of code that uses `Sender` is not aware at all that `Sender` stores a reference to `Recipient` inside it. This basically means that when `Sender` is used, e.g. like this:
 
 {lang="csharp"}
 ~~~
 sender.DoSomething()
 ~~~
 
-the `Sender` may then react by sending message to `Recipient`, but the code invoking the `DoSomething()` method is completely unaware of that. 
-Which is good, because "what you hide, you can change"[^kolskybain] - if we decide that the `Sender` needs not use the `Recipient` to do its duty (or pass in a different implementation of `Sender` that does not need the `Recipient`), the code that uses `Sender` does not need to change at all - it still uses the `Sender` the same way:
+the `Sender` may then react by sending message to `Recipient`, but the code invoking the `DoSomething()` method is completely unaware of that - it is hidden. This is good, because "what you hide, you can change"[^kolskybain] - e.g. if we decide that the `Sender` needs not use the `Recipient` to do its duty, the code that uses `Sender` does not need to change at all - it still looks the same as before:
 
 {lang="csharp"}
 ~~~
 sender.DoSomething()
 ~~~
 
-All we have to change is the composition code to remove `Recipient`:
+All we have to change is the composition code to remove the `Recipient`:
 
 {lang="csharp"}
 ~~~
@@ -108,7 +123,13 @@ All we have to change is the composition code to remove `Recipient`:
 new Sender();
 ~~~
 
-Another advantage of the constructor approach is that if `Recipient` is required for a `Sender` to work correctly and it does not make sense to create a `Sender` without a `Recipient`, the signature of the constructor makes it explicit - the compiler will not let us create a `Sender` without passing *something* as a `Recipient`.
+and the `Sender` class itself to work in a different way.
+
+#### Advantage: communication of intent
+
+Another advantage of the constructor approach is that if a reference to `Recipient` is required for a `Sender` to work correctly and it does not make sense to create a `Sender` without a `Recipient`, the signature of the constructor makes it explicit - the compiler will not let us create a `Sender` without passing *something* as a `Recipient`.
+
+#### Where to apply
 
 Passing into constructor is a great solution in cases we want to compose sender with a recipient permanently (i.e. for the lifetime of `Sender`). In order to be able to do this, a `Recipient` must, of course, exist before a `Sender` does. Another less obvious requirement for this composition is that `Recipient` must be usable at least as long as `Sender` is usable. In other words, the following is nonsense:
 
