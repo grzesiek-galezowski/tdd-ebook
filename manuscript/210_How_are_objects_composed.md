@@ -125,7 +125,7 @@ new Sender();
 
 and the `Sender` class itself to work in a different way.
 
-#### Advantage: communication of intent
+#### Communication of intent: required recipient
 
 Another advantage of the constructor approach is that if a reference to `Recipient` is required for a `Sender` to work correctly and it does not make sense to create a `Sender` without a `Recipient`, the signature of the constructor makes it explicit - the compiler will not let us create a `Sender` without passing *something* as a `Recipient`.
 
@@ -166,6 +166,8 @@ public void DoSomethingWithHelpOf(Recipient recipient)
 }
 ~~~
 
+#### Where to apply
+
 Contrary to the constructor approach, where a `Sender` could hide from its user the fact that it needs `Recipient`, in this case the user of `Sender` is explicitly responsible for supplying a `Recipient`. It may look like the coupling of user to `Recipient` is a disadvantage, but there are scenarios where it is actually **required** for a code using `Sender` to be able to provide its own `Recipient` - it lets us use the same sender with different recipients at different times (most often from different parts of the code):
 
 {lang="csharp"}
@@ -184,14 +186,16 @@ If this ability is not required, the constructor approach is better as it remove
 
 ### Receive in response to a message (i.e. as method return value)
 
-This method of composing objects uses another intermediary object - often a factory (that creates new recipient instance on each call)[^gofcreationpatterns]. Most often, the sender is given a reference to this intermediary object as a constructor parameter (an approach we already discussed):
+This method of composing objects relies on an intermediary object - often a factory[^gofcreationpatterns] - to supply recipients on request. To simplify things, I will use factories as an example for the rest of this section, although what I tell you is true for some other creation patterns as well.  
+
+To be able to ask a factory for recipients, the sender needs to obtain a reference to it first. Typically, a factory is composed with a sender through constructor (an approach we already discussed). For example:
 
 {lang="csharp"}
 ~~~
-sender = new Sender(factory);
+var sender = new Sender(recipientFactory);
 ~~~
 
-and then the intermediary object is used to deliver other objects:
+The factory can then be used by the `Sender` at will to get a hold of new recipients:
 
 {lang="csharp"}
 ~~~
@@ -201,20 +205,25 @@ public class Sender
 
   public DoSomething() 
   {
-    var recipient = _factory.CreateRecipient();
+    //ask the factory for a recipient:
+    var recipient = _recipientFactory.CreateRecipient();
+    
+    //use the recipient:
     recipient.DoSomethingElse();
   }
 }
 ~~~
 
-This kind of composition is beneficial when a new recipient is needed each time `DoSomething()` is called (much like in case of previously discussed approach of receiving a recipient as a method parameter), but at the same time (contrary to the mentioned approach), it is not the code using the `Sender` that should (or can) be responsible for supplying a recipient.
+#### Where to apply
 
-To be more clear, here is a comparison of two approaches: passing 
-recipient inside a message:
+This kind of composition is beneficial when a new recipient is needed each time `DoSomething()` is called. This part of the benefit looks much like in case of previously discussed approach of receiving a recipient inside a message. There is one difference, however. Contrary to passing a recipient inside a message, where the code using the `Sender` passed a `Recipient` "from outside" of the `Sender`, in this approach we rely on a separate object that is used by a `Sender` from the inside.
+
+To be more clear, let us compare the two approaches. Passing 
+recipient inside a message looks like this:
 
 {lang="csharp"}
 ~~~
-//user of Sender passes a recipient:
+//Sender gets a Recipient from the "outside":
 public DoSomething(Recipient recipient) 
 {
   recipient.DoSomethingElse();
@@ -225,13 +234,24 @@ and obtaining from factory:
 
 {lang="csharp"}
 ~~~
-//user of Sender does not know about Recipient
+//a factory is used "inside" Sender
+//to obtain a recipient
 public DoSomething() 
 {
   var recipient = _factory.CreateRecipient();
   recipient.DoSomethingElse();
 }
 ~~~
+
+So in the first example, the decision on which `Recipient` is used is made by whoever calls `DoSomething()`. In the factory example, whoever calls `DoSomething()` does not know at all about the `Recipient` and cannot directly influence which `Recipient` is used. The factory makes this decision.
+
+#### Factories with parameters
+
+So far, all the factories we considered had creation methods with empty parameter list, but this is not required. As the factory remains the decision maker on which `Recipient` is used, it can rely on some external parameters to help it make the decision.
+
+#### Not only factories
+
+Throughout this section, we have used a factory as our role model, but the approach of obtaining a recipient in response to a message is wider than that. Other types of objects that fall into this category include: repositories, caches, builders and collections.   
 
 ### Register a recipient with already created sender
 
