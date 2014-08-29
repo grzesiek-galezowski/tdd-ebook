@@ -48,7 +48,7 @@ Many of the objects we use in our applications can be created and connected up-f
 Apart from that, there's a **dynamic part** - a part that undergoes constant changes - objects are created, destroyed, connected temporarily, and then disconnected. There are at least two reasons this dynamic part exists:
 
 1. Some objects represent requests or user actions that arrive during the application runtime, are processed and then discarded. These objects cannot be composed up-front (because they do not exist yet), but only as early as the events they represent occur. Also, these objects do not live until the application is terminated, but are discarded as soon as the processing of a request is finished. Other objects represent e.g. items in cache that live for some time and then expire, so, again, we do not have these objects up-front and they often do not live as long as the application itself. All of these objects come and go, making temporary connections. 
-2. There are objects that have a lifespan as long as the application itself, but are connected only for the needs of a single interaction (e.g. when one object is passed to a method of another as an argument) or at some point during the application runtime. 
+2. There are objects that have a life span as long as the application itself, but are connected only for the needs of a single interaction (e.g. when one object is passed to a method of another as an argument) or at some point during the application runtime. 
 
 It is perfectly possible for an object to be part of both static and dynamic part - some of its connections may be made up-front, while others may be created later, e.g. when it is passed inside a message sent to another object (i.e. passed as method parameter).
 
@@ -216,7 +216,7 @@ public class Sender
 
 #### Where to apply
 
-This kind of composition is beneficial when a new recipient is needed each time `DoSomething()` is called. This part of the benefit looks much like in case of previously discussed approach of receiving a recipient inside a message. There is one difference, however. Contrary to passing a recipient inside a message, where the code using the `Sender` passed a `Recipient` "from outside" of the `Sender`, in this approach we rely on a separate object that is used by a `Sender` from the inside.
+This kind of composition is beneficial when a new recipient is needed each time `DoSomething()` is called. In this sense it may look much like in case of previously discussed approach of receiving a recipient inside a message. There is one difference, however. Contrary to passing a recipient inside a message, where the code using the `Sender` passed a `Recipient` "from outside" of the `Sender`, in this approach, we rely on a separate object that is used by a `Sender` "from the inside".
 
 To be more clear, let us compare the two approaches. Passing 
 recipient inside a message looks like this:
@@ -255,17 +255,14 @@ Throughout this section, we have used a factory as our role model, but the appro
 
 ### Register a recipient with already created sender
 
-This means passing a recipient to an **already created** sender 
-(contrary to passing as constructor parameter where recipient was 
-passed **during** creation) as a parameter of a method that stores the 
-reference for later use. This may be a "setter" method, although I do 
-not like naming it according to convention "setWhatever()" - after Kent 
-Beck[^implementationpatterns] I find this convention too much 
-implementaion-focused instead of purpose-focused. Thus, I pick 
-different names based on what domain concept is modeled by the 
-registration method or what is its purpose.
+This means passing a recipient to an **already created** sender (contrary to passing as constructor parameter where recipient was passed **during** creation) as a parameter of a method that stores the 
+reference for later use. This may be a "setter" method, although I do not like naming it according to convention "setWhatever()" - after Kent Beck[^implementationpatterns] I find this convention too much implementation-focused instead of purpose-focused. Thus, I pick different names based on what domain concept is modeled by the registration method or what is its purpose.
 
-Note that this is similar to "pass inside a message" approach, only this time, the passed recipient is not used immediately and forgotten, but rather remembered for later use.
+Note that there is one similarity to "passing inside a message" approach - in both, a recipient is passed inside a message. The difference is that this time, contrary to "pass inside a message" approach, the passed recipient is not immediately used (and then forgotten), but rather only remembered (registered) for later use.
+
+TODO
+
+#### Example
 
 I hope I can clear up the confusion with a quick example. Suppose we have a temperature sensor that can report its current and historically mean value for the current date to whoever registers with it. If no one registers, it still does its job, because it still has to be able to give a history-based mean value to whoever registers at whatever time, right? 
 
@@ -311,6 +308,7 @@ public class TemperatureSensor
 
 As you can see, by default, the sensor reports its values to nowhere (`NullObserver`), which is a safe default value (using a `null` instead would cause exceptions or force us to put an ugly null check inside the `Run()` method). We have already seen such "null objects" a few times before (e.g. in the previous chapter, when we introduced the `NoAlarm` class) - `NullObserver` is just another incarnation of this pattern.
 
+#### Overwriting observers
 
  Still, we want to be able to supply our own observer one day, when someone starts caring about the measured and calculated values (this may be indicated to our application e.g. with a network message or an event from the user interface). This means we need to have a method inside the `TemperatureSensor` class to overwrite this default "do-nothing" observer with a custom one **after** the `TemperatureSensor` instance is created. As I said, I do not like the "SetXYZ()" convention, so I will name the registration method `FromNowOnReportTo()` and make the observer an argument:
 
@@ -322,8 +320,7 @@ public void FromNowOnReportTo(TemperatureObserver observer)
 }
 ~~~
 
-This lets us overwrite the observer with a new one should we ever need 
-to do it. Note that, as I mentioned, this is the place where registration approach differs from the "pass inside a message" approach, where we also receive a recipient in a message, but for immediate use. Here, we don't use the recipient (i.e. the observer) when we get it, but instead we save it for later.
+This lets us overwrite the observer with a new one should we ever need to do it. Note that, as I mentioned, this is the place where registration approach differs from the "pass inside a message" approach, where we also receive a recipient in a message, but for immediate use. Here, we don't use the recipient (i.e. the observer) when we get it, but instead we save it for later.
 
 Time for a general remark. Allowing registering recipients after a sender is created is a way of saying: "the recipient is optional - if you provide one, fine, if not, I will do my work without it". Please, do not use this kind of mechanism for **required** recipients - these should all be passed through constructor, making it harder to create invalid objects that are only partially ready to work. Placing a 
 recipient in a constructor signature is effectively saying that "I will not work without it". Look at how the following class members signatures talk to you:
