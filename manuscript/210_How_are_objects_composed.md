@@ -222,7 +222,6 @@ To be more clear, let us compare the two approaches. Passing
 recipient inside a message looks like this:
 
 {lang="csharp"}
-~~~
 //Sender gets a Recipient from the "outside":
 public DoSomething(Recipient recipient) 
 {
@@ -260,13 +259,13 @@ reference for later use. This may be a "setter" method, although I do not like n
 
 Note that there is one similarity to "passing inside a message" approach - in both, a recipient is passed inside a message. The difference is that this time, contrary to "pass inside a message" approach, the passed recipient is not immediately used (and then forgotten), but rather only remembered (registered) for later use.
 
-TODO
+I hope I can clear up the confusion with a quick example.
 
 #### Example
 
-I hope I can clear up the confusion with a quick example. Suppose we have a temperature sensor that can report its current and historically mean value for the current date to whoever registers with it. If no one registers, it still does its job, because it still has to be able to give a history-based mean value to whoever registers at whatever time, right? 
+Suppose we have a temperature sensor that can report its current and historically mean value to whoever subscribes with it. If no one subscribes, the sensor still does its job, because it still has to collect the data for calculating a history-based mean value in case anyone subscribes later. 
 
-We may solve the problem by introducing an observer registration mechanism in the sensor implementation. If no observer is registered, the values are not reported (in other words, a registered observer is not required for the object to function, but if there is one, it can take advantage of the reports). For this purpose, let's make our sensor depend on an interface called `TemperatureObserver` that could be implemented by various custom observers:
+We may solve the problem by introducing an observer registration mechanism in the sensor implementation. If no observer is registered, the values are not reported (in other words, a registered observer is not required for the object to function, but if there is one, it can take advantage of the reports). For this purpose, let's make our sensor depend on an interface called `TemperatureObserver` that could be implemented by various concrete observer classes. The interface declaration looks like this:
 
 {lang="csharp"}
 ~~~
@@ -278,7 +277,7 @@ public interface TemperatureObserver
 }
 ~~~
 
-Now we are ready to look at the sensor implementation. Let's make it a class called `TemperatureSensor`. Part of its definition could look like this:
+Now we are ready to look at the implementation of the temperature sensor itself and how it uses this `TemperatureObserver` interface. Let's say that the class representing the sensor is called `TemperatureSensor`. Part of its definition could look like this:
 
 {lang="csharp"}
 ~~~
@@ -286,6 +285,7 @@ public class TemperatureSensor
 {
   private TemperatureObserver _observer 
     = new NullObserver(); //ignores reported values
+    
   private Temperature _meanValue 
     = Temperature.Celsius(0);
   
@@ -306,19 +306,31 @@ public class TemperatureSensor
 }
 ~~~
 
-As you can see, by default, the sensor reports its values to nowhere (`NullObserver`), which is a safe default value (using a `null` instead would cause exceptions or force us to put an ugly null check inside the `Run()` method). We have already seen such "null objects" a few times before (e.g. in the previous chapter, when we introduced the `NoAlarm` class) - `NullObserver` is just another incarnation of this pattern.
+As you can see, by default, the sensor reports its values to nowhere (`NullObserver`), which is a safe default value (using a `null` for a default value instead would cause exceptions or force us to put an ugly null check inside the `Run()` method). We have already seen such "null objects" a few times before (e.g. in the previous chapter, when we introduced the `NoAlarm` class) - `NullObserver` is just another incarnation of this pattern.
 
-#### Overwriting observers
+#### Registering observers
 
- Still, we want to be able to supply our own observer one day, when someone starts caring about the measured and calculated values (this may be indicated to our application e.g. with a network message or an event from the user interface). This means we need to have a method inside the `TemperatureSensor` class to overwrite this default "do-nothing" observer with a custom one **after** the `TemperatureSensor` instance is created. As I said, I do not like the "SetXYZ()" convention, so I will name the registration method `FromNowOnReportTo()` and make the observer an argument:
+ Still, we want to be able to supply our own observer one day, when we start caring about the measured and calculated values (the fact that we "started caring" may be indicated to our application e.g. by a network message or an event from the user interface). This means we need to have a method inside the `TemperatureSensor` class to overwrite this default "do-nothing" observer with a custom one **after** the `TemperatureSensor` instance is created. As I said, I do not like the "SetXYZ()" convention, so I will name the registration method `FromNowOnReportTo()` and make the observer an argument. Here are the relevant parts of `TemperatureSensor` class:
 
 {lang="csharp"}
 ~~~
-public void FromNowOnReportTo(TemperatureObserver observer)
+public class TemperatureSensor
 {
-  _observer = observer;
+  private TemperatureObserver _observer 
+    = new NullObserver(); //ignores reported values
+
+  //... ... ...
+
+  public void FromNowOnReportTo(TemperatureObserver observer)
+  {
+    _observer = observer;
+  }
+  
+  //... ... ...
 }
 ~~~
+
+TODO TODO TODO
 
 This lets us overwrite the observer with a new one should we ever need to do it. Note that, as I mentioned, this is the place where registration approach differs from the "pass inside a message" approach, where we also receive a recipient in a message, but for immediate use. Here, we don't use the recipient (i.e. the observer) when we get it, but instead we save it for later.
 
