@@ -330,12 +330,11 @@ public class TemperatureSensor
 }
 ~~~
 
-TODO TODO TODO
+This lets us overwrite the observer with a new one should we ever need to do it. Note that, as I mentioned, this is the place where registration approach differs from the "pass inside a message" approach, where we also received a recipient in a message, but for immediate use. Here, we don't use the recipient (i.e. the observer) when we get it, but instead we save it for later.
 
-This lets us overwrite the observer with a new one should we ever need to do it. Note that, as I mentioned, this is the place where registration approach differs from the "pass inside a message" approach, where we also receive a recipient in a message, but for immediate use. Here, we don't use the recipient (i.e. the observer) when we get it, but instead we save it for later.
+#### Communication of intent: optional dependency
 
-Time for a general remark. Allowing registering recipients after a sender is created is a way of saying: "the recipient is optional - if you provide one, fine, if not, I will do my work without it". Please, do not use this kind of mechanism for **required** recipients - these should all be passed through constructor, making it harder to create invalid objects that are only partially ready to work. Placing a 
-recipient in a constructor signature is effectively saying that "I will not work without it". Look at how the following class members signatures talk to you:
+Allowing registering recipients after a sender is created is a way of saying: "the recipient is optional - if you provide one, fine, if not, I will do my work without it". Please, do not use this kind of mechanism for **required** recipients - these should all be passed through constructor, making it harder to create invalid objects that are only partially ready to work. Placing a recipient in a constructor signature is effectively saying that "I will not work without it". Let's practice - just look at how the following class members signatures talk to you:
 
 {lang="csharp"}
 ~~~
@@ -351,14 +350,15 @@ public class Sender
 }
 ~~~ 
 
-Now, the observer API we just skimmed over gives us the possibility to have a single observer at any given time. When we register new observer, the reference to the old one is overwritten. This is not really useful in our context, is it? With real sensors, we often want them to report 
-their measurements to multiple places (e.g. we want the measurements printed on screen, saved to database, used as part of more complex calculations). This can be achieved in two ways.
+#### More than one observer
+
+Now, the observer API we just skimmed over gives us the possibility to have a single observer at any given time. When we register a new observer, the reference to the old one is overwritten. This is not really useful in our context, is it? With real sensors, we often want them to report their measurements to multiple places (e.g. we want the measurements printed on screen, saved to database, used as part of more complex calculations). This can be achieved in two ways.
 
 The first way would be to just hold a collection of observers in our sensor, and add to this collection whenever a new observer is registered:
 
 {lang="csharp"}
 ~~~
-IList<TemperatureObserver> _observers 
+private IList<TemperatureObserver> _observers 
   = new List<TemperatureObserver>();
 
 public void FromNowOnReportTo(TemperatureObserver observer)
@@ -379,7 +379,7 @@ foreach(var observer in _observers)
 ...
 ~~~
 
-Another, more flexible option, is to use something like we did in the previous chapter with a `HybridAlarm` (remember? It was an alarm aggregating other alarms) - i.e. instead of introducing a collection in the sensor, create a special kind of "broadcasting observer" that would hold collection of other observers (hurrah composability!) and broadcast the values to them every time it itself receives those values:
+Another, more flexible option, is to use something like we did in the previous chapter with a `HybridAlarm` (remember? It was an alarm aggregating other alarms) - i.e. instead of introducing a collection in the sensor, we can create a special kind of observer - a "broadcasting observer" that would itself hold collection of other observers (hurrah composability!) and broadcast the values to them every time it itself receives those values:
 
 {lang="csharp"}
 ~~~
@@ -418,17 +418,19 @@ var broadcastingObserver
       new StoringObserver(),
       new CalculatingObserver());
 
+...
+
 //registration:
 sensor.FromNowOnReportTo(broadcastingObserver);
 ~~~
 
-This would let us change the broadcasting policy without touching either the sensor code or the other observers. For example, we might introduce `ParallelBroadcastObserver` that would notify each observer asynchronously instead of sequentially and put it to use by changing the composition code only:
+The additional benefit of modeling broadcasting as an observer is that it would let us change the broadcasting policy without touching either the sensor code or the other observers. For example, we might introduce `ParallelBroadcastObserver` that would notify each observer asynchronously instead of sequentially and put it to use by changing the composition code only:
 
 {lang="csharp"}
 ~~~
 //now using parallel observer
 var broadcastingObserver 
-  = new ParallelBroadcastObserver(
+  = new ParallelBroadcastObserver( //change here!
       new DisplayingObserver(),
       new StoringObserver(),
       new CalculatingObserver());
@@ -436,24 +438,26 @@ var broadcastingObserver
 sensor.FromNowOnReportTo(broadcastingObserver);
 ~~~
 
-Anyway, as I said, use registering instances very wisely and only if you specifically need it. Also, if you do use it, evaluate how allowing changing observers at runtime is affecting your multithreading scenarios. This is because maintaining a changeable field (or a collection) throughout the object lifetime means that multiple thread might access it and get in each others' ways.
+Anyway, as I said, use registering instances very wisely and only if you specifically need it. Also, if you do use it, evaluate how allowing changing observers at runtime is affecting your multithreading scenarios. This is because a collection of observers might potentially be modified by two threads at the same time.
 
 Where are objects composed?
 ---------------------------
 
-Ok, we went through some ways of passing a recipient to a sender. The big question is: which code should pass the recipient?
+Ok, we went through some ways of passing a recipient to a sender. We did it from the "internal" perspective of a sender that is given a recipient. What we left out for the most part is the "external" perspective, i.e. who should pass the recipient into the sender?
 
 For almost all of the approaches described above there is no limitation - you pass the recipient from where you need to pass it.
 
 There is one approach, however, that is more limited, and this approach is **passing as constructor parameter**.
 
-Why is that? Because, we are trying to be true to the principle of "separating objects creation from usage". If an object cannot both use and create another object, we have to make special objects just for creating other objects (there are some design patterns for how to design such objects, but the most popular and useful is a factory) or defer the creation up to the application entry point (there is also a pattern for this, called **composition root**).
+Why is that? Because, we are trying to be true to the principle of "separating objects creation from usage" and this, in turn, is a result of us striving for composability. 
 
-Let's start with the second one.
+Anyway, if an object cannot both use and create another object, we have to make special objects just for creating other objects (there are some design patterns for how to design such objects, but the most popular and useful is a **factory**) or defer the creation up to the application entry point (there is also a pattern for this, called **composition root**).
+
+So, we have two cases to consider. I'll start with the second one.
 
 ### Composition Root
 
-Let us assume for fun that we are creating a mobile game when a player has to defend a castle. This game has two levels. Each level has a castle. So, we have three classes: a `Game` that has two `Level`s and each of them that contain a `Castle`. Let us also assume that the first two classes violate the principle of separating usage from construction.
+Let us assume for fun that we are creating a mobile game where a player has to defend a castle. This game has two levels. Each level has a castle to defend. So, we can break down the domain logic into three classes: a `Game` that has two `Level`s and each of them that contain a `Castle`. Let us also assume that the first two classes violate the principle of separating usage from construction, i.e. that a `Game` creates its own levels and each `Level` creates its own castle.
 
 A `Game` class is created in the `Main()` method of the application:
 
@@ -500,7 +504,13 @@ public class Level2
 }
 ~~~
 
-We can try to make them more compliant with the principle. First, let us refactor the `Level1` and `Level2` by moving instantiation of their castles out of these classes. Existence of a castle is required for a level to make sense at all to make sense - we will say this in code by using the approach of passing them through constructor:
+Now, I said (and I hope you saw this) that the `Game`, `Level1` and `Level2` classes violate the principle of separating usage from construction.  We don't like this, do we? So now we will try to make them more compliant with the principle. 
+
+#### Achieving separation of usage from construction
+
+TODO
+
+First, let us refactor the `Level1` and `Level2` by moving instantiation of their castles out of these classes. Existence of a castle is required for a level to make sense at all to make sense - we will say this in code by using the approach of passing them through constructor:
 
 {lang="csharp"}
 ~~~
