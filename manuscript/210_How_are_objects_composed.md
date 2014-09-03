@@ -508,9 +508,9 @@ Now, I said (and I hope you saw this) that the `Game`, `Level1` and `Level2` cla
 
 #### Achieving separation of usage from construction
 
-TODO
+First, let us refactor the `Level1` and `Level2` to follow the principle by moving instantiation of their castles out. As existence of a castle is required for a level to make sense at all - we will say this in code by using the approach of passing a castle through constructor:
 
-First, let us refactor the `Level1` and `Level2` by moving instantiation of their castles out of these classes. Existence of a castle is required for a level to make sense at all to make sense - we will say this in code by using the approach of passing them through constructor:
+TODO
 
 {lang="csharp"}
 ~~~
