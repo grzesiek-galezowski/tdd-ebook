@@ -101,7 +101,7 @@ public DoSomething()
 
 #### Advantage: "what you hide, you can change" 
 
-Composing using constructors has one significant advantage. By separating object usage from construction, we end up with the code that creates a `Sender` being in a totally different place than the code that uses it. And, as `Recipient` is passed to `Sender` during its creation, it is the only place external to the `Sender` that needs to know that `Sender` uses `Recipient`. The part of code that uses `Sender` is not aware at all that `Sender` stores a reference to `Recipient` inside it. This basically means that when `Sender` is used, e.g. like this:
+Composing using constructors has one significant advantage. By separating object use from construction, we end up with the code that creates a `Sender` being in a totally different place than the code that uses it. And, as `Recipient` is passed to `Sender` during its creation, it is the only place external to the `Sender` that needs to know that `Sender` uses `Recipient`. The part of code that uses `Sender` is not aware at all that `Sender` stores a reference to `Recipient` inside it. This basically means that when `Sender` is used, e.g. like this:
 
 {lang="csharp"}
 ~~~
@@ -449,7 +449,7 @@ For almost all of the approaches described above there is no limitation - you pa
 
 There is one approach, however, that is more limited, and this approach is **passing as constructor parameter**.
 
-Why is that? Because, we are trying to be true to the principle of "separating objects creation from usage" and this, in turn, is a result of us striving for composability. 
+Why is that? Because, we are trying to be true to the principle of "separating objects creation from use" and this, in turn, is a result of us striving for composability. 
 
 Anyway, if an object cannot both use and create another object, we have to make special objects just for creating other objects (there are some design patterns for how to design such objects, but the most popular and useful is a **factory**) or defer the creation up to the application entry point (there is also a pattern for this, called **composition root**).
 
@@ -457,7 +457,7 @@ So, we have two cases to consider. I'll start with the second one.
 
 ### Composition Root
 
-Let us assume for fun that we are creating a mobile game where a player has to defend a castle. This game has two levels. Each level has a castle to defend. So, we can break down the domain logic into three classes: a `Game` that has two `Level`s and each of them that contain a `Castle`. Let us also assume that the first two classes violate the principle of separating usage from construction, i.e. that a `Game` creates its own levels and each `Level` creates its own castle.
+Let us assume for fun that we are creating a mobile game where a player has to defend a castle. This game has two levels. Each level has a castle to defend. So, we can break down the domain logic into three classes: a `Game` that has two `Level`s and each of them that contain a `Castle`. Let us also assume that the first two classes violate the principle of separating use from construction, i.e. that a `Game` creates its own levels and each `Level` creates its own castle.
 
 A `Game` class is created in the `Main()` method of the application:
 
@@ -504,13 +504,11 @@ public class Level2
 }
 ~~~
 
-Now, I said (and I hope you saw this) that the `Game`, `Level1` and `Level2` classes violate the principle of separating usage from construction.  We don't like this, do we? So now we will try to make them more compliant with the principle. 
+Now, I said (and I hope you see it in the code above) that the `Game`, `Level1` and `Level2` classes violate the principle of separating use from construction.  We don't like this, do we? So now we will try to make them more compliant with the principle. 
 
-#### Achieving separation of usage from construction
+#### Achieving separation of use from construction
 
-First, let us refactor the `Level1` and `Level2` to follow the principle by moving instantiation of their castles out. As existence of a castle is required for a level to make sense at all - we will say this in code by using the approach of passing a castle through constructor:
-
-TODO
+First, let us refactor the `Level1` and `Level2` according to the principle by moving instantiation of their castles out. As existence of a castle is required for a level to make sense at all - we will say this in code by using the approach of passing a castle through a `Level`'s constructor:
 
 {lang="csharp"}
 ~~~
@@ -543,7 +541,7 @@ public class Level2
 }
 ~~~
 
-This was easy, wasn't it? The only problem is that if the instantiation of castles is not in `Level1` and `Level2` anymore, then they have to be passed by whoever creates the levels. In our case - the `Game` class:
+This was easy, wasn't it? The only problem is that if the instantiations of castles are not in `Level1` and `Level2` anymore, then they have to be passed by whoever creates the levels. In our case, this falls on the shoulders of `Game` class:
  
 {lang="csharp"}
 ~~~
@@ -559,7 +557,7 @@ public class Game
 }
 ~~~
 
-But remember - this class suffers from the same violation of not separating objects use from construction as the levels. Thus, to make this class compliant as well, we have to move the creation of levels out of it:
+But remember - this class suffers from the same violation of not separating objects use from construction as the levels did. Thus, to make this class compliant to the principle as well, we have do the same to it that we did to the level classes - move the creation of levels out of it:
 
 {lang="csharp"}
 ~~~
@@ -595,7 +593,7 @@ public static void Main(string[] args)
 }
 ~~~
 
-By the way, the `Level1` and `Level2` differed only by the castles and this difference is no more, so we can make them a single class and call it e.g. `TimedLevel` (because it is considered passed when we defend our castle for a specific period of time). Now, we have:
+By the way, the `Level1` and `Level2` differed only by the castle types and this difference is no more as we refactored it out, so we can make them a single class and call it e.g. `TimedLevel` (because it is considered passed when we defend our castle for a specific period of time). After this move, now we have:
 
 {lang="csharp"}
 ~~~
@@ -612,26 +610,30 @@ public static void Main(string[] args)
 }
 ~~~
 
-Looking at the code above, we might come to another funny conclusion - this violates the principle of separating usage from construction as well! First, we create and connect the web of objects and then send the `Play()` message to the `game` object. Shouldn't we fix this as well? 
+Looking at the code above, we might come to another funny conclusion - this violates the principle of separating use from construction as well! First, we create and connect the web of objects and then send the `Play()` message to the `game` object. Shouldn't we fix this as well? 
 
 The answer is "no", for two reasons:
 
- 1. There is no further place we can defer the creation. Sure, we could move the creation of the `Game` object and its dependencies into a separate object responsible only for the creation (we call such object **a factory**), but that would leave us with the question: where where do we instantiate this factory?
+ 1. There is no further place we can defer the creation. Sure, we could move the creation of the `Game` object and its dependencies into a separate object responsible only for the creation (we call such object **a factory**, as you already know), but it's a dead end, because it would leave us with the question: where do we create the factory?
  2. The whole point of the principle we are trying to apply is decoupling, i.e. giving ourselves the ability to change one thing without having to change another. When we think of it, there is no point of decoupling the entry point of the application from the application itself, since this is the most application-specific and non-reusable part of the application we can imagine.
 
-What is important is that we reached a place where the web of objects is created using constructor approach and we have no place left to defer the the creation of the web (in other words, it is as close as possible to application entry point). Such place is called **a composition root**.
+What is important is that we reached a place where the web of objects is created using constructor approach and we have no place left to defer the the creation of the web (in other words, it is as close as possible to application entry point). Such place is called [**a composition root**](http://blog.ploeh.dk/2011/07/28/CompositionRoot/).
 
-We say that composition root is "as close as possible" to application entry point, because there may be different frameworks in control of your application and you will not always have the `Main()` method at your disposal[^seemanndi].
+We say that composition root is "as close as possible" to application entry point, because there may be different frameworks in control of your application and you will not always have the `Main()` method at your service[^seemanndi].
 
-Apart from the constructor invocations, the composition root may also contain registrations of observers (see registration approach to passing recipients) if such observers are already known at this point.
+Apart from the constructor invocations, the composition root may also contain e.g. registrations of observers (see registration approach to passing recipients) if such observers are already known at this point. It is also responsible for disposing of all objects it created that require explicit disposal after the application finishes running. This is because it creates them and thus is the only place in the code that can safely determine when they are not needed.
 
-The composition root above looks quite small, but you can imagine it grow a lot in bigger applications. There are techniques of refactoring the composition root to make it more readable and reusable and we will explore those techniques in further chapters.
+The composition root above looks quite small, but you can imagine it grow a lot in bigger applications. There are techniques of refactoring the composition root to make it more readable and cleaner - we will explore those techniques in further chapters.
 
 ### Factories
 
 As I previously said, it is not always possible to pass everything through the constructor. One of the approach we discussed that we can use in such cases is **a factory**.
 
-#### Example  
+When we previously talked about factories, we focused on it being just a source of objects. This time we will have a much closer look at what factory is and what are its benefits.
+
+But first, let's look at an example of a factory emerging in code that was not using it, as a mere consequence of trying to follow the principle of separating objects use from construction.
+
+#### Emerging factory - example  
 
 Consider the following code that receives a frame from the network (as raw data), then packs it into an object, validates and applies to the system:
  
@@ -666,7 +668,9 @@ public class MessageInbound
 }
 ~~~
 
-Note that, again, this code violates the principle of separating usage from construction. The `change` is first created, depending on the frame type, and then used (validated and applied). On the other hand, it is impossible to pass an instance of the `ChangeMessage` through the `MessageInbound` constructor, because this would require us to create the `ChangeMessage` before we create the `MessageInbound`. This is impossible, because we can only create messages when we know the frame data which the `MessageInbound` is supposed to receive.
+TODO
+
+Note that, this code violates the principle of separating use from construction. The `change` is first created, depending on the frame type, and then used (validated and applied). On the other hand, it is impossible to pass an instance of the `ChangeMessage` through the `MessageInbound` constructor, because this would require us to create the `ChangeMessage` before we create the `MessageInbound`. This is impossible, because we can only create messages when we know the frame data which the `MessageInbound` is supposed to receive.
 
 Thus, our choice is to make a special object that we would move the creation of new messages to. It would produce the new instances when requested, hence the name **factory**. This object itself can be passed through constructor, since it does not need the framer to exist - it only needs one when it is asked to create a message.
 
@@ -703,7 +707,7 @@ public class MessageInbound
 }
 ~~~
 
-This way we have separated message construction from its usage. The factory looks like this:
+This way we have separated message construction from its use. The factory looks like this:
 
 {lang="csharp"}
 ~~~
@@ -733,7 +737,7 @@ This is it for a simple factory example, now on to the more general explanation.
 
 #### Explanation of the factory
 
-As you saw in the example, factories are objects responsible for creating other objects. They are used to achieve the separation object construction from its usage when not all of the information necessary to create objects is known at the time the composition root is executed (as the full context for object creation is not available, we puts the part of the context we know in the factory, and supply the rest by factory method parameters when it is available). Another reason is that we need to create a new object each time some kind of request is made (a message is received from the network or someone clicks a button). Both these reasons were present in our example:
+As you saw in the example, factories are objects responsible for creating other objects. They are used to achieve the separation object construction from its use when not all of the information necessary to create objects is known at the time the composition root is executed (as the full context for object creation is not available, we puts the part of the context we know in the factory, and supply the rest by factory method parameters when it is available). Another reason is that we need to create a new object each time some kind of request is made (a message is received from the network or someone clicks a button). Both these reasons were present in our example:
 
  1. We were unable to create a `ChangeMessage` before knowing the actual `Frame`.
  2. For each `Frame` received, we needed to create a new `ChangeMessage` instance. 
