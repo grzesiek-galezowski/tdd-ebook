@@ -668,11 +668,9 @@ public class MessageInbound
 }
 ~~~
 
-TODO
+Note that this code violates the principle of separating use from construction. The `change` is first created, depending on the frame type, and then used (validated and applied) in the same method. On the other hand, if we wanted to separate the construction of `change` from its use, we have to note that it is impossible to pass an instance of the `ChangeMessage` through the `MessageInbound` constructor, because this would require us to create the `ChangeMessage` before we create the `MessageInbound`. Achieving this is impossible, because we can create messages only as soon as we know the frame data which the `MessageInbound` receives.
 
-Note that, this code violates the principle of separating use from construction. The `change` is first created, depending on the frame type, and then used (validated and applied). On the other hand, it is impossible to pass an instance of the `ChangeMessage` through the `MessageInbound` constructor, because this would require us to create the `ChangeMessage` before we create the `MessageInbound`. This is impossible, because we can only create messages when we know the frame data which the `MessageInbound` is supposed to receive.
-
-Thus, our choice is to make a special object that we would move the creation of new messages to. It would produce the new instances when requested, hence the name **factory**. This object itself can be passed through constructor, since it does not need the framer to exist - it only needs one when it is asked to create a message.
+Thus, our choice is to make a special object that we would move the creation of new messages into. It would produce the new instances when requested, hence the name **factory**. The factory itself can be passed through constructor, since it does not require a frame to exist - it only needs one when it is asked to create a message.
 
 Knowing this, we can refactor the above code to the following:
 
@@ -707,7 +705,9 @@ public class MessageInbound
 }
 ~~~
 
-This way we have separated message construction from its use. The factory looks like this:
+This way we have separated message construction from its use. 
+
+By the way, the factory itself looks like this:
 
 {lang="csharp"}
 ~~~
@@ -733,16 +733,48 @@ public class InboundMessageFactory
 }
 ~~~
 
-This is it for a simple factory example, now on to the more general explanation.
+And this is it. We have a factory now and the way we got to this point is by trying to be true to the principle of separating use from construction.
 
-#### Explanation of the factory
+Now that we are through with the example, we are ready for some more general explanation on factories.
 
-As you saw in the example, factories are objects responsible for creating other objects. They are used to achieve the separation object construction from its use when not all of the information necessary to create objects is known at the time the composition root is executed (as the full context for object creation is not available, we puts the part of the context we know in the factory, and supply the rest by factory method parameters when it is available). Another reason is that we need to create a new object each time some kind of request is made (a message is received from the network or someone clicks a button). Both these reasons were present in our example:
+#### Reasons to use factories
+
+As you saw in the example, factories are objects responsible for creating other objects. They are used to achieve the separation of object constructions from their use when not all of the information necessary to create objects is known up-front. We put the part of the context we know in the factory, and supply the rest in a form of factory method parameters when available:
+
+{lang="csharp"}
+~~~
+var factory = new Factory(upfrontKnownContext);
+
+//...
+
+factory.CreateInstance(remainingPartOfTheContext);
+~~~
+
+Another case for using a factory is when we need to create a new object each time some kind of request is made (a message is received from the network or someone clicks a button):
+
+{lang="csharp"}
+~~~
+var factory = new Factory(upfrontKnownContext);
+
+//...
+
+//we need a fresh instance
+factory.CreateInstance();
+
+//...
+
+//we need another fresh instance
+factory.CreateInstance();
+~~~
+ 
+Both these reasons were present in our example:
 
  1. We were unable to create a `ChangeMessage` before knowing the actual `Frame`.
  2. For each `Frame` received, we needed to create a new `ChangeMessage` instance. 
 
-The simplest possible example of a factory is something along the following lines:
+#### Simplest factory
+
+The simplest possible example of a factory object is something along the following lines:
 
 {lang="csharp"}
 ~~~
@@ -755,7 +787,7 @@ public class MyMessageFactory
 }
 ~~~
 
-Even in this primitive shape the factory already has some value (e.g. we can make `MyMessage` an abstract type and return instances of its subclasses from the factory, and the only place we need to change is the factory[^essentialskills]). More often, however, when talking about simple factories, we think about something like this:
+Even in this primitive shape the factory already has some value (e.g. we can make `MyMessage` an abstract type and return instances of its subclasses from the factory, and the only place impacted by the change is the factory itself[^essentialskills]). More often, however, when talking about simple factories, we think about something like this:
 
 {lang="csharp"}
 ~~~
@@ -772,10 +804,10 @@ public class XmlMessageFactory : MessageFactory
 
 Note the two things that the factory in the second example has that the one in the first example does not:
 
-* it implements an interface (one level of indirection)
-* its `CreateSessionInitialization()` method declares a return type to be an interface (another level of indirection)
+* it implements an interface (a level of indirection is introduced)
+* its `CreateSessionInitialization()` method declares a return type to be an interface (another level of indirection is introduced)
 
-In order for you to use factories effectively, I need you to understand why and how this indirection is useful, especially that when I talk with people, they often do not understand the benefits of using factories, "because we already have the `new` operator to create objects". So, here are the benefits of using factories:
+In order for you to use factories effectively, I need you to understand why and how these levels of indirection are useful, especially that when I talk with people, they often do not understand the benefits of using factories, "because we already have the `new` operator to create objects". So, here are these benefits:
 
 #### Factories allow creating objects polymorphically (encapsulation of type)
 
@@ -787,25 +819,31 @@ new List<int>(); //OK!
 new IList<int>(); //won't compile...
 ~~~
 
-Factories are different. Because we get objects from factories by invoking a method, not by saying which class we want to get instantiated, we can take advantage of polymorphism, i.e. our factory may have a method like this:
+This means that henver we want to use the class that does this instantiation with another concrete object (e.g. a sorted list), we have to wither change the code to delete the old type name and put new type name, or provide some kind of conditional (`if-else`). 
+
+Factories do not have this defficiency. Because we get objects from factories by invoking a method, not by saying explicitly which class we want to get instantiated, we can take advantage of polymorphism, i.e. our factory may have a method like this:
 
 {lang="csharp"}
 ~~~
 IList<int> CreateContainerForData() {...}
 ~~~
 
-and everything is well as long as the code of this method returns an instance of a real class (say, `List<int>`):
+which returns any instance of a real class that implements `IList<int>` (say, `List<int>`):
 
 {lang="csharp"}
 ~~~
-public /*interface in declaration: */ IList<int> 
+public IList<int> /* return type is interface */ 
 CreateContainerForData() 
 {
-  return /* instance of concrete class: */ new List<int>();
+  return new List<int>(); /* instance of concrete class */
 }
 ~~~
 
-Of course, it makes little sense for the return type of the factory to be a library class or interface (rather, we use factories to create our own classes), but you get the idea, right? Anyway, it is typical for a return type of a factory to be an interface or, at worst, an abstract class. This means that whatever uses the factory, it knows only that it receives an object of that type. Thus,  a factory may return objects of different types at different times, depending on some rules only it knows.
+Of course, it makes little sense for the return type of the factory to be a library class or interface (rather, we use factories to create instances of our own classes), but you get the idea, right? 
+
+Anyway, it is typical for a return type of a factory to be an interface or, at worst, an abstract class. This means that whoever uses the factory, it knows only that it receives an object of a class that is implementing an interface or is derived from abstract class. But it does not know exactly what *concrete* type it is. Thus, a factory may return objects of different types at different times, depending on some rules only it knows.
+
+TODO
 
 Time to look at some more realistic example of how to apply this. Let's say we have a factory of messages like this:
 
