@@ -843,8 +843,6 @@ Of course, it makes little sense for the return type of the factory to be a libr
 
 Anyway, it is typical for a return type of a factory to be an interface or, at worst, an abstract class. This means that whoever uses the factory, it knows only that it receives an object of a class that is implementing an interface or is derived from abstract class. But it does not know exactly what *concrete* type it is. Thus, a factory may return objects of different types at different times, depending on some rules only it knows.
 
-TODO
-
 Time to look at some more realistic example of how to apply this. Let's say we have a factory of messages like this:
 
 {lang="csharp"}
@@ -869,7 +867,7 @@ public class Version1ProtocolMessageFactory
 }
 ~~~
 
-Note that the factory can create many different types of messages depending on what is inside the raw data, but for the user of the factory, this is irrelevant. All that it knows is that it gets a `Message`, thus, it (and additional code operating on messages for that matter) can be written as general-purpose logic:
+Note that the factory can create many different types of messages depending on what is inside the raw data, but from the perspective of the user of the factory, this is irrelevant. All that it knows is that it gets a `Message`, thus, it (and the rest of the code operating on messages in the whole application for that matter) can be written as general-purpose logic, containing no "special cases" dependent on type of message:
 
 {lang="csharp"}
 ~~~
@@ -878,7 +876,7 @@ message.ValidateUsing(_primitiveValidations);
 message.ApplyTo(_sessions);
 ~~~
 
-Note that, while the above code needs to change when the rule "first validate, then apply to sessions" changes, it does not need to change in case we want to add a new type of message that complies with the current logic. The only place we need to change in such case is the factory. Let's see how it would look like if we decided to add a session refresh message: 
+Note that the above code does not need to change in case we want to add a new type of message that is compatible with the existing flow of processing messages[^messageotherchangecase]. The only place we need to modify in such case is the factory. For example, imagine we decided to add a session refresh message. The modified factory would look like this: 
 
 ~~~
 public class Version1ProtocolMessageFactory
@@ -903,13 +901,15 @@ public class Version1ProtocolMessageFactory
 }
 ~~~
 
-Using the factory to hide the real type of message returned makes maintaining the code easier, because there is less code to change when adding new types of messages to the system or removing existing ones (e.g. in case when we do not need to initiate a session anymore) [^encapsulatewhatvaries] - the factory hides that.
+and the rest of the code could remain untouched.
+
+Using the factory to hide the real type of message returned makes maintaining the code easier, because there is less code to change when adding new types of messages to the system or removing existing ones (in our example - in case when we do not need to initiate a session anymore) [^encapsulatewhatvaries] - the factory hides that and the rest of the application is coded against the general scenario.
 
 #### Factories are themselves polymorphic (encapsulation of rule)
 
-Another benefit of factories over constructors is that they are composable themselves. This allows replacing the rule used to create objects with another one.
+Another benefit of factories over inline constructors is that they are composable. This allows replacing the rule used to create objects with another one, by replacing one factory implementation with another.
 
-In the example in the previous section, we examined a situation where we extended the existing factory with a `SessionRefresh` message. This was done with assumption that we do not need the previous version of the factory. But consider a situation where we need both versions of the behavior. The "version 1" of the factory looking like this:
+In the example from the previous section, we examined a situation where we extended the existing factory with a `SessionRefresh` message. This was done with assumption that we do not need the previous version of the factory. But consider a situation where we need both versions of the behavior adn want to be able to use the old version sometimes, and other times the new one. The "version 1" of the factory (the old one) would look like this:
 
 {lang="csharp"}
 ~~~
@@ -933,7 +933,7 @@ public class Version1ProtocolMessageFactory
 }
 ~~~
 
-and the "version 2" looking like this:
+and the "version 2" (the new one) would be:
 
 {lang="csharp"}
 ~~~
@@ -973,7 +973,9 @@ var messageProcessing = new MessageProcessing(messageFactory);
 
 The above code composes a `MessageProcessing` instance with either a `Version1ProtocolMessageFactory` or a `Version2ProtocolMessageFactory`, depending on the configuration. 
 
-This example shows something I like calling "encapsulation of rule". The logic inside the factory is actually a rule on how, when and which objects to create. Thus, if we make our factory implement an interface and have other objects depend on this interface, we will be able to switch the rules of object creation without these objects realizing it.
+This example shows something I like calling "encapsulation of rule". The logic inside the factory is actually a rule on how, when and which objects to create. Thus, if we make our factory implement an interface and have other objects depend on this interface, we will be able to switch the rules of object creation without having to modify these objects.
+
+TODO
 
 #### Factories can hide some of the created object dependencies (encapsulation of global context)
 
@@ -1119,3 +1121,4 @@ The rules outlined here apply to the overwhelming part of the objects in our app
 
 [^essentialskills]: A. Shalloway et al., Essential Skills For The Agile Developer
 
+[^messageotherchangecase] although it does need to change when the rule "first validate, then apply to sessions" changes
