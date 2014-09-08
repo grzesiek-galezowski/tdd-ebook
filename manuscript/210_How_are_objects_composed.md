@@ -222,6 +222,7 @@ To be more clear, let us compare the two approaches. Passing
 recipient inside a message looks like this:
 
 {lang="csharp"}
+~~~
 //Sender gets a Recipient from the "outside":
 public DoSomething(Recipient recipient) 
 {
