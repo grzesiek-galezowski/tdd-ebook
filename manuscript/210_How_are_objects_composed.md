@@ -739,22 +739,22 @@ Now that we are through with the example, we are ready for some more general exp
 
 #### Reasons to use factories
 
-As you saw in the example, factories are objects responsible for creating other objects. They are used to achieve the separation of object constructions from their use when not all of the information necessary to create objects is known up-front. We put the part of the context we know in the factory, and supply the rest in a form of factory method parameters when available:
+As you saw in the example, factories are objects responsible for creating other objects. They are used to achieve the separation of object constructions from their use when not all of the context necessary to create an object is known up-front. We pass the part of the context we know up-front (so called **global context**) in the factory via its constructor and supply the rest that becomes available later (so called **local context**) in a form of factory method parameters when it becomes available:
 
 {lang="csharp"}
 ~~~
-var factory = new Factory(upfrontKnownContext);
+var factory = new Factory(globalContextKnownUpFront);
 
 //...
 
-factory.CreateInstance(remainingPartOfTheContext);
+factory.CreateInstance(localContext);
 ~~~
 
 Another case for using a factory is when we need to create a new object each time some kind of request is made (a message is received from the network or someone clicks a button):
 
 {lang="csharp"}
 ~~~
-var factory = new Factory(upfrontKnownContext);
+var factory = new Factory(globalContext);
 
 //...
 
@@ -766,6 +766,8 @@ factory.CreateInstance();
 //we need another fresh instance
 factory.CreateInstance();
 ~~~
+
+In the above example, two independent instances are created, eve though both are created in identical way (there is no local context that would differ them).
  
 Both these reasons were present in our example:
 
@@ -975,11 +977,9 @@ The above code composes a `MessageProcessing` instance with either a `Version1Pr
 
 This example shows something I like calling "encapsulation of rule". The logic inside the factory is actually a rule on how, when and which objects to create. Thus, if we make our factory implement an interface and have other objects depend on this interface, we will be able to switch the rules of object creation without having to modify these objects.
 
-TODO
-
 #### Factories can hide some of the created object dependencies (encapsulation of global context)
 
-Let us consider a simple example. We have an application that, again, can process messages. One of the things that is done with those messages is saving them in a database and another is validation. The processing of message is, like in previous examples, handled by a `MessageProcessing` class, which, this time, does not use any factory, but creates the messages based on the frame data itself. let us look at this class:
+Let us consider another simple example. We have an application that, again, can process messages. One of the things that is done with those messages is saving them in a database and another is validation. The processing of message is, like in previous examples, handled by a `MessageProcessing` class, which, this time, does not use any factory, but creates the messages based on the frame data itself. let us look at this class:
 
 {lang="csharp"}
 ~~~
@@ -1010,9 +1010,9 @@ public class MessageProcessing
 }
 ~~~
 
-There is one noticeable thing about the `MessageProcessing` class. It depends on both `DataDestination` and `ValidationRules` interfaces, but does not use them itself. The only thing it needs those interfaces is to supply them as parameters to the constructor. Thus, the class gets polluted by something that it does not need directly.
+There is one noticeable thing about the `MessageProcessing` class. It depends on both `DataDestination` and `ValidationRules` interfaces, but does not use them. The only thing it needs those interfaces for is to supply them as parameters to the constructor of a `Message`. As a number of `Message` constructor parameters grows, the `MessageProcessing` will have to change to take more parameters as well. Thus, the `MessageProcessing` class gets polluted by something that it does not directly need. 
 
-We can remove these dependencies by introducing a factory. If we manage to move the creation of the `Message` to the factory, we will be need to pass `DataDestination` and `ValidationRules` to the factory only. The factory may look like this:
+We can remove these dependencies from `MessageProcessing` by introducing a factory that would take care of creating the messages in its stead. This way, we only need to pass `DataDestination` and `ValidationRules` to the factory, because `MessageProcessing` never needed them for any reason other than creating messages. This factory may look like this:
 
 {lang="csharp"}
 ~~~
@@ -1068,7 +1068,7 @@ public class MessageProcessing
 
 So, instead of `DataDestination` and `ValidationRules` interfaces, the `MessageProcessing` depends only on the factory. This may not sound as a very attractive tradeoff (taking away two dependencies and introducing one), but note that whenever the `MessageFactory` needs another dependency that is like the existing two, the factory is all that will need to change. The `MessageProcessing` will remain untouched and still coupled only to the factory.
 
-The last thing that needs to be said is that not all dependencies can be hidden inside a factory. Note that the factory still needs to receive the `MessageData` from whoever is asking for a `Message`, because the `MessageData` is not available when the factory is created. I call such dependencies a **local context** (because it is different everytime the factory is asked to create something). On the other hand, what a factory accepts through the constructor can be called a **global context** (because it is the same throughout the factory lifetime). Using this terminology, the local context cannot be hidden, but the global context can. Thanks to this, the classes using the factory do not need to know about the global context and can stay cleaner, coupled to less things and more focused.
+The last thing that needs to be said is that not all dependencies can be hidden inside a factory. Note that the factory still needs to receive the `MessageData` from whoever is asking for a `Message`, because the `MessageData` is not available when the factory is created. You may remember that I call such dependencies a **local context** (because it is specific to a single use of a factory). On the other hand, what a factory accepts through its constructor can be called a **global context** (because it is the same throughout the factory lifetime). Using this terminology, the local context cannot be hidden from users of the factory, but the global context can. Thanks to this, the classes using the factory do not need to know about the global context and can stay cleaner, coupled to less things and more focused.
 
 #### Factories help eliminate redundancy
 
@@ -1087,7 +1087,7 @@ public int DollarsToCents(int value)
 }
 ~~~ 
 
-As I said, this is not redundancy, because the two methods represent different concepts. Even if we were to extract "common logic" from the two methods, the only sensible name we could come up with would be something like `MultiplyBy100()` which wouldn't add any value at all.
+As I said, this is not redundancy, because the two methods represent different concepts that would change for different reasons. Even if we were to extract "common logic" from the two methods, the only sensible name we could come up with would be something like `MultiplyBy100()` which wouldn't add any value at all.
 
 Note that up to now, we considered three things factories encapsulate about creation of objects:
 
@@ -1121,4 +1121,4 @@ The rules outlined here apply to the overwhelming part of the objects in our app
 
 [^essentialskills]: A. Shalloway et al., Essential Skills For The Agile Developer
 
-[^messageotherchangecase] although it does need to change when the rule "first validate, then apply to sessions" changes
+[^messageotherchangecase]: although it does need to change when the rule "first validate, then apply to sessions" changes
