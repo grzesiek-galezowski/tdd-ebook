@@ -1,11 +1,13 @@
 Designing for composability
 ===============================
 
-Some classes are harder to compose with other classes, others are easier. There are numerous factors influencing this:
+Some classes are harder to compose with other classes, others are easier. Of course, we are striving for the higher composability. There are numerous factors influencing this:
 
 ### Classes vs interfaces
 
-As we said, a sender is composed with a recipient by obtaining a reference to it. Also, we said that we want the flexibility of using a sender with many different recipients. This is, of course, done using polymorphism. So, on what should a sender depend on to be able to work with as many recipients as possible? Should it depend on classes or interfaces? In other words, when we plug in an object as a message receipient:
+As we said, a sender is composed with a recipient by obtaining a reference to it. Also, we said that we want our senders to be able to send messages to many different recipients. This is, of course, done using polymorphism. 
+
+So, one of the questions we have to ask ourselves in our quest for high composability is: on what should a sender depend on to be able to work with as many recipients as possible? Should it depend on classes or interfaces? In other words, when we plug in an object as a message receipient like this:
 
 {lang="csharp"}
 ~~~
