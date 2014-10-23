@@ -1,7 +1,7 @@
 Designing for composability
 ===============================
 
-Some classes are harder to compose with other classes, others are easier. Of course, we are striving for the higher composability. There are numerous factors influencing this:
+Some objects are harder to compose with other objects, others are easier. Of course, we are striving for the higher composability. There are numerous factors influencing this. I already discussed some of them indirectly, so time to sum things up and fill in the gaps.
 
 ### Classes vs interfaces
 
@@ -19,16 +19,16 @@ public Sender(Recipient recipient)
 
 Should the `Recipient` be a class or an interface?
 
-If we assume that Recipient is a class, we can get the composability we want by deriving another class from it and implementing abstract methods or overriding virtual ones. However, depending on a class as a base for composability has the following disadvantages:
+If we assume that `Recipient` is a class, we can get the composability we want by deriving another class from it and implementing abstract methods or overriding virtual ones. However, depending on a class as a base type for a recipient has the following disadvantages:
 
-TODO below
+1.  The recipient class may have some real dependencies. For example, if `Recipient` class depends on Windows Communication Foundation stack, then all classes depending directly on `Recipient` will indirectly depend on WCF, including our `Sender`. TODO bypass the WCF logic.
+2.  Each class deriving from `Recipient` must invoke `Recipient`'s constructor, which, depending on the complexity of the superclass, may be smaller or bigger trouble, depending on what kind of parameters the constructor accepts and what it does.
+3.  In languages like C\#, where only single inheritance exists, by deriving from `Recipient` class, we use up the only inheritance slot, further constraining our design.
+4.  We must take care to make all methods of `Recipient` superclass virtual to enable overriding by subclasses. otherwise, we won't have full composability. This is something we have by default in Java, but not in C\#.
 
-1.  The class may have some real dependencies. For example, if `Recipient` class depends on WCF stack, then everywhere we take our Sender to compose it with different recipients, we must also take our `Recipient` and its WCF dependency.
-2.  We force each recipient class we want to compose our sender with to invoke a constructor from superclass, which, depending on the complexity of the superclass, may be smaller or bigger trouble.
-3.  In languages like C\#, when only single inheritance exists all the classes that want to be composed with our `Sender`, we waste the only inheritance slot, further constraining the inheriting classes.
-4.  We must take care to make all methods of `Recipient` superclass virtual to enable overriding by subclasses. otherwise, we won't have full composability.
+TODO
 
-As you see, there are some difficulties using classes as "slots for composability", even if composition is possible this way. Thus, interfaces are far better, just because they are easier to use for this purpose.
+As you see, there are some difficulties using classes as "slots for composability", even if composition is possible this way. Interfaces are far better, just because they do not have the above disadvantages.
 
 It is decided then, If a sender wants to be composable with recipient, it has to accept a reference to recipient in form of interface reference. We can say that, by being lightweight and implementationless, **interfaces can be treated as "slots" for plugging in different objects**.
 

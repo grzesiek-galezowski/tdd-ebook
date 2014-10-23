@@ -169,7 +169,7 @@ public class CompanyPolicies : IDisposable
 **Johnny:** True, but this option has few deficiencies. First of all,
 remember we're trying to follow the scout rule and by using this option
 we introduce more complexity to the CommonPolicies class. Also, let's
-say tomorrow someone writes another class for, say, reporting and this
+say tommorow someone writes another class for, say, reporting and this
 class will also need to access the repository - they will need to make
 the same decision on repositories in their code as we do in ours. This
 effectively means duplicating code. Thus, I'd rather evaluate further
