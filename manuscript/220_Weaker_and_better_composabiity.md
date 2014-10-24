@@ -34,7 +34,7 @@ It is decided then, If a sender wants to be composable with recipient, it has to
 
 In fact, when we look at how interfaces are depicted on UML class diagrams, it seems that the "interface as slot for composition" notion is not unusual:
 
-TODO insert a picture showing one notation of interfaces in UML.
+![Recipient interfaces modeled as "connectors"](images/lollipop.png)
 
 It is just that we try to take the notion of composability to its fullest, as not only a first-class citizen, but as THE most important aspect of our design approach.
 

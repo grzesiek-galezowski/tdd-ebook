@@ -1,0 +1,16 @@
+@startuml
+
+skinparam class {
+  BackgroundColor White
+  ArrowColor Black
+  BorderColor Black
+}
+
+class Sender
+Sender -() Recipient1
+Recipient2 ()-- Sender  
+Sender --() Recipient3 
+
+hide members 
+hide circle
+@enduml
