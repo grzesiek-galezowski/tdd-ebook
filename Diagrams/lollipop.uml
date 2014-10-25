@@ -6,10 +6,10 @@ skinparam class {
   BorderColor Black
 }
 
-class Sender
-Sender -() Recipient1
-Recipient2 ()-- Sender  
-Sender --() Recipient3 
+class ConcreteRecipient
+ConcreteRecipient -() Recipient1
+Recipient2 ()-- ConcreteRecipient  
+ConcreteRecipient --() Recipient3 
 
 hide members 
 hide circle
