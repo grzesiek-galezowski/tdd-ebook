@@ -230,18 +230,16 @@ This is better. For example, as `ProductOutput` is a higher level abstraction (m
 
 So the general rule is: make interfaces real abstractions by abstracting away the implementation details from them. Only then are you free to create different implementations of the interface that are not constrained by dependencies they do not want or need.
 
-TODO
-
 ### Protocols
 
-You already know that objects are connected (composed) together and communicate through interfaces, just as in IP network. There is another similarity though, that's as important as this one. It's *protocols*.
+You already know that objects are connected (composed) together and communicate through interfaces, just as in IP network. There is another similarity though, that's as important as this one. It's *protocols*. In this section, we will look at protocols between objects and their place on our design approach.
 
 #### Protocols exist
 
 I do not want to introduce any scientific definition, so let's just establish an understanding that protocols are sets of rules about how objects communicate with each other. Really? Are there any rules? Is it
-not enough the the objects can be composed together through interfaces? Well, not, it's not enough and let me give you a quick example.
+not enough the the objects can be composed together through interfaces, as I explained in previous sections? Well, no, it's not enough and let me give you a quick example.
 
-Let us imagine a class `Sender` that uses `Recipient` like this:
+Let us imagine a class `Sender` that, in one of its methods, asks `Recipient` (let's assume `Recipient` is an interface) for status code extracted from some kind of response and makes a decision based on that code whether or not to notify an observer about an error:
 
 {lang="csharp"}
 ~~~
@@ -251,9 +249,7 @@ if(recipient.ExtractStatusCodeFrom(response) == -1)
 }
 ~~~
 
-Stupid as it is, the example shows one important thing. Whoever the recipient is, it is expected to report error as -1. Otherwise, the `Sender` will not be able to react to the error situation appropriately.
-Similarly, the recipient must not report "no error" situation as -1, because if it does, this will be mistakenly recognized as error by `Sender`. So for example this implementation of `Recipient`, although
-implementing the required interface, is wrong from the point of view of `Sender`:
+Simplistic as it is, the example shows one important thing. Whoever the recipient is, it is expected to report error by returning a value of `-1`. Otherwise, the `Sender` (which is explicitly checking for this value) will not be able to react to the error situation appropriately. Similarly, if there is no error, the recipient must not report this using `-1`, because if it does, the `Sender` will be mistakenly recognize this as error. So for example this implementation of `Recipient`, although implementing the interface required by `Sender`, is still wrong, because it does not behave as `Sender` expects it to:
 
 {lang="csharp"}
 ~~~
@@ -272,6 +268,8 @@ public class WrongRecipient : Recipient
   }
 }
 ~~~
+
+TODO
 
 So as you see, we cannot just write anything in a class implementing an interface, because of protocol that imposes certain contract on both the sender and recipient. This contract may not only be about return values,
 it can also be on types of exceptions thrown, or the order of method calls. For example, anybody using some kind of connection object would imagine the following way of using the connection:
