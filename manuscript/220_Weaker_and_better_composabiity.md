@@ -249,7 +249,7 @@ if(recipient.ExtractStatusCodeFrom(response) == -1)
 }
 ~~~
 
-Simplistic as it is, the example shows one important thing. Whoever the recipient is, it is expected to report error by returning a value of `-1`. Otherwise, the `Sender` (which is explicitly checking for this value) will not be able to react to the error situation appropriately. Similarly, if there is no error, the recipient must not report this using `-1`, because if it does, the `Sender` will be mistakenly recognize this as error. So for example this implementation of `Recipient`, although implementing the interface required by `Sender`, is still wrong, because it does not behave as `Sender` expects it to:
+Simplistic as it is, the example shows one important thing. Whoever the `recipient` is, it is expected to report error by returning a value of `-1`. Otherwise, the `Sender` (which is explicitly checking for this value) will not be able to react to the error situation appropriately. Similarly, if there is no error, the recipient must not report this using `-1`, because if it does, the `Sender` will be mistakenly recognize this as error. So for example this implementation of `Recipient`, although implementing the interface required by `Sender`, is wrong, because it does not behave as `Sender` expects it to:
 
 {lang="csharp"}
 ~~~
@@ -269,10 +269,9 @@ public class WrongRecipient : Recipient
 }
 ~~~
 
-TODO
+So as you see, we cannot just write anything in a class implementing an interface, because of a protocol that imposes certain constraints on both a sender and a recipient. 
 
-So as you see, we cannot just write anything in a class implementing an interface, because of protocol that imposes certain contract on both the sender and recipient. This contract may not only be about return values,
-it can also be on types of exceptions thrown, or the order of method calls. For example, anybody using some kind of connection object would imagine the following way of using the connection:
+This contract may not only be about return values, it can also be on types of exceptions thrown, or the order of method calls. For example, anybody using some kind of connection object would imagine the following way of using the connection: first open it, then do something with it and close it when finished, e.g.
 
 {lang="csharp"}
 ~~~
@@ -289,34 +288,38 @@ public class WrongConnection : Connection
 {
   public void Open()
   {
-    //...close connection
+    // implementation 
+    // for closing the connection!! 
   }
 
   public void Close()
   {
-    //...open connection
+    // implementation for
+    // opening the connection!! 
   }
 }
 ~~~
 
-it would compile just fine, but fail badly when executed.
+it would compile just fine, but fail badly when executed. This is, because the behavior would be against the protocol set between `Connection` abstraction and its user.
 
 So, again, there are certain rules that restrict the way two objects can communicate. Both sender and recipient of a message must adhere to the rules, or the they will not be able to work together.
 
-The good news is that WE are the ones who design these protocols, along with the interfaces, so we can design them to be harder or easier to adhere to by different implementations of an interface. Of course, we
-are wholeheartedly for the "easier" part. Thus, we want the communication between objects to be as stable as possible (see next section on the explanation of "as possible").
+The good news is that, most of the time, WE are the ones who design these protocols, along with the interfaces, so we can design them to be harder or easier to adhere to by different implementations of an interface. Of course, we are wholeheartedly for the "easier" part.
 
 #### Communication patterns stability
 
 Remember the change Johnny and Benjamin had to make in order to add another kind of employees to the application? In order to do that, they had to change existing interfaces and add new ones. This was a lot of
-work. We don't want to do this much work every time we make a change. The reason they had to do so much changes was that the protocol between the objects they were dealing with was unstable. And they were unstable
-because they were:
+work. We don't want to do this much work every time we make a change, especially when we introduce a new variation of a concept that is already present (e.g. Johnny and Benjamin already had the concept of employee and they were adding a new variation called "contractor"). 
+
+TODO
+
+In order to achieve this, let us draw some conclusion from experiences of Johnny and Benjamin. The reason they had to do so much work and touch so many classes when introducing changes was that the protocol between the objects they were dealing with was unstable. And they were unstable because they were:
 
 1.  complicated rather than simple
 2.  concrete rather than abstract
 3.  large rather than small
 
-Driven by why the stability of the protocols is bad, we can come up with some qualities that make protocols stable:
+Based on analysis of the factors that make the stability of the protocols bad, we can come up with some conclusions on how to make protocols more stable:
 
 1.  protocols should be simple
 2.  protocols should be abstract
