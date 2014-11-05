@@ -308,18 +308,15 @@ The good news is that, most of the time, WE are the ones who design these protoc
 
 #### Communication patterns stability
 
-Remember the change Johnny and Benjamin had to make in order to add another kind of employees to the application? In order to do that, they had to change existing interfaces and add new ones. This was a lot of
-work. We don't want to do this much work every time we make a change, especially when we introduce a new variation of a concept that is already present (e.g. Johnny and Benjamin already had the concept of employee and they were adding a new variation called "contractor"). 
+Remember our last story about Johnny and Benjamin when they had to make a design change in order to add another kind of employees to the application? In order to do that, they had to change existing interfaces and add new ones. This was a lot of work. We don't want to do this much work every time we make a change, especially when we introduce a new variation of a concept that is already present in our design (e.g. Johnny and Benjamin already had the concept of "employee" and they were adding a new variation of it, called "contractor"). 
 
-TODO
-
-In order to achieve this, let us draw some conclusion from experiences of Johnny and Benjamin. The reason they had to do so much work and touch so many classes when introducing changes was that the protocol between the objects they were dealing with was unstable. And they were unstable because they were:
+In order to achieve this, we need the protocols to be more stable, i.e. less prone to change. By drawing some conclusions from experiences of Johnny and Benjamin, we can say that they had problems with protocols stability because the protocols were:
 
 1.  complicated rather than simple
 2.  concrete rather than abstract
 3.  large rather than small
 
-Based on analysis of the factors that make the stability of the protocols bad, we can come up with some conclusions on how to make protocols more stable:
+Based on analysis of the factors that make the stability of the protocols bad, we can come up with some conditions under which these protocols could be more stable:
 
 1.  protocols should be simple
 2.  protocols should be abstract
@@ -328,15 +325,11 @@ Based on analysis of the factors that make the stability of the protocols bad, w
 
 And there are some heuristics that let us get closer to these qualities:
 
-#### Short interactions
+#### Craft messages to reflect sender's intention
 
-TODO may be many small interfaces we interact with. Constructor bloat
+The protocols are simpler if they are designed from the perspective of the object that sends the message, not the one that receives it. In other words, methods should reflect the intention of senders rather than capabilities of recipients.
 
-#### Method calls crafted from the perspective of senders
-
-The protocols are simpler if they are designed from the perspective of the object that sends the signal, not the one that receives it. In other words, methods should be adjusted to exactly meet the needs of the senders.
-
-As an example, let us look at a code for logging in:
+As an example, let us look at a code for logging in that uses an instance of an `AccessGuard` class:
 
 {lang="csharp"}
 ~~~
@@ -345,32 +338,46 @@ accessGuard.SetPassword(password);
 accessGuard.Login();
 ~~~
 
-In this little snippet, the sender must invoke three methods, even though there is no real need to divide the logic into three steps - they are all executed in the same place anyway. The maker of this class might
-have thought that this division makes the class more "general purpose", but it seems this is a "premature optimization" that only makes it harder for the sender to work with the `accessGuard` object. Thus, the
-protocol that is simpler from the perspective of sender would be: 
+In this little snippet, the sender must send three messages to the `accessGuard` object: `SetLogin()`, `SetPassword()` and `Login()`, even though there is no real need to divide the logic into three steps - they are all executed in the same place anyway. The maker of the `AccessGuard` class might have thought that this division makes the class more "general purpose", but it seems this is a "premature optimization" that only makes it harder for the sender to work with the `accessGuard` object. Thus, the protocol that is simpler from the perspective of a sender would be: 
 
 {lang="csharp"}
 ~~~
 accessGuard.LoginWith(login, password);
 ~~~
 
-Another lesson from the above example is: setters rarely reflect senders' intention. Most often, they reflect the structure of the recipient. `myObject.SetX(x)` call suggests that `myObject` holds value X. But it is rarely the intention of objects that use `myObject` to store information in it (unless it is a data structure, e.g. a collection or a data persistence abstraction), rather, they want `myObject` to do something for them and the setter is just an intermediate step required by `myObject`. In such cases, setters should be either avoided or changed to something that reflects the intention better. For example, when dealing with observer pattern, we don't want to say: `object.SetObserver(screen)`, but rather
-`object.RegisterObserver(screen)`.
+Another lesson learned from the above example is: setters rarely reflect senders' intention - more often they are artificial "things" introduced to directly manage object state. This may also have been the reason why someone introduced three messages instead of one - maybe the `AccessGuard` class has two fields inside, so the programmer might have thought someone would want to manipulate them separately... Anyway, setters should be either avoided or changed to something that reflects the intention better. For example, when dealing with observer pattern, we don't want to say: `object.SetObserver(screen)`, but rather something like `object.FromNowOnReportCurrentWeatherTo(screen)`.
 
-Another thing is naming. The names of the methods (and interfaces for that matter) should be crafted from the perspective of the sender as well. In other words, the name of the method should not tell how thing is done (unless that matters from the perspective of the sender), but rather what is the intention of the sender that invokes the method. I love the example that Scott Bain gives in his Emergent Design book: if I told you "give me your driving license number", you might've reacted differently based on whether the driving license is in your pocket, or your wallet, or your bag, or in your home and you have to call someone to give it to you. The point is: I, as a sender of this "give me your driving license number" message, do not care how you get it. I say `RetrieveDrivingLicenseNumber()`, not `OpenYourWalletAndReadTheNumber()`. This is important, because if the name represents the sender's intention, the method will not have to be renamed when new classes are created that fulfill this intention in a different way.
+The issue of naming can be summarized as: the names of interfaces should be named after the *roles* that their implementations play and methods should be named after the *responsibilities* we want them to have. I love the example that Scott Bain gives in his Emergent Design book[^emergentdesign]: if I told you "give me your driving license number", you might've reacted differently based on whether the driving license is in your pocket, or your wallet, or your bag, or in your home (in which case you would need to call someone to give it to you). The point is: I, as a sender of this "give me your driving license number" message, do not care how you get it. I say `RetrieveDrivingLicenseNumber()`, not `OpenYourWalletAndReadTheNumber()`. This is important, because if the name represents the sender's intention, the method will not have to be renamed when new classes are created that fulfill this intention in a different way.
 
-#### Interactions should reflect the domain
+#### Model interactions after the problem domain
 
-Sometimes at work, I am asked to conduct a design workshop. The example I often give to my colleagues is to design a system for order reservation. The thing that struck me the first few times I did this workshop was that nearly none of the attendees had an `Order` abstraction with `Reserve()` method on it. Most of the attendees assume that `Order` is a data structure and handle reservation by adding it to a "collection of reserved items":
+Sometimes at work, I am asked to conduct a design workshop. The example I often give to my colleagues is to design a system for order reservation (customers place orders and shop deliverers can reserve who gets to deliver which order). The thing that struck me the first few times I did this workshop was that even though the application was all about orders and their reservation, nearly none of the attendees introduced any kind of `Order` interface or class with `Reserve()` method on it. Most of the attendees assume that `Order` is a data structure and handle reservation by adding it to a "collection of reserved items" which can be imagined as the following code fragment:
 
 {lang="csharp"}
 ~~~
+// order is just a data structure,
+// added to a collection
 reservedOrders.Add(order)
 ~~~
 
-While this achieves the functionality they need to implement, it does not reflect the domain. Thus, it can be affected by changes other than domain changes. Thus, the interactions between objects become less stable.
+While this achieves the goal in technical terms (i.e. the application works), the code does not reflect the domain. 
 
-On the other hand, let's assume that we have a code for handling alarms. On each alarm, all gates are closed, sirens are turned on and message is sent to special forces with highest priority. Any error in this procedure leads to shutting down power in the building. If this workflow is coded like this:
+If roles, responsibilities and collaborations between objects reflect the domain, then any change that is natural in the domain is natural in the code. If this is not the case, then changes that seem small from the perspective of the problem domain end up touching many classes and methods in highly unusual ways. In other words, the interactions between objects become less stable (which is exactly not what we want).
+
+On the other hand, let's assume that we have modeled the design after the domain and have introduced a proper `Order` role. Then, the logic for reserving an order may look like this:
+
+{lang="csharp"}
+~~~
+order.ReserveBy(deliverer);
+~~~
+
+Note that this line is as stable as the domain itself. It needs to change e.g. when orders are not reserved anymore, or it is not deliverers that reserve the orders. I'd say the stability of this tiny interaction is darn high. Even in cases when the understanding of the domain evolves and changes rapidly, the stability of the domain, although not as high, is still one of the highest the world around us has to offer. 
+
+TODO
+
+Let's illustrate this with another example. Let's assume that we have a code for handling alarms. When alarm is triggered, all gates are closed, sirens are turned on and message is sent to special forces with highest priority to make them arrive and terminate the intruder. Any error in this procedure leads to shutting down power in the building. If this workflow is coded like this:
+
+
 
 {lang="csharp"}
 ~~~
@@ -809,3 +816,4 @@ Why did I leave out inline creation and singletons? context independence!
 TODO
 
 [^interfacesegregation]: http://www.objectmentor.com/resources/articles/isp.pdf
+[^emergentdesign]: Scott Bain, Emergent Design
