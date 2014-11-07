@@ -373,9 +373,7 @@ order.ReserveBy(deliverer);
 
 Note that this line is as stable as the domain itself. It needs to change e.g. when orders are not reserved anymore, or it is not deliverers that reserve the orders. I'd say the stability of this tiny interaction is darn high. Even in cases when the understanding of the domain evolves and changes rapidly, the stability of the domain, although not as high, is still one of the highest the world around us has to offer. 
 
-TODO
-
-Let's illustrate this with another example. Let's assume that we have a code for handling alarms. When alarm is triggered, all gates are closed, sirens are turned on and message is sent to special forces with highest priority to make them arrive and terminate the intruder. Any error in this procedure leads to shutting down power in the building. If this workflow is coded like this:
+Let's illustrate this with another example. Let's assume that we have a code for handling alarms. When alarm is triggered, all gates are closed, sirens are turned on and message is sent to special forces with highest priority to arrive and terminate the intruder. Any error in this procedure leads to shutting down power in the building. If this workflow is coded like this:
 
 
 
@@ -396,12 +394,52 @@ catch(SecurityFailure failure)
 Then the risk of this code changing for other reasons than the change of how domain works (e.g. we do not close the gates anymore but activate laser guns instead) is small. Thus, interactions that use abstractions
 and methods that directly express domain rules are more stable.
 
-Object responsibilities change less often than their data and if they do, they affect the design in a more predictable way. If a design reflects the domain, a change in design that is a result of domain rules
-change is easier to predict. This contributes to maintainability and stability of the interactions and the design as a whole.
+So, to sum up - if a design reflects the domain, it is easier to predict how a change of domain rules affects 
+the design. This contributes to maintainability and stability of the interactions and the design as a whole.
 
-#### Objects should be told what to do, instead of asked for information
+#### Message recipients should be told what to do, instead of being asked for information
 
-This is probably one of the most important guidelines, known under the name of Tell Don't Ask. When an object is asked to perform a task instead of asked questions, we have a change of switching the implementation of this task with another one.
+Communication between objects does not always translate well into communication with people, but I find the following example helpful to explain what I mean: imagine I want to borrow some money from my brother. I already know he will lend me the money. I go into his room and start a conversation like this:
+
+- Where is your money?
+- It is in my locker.
+- Is the locker open?
+- No, it is closed.
+- Do you have the key?
+- Yes, I do.
+- Where is the key?
+- It is laying on the table.
+- Please take the key.
+- Sure.
+- Open the locker.
+- Ok.
+- Is it open?
+- Now it is.
+- How much do you have?
+- 100$
+- Then give me 40$
+- Here.
+  
+  
+  
+Sounds artificial, right? If this happened in the real life, the dialog would probably look more like this:
+
+- Where is your money?
+- Not your business!
+
+And my brother would be right in responding to me like this. This is not my business. I just want to borrow the money. Moreover, if I was to ask my sister to lend me some money, I could not use the same sequence of questions. This is how it would end up:
+
+- Where is your money?
+- It is on my bank account.
+- Is the locker open?
+- What??
+
+ 
+
+
+TODO assume recipient is interface. Start with example. The more we ask questions, the more we ask object to reveal.
+
+This is probably one of the most important guidelines, known under the name of *Tell Don't Ask*. When a recipient is asked to perform a task, it can do it in a myriad of ways. Thus, we can make many different implementations of the sender and use them interchangeably using polymorphism. On the other hand, when sender interacts with recipients by asking them many questions, the implementers of recipient role are much more constrained - they have to make the new implementations provide answers to all these questions.
 
 So remember the payroll system that Johnny and Benjamin were working on? As long as their code for giving raise looked like this:
 
