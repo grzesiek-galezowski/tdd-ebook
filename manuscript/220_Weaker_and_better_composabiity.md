@@ -420,22 +420,40 @@ Communication between objects does not always translate well into communication 
 - Then give me 40$
 - Here.
   
-  
-  
 Sounds artificial, right? If this happened in the real life, the dialog would probably look more like this:
 
 - Where is your money?
 - Not your business!
 
-And my brother would be right in responding to me like this. This is not my business. I just want to borrow the money. Moreover, if I was to ask my sister to lend me some money, I could not use the same sequence of questions. This is how it would end up:
+And my brother would be right in responding to me like this. This is not my business. I just want to borrow the money. Moreover, if I was to ask my sister to lend me some money, I could not use the same sequence of questions. This is how it could end up:
 
 - Where is your money?
 - It is on my bank account.
-- Is the locker open?
+- Is the locker open? (same question as before)
 - What??
 
- 
+If we were objects and this would be the way we interact with the world outside us, we would have to have all the logic for different interactions coded inside our classes. Heck, this would be a lot of code!
 
+Instead, we can adopt a pattern that is also visible in human interaction: trust. We can tell somebody what we want and trust them to get the job done. For example, if I was to ask my brother to lend me some money, I would go about it this way:
+
+- Please, lend me 40$
+- Sure, no problem
+
+Of course, it could be that it would not be acceptable for him and he could as well tell me "No way" instead. But that's essentially all I need to know. I do not need to know where he keeps the money. I do not need to know how he gets to them and how much he has. All I want to have is the money, so I tell him what I want and trust that he knows how to do it for me. 
+
+Another thing about the new protocol I have established for borrowing money is that I can reuse it with my sister:
+
+- Please, lend me 40$
+- Sure, no problem
+
+Unlike my brother, she would not get the money from a locker, but take the money from her bank account, but that's not really what I care about. Thus, it seems I have found a more stable protocol, and it is more stable because it assumes less knowledge about how someone will fulfill my need[humanptorocols]. 
+
+So, what I basically said is that the protocol will not need to change when I need to interact with other people (like my sister) when I need to. Another reason the new protocol is more stable is because it will not need to change when my brother stops hiding money in his locker and instead moves it to a bank account as well.
+
+Now, let us move to object oriented world.
+
+TODO money jest niepoliczalny
+TODO
 
 TODO assume recipient is interface. Start with example. The more we ask questions, the more we ask object to reveal.
 
@@ -855,3 +873,5 @@ TODO
 
 [^interfacesegregation]: http://www.objectmentor.com/resources/articles/isp.pdf
 [^emergentdesign]: Scott Bain, Emergent Design
+[^humanprotocols]: Of course, human interactions are way more complex, so I am not trying to tell you "object interaction is like human interaction", just using this example as a nice illustration. 
+ 
