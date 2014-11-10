@@ -399,85 +399,109 @@ the design. This contributes to maintainability and stability of the interaction
 
 #### Message recipients should be told what to do, instead of being asked for information
 
-Communication between objects does not always translate well into communication with people, but I find the following example helpful to explain what I mean: imagine I want to borrow some money from my brother. I already know he will lend me the money. I go into his room and start a conversation like this:
+Let's say we are paying an annual income tax yearly and are too busy (i.e. have too many responsibilities) to do this ourselves. Thus, we hire a tax expert to calculate and pay the taxes for us. He is an expert on paying taxes, knows how to calculate everything, where to submit it etc. But there is one thing he does not know - the context. In other word, he does not know which bank we are using or what we have earned this year that we need to pay the tax for. This is something we need to give him.
 
-- Where is your money?
-- It is in my locker.
-- Is the locker open?
-- No, it is closed.
-- Do you have the key?
-- Yes, I do.
-- Where is the key?
-- It is laying on the table.
-- Please take the key.
-- Sure.
-- Open the locker.
-- Ok.
-- Is it open?
-- Now it is.
-- How much do you have?
-- 100$
-- Then give me 40$
-- Here.
-  
-Sounds artificial, right? If this happened in the real life, the dialog would probably look more like this:
+Here's the deal between us and the tax expert summarized as a table:
 
-- Where is your money?
-- Not your business!
+| Who?       | Needs                             |     Can provide                          |
+|------------|-----------------------------------|------------------------------------------|
+| Us         | The tax paid                      | context (bank, income documents), salary |
+| Tax Expert | context (bank, income documents)  | The service of paying the tax            |
 
-And my brother would be right in responding to me like this. This is not my business. I just want to borrow the money. Moreover, if I was to ask my sister to lend me some money, I could not use the same sequence of questions. This is how it could end up:
-
-- Where is your money?
-- It is on my bank account.
-- Is the locker open? (same question as before)
-- What??
-
-If we were objects and this would be the way we interact with the world outside us, we would have to have all the logic for different interactions coded inside our classes. Heck, this would be a lot of code!
-
-Instead, we can adopt a pattern that is also visible in human interaction: trust. We can tell somebody what we want and trust them to get the job done. For example, if I was to ask my brother to lend me some money, I would go about it this way:
-
-- Please, lend me 40$
-- Sure, no problem
-
-Of course, it could be that it would not be acceptable for him and he could as well tell me "No way" instead. But that's essentially all I need to know. I do not need to know where he keeps the money. I do not need to know how he gets to them and how much he has. All I want to have is the money, so I tell him what I want and trust that he knows how to do it for me. 
-
-Another thing about the new protocol I have established for borrowing money is that I can reuse it with my sister:
-
-- Please, lend me 40$
-- Sure, no problem
-
-Unlike my brother, she would not get the money from a locker, but take the money from her bank account, but that's not really what I care about. Thus, it seems I have found a more stable protocol, and it is more stable because it assumes less knowledge about how someone will fulfill my need[humanptorocols]. 
-
-So, what I basically said is that the protocol will not need to change when I need to interact with other people (like my sister) when I need to. Another reason the new protocol is more stable is because it will not need to change when my brother stops hiding money in his locker and instead moves it to a bank account as well.
-
-Now, let us move to object oriented world.
-
-TODO money jest niepoliczalny
-TODO
-
-TODO assume recipient is interface. Start with example. The more we ask questions, the more we ask object to reveal.
-
-This is probably one of the most important guidelines, known under the name of *Tell Don't Ask*. When a recipient is asked to perform a task, it can do it in a myriad of ways. Thus, we can make many different implementations of the sender and use them interchangeably using polymorphism. On the other hand, when sender interacts with recipients by asking them many questions, the implementers of recipient role are much more constrained - they have to make the new implementations provide answers to all these questions.
-
-So remember the payroll system that Johnny and Benjamin were working on? As long as their code for giving raise looked like this:
+It is us who hire the expert and us who initiate the deal. If we were to model this deal as an interaction between two objects, it could e.g. look like this:
 
 {lang="csharp"}
 ~~~
-if(employee.GetSalary() < payGrade.Maximum)
-{
- var newSalary 
-  = employee.GetSalary() 
-  + employee.GetSalary() 
-  * 0.1;
-  employee.SetSalary(newSalary);
-}
+taxExpert.PayAnnualIncomeTax(
+  ourIncomeDocuments,
+  ourBank);
 ~~~
 
-They were unable to compose this code with another employees that had different raise rules applied to them, including voluntary employees that would not have raises, but may have bonuses.
+One day, our friend, Joan, tells us she needs a tax expert as well. We are happy with the one we hired, so we recommend him to Joan. She has her own income documents, but they are the same as ours, just with different numbers here and there. Also, Joan uses a different bank, but interacting with any bank these days is almost identical. If we model this as interaction between objects, it may look like this: 
+
+{lang="csharp"}
+~~~
+taxExpert.PayAnnualIncomeTax(
+  joansIncomeDocuments,
+  joansBank);
+~~~
+
+Thus, when interacting with Joan, the tax expert can still use his abilities to calculate and pay taxes the same way as in our case. This is because his abilities are independent of the context.
+
+Another day, we decide we are not happy anymore with our tax expert, so we decide to make a deal with a new one. Thankfully, we do not need to know how the tax experts do their work - we just tell them to do it, so we can interact with the new one just as with the previous one:
+
+{lang="csharp"}
+~~~
+//this is the new tax expert, 
+//but no change to communication:
+
+taxExpert.PayAnnualIncomeTax(
+  ourIncomeDocuments,
+  ourBank);
+~~~
+
+This small example should not be taken literally. Social interactions are far more complicated and complex than what objects usually do. But I hope I managed to illustrate with it an important aspect of the communication style that is preferred in object oriented design: the Tell Don't Ask heuristic. 
+
+Tell Don't Ask basically means that we, as experts in our job, are not doing what is not our job, but instead relying on other objects that are experts in their respective jobs and provide them with all the context they need to achieve the tasks we want them to do as parameters of the messages we send to them.
+
+This way, a double benefit is gained:
+1. Our recipient (e.g. `taxExpert`) can be used by other senders (e.g. pay tax for Joan) without needing to change. All it needs is a different context passed inside a constructor and messages.
+2. We, as senders, can easily use different recipients (e.g. different tax experts that do the task they are assigned with differently) without learning how to interact with each new one. 
+Actually, if you look at it, as much as bank and documents are a context for the tax expert, the tax expert is a context for us. Thus, we may say that *a design that follows the Tell Don't Ask principle creates classes that are context-independent*.
+
+This has very profound influence on the stability of the protocols. As much as objects are context-independent, they (and their interactions) do not need to change when context changes.
 
 Again, quoting Scott Bain, "what you hide, you can change". Thus, telling an object what to do requires less knowledge than asking for data and information. Going back to the driver license example: I may ask another person for a driving license number to actually make sure they have the license and that it is valid (by checking the number somewhere). I may also ask another person to provide me with the directions to the place I want the first person to drive. But isn't it easier to just tell "buy me some bread and butter"? Then, whoever I ask, has the freedom to either drive, or walk (if they know a good store nearby) or ask yet another person to do it instead. I don't care as long as tomorrow morning, I find the bread and butter in my fridge.
 
-This guideline should be trated very, very seriously and applied in almost an extreme way. There are few places where it does not apply and we'll get back to them later.
+All of these benefits are, by the way, exactly what Johnny and Benjamin were aiming at when refactoring the payroll system. They went from this code, where they *asked* `employee` a lot of questions:
+
+{lang="csharp"}
+~~~
+var newSalary 
+  = employee.GetSalary() 
+  + employee.GetSalary() 
+  * 0.1;
+employee.SetSalary(newSalary);
+~~~
+
+to this design that *told* `employee` do do its job:
+
+{lang="csharp"}
+~~~
+employee.EvaluateRaise();
+~~~
+
+This way, they were able to make this code interact with both `RegularEmployee` and `ContractorEmployee` the same way. 
+
+This guideline should be treated very, very seriously and applied in almost an extreme way. There are, of course, few places where it does not apply and we'll get back to them later.
+
+Oh, I almost forgot one thing! The context that we are passing is not necessarily data. It is even more frequent to pass around behavior. For example, in our interaction with the tax expert:
+
+{lang="csharp"}
+~~~
+taxExpert.PayAnnualIncomeTax(
+  ourIncomeDocuments,
+  ourBank);
+~~~
+
+Bank is probably not a piece of data. Rather, I would imagine Bank to implement an interface that looks like this:
+
+{lang="csharp"}
+~~~
+public interface Bank
+{
+  void TransferMoney(
+    Amount amount, 
+    AccountId sourceAccount,
+    AccountId destinationAccount); 
+}
+~~~
+
+So as you can see, this is behavior, not data, and it itself follows the Tell Don't Ask style as well.
+
+There is one nice advice about creating interactions following this style.
+
+TODO
 
 #### Getters should be removed, return values should be avoided
 
@@ -872,6 +896,7 @@ Why did I leave out inline creation and singletons? context independence!
 TODO
 
 [^interfacesegregation]: http://www.objectmentor.com/resources/articles/isp.pdf
+
 [^emergentdesign]: Scott Bain, Emergent Design
+
 [^humanprotocols]: Of course, human interactions are way more complex, so I am not trying to tell you "object interaction is like human interaction", just using this example as a nice illustration. 
- 
