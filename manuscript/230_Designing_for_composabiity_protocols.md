@@ -1,4 +1,4 @@
-Designing for composability - Interfaces
+Designing for composability -- Protocols
 ===============================
 
 You already know that objects are connected (composed) together and communicate through interfaces, just as in IP network. There is another similarity though, that's as important as this one. It's *protocols*. In this section, we will look at protocols between objects and their place on our design approach.

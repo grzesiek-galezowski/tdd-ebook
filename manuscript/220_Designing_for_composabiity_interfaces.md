@@ -1,4 +1,4 @@
-Designing for composability - Interfaces
+Designing for composability -- Interfaces
 ===============================
 
 Some objects are harder to compose with other objects, others are easier. Of course, we are striving for the higher composability. There are numerous factors influencing this. I already discussed some of them indirectly, so time to sum things up and fill in the gaps. This chapter will deal with the role interfaces play in achieving high composability and the next one will deal with something called *protocols*.
