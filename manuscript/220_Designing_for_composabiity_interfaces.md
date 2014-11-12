@@ -1,7 +1,7 @@
 Designing for composability -- Interfaces
 ===============================
 
-Some objects are harder to compose with other objects, others are easier. Of course, we are striving for the higher composability. There are numerous factors influencing this. I already discussed some of them indirectly, so time to sum things up and fill in the gaps. This chapter will deal with the role interfaces play in achieving high composability and the next one will deal with something called *protocols*.
+Some objects are harder to compose with other objects, others are easier. Of course, we are striving for the higher composability. There are numerous factors influencing this. I already discussed some of them indirectly, so time to sum things up and fill in the gaps. This chapter will deal with the role interfaces play in achieving high composability and the next one will deal with a concept of protocols.
 
 ### Classes vs interfaces
 
@@ -21,8 +21,10 @@ Should the `Recipient` be a class or an interface?
 
 If we assume that `Recipient` is a class, we can get the composability we want by deriving another class from it and implementing abstract methods or overriding virtual ones. However, depending on a class as a base type for a recipient has the following disadvantages:
 
-1.  The recipient class may have some real dependencies. For example, if `Recipient` class depends on Windows Communication Foundation stack, then all classes depending directly on `Recipient` will indirectly depend on WCF, including our `Sender`. The more damaging version of this problem is where such a `Recipient` class actually opens a connection in a constructor - the subclasses are unable to prevent it, no matter if they like it or not, because a subclass has to call a superclass' constructor.
-2.  Each class deriving from `Recipient` must invoke `Recipient`'s constructor, which, depending on the complexity of the superclass, may be smaller or bigger trouble, depending on what kind of parameters the constructor accepts and what it does.
+1.  The recipient class may have some real dependencies. For example, if our `Recipient` depends on Windows Communication Foundation (WCF) stack, then all classes depending directly on `Recipient` will indirectly depend on WCF, including our `Sender`. The more damaging version of this problem is where such a `Recipient` class actually does something like opening a network connection in a constructor - the subclasses are unable to prevent it, no matter if they like it or not, because a subclass has to call a superclass' constructor.
+
+TODO there is duplication below:
+2.  Each class deriving from `Recipient` must invoke its constructor, which, depending on the complexity of the `Recipient`, may be smaller or bigger trouble, depending on what kind of parameters the constructor accepts and what it does.
 3.  In languages like C\#, where only single inheritance exists, by deriving from `Recipient` class, we use up the only inheritance slot, further constraining our design.
 4.  We must make sure to mark all the methods of `Recipient` class as `virtual` to enable overriding them by subclasses. otherwise, we won't have full composability, because subclasses, not being able to override some methods, will be very constrained in what they can do.
 
