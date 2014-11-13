@@ -22,34 +22,32 @@ Should the `Recipient` be a class or an interface?
 If we assume that `Recipient` is a class, we can get the composability we want by deriving another class from it and implementing abstract methods or overriding virtual ones. However, depending on a class as a base type for a recipient has the following disadvantages:
 
 1.  The recipient class may have some real dependencies. For example, if our `Recipient` depends on Windows Communication Foundation (WCF) stack, then all classes depending directly on `Recipient` will indirectly depend on WCF, including our `Sender`. The more damaging version of this problem is where such a `Recipient` class actually does something like opening a network connection in a constructor - the subclasses are unable to prevent it, no matter if they like it or not, because a subclass has to call a superclass' constructor.
+2.  `Recipient`'s constructor must be invoked by any class deriving from it, which may be smaller or bigger trouble, depending on what kind of parameters the constructor accepts and what it does.
+3.  In languages that support single inheritance only, deriving from `Recipient` class uses up the only inheritance slot, constraining our design.
+4.  We must make sure to mark all the methods of `Recipient` class as `virtual` to enable overriding them by subclasses. otherwise, we won't have full composability. Subclasses will not be able to redefine all of the `Recipient` behaviors, so they will be very constrained in what they can do.
 
-TODO there is duplication below:
-2.  Each class deriving from `Recipient` must invoke its constructor, which, depending on the complexity of the `Recipient`, may be smaller or bigger trouble, depending on what kind of parameters the constructor accepts and what it does.
-3.  In languages like C\#, where only single inheritance exists, by deriving from `Recipient` class, we use up the only inheritance slot, further constraining our design.
-4.  We must make sure to mark all the methods of `Recipient` class as `virtual` to enable overriding them by subclasses. otherwise, we won't have full composability, because subclasses, not being able to override some methods, will be very constrained in what they can do.
+As you see, there are some difficulties using classes as "slots for composability", even if composition is technically possible this way. Interfaces are far better, just because they do not have the above disadvantages:
 
-As you see, there are some difficulties using classes as "slots for composability", even if composition is technically possible this way. Interfaces are far better, just because they do not have the above disadvantages.
+It is decided then, If a sender wants to be composable with different recipients, it has to accept a reference to a recipient in form of interface reference. We can say that, by being lightweight and behaviorless, **interfaces can be treated as "slots" or "sockets" for plugging in different objects**.
 
-It is decided then, If a sender wants to be composable with different recipients, it has to accept a reference to recipient in form of interface reference. We can say that, by being lightweight and implementationless, **interfaces can be treated as "slots" for plugging in different objects**.
+As a matter of fact, on UML diagrams, one way to depict a a class implementing an interface is by drawing it with a plug. Thus, it seems that the "interface as slot for pluggability" concept is not so unusual.
 
-In fact, one way to depict a fact that a class implements an interface on UML diagram looks like the class is exposing a plug. Thus, it seems that the "interface as slot for pluggability" concept is not so unusual.
+![ConcreteRecipient class implementing three interfaces in UML. The interfaces are shown as "plugs" exposed by the class meaning it can be plugged into anything that uses any of the three interfaces](images/lollipop.png)
 
-![ConcreteRecipient class implementing three interfaces in UML. The interfaces are shown as "connectors" meaning the class can be plugged into anything that uses any of the three interfaces](images/lollipop.png)
-
-The big thing about the design approach I am trying to introduce you to is that we are taking this concept to the extreme, making it THE most important aspect of this approach.
-
+As you may have already guessed from the previous chapters, we are taking the idea of pluggability and composability to the extreme, making it one of the top priorities.
 
 ### Events/callbacks vs interfaces - few words on roles
 
-Did I just say that composability is "THE most important aspect of our design approach"? Wow, that's quite a statement, isn't it? Unfortunately for me, it also lets you jump with the following argument:
-"Hey, interfaces are not the most extreme way of achieving composability! What about events that e.g. C\# supports? Or callbacks that are supported by some other languages? Wouldn't it make the classes even more context-independent, if we connected them using events or callbacks, not interfaces?"
+Did I just say that composability is "one of the top priorities" in our design approach? Wow, that's quite a statement, isn't it? Unfortunately for me, it also lets you raise the following argument:
+"Hey, interfaces are not the most extreme way of achieving composability! What about e.g. C\# events feature? Or callbacks that are supported by some other languages? Wouldn't it make the classes even more context-independent and composable, if we connected them through events or callbacks, not interfaces?"
 
-Actually, it would, and we could, but it would also strip us from another very important aspect of our design approach that I did not mention explicitly until now. This aspect is: roles.
+Actually, it would, but it would also strip us from another very important aspect of our design approach that I did not mention explicitly until now. This aspect is: roles. When we use interfaces, we can say that each interface stands for a role for a real object to play. When these roles are explicit, they help design and describe the communication between objects.
 
-When we take an example method that sends some messages to two recipients held as interfaces:
+Let us look at an example of how not using defining explicit roles removes some clarity from the design. This is a sample method that sends some messages to two recipients held as interfaces:
 
 {lang="csharp"}
 ~~~
+//role players:
 private readonly Recipient1 recipient1;
 private readonly Recipient2 recipient2;
 
@@ -61,10 +59,11 @@ public void SendSomethingToRecipients()
 }
 ~~~
 
-and we compare it with similar effect achieved using event/callback invocation:
+and we compare it with similar effect achieved using callback invocation:
 
 {lang="csharp"}
 ~~~
+//callbacks:
 private readonly Action DoX;
 private readonly Action DoY;
 private readonly Action DoZ;
@@ -77,9 +76,11 @@ public void SendSomethingToRecipients()
 }
 ~~~
 
-We can see that in the second case we are losing the notion of which message belongs to which recipient - each event is standalone from the point of view of the sender. This is unfortunate, because in our design approach, we want to highlight the roles each receiver plays in the communication, to make the communication itself readable and logical. Also, ironically, decoupling using events or callbacks can make composability harder. This is because roles tell us which sets of behaviors belong together and thus, need to change together. If each behavior is triggered using a separate event or callback, an overhead is placed on us to remember which behaviors should be changed together, and which ones can change independently.
+We can see that in the second case we are losing the notion of which message belongs to which recipient - each callback is standalone from the point of view of the sender. This is unfortunate, because in our design approach, we want to highlight the roles each recipient plays in the communication, to make the it readable and logical. Also, ironically, decoupling using events or callbacks can make composability harder. This is because roles tell us which sets of behaviors belong together and thus, need to change together. If each behavior is triggered using a separate event or callback, an overhead is placed on us to remember which behaviors should be changed together, and which ones can change independently.
 
-This does not mean that events or callbacks are bad. It's just that they are not a fit replacement for interfaces - in reality, their purpose is a little bit different. We use events or callbacks not to do somebody to do something, but to indicate what happened (that's why we call them events, after all...). This fits well the observer pattern we already talked about in the previous chapter. So, instead of using observer objects, we may consider using events or callbacks instead (as in everything, there are some tradeoffs for each of the solutions). In other words, events and callbacks have their role in the composition, but they are fit for a case so specific, that they cannot be used as a default choice for the composition. The advantage of the interfaces is that they bind together messages, which should be implemented cohesively, and convey roles in the communication, which improves readability.
+This does not mean that events or callbacks are bad. It's just that they are not fit for replacing interfaces - in reality, their purpose is a little bit different. We use events or callbacks not to do somebody to do something, but to indicate what happened (that's why we call them events, after all...). This fits well the observer pattern we already talked about in the previous chapter. So, instead of using observer objects, we may consider using events or callbacks instead (as in everything, there are some tradeoffs for each of the solutions). In other words, events and callbacks have their use in the composition, but they are fit for a case so specific, that they cannot be treated as a default choice. The advantage of interfaces is that they bind together messages that represent a coherent abstractions and convey roles in the communication. This improves readability and clarity.
+
+TODO
 
 ### Small interfaces
 

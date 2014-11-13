@@ -1,0 +1,2 @@
+1. In interfaces chapter - provide better examples in roles section (use some more real examples)
+2. Chapter on value objects
