@@ -48,8 +48,8 @@ Let us look at an example of how not using defining explicit roles removes some 
 {lang="csharp"}
 ~~~
 //role players:
-private readonly Recipient1 recipient1;
-private readonly Recipient2 recipient2;
+private readonly Role1 recipient1;
+private readonly Role2 recipient2;
 
 public void SendSomethingToRecipients()
 {
@@ -80,18 +80,15 @@ We can see that in the second case we are losing the notion of which message bel
 
 This does not mean that events or callbacks are bad. It's just that they are not fit for replacing interfaces - in reality, their purpose is a little bit different. We use events or callbacks not to do somebody to do something, but to indicate what happened (that's why we call them events, after all...). This fits well the observer pattern we already talked about in the previous chapter. So, instead of using observer objects, we may consider using events or callbacks instead (as in everything, there are some tradeoffs for each of the solutions). In other words, events and callbacks have their use in the composition, but they are fit for a case so specific, that they cannot be treated as a default choice. The advantage of interfaces is that they bind together messages that represent a coherent abstractions and convey roles in the communication. This improves readability and clarity.
 
-TODO
-
 ### Small interfaces
 
-Ok, so we said that he interfaces are "the way to go" for reaching the strong composability we're striving for. Does merely using interfaces guarantee us that the composability is going to be strong? The answer is "no" - while using interfaces is a necessary step in the right direction, it alone does not produce the best composability.
+Ok, so we said that he interfaces are "the way to go" for reaching the strong composability we're striving for. Does merely using interfaces guarantee us that the composability will be strong? The answer is "no" - while using interfaces as "slots" is a necessary step in the right direction, it alone does not produce the best composability.
 
 One of the other things we need to consider is the size of interfaces. Let's state one thing that is obvious in regard to this:
 
 **All other things equal, smaller interfaces (i.e. with less methods) are easier to implement that bigger interfaces.**
 
-The obvious conclusion from this is that if we want to have really strong composability, our "slots", i.e. interfaces, have to be as small as possible (but not smaller - see previous section on interfaces vs
-events/callbacks). Of course, we cannot achieve this just by blindly removing methods from the interfaces, because this would break classes that actually use these methods e.g. when someone is using an interface implementation like this:
+The obvious conclusion from this is that if we want to have really strong composability, our "slots", i.e. interfaces, have to be as small as possible (but not smaller - see previous section on interfaces vs events/callbacks). Of course, we cannot achieve this by blindly removing methods from interfaces, because this would break classes that actually use these methods e.g. when someone is using an interface implementation like this:
 
 {lang="csharp"}
 ~~~
@@ -119,7 +116,7 @@ This notion of creating a separate interface per sender instead of a single big 
 
 #### A simple example: separation of reading from writing
 
-Let's assume we have a class representing organizational structure in our application. This application exposes two APIs. Through the first one, it is notified on any changes made to the organizational structure by an administrator. The second one is for client-side operations on the organizational data, like listing all employees. The interface for the organizational structure class may contain methods used by both these APIs:
+Let's assume we have a class in our application that represents enterprise organizational structure. This application exposes two APIs. The first one serves for notifications about changes of organizational structure by an administrator (so that our class can update its data). The second one is for client-side operations on the organizational data, like listing all employees. The interface for the organizational structure class may contain methods used by both these APIs:
 
 {lang="csharp"}
 ~~~
@@ -127,14 +124,14 @@ public interface
 OrganizationStructure
 {
   //////////////////////
-  //administrative part:
+  //used by administrator:
   //////////////////////  
   
   void Make(Change change);
   //...other administrative methods
   
   //////////////////////
-  //client-side part:
+  //used by clients:
   //////////////////////
   
   void ListAllEmployees(
@@ -143,7 +140,7 @@ OrganizationStructure
 }
 ~~~
 
-However, the administrative API handling is done by a different code than the client-side API handling.  Thus, the administrative part has no use of the knowledge about listing employees and vice-versa - the client-side one has no interest in making administrative changes. We can use this knowledge to separate our interface into two:
+However, the administrative API handling is done by a different code than the client-side API handling. Thus, the administrative part has no use of the knowledge about listing employees and vice-versa - the client-side one has no interest in making administrative changes. We can use this knowledge to split our interface into two:
 
 {lang="csharp"}
 ~~~
@@ -175,9 +172,9 @@ public class InMemoryOrganizationalStructure
 }
 ~~~
 
-In this approach, we create more interfaces (which some may not like), but that shouldn't bother us much, because in return, each interface is easier to implement. In other words, if a class is using one of the interfaces, it is easier to write another implementation of it, because there is less methods to implement. This means that composability is enhanced, which is what we want the most. 
+In this approach, we create more interfaces (which some of you may not like), but that shouldn't bother us much, because in return, each interface is easier to implement. In other words, if a class is using one of the interfaces, it is easier to write another implementation of it, because there is less methods to implement. This means that composability is enhanced, which is what we want the most. 
 
-It pays off. For example, one day, we may get a requirement that all writes to the organizational structure have to be traced. In such case, All we have to do is to create new class implementing `OrganizationalStructureAdminCommands` which will wrap the original methods with a notification to an observer (that can be either the trace that is required or anything else we like):
+It pays off. For example, one day, we may get a requirement that all writes to the organizational structure have to be traced. In such case, All we have to do is to create a proxy class implementing `OrganizationalStructureAdminCommands` interface, which will wrap the original class' methods with a notification to an observer (that can be either the trace that is required or anything else we like):
 
 {lang="csharp"}
 ~~~
@@ -201,7 +198,9 @@ public class NotifyingAdminComands : OrganizationalStructureAdminCommands
 }
 ~~~
 
-If we did not separate interfaces for admin and client access, in our `NotifyingAdminComands` class, we would have to implement the `ListAllEmployees` method (and others) and make it delegate to the original wrapped instance. This is not difficult, but it's unnecessary effort. Splitting the interface into two smaller ones spared us this trouble.
+Note that we only had to implement `OrganizationalStructureAdminCommands`, and could ignore the existence of `OrganizationalStructureClientCommands`. This is because of the interface split we did. If we did not separate interfaces for admin and client access, in our `NotifyingAdminComands` class, we would have to implement the `ListAllEmployees` method (and others) and make it delegate to the original wrapped instance. This is not difficult, but it's unnecessary effort. Splitting the interface into two smaller ones spared us this trouble.
+
+TODO
 
 #### Interfaces should depend on abstractions, not implementation details
 
