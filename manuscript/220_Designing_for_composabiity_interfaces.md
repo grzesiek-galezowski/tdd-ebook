@@ -200,12 +200,9 @@ public class NotifyingAdminComands : OrganizationalStructureAdminCommands
 
 Note that we only had to implement `OrganizationalStructureAdminCommands`, and could ignore the existence of `OrganizationalStructureClientCommands`. This is because of the interface split we did. If we did not separate interfaces for admin and client access, in our `NotifyingAdminComands` class, we would have to implement the `ListAllEmployees` method (and others) and make it delegate to the original wrapped instance. This is not difficult, but it's unnecessary effort. Splitting the interface into two smaller ones spared us this trouble.
 
-TODO
-
 #### Interfaces should depend on abstractions, not implementation details
 
-You might think that interface is an abstraction by definition. I believe otherwise - while interfaces abstract away the concrete type of the class that is implementing the interface, they may still contain some
-other things not abstracted, exposing some implementation details. Let's look at the following interface:
+You might think that every interface is an abstraction by definition. I believe otherwise - while interfaces abstract away the concrete type of the class that implements it, they may still contain some other things not abstracted, exposing some implementation details. Let's look at the following interface:
 
 {lang="csharp"}
 ~~~
@@ -217,7 +214,7 @@ public interface Basket
 ~~~
 
 See the arguments of those methods? `SqlConnection` is a library object for interfacing directly with SQL Server database, so it is a very concrete dependency. `SecurityPrincipal` is one of the core classes of
-.NET's authentication and authorization model for local users database and Active Directory, so again, a very concrete dependency. With dependencies like that, it will be very hard to write other implementations of this interface, because we will be forced to drag around concrete dependencies and mostly will not be able to work around that if we want something different. Thus, we may say that these are implementation details exposed in the interface that, for this reason, cannot be abstract. It is essential to abstract these implementation details away, e.g. like this:
+.NET's authorization library that works with users database on local system or Active Directory. So again, a very concrete dependency. With dependencies like that, it will be very hard to write other implementations of this interface, because we will be forced to drag around concrete dependencies and mostly will not be able to work around that if we want something different. Thus, we may say that these concrete types I mentioned are implementation details exposed in the interface. Thus, this interface is a failed abstraction. It is essential to abstract these implementation details away, e.g. like this:
 
 {lang="csharp"}
 ~~~
@@ -227,6 +224,8 @@ public interface Basket
   bool IsAllowedToEditBy(BasketOwner user);
 }
 ~~~
+
+TODO
 
 This is better. For example, as `ProductOutput` is a higher level abstraction (most probably an interface, as we discussed earlier) no implementation of the `WriteTo` method must be tied to any particular storage kind. This means that we are more free to develop different implementations of this method. In addition, each implementation of the `WriteTo` method is more useful as it can be reused with different kinds of `ProducOutput`s.
 
