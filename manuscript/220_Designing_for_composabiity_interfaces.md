@@ -1,4 +1,4 @@
-Designing for composability -- Interfaces
+Interfaces
 ===============================
 
 Some objects are harder to compose with other objects, others are easier. Of course, we are striving for the higher composability. There are numerous factors influencing this. I already discussed some of them indirectly, so time to sum things up and fill in the gaps. This chapter will deal with the role interfaces play in achieving high composability and the next one will deal with a concept of protocols.
@@ -256,7 +256,4 @@ public interface Employee
 
 So the general rule is: make interfaces real abstractions by abstracting away the implementation details from them. Only then are you free to create different implementations of the interface that are not constrained by dependencies they do not want or need.
 
-
 [^interfacesegregation]: http://www.objectmentor.com/resources/articles/isp.pdf
-
-
