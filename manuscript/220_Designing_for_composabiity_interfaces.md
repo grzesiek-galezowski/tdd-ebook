@@ -202,7 +202,7 @@ Note that when defining the above class, we only had to implement one interface:
 
 #### Interfaces should depend on abstractions, not implementation details
 
-You might think that every interface is an abstraction by definition. I believe otherwise - while interfaces abstract away the concrete type of the class that implements it, they may still contain some other things not abstracted, exposing some implementation details. Let's look at the following interface:
+It is tempting to think that every interface is an abstraction by definition. I believe otherwise - while interfaces abstract away the concrete type of the class that implements it, they may still contain some other things not abstracted that are basically implementation details. Let's look at the following interface:
 
 {lang="csharp"}
 ~~~
