@@ -86,7 +86,7 @@ Ok, so we said that he interfaces are "the way to go" for reaching the strong co
 
 One of the other things we need to consider is the size of interfaces. Let's state one thing that is obvious in regard to this:
 
-**All other things equal, smaller interfaces (i.e. with less methods) are easier to implement that bigger interfaces.**
+**All other things equal, smaller interfaces (i.e. with less methods) are easier to implement than bigger interfaces.**
 
 The obvious conclusion from this is that if we want to have really strong composability, our "slots", i.e. interfaces, have to be as small as possible (but not smaller - see previous section on interfaces vs events/callbacks). Of course, we cannot achieve this by blindly removing methods from interfaces, because this would break classes that actually use these methods e.g. when someone is using an interface implementation like this:
 
