@@ -248,7 +248,7 @@ in how many different ways can we implement such interface? Not many - the only 
 public interface Employee
 {
   void Sign(Document document);
-  void SendPayrollReport();
+  void Send(PayrollReport payrollReport);
   void Fire();
   void GiveRaiseBy(Percentage percentage);
 }
