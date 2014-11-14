@@ -241,7 +241,7 @@ public interface Employee
 }
 ~~~
 
-in how many different ways can we implement such interface? Not many - the only question we can answer differently in different implementations of `Employee` is: "what is the data storage?". Everything besides this question is exposed, making this a very poor abstraction. As a matter of fact, this is similar to what Johnny and Benjamin were battling in the payroll system, when they wanted to introduce another kind of employee - a contractor employee. Thus, a better abstraction would be something like this:
+in how many different ways can we implement such interface? Not many - the only question we can answer differently in different implementations of `Employee` is: "what is the data storage?". Everything besides this question is exposed, making this a very poor abstraction. As a matter of fact, this is similar to what Johnny and Benjamin were battling in the payroll system, when they wanted to introduce another kind of employee - a contractor employee. Thus, most probably, a better abstraction would be something like this:
 
 {lang="csharp"}
 ~~~
