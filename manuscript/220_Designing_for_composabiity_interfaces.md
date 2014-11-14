@@ -3,7 +3,7 @@ Designing for composability -- Interfaces
 
 Some objects are harder to compose with other objects, others are easier. Of course, we are striving for the higher composability. There are numerous factors influencing this. I already discussed some of them indirectly, so time to sum things up and fill in the gaps. This chapter will deal with the role interfaces play in achieving high composability and the next one will deal with a concept of protocols.
 
-### Classes vs interfaces
+## Classes vs interfaces
 
 As we said, a sender is composed with a recipient by obtaining a reference to it. Also, we said that we want our senders to be able to send messages to many different recipients. This is, of course, done using polymorphism. 
 
@@ -36,7 +36,7 @@ As a matter of fact, on UML diagrams, one way to depict a a class implementing a
 
 As you may have already guessed from the previous chapters, we are taking the idea of pluggability and composability to the extreme, making it one of the top priorities.
 
-### Events/callbacks vs interfaces - few words on roles
+## Events/callbacks vs interfaces - few words on roles
 
 Did I just say that composability is "one of the top priorities" in our design approach? Wow, that's quite a statement, isn't it? Unfortunately for me, it also lets you raise the following argument:
 "Hey, interfaces are not the most extreme way of achieving composability! What about e.g. C\# events feature? Or callbacks that are supported by some other languages? Wouldn't it make the classes even more context-independent and composable, if we connected them through events or callbacks, not interfaces?"
@@ -80,7 +80,7 @@ We can see that in the second case we are losing the notion of which message bel
 
 This does not mean that events or callbacks are bad. It's just that they are not fit for replacing interfaces - in reality, their purpose is a little bit different. We use events or callbacks not to do somebody to do something, but to indicate what happened (that's why we call them events, after all...). This fits well the observer pattern we already talked about in the previous chapter. So, instead of using observer objects, we may consider using events or callbacks instead (as in everything, there are some tradeoffs for each of the solutions). In other words, events and callbacks have their use in the composition, but they are fit for a case so specific, that they cannot be treated as a default choice. The advantage of interfaces is that they bind together messages that represent a coherent abstractions and convey roles in the communication. This improves readability and clarity.
 
-### Small interfaces
+## Small interfaces
 
 Ok, so we said that he interfaces are "the way to go" for reaching the strong composability we're striving for. Does merely using interfaces guarantee us that the composability will be strong? The answer is "no" - while using interfaces as "slots" is a necessary step in the right direction, it alone does not produce the best composability.
 
@@ -114,7 +114,7 @@ public class ImplementingObject
 
 This notion of creating a separate interface per sender instead of a single big interface for all senders is known as the Interface Segregation Principle[^interfacesegregation].
 
-#### A simple example: separation of reading from writing
+### A simple example: separation of reading from writing
 
 Let's assume we have a class in our application that represents enterprise organizational structure. This application exposes two APIs. The first one serves for notifications about changes of organizational structure by an administrator (so that our class can update its data). The second one is for client-side operations on the organizational data, like listing all employees. The interface for the organizational structure class may contain methods used by both these APIs:
 
@@ -172,9 +172,9 @@ public class InMemoryOrganizationalStructure
 }
 ~~~
 
-In this approach, we create more interfaces (which some of you may not like), but that shouldn't bother us much, because in return, each interface is easier to implement. In other words, if a class is using one of the interfaces, it is easier to write another implementation of it, because there is less methods to implement. This means that composability is enhanced, which is what we want the most. 
+In this approach, we create more interfaces (which some of you may not like), but that shouldn't bother us much, because in return, each interface is easier to implement (because the number of methods to implement is smaller than in case of one big interface). This means that composability is enhanced, which is what we want the most. 
 
-It pays off. For example, one day, we may get a requirement that all writes to the organizational structure have to be traced. In such case, All we have to do is to create a proxy class implementing `OrganizationalStructureAdminCommands` interface, which will wrap the original class' methods with a notification to an observer (that can be either the trace that is required or anything else we like):
+It pays off. For example, one day, we may get a requirement that all writes to the organizational structure (i.e. the admin-related operations) have to be traced. In such case, All we have to do is to create a proxy class implementing `OrganizationalStructureAdminCommands` interface, which wraps the original class' methods with a notification to an observer (that can be either the trace that is required or anything else we like):
 
 {lang="csharp"}
 ~~~
@@ -198,7 +198,7 @@ public class NotifyingAdminComands : OrganizationalStructureAdminCommands
 }
 ~~~
 
-Note that we only had to implement `OrganizationalStructureAdminCommands`, and could ignore the existence of `OrganizationalStructureClientCommands`. This is because of the interface split we did. If we did not separate interfaces for admin and client access, in our `NotifyingAdminComands` class, we would have to implement the `ListAllEmployees` method (and others) and make it delegate to the original wrapped instance. This is not difficult, but it's unnecessary effort. Splitting the interface into two smaller ones spared us this trouble.
+Note that when defining the above class, we only had to implement `OrganizationalStructureAdminCommands`, and could ignore the existence of `OrganizationalStructureClientCommands`. This is because of the interface split we did before. If we had not separated interfaces for admin and client access, in our `NotifyingAdminComands` class, we would have to implement the `ListAllEmployees` method (and others) and make it delegate to the original wrapped instance. This is not difficult, but it's unnecessary effort. Splitting the interface into two smaller ones spared us this trouble.
 
 #### Interfaces should depend on abstractions, not implementation details
 
@@ -225,10 +225,38 @@ public interface Basket
 }
 ~~~
 
-TODO
-
 This is better. For example, as `ProductOutput` is a higher level abstraction (most probably an interface, as we discussed earlier) no implementation of the `WriteTo` method must be tied to any particular storage kind. This means that we are more free to develop different implementations of this method. In addition, each implementation of the `WriteTo` method is more useful as it can be reused with different kinds of `ProducOutput`s.
+
+Another example might be a data interface, i.e. an interface with getters and setters only. Looking at this example:
+
+{lang="csharp"}
+~~~
+public interface Employee
+{
+  HumanName Name { get; set; }
+  HumanAge  Age { get; set; }
+  Address Address { get; set; }
+  Money Pay { get; set; }
+  EmploymentStatus EmploymentStatus { get; set; }
+}
+~~~
+
+in how many different ways can we implement such interface? Not many - the only question we can answer differently in different implementations of `Employee` is: "what is the data storage?". Everything besides this question is exposed, making this a very poor abstraction. As a matter of fact, this is similar to what Johnny and Benjamin were battling in the payroll system, when they wanted to introduce another kind of employee - a contractor employee. Thus, a better abstraction would be something like this:
+
+{lang="csharp"}
+~~~
+public interface Employee
+{
+  void Sign(Document document);
+  void SendPayrollReport();
+  void Fire();
+  void GiveRaiseBy(Percentage percentage);
+}
+~~~
 
 So the general rule is: make interfaces real abstractions by abstracting away the implementation details from them. Only then are you free to create different implementations of the interface that are not constrained by dependencies they do not want or need.
 
+
 [^interfacesegregation]: http://www.objectmentor.com/resources/articles/isp.pdf
+
+
