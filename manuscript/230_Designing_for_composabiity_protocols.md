@@ -170,20 +170,18 @@ catch(SecurityFailure failure)
 Then the risk of this code changing for other reasons than the change of how domain works (e.g. we do not close the gates anymore but activate laser guns instead) is small. Thus, interactions that use abstractions
 and methods that directly express domain rules are more stable.
 
-So, to sum up - if a design reflects the domain, it is easier to predict how a change of domain rules affects 
+So, to sum up - if a design reflects the domain, it is easier to predict how a change of domain rules will affect 
 the design. This contributes to maintainability and stability of the interactions and the design as a whole.
-
-TODO
 
 ## Message recipients should be told what to do, instead of being asked for information
 
-Let's say we are paying an annual income tax yearly and are too busy (i.e. have too many responsibilities) to do this ourselves. Thus, we hire a tax expert to calculate and pay the taxes for us. He is an expert on paying taxes, knows how to calculate everything, where to submit it etc. But there is one thing he does not know - the context. In other word, he does not know which bank we are using or what we have earned this year that we need to pay the tax for. This is something we need to give him.
+Let's say we are paying an annual income tax yearly and are too busy (i.e. have too many responsibilities) to do this ourselves. Thus, we hire a tax expert to calculate and pay the taxes for us. He is an expert on paying taxes, knows how to calculate everything, where to submit it etc. but there is one thing he does not know - the context. In other word, he does not know which bank we are using or what we have earned this year that we need to pay the tax for. This is something we need to give him.
 
 Here's the deal between us and the tax expert summarized as a table:
 
 | Who?       | Needs                             |     Can provide                          |
 |------------|-----------------------------------|------------------------------------------|
-| Us         | The tax paid                      | context (bank, income documents), salary |
+| Us         | The tax paid                      | context (bank, income documents)         |
 | Tax Expert | context (bank, income documents)  | The service of paying the tax            |
 
 It is us who hire the expert and us who initiate the deal, so we need to provide the context, as seen in the above table. If we were to model this deal as an interaction between two objects, it could e.g. look like this:
@@ -195,7 +193,7 @@ taxExpert.PayAnnualIncomeTax(
   ourBank);
 ~~~
 
-One day, our friend, Joan, tells us she needs a tax expert as well. We are happy with the one we hired, so we recommend him to Joan. She has her own income documents, but they are the same as ours, just with different numbers here and there. Also, Joan uses a different bank, but interacting with any bank these days is almost identical. If we model this as interaction between objects, it may look like this: 
+One day, our friend, Joan, tells us she needs a tax expert as well. We are happy with the one we hired, so we recommend him to Joan. She has her own income documents, but they are functionally similar to ours, just with different numbers here and there and maybe some different formatting. Also, Joan uses a different bank, but interacting with any bank these days is almost identical. Thus, our tax expert knows how to handle her request. If we model this as interaction between objects, it may look like this: 
 
 {lang="csharp"}
 ~~~
@@ -204,26 +202,33 @@ taxExpert.PayAnnualIncomeTax(
   joansBank);
 ~~~
 
-Thus, when interacting with Joan, the tax expert can still use his abilities to calculate and pay taxes the same way as in our case. This is because his abilities are independent of the context.
+Thus, when interacting with Joan, the tax expert can still use his abilities to calculate and pay taxes the same way as in our case. This is because his skills are independent of the context.
 
-Another day, we decide we are not happy anymore with our tax expert, so we decide to make a deal with a new one. Thankfully, we do not need to know how the tax experts do their work - we just tell them to do it, so we can interact with the new one just as with the previous one:
+Another day, we decide we are not happy anymore with our tax expert, so we decide to make a deal with a new one. Thankfully, we do not need to know how tax experts do their work - we just tell them to do it, so we can interact with the new one just as with the previous one:
 
 {lang="csharp"}
 ~~~
 //this is the new tax expert, 
-//but no change to communication:
+//but no change to the way we talk to him:
 
 taxExpert.PayAnnualIncomeTax(
   ourIncomeDocuments,
   ourBank);
 ~~~
 
-This small example should not be taken literally. Social interactions are far more complicated and complex than what objects usually do. But I hope I managed to illustrate with it an important aspect of the communication style that is preferred in object oriented design: the Tell Don't Ask heuristic. 
+This small example should not be taken literally. Social interactions are far more complicated and complex than what objects usually do. But I hope I managed to illustrate with it an important aspect of the communication style that is preferred in object oriented design: the *Tell Don't Ask* heuristic. 
 
-Tell Don't Ask basically means that we, as experts in our job, are not doing what is not our job, but instead relying on other objects that are experts in their respective jobs and provide them with all the context they need to achieve the tasks we want them to do as parameters of the messages we send to them.
+Tell Don't Ask basically means that each object, as an expert in its job, is not doing what is not its job, but instead relying on other objects that are experts in their respective jobs and provide them with all the context they need to achieve the tasks it wants them to do as parameters of the messages it sends to them.
+
+This can be illustrated with a generic code pattern:
+
+{lang="csharp"}
+~~~
+recipient.DoSomethingForMe(allTheContextYouNeedToKnow);
+~~~
 
 This way, a double benefit is gained:
-1.  Our recipient (e.g. `taxExpert`) can be used by other senders (e.g. pay tax for Joan) without needing to change. All it needs is a different context passed inside a constructor and messages.
+1.  Our recipient (e.g. `taxExpert` from the example) can be used by other senders (e.g. pay tax for Joan) without needing to change. All it needs is a different context passed inside a constructor and messages.
 2.  We, as senders, can easily use different recipients (e.g. different tax experts that do the task they are assigned with differently) without learning how to interact with each new one. 
 Actually, if you look at it, as much as bank and documents are a context for the tax expert, the tax expert is a context for us. Thus, we may say that *a design that follows the Tell Don't Ask principle creates classes that are context-independent*.
 
@@ -249,11 +254,11 @@ to this design that *told* `employee` do do its job:
 employee.EvaluateRaise();
 ~~~
 
-This way, they were able to make this code interact with both `RegularEmployee` and `ContractorEmployee` the same way. 
+This way, they were able to make this code interact with both `RegularEmployee` and `ContractorEmployee` the same way.
 
 This guideline should be treated very, very seriously and applied in almost an extreme way. There are, of course, few places where it does not apply and we'll get back to them later.
 
-Oh, I almost forgot one thing! The context that we are passing is not necessarily data. It is even more frequent to pass around behavior. For example, in our interaction with the tax expert:
+Oh, I almost forgot one thing! The context that we are passing is not necessarily data. It is even more frequent to pass around behavior than to pass data. For example, in our interaction with the tax expert:
 
 {lang="csharp"}
 ~~~
@@ -275,9 +280,18 @@ public interface Bank
 }
 ~~~
 
-So as you can see, this is behavior, not data, and it itself follows the Tell Don't Ask style as well.
+So as you can see, this `Bank` is a piece of behavior, not data, and it itself follows the Tell Don't Ask style as well (it does something well and takes all the context it needs from outside).
 
-There is one nice advice about creating interactions following this style.
+### Where Tell Don't Ask does not apply
+
+As I already said, there are places where Tell Don't Ask does not apply. 
+
+1. Factories - these are objects that produce other objects for us, so they are inherently "pull-based" - they are always asked to deliver objects.
+2. Collections - they are merely containers for objects, so all we want from them is adding objects and retrieving objects (by index, by predicate, using a key etc.). Note however, that when we write a class that wraps a collection inside, we want this class to expose interface shaped in a Tell Don't Ask manner.
+3. Data sources, like databases - again, these are storage for data, so it is more probable that we will need to ask for this data to get it.
+4. Some APIs accessed via network - while it is good to use as much Tell Don't Ask as we can, web APIs have one limitation - it is hard or impossible to pass behaviors as polymorphic objects through them.
+
+TODO
 
 ## Getters should be removed, return values should be avoided
 
