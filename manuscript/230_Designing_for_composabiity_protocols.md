@@ -1,14 +1,15 @@
-Designing for composability -- Protocols
+Protocols
 ===============================
 
-You already know that objects are connected (composed) together and communicate through interfaces, just as in IP network. There is another similarity though, that's as important as this one. It's *protocols*. In this section, we will look at protocols between objects and their place on our design approach.
+You already know that objects are connected (composed) together and communicate through interfaces, just as in IP network. There is one more similarity, that's as important. It's *protocols*. In this section, we will look at protocols between objects and their place on our design approach.
 
 ## Protocols exist
 
-I do not want to introduce any scientific definition, so let's just establish an understanding that protocols are sets of rules about how objects communicate with each other. Really? Are there any rules? Is it
-not enough the the objects can be composed together through interfaces, as I explained in previous sections? Well, no, it's not enough and let me give you a quick example.
+I do not want to introduce any scientific definition, so let's just establish an understanding that protocols are sets of rules about how objects communicate with each other. 
 
-Let us imagine a class `Sender` that, in one of its methods, asks `Recipient` (let's assume `Recipient` is an interface) for status code extracted from some kind of response and makes a decision based on that code whether or not to notify an observer about an error:
+Really? Are there any rules? Is it not enough the the objects can be composed together through interfaces, as I explained in previous sections? Well, no, it's not enough and let me give you a quick example.
+
+Let us imagine a class `Sender` that, in one of its methods, asks `Recipient` (let's assume `Recipient` is an interface) to extract status code from some kind of response object and makes a decision based on that code whether or not to notify an observer about an error:
 
 {lang="csharp"}
 ~~~
@@ -18,7 +19,7 @@ if(recipient.ExtractStatusCodeFrom(response) == -1)
 }
 ~~~
 
-Simplistic as it is, the example shows one important thing. Whoever the `recipient` is, it is expected to report error by returning a value of `-1`. Otherwise, the `Sender` (which is explicitly checking for this value) will not be able to react to the error situation appropriately. Similarly, if there is no error, the recipient must not report this using `-1`, because if it does, the `Sender` will be mistakenly recognize this as error. So for example this implementation of `Recipient`, although implementing the interface required by `Sender`, is wrong, because it does not behave as `Sender` expects it to:
+This design is a bit simplistic, but never mind. Its role is to make a certain point. Whoever the `recipient` is, it is expected to report error by returning a value of `-1`. Otherwise, the `Sender` (which is explicitly checking for this value) will not be able to react to the error situation appropriately. Similarly, if there is no error, the recipient must not report this by returning `-1`, because if it does, the `Sender` will be mistakenly recognize this as error. So for example this implementation of `Recipient`, although implementing the interface required by `Sender`, is wrong, because it does not behave as `Sender` expects it to:
 
 {lang="csharp"}
 ~~~
@@ -28,7 +29,7 @@ public class WrongRecipient : Recipient
   {
     if( /* success */ )
     {
-      return -1; // but other than -1 should be used!
+      return -1; // but -1 is for errors!
     }
     else
     {
@@ -40,7 +41,7 @@ public class WrongRecipient : Recipient
 
 So as you see, we cannot just write anything in a class implementing an interface, because of a protocol that imposes certain constraints on both a sender and a recipient. 
 
-This contract may not only be about return values, it can also be on types of exceptions thrown, or the order of method calls. For example, anybody using some kind of connection object would imagine the following way of using the connection: first open it, then do something with it and close it when finished, e.g.
+This protocol may not only determine the return values necessary for two objects to interact properly, it can also determine types of exceptions thrown, or the order of method calls. For example, anybody using some kind of connection object would imagine the following way of using the connection: first open it, then do something with it and close it when finished, e.g.
 
 {lang="csharp"}
 ~~~
@@ -49,7 +50,7 @@ connection.Send(data);
 connection.Close();
 ~~~
 
-Again, if we were to implement a connection that behaves like this:
+Assuming the above `connection` is an implementation of `Connection` interface, if we were to implement it like this:
 
 {lang="csharp"}
 ~~~
@@ -57,27 +58,27 @@ public class WrongConnection : Connection
 {
   public void Open()
   {
-    // implementation 
-    // for closing the connection!! 
+    // imagine implementation 
+    // for *closing* the connection is here!! 
   }
 
   public void Close()
   {
-    // implementation for
-    // opening the connection!! 
+    // imagine implementation for
+    // *opening* the connection is here!! 
   }
 }
 ~~~
 
-it would compile just fine, but fail badly when executed. This is, because the behavior would be against the protocol set between `Connection` abstraction and its user.
+it would compile just fine, but fail badly when executed. This is because the behavior would be against the protocol set between `Connection` abstraction and its user. All implementations of `Connection` must follow this protocol.
 
 So, again, there are certain rules that restrict the way two objects can communicate. Both sender and recipient of a message must adhere to the rules, or the they will not be able to work together.
 
-The good news is that, most of the time, WE are the ones who design these protocols, along with the interfaces, so we can design them to be harder or easier to adhere to by different implementations of an interface. Of course, we are wholeheartedly for the "easier" part.
+The good news is that, most of the time, *we* are the ones who design these protocols, along with the interfaces, so we can design them to be either easier or harder or to follow by different implementations of an interface. Of course, we are wholeheartedly for the "easier" part.
 
-## Communication patterns stability
+## Protocol stability
 
-Remember our last story about Johnny and Benjamin when they had to make a design change in order to add another kind of employees to the application? In order to do that, they had to change existing interfaces and add new ones. This was a lot of work. We don't want to do this much work every time we make a change, especially when we introduce a new variation of a concept that is already present in our design (e.g. Johnny and Benjamin already had the concept of "employee" and they were adding a new variation of it, called "contractor"). 
+Remember the last story about Johnny and Benjamin when they had to make a design change in order to add another kind of employees (contractors) to the application? In order to do that, they had to change existing interfaces and add new ones. This was a lot of work. We don't want to do this much work every time we make a change, especially when we introduce a new variation of a concept that is already present in our design (e.g. Johnny and Benjamin already had the concept of "employee" and they were adding a new variation of it, called "contractor"). 
 
 In order to achieve this, we need the protocols to be more stable, i.e. less prone to change. By drawing some conclusions from experiences of Johnny and Benjamin, we can say that they had problems with protocols stability because the protocols were:
 
@@ -114,9 +115,13 @@ In this little snippet, the sender must send three messages to the `accessGuard`
 accessGuard.LoginWith(login, password);
 ~~~
 
-Another lesson learned from the above example is: setters rarely reflect senders' intention - more often they are artificial "things" introduced to directly manage object state. This may also have been the reason why someone introduced three messages instead of one - maybe the `AccessGuard` class has two fields inside, so the programmer might have thought someone would want to manipulate them separately... Anyway, setters should be either avoided or changed to something that reflects the intention better. For example, when dealing with observer pattern, we don't want to say: `object.SetObserver(screen)`, but rather something like `object.FromNowOnReportCurrentWeatherTo(screen)`.
+### Naming by intention
 
-The issue of naming can be summarized as: the names of interfaces should be named after the *roles* that their implementations play and methods should be named after the *responsibilities* we want them to have. I love the example that Scott Bain gives in his Emergent Design book[^emergentdesign]: if I told you "give me your driving license number", you might've reacted differently based on whether the driving license is in your pocket, or your wallet, or your bag, or in your home (in which case you would need to call someone to give it to you). The point is: I, as a sender of this "give me your driving license number" message, do not care how you get it. I say `RetrieveDrivingLicenseNumber()`, not `OpenYourWalletAndReadTheNumber()`. This is important, because if the name represents the sender's intention, the method will not have to be renamed when new classes are created that fulfill this intention in a different way.
+Another lesson learned from the above example is: setters (like `SetLogin` and `SetPassword` in our example) rarely reflect senders' intentions - more often they are artificial "things" introduced to directly manage object state. This may also have been the reason why someone introduced three messages instead of one - maybe the `AccessGuard` class was implemented to hold two fields (login and password) inside, so the programmer might have thought someone would want to manipulate them separately from the login step... Anyway, setters should be either avoided or changed to something that reflects the intention better. For example, when dealing with observer pattern, we don't want to say: `SetObserver(screen)`, but rather something like `FromNowOnReportCurrentWeatherTo(screen)`.
+
+The issue of naming can be summarized as this: a name of an interface should assigned after the *role* that its implementations plays and methods should be named after the *responsibilities* we want the role to have. I love the example that Scott Bain gives in his Emergent Design book[^emergentdesign]: if I told you "give me your driving license number", you might've reacted differently based on whether the driving license is in your pocket, or your wallet, or your bag, or in your house (in which case you would need to call someone to read it for you). The point is: I, as a sender of this "give me your driving license number" message, do not care how you get it. I say `RetrieveDrivingLicenseNumber()`, not `OpenYourWalletAndReadTheNumber()`. 
+
+This is important, because if the name represents the sender's intention, the method will not have to be renamed when new classes are created that fulfill this intention in a different way.
 
 ## Model interactions after the problem domain
 
@@ -131,7 +136,7 @@ reservedOrders.Add(order)
 
 While this achieves the goal in technical terms (i.e. the application works), the code does not reflect the domain. 
 
-If roles, responsibilities and collaborations between objects reflect the domain, then any change that is natural in the domain is natural in the code. If this is not the case, then changes that seem small from the perspective of the problem domain end up touching many classes and methods in highly unusual ways. In other words, the interactions between objects become less stable (which is exactly not what we want).
+If roles, responsibilities and collaborations between objects reflect the domain, then any change that is natural in the domain is natural in the code. If this is not the case, then changes that seem small from the perspective of the problem domain end up touching many classes and methods in highly unusual ways. In other words, the interactions between objects becomes less stable (which is exactly what we want to avoid).
 
 On the other hand, let's assume that we have modeled the design after the domain and have introduced a proper `Order` role. Then, the logic for reserving an order may look like this:
 
@@ -140,9 +145,13 @@ On the other hand, let's assume that we have modeled the design after the domain
 order.ReserveBy(deliverer);
 ~~~
 
-Note that this line is as stable as the domain itself. It needs to change e.g. when orders are not reserved anymore, or it is not deliverers that reserve the orders. I'd say the stability of this tiny interaction is darn high. Even in cases when the understanding of the domain evolves and changes rapidly, the stability of the domain, although not as high, is still one of the highest the world around us has to offer. 
+Note that this line is as stable as the domain itself. It needs to change e.g. when orders are not reserved anymore, or someone other than deliverers starts reserving the orders. Thus, I'd say the stability of this tiny interaction is darn high. 
 
-Let's illustrate this with another example. Let's assume that we have a code for handling alarms. When alarm is triggered, all gates are closed, sirens are turned on and message is sent to special forces with highest priority to arrive and terminate the intruder. Any error in this procedure leads to shutting down power in the building. If this workflow is coded like this:
+Even in cases when the understanding of the domain evolves and changes rapidly, the stability of the domain, although not as high as usually, is still one of the highest the world around us has to offer. 
+
+### Another example
+
+Let's assume that we have a code for handling alarms. When alarm is triggered, all gates are closed, sirens are turned on and message is sent to special forces with highest priority to arrive and terminate the intruder. Any error in this procedure leads to shutting down power in the building. If this workflow is coded like this:
 
 {lang="csharp"}
 ~~~
@@ -163,6 +172,8 @@ and methods that directly express domain rules are more stable.
 
 So, to sum up - if a design reflects the domain, it is easier to predict how a change of domain rules affects 
 the design. This contributes to maintainability and stability of the interactions and the design as a whole.
+
+TODO
 
 ## Message recipients should be told what to do, instead of being asked for information
 
@@ -308,8 +319,6 @@ foreach(var session in sessions)
   table.Add(tableRow);
 }
 ~~~
-
-TODO finished here
 
 It seems we solved the problem, by pulling data to a place that has the context, i.e. knows what to do with this data. Are we happy? We may be unless we look at how the other parts look like - the sending one:
 
