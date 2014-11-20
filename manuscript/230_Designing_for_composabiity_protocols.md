@@ -380,9 +380,7 @@ As we see, the solution is pretty bad. But we seem to be out of solutions. Shoul
 
 Thankfully, we have a third alternative, which is better than the two we already mentioned. We can just **pass** the context **into** the `Session` class. "Isn't this just another way to do what we outlined in point 1? If we pass the context in, isn't `Session` still coupled to this context?", you may ask. The answer is: no, because we can make `Session` class depend on interfaces only to make it context-independent.
 
-Let's see how this plays out in practice. First let's remove those ugly
-getters from the `Session` and introduce new method called `Dump()` that
-will take the `Destination` interface as parameter:
+Let's see how this plays out in practice. First let's remove those ugly getters from the `Session` and introduce new method called `Dump()` that will take the `Destination` interface as parameter:
 
 {lang="csharp"}
 ~~~
@@ -423,11 +421,7 @@ foreach(var session : sessions)
 }
 ~~~
 
-In this design, `Session` itself decides which parameters to pass - no
-one is asking for its data. This `Dump()` method is fairly general, so
-we can use it to implement all three mentioned behaviors (displaying,
-storing, sending), by creating adapters for each type of destination,
-e.g. for GUI, it might look like this:
+In this design, `Session` itself decides which parameters to pass - no one is asking for its data. This `Dump()` method is fairly general, so we can use it to implement all three mentioned behaviors (displaying, storing, sending), by creating adapters for each type of destination, e.g. for GUI, it might look like this:
 
 {lang="csharp"}
 ~~~
@@ -465,14 +459,9 @@ public class GuiDestination : Destination
 }
 ~~~
 
-Note that with the current design, adding new property to the `Session`
-that would need to be displayed, stored or sent, means adding new method
-to the `Destination` interface. All implementing classes must implement
-this new method, or they stop compiling, so there is no way to
-mistakenly forget about one of them.
+Note that with the current design, adding new property to the `Session` that would need to be displayed, stored or sent, means adding new method to the `Destination` interface. All implementing classes must implement this new method, or they stop compiling, so there is no way to mistakenly forget about one of them.
 
-Also, unnoticeably, the protocol got more stable. Previously, when we
-had the getters in the `Session` class:
+Also, unnoticeably, the protocol got more stable. Previously, when we had the getters in the `Session` class:
 
 {lang="csharp"}
 ~~~
@@ -484,12 +473,7 @@ public class Session
 }
 ~~~
 
-the getters **had to** return **something**. So what if we didn't want
-to display, send and store expired timed sessions anymore? we would have
-to add another getter, called `IsExpired()` and checking it
-everywhere... you see where this is going. On the other hand, with the
-current design of the `Session` interface, we can e.g. introduce a
-feature where the expired sessions are not processed at all:
+the getters **had to** return **something**. So what if we didn't want to display, send and store expired timed sessions anymore? we would have to add another getter, called `IsExpired()` and checking it everywhere... you see where this is going. On the other hand, with the current design of the `Session` interface, we can e.g. introduce a feature where the expired sessions are not processed at all:
 
 {lang="csharp"}
 ~~~
@@ -514,11 +498,7 @@ public class TimedSession : Session
 
 and there is no need to change any other code to get this working.
 
-Another added bonus of this situation that we do not have to return
-anything from methods is that we are free to apply proxy and decorator
-patterns more freely. For example, we may have hidden sessions, that are
-not displayed at all, but retain the rest of the session functionality.
-We may implement it as a proxy, that forwards all messages received to
+Another added bonus of this situation that we do not have to return anything from methods is that we are free to apply proxy and decorator patterns more freely. For example, we may have hidden sessions, that are not displayed at all, but retain the rest of the session functionality. We may implement it as a proxy, that forwards all messages received to
 the original, wrapped `Session` object, while discarding the Dump calls:
 
 {lang="csharp"}
@@ -549,23 +529,16 @@ public class HiddenSession : Session
 }
 ~~~
 
-The most important thing is that when we are not forced to return
-anything, we are more free to do as we like. Again, "Tell, don't ask".
+The most important thing is that when we are not forced to return anything, we are more free to do as we like. Again, "Tell, don't ask".
 
-The notion of passing context where the data is instead of pulling the
-data right into the context is often referred to as "context
-independence". Context independence is not only about passing context in
-methods - it applies to constructors the same way. Being context
-independent is one of the most important requirements for a class to be
+The notion of passing context where the data is instead of pulling the data right into the context is often referred to as "context independence". Context independence is not only about passing context in methods - it applies to constructors the same way. Being context independent is one of the most important requirements for a class to be
 composable with other classes.
 
 TODO sometimes ask
 
 ## Single Responsibility
 
-I already said that we want our system to be a web of composable
-objects. Also, I said that we want to be able to unplug a cluster of
-objects at any place and plug in something different. TODO
+I already said that we want our system to be a web of composable objects. Also, I said that we want to be able to unplug a cluster of objects at any place and plug in something different. TODO
 
 TODO
 
@@ -582,6 +555,8 @@ of values. Example: different reports produced.
 ## Context independence
 
 TODO
+
+## Avoid statics
 
 ## Instead of pulling the data where context is, pass the context where the data is
 

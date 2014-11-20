@@ -43,25 +43,38 @@ task :clone_manuscript => 'diagrams:regenerate' do
   cp_r $MANUSCRIPT_DIR, $PD_MANUSCRIPT_DIR
   
   # remove leanpub code language markers
+  #replace_in_temp_markdown_files 
   puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri '/\\{lang=/d' *.md")
   # replace leanpub parts with chapters
-  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/^-# /# /' *.md")
+  replace_in_temp_markdown_files "^-#", "# " 
   # replace asides with blocks
-  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/^A> /> /' *.md")
+  replace_in_temp_markdown_files "^A> ", "> "
+  replace_in_temp_markdown_files "^A>$", ">"
   # replace tips with blocks
-  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/^T> /> /' *.md")
+  replace_in_temp_markdown_files "^T> ", "> "
+  replace_in_temp_markdown_files "^T>$", ">"
   # replace errors with blocks
-  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/^E> /> /' *.md")
+  replace_in_temp_markdown_files "^E> ", "> "
+  replace_in_temp_markdown_files "^E>$", ">"
   # replace information with blocks
-  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/^I> /> /' *.md")
+  replace_in_temp_markdown_files "^I> ", "> "
+  replace_in_temp_markdown_files "^I>$", ">"
   # replace questions with blocks
-  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/^Q> /> /' *.md")
+  replace_in_temp_markdown_files "^Q> ", "> "
+  replace_in_temp_markdown_files "^Q>$", ">"
   # replace discussions with blocks
-  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/^D> /> /' *.md")
+  replace_in_temp_markdown_files "^D> ", "> "
+  replace_in_temp_markdown_files "^D>$", ">"
   # replace exercises with blocks
-  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/^X> /> /' *.md")
+  replace_in_temp_markdown_files "^X> ", "> "
+  replace_in_temp_markdown_files "^X>$", ">"
   # replace generic blocks with blocks
-  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/^G> /> /' *.md")
+  replace_in_temp_markdown_files "^G> ", "> "
+  replace_in_temp_markdown_files "^G>$", ">"
+end
+
+def replace_in_temp_markdown_files(replaced, replacement)
+  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/#{replaced}/#{replacement}/' *.md")
 end
 
 namespace :formats do
