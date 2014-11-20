@@ -285,14 +285,13 @@ So as you can see, this `Bank` is a piece of behavior, not data, and it itself f
 
 ### Where Tell Don't Ask does not apply
 
-As I already said, there are places where Tell Don't Ask does not apply. 
+As I already said, there are places where Tell Don't Ask does not apply. Here are some examples from the top of my head: 
 
 1. Factories - these are objects that produce other objects for us, so they are inherently "pull-based" - they are always asked to deliver objects.
 2. Collections - they are merely containers for objects, so all we want from them is adding objects and retrieving objects (by index, by predicate, using a key etc.). Note however, that when we write a class that wraps a collection inside, we want this class to expose interface shaped in a Tell Don't Ask manner.
 3. Data sources, like databases - again, these are storage for data, so it is more probable that we will need to ask for this data to get it.
 4. Some APIs accessed via network - while it is good to use as much Tell Don't Ask as we can, web APIs have one limitation - it is hard or impossible to pass behaviors as polymorphic objects through them. Usually, we can only pass data.
-
-TODO
+5. So called "fluent APIs", also called "internal domain-specific languages"[^domainspecificlanguages]
 
 ## Getters should be removed, return values should be avoided
 
@@ -642,3 +641,5 @@ A> 2. Second item.
 [^emergentdesign]: Scott Bain, Emergent Design
 
 [^humanprotocols]: Of course, human interactions are way more complex, so I am not trying to tell you "object interaction is like human interaction", just using this example as a nice illustration. 
+
+[^domainspecificlanguages]: This topic is outside the scope of the book, but you can take a look at: M. Fowler, Domain-Specific Languages, Addison-Wesley 2010
