@@ -230,11 +230,12 @@ recipient.DoSomethingForMe(allTheContextYouNeedToKnow);
 This way, a double benefit is gained:
 1.  Our recipient (e.g. `taxExpert` from the example) can be used by other senders (e.g. pay tax for Joan) without needing to change. All it needs is a different context passed inside a constructor and messages.
 2.  We, as senders, can easily use different recipients (e.g. different tax experts that do the task they are assigned with differently) without learning how to interact with each new one. 
+
 Actually, if you look at it, as much as bank and documents are a context for the tax expert, the tax expert is a context for us. Thus, we may say that *a design that follows the Tell Don't Ask principle creates classes that are context-independent*.
 
 This has very profound influence on the stability of the protocols. As much as objects are context-independent, they (and their interactions) do not need to change when context changes.
 
-Again, quoting Scott Bain, "what you hide, you can change". Thus, telling an object what to do requires less knowledge than asking for data and information. Going back to the driver license example: I may ask another person for a driving license number to actually make sure they have the license and that it is valid (by checking the number somewhere). I may also ask another person to provide me with the directions to the place I want the first person to drive. But isn't it easier to just tell "buy me some bread and butter"? Then, whoever I ask, has the freedom to either drive, or walk (if they know a good store nearby) or ask yet another person to do it instead. I don't care as long as tomorrow morning, I find the bread and butter in my fridge.
+Again, quoting Scott Bain, "what you hide, you can change". Thus, telling an object what to do requires less knowledge than asking for data and information. Again using the driver license metaphor: I may ask another person for a driving license number to actually make sure they have the license and that it is valid (by checking the number somewhere). I may also ask another person to provide me with the directions to the place I want the first person to drive. But isn't it easier to just tell "buy me some bread and butter"? Then, whoever I ask, has the freedom to either drive, or walk (if they know a good store nearby) or ask yet another person to do it instead. I don't care as long as tomorrow morning, I find the bread and butter in my fridge.
 
 All of these benefits are, by the way, exactly what Johnny and Benjamin were aiming at when refactoring the payroll system. They went from this code, where they *asked* `employee` a lot of questions:
 
@@ -289,7 +290,7 @@ As I already said, there are places where Tell Don't Ask does not apply.
 1. Factories - these are objects that produce other objects for us, so they are inherently "pull-based" - they are always asked to deliver objects.
 2. Collections - they are merely containers for objects, so all we want from them is adding objects and retrieving objects (by index, by predicate, using a key etc.). Note however, that when we write a class that wraps a collection inside, we want this class to expose interface shaped in a Tell Don't Ask manner.
 3. Data sources, like databases - again, these are storage for data, so it is more probable that we will need to ask for this data to get it.
-4. Some APIs accessed via network - while it is good to use as much Tell Don't Ask as we can, web APIs have one limitation - it is hard or impossible to pass behaviors as polymorphic objects through them.
+4. Some APIs accessed via network - while it is good to use as much Tell Don't Ask as we can, web APIs have one limitation - it is hard or impossible to pass behaviors as polymorphic objects through them. Usually, we can only pass data.
 
 TODO
 
@@ -377,13 +378,7 @@ As we see, the solution is pretty bad. But we seem to be out of solutions. Shoul
 1.  The `Session` class containing the display, store and send logic, i.e. all the context needed - too much coupling to heavy dependencies
 2.  The `Session` class to expose its data so that we may pull it where we have enough context to know how to use it - communication is too brittle and redundancy creeps in (by the way, this design will also be bad for multithreading, but that's something for another time)
 
-Thankfully, we have a third alternative, which is better than the two we
-already mentioned. We can just **pass** the context **into** the
-`Session` class. "Isn't this just another way to do what we outlined in
-point 1? If we pass the context in, isn't `Session` still coupled to
-this context?", you may ask. The answer is: no, because we can make
-`Session` class depend on interfaces only to make it
-context-independent.
+Thankfully, we have a third alternative, which is better than the two we already mentioned. We can just **pass** the context **into** the `Session` class. "Isn't this just another way to do what we outlined in point 1? If we pass the context in, isn't `Session` still coupled to this context?", you may ask. The answer is: no, because we can make `Session` class depend on interfaces only to make it context-independent.
 
 Let's see how this plays out in practice. First let's remove those ugly
 getters from the `Session` and introduce new method called `Dump()` that
@@ -662,6 +657,12 @@ Why did I leave out inline creation and singletons? context independence!
 11. need driven development
 
 TODO
+
+A> ##This is a block quote. This
+A> paragraph has two lines.
+A> 
+A> 1. This is a list inside a block quote.
+A> 2. Second item.
 
 [^emergentdesign]: Scott Bain, Emergent Design
 

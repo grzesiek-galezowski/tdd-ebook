@@ -46,6 +46,22 @@ task :clone_manuscript => 'diagrams:regenerate' do
   puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri '/\\{lang=/d' *.md")
   # replace leanpub parts with chapters
   puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/^-# /# /' *.md")
+  # replace asides with blocks
+  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/^A> /> /' *.md")
+  # replace tips with blocks
+  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/^T> /> /' *.md")
+  # replace errors with blocks
+  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/^E> /> /' *.md")
+  # replace information with blocks
+  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/^I> /> /' *.md")
+  # replace questions with blocks
+  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/^Q> /> /' *.md")
+  # replace discussions with blocks
+  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/^D> /> /' *.md")
+  # replace exercises with blocks
+  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/^X> /> /' *.md")
+  # replace generic blocks with blocks
+  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/^G> /> /' *.md")
 end
 
 namespace :formats do
