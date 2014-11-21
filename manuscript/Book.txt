@@ -25,3 +25,5 @@ End.md
 230_Designing_for_composabiity_protocols.md
 240_Value_Objects.md
 250_Refactoring_Object_Composition.md
+260_Dealing_with_3rd_party.md
+270_Mock_Objects.md

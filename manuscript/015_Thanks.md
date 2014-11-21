@@ -6,7 +6,7 @@ name) for valuable feedback, suggestions, typo fixes and other
 contributions:
 
 -   Brad Appleton
--   Daniel Żołopa
+-   Daniel Żołopa (cover image)
 -   Donghyun Lee
 -   Michael Whelan
 -   Reuven Yagel
@@ -26,6 +26,7 @@ that I gained all my knowledge from (listed alphabetically by name):
 -   Mark Seemann
 -   Martin Fowler
 -   Nat Pryce
+-   Philip Schwarz
 -   Scott Bain
 -   Steve Freeman
 -   Robert C. Martin

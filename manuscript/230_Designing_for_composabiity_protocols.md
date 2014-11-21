@@ -295,19 +295,18 @@ As I already said, there are places where Tell Don't Ask does not apply. Here ar
 
 ## Getters should be removed, return values should be avoided
 
-The above stated guideline of "Tell Don't Ask" has a practical implication of getting rid of (almost) all the getters. We did say that each object should stick to its work and tell other objects to do their work, passing context to them, didn't we? If so, then why should we "get" something from objects?
+The above stated guideline of "Tell Don't Ask" has a practical implication of getting rid of (almost) all the getters. We did say that each object should stick to its work and tell other objects to do their work, passing context to them, didn't we? If so, then why should we "get" anything from other objects?
 
-For me, this was very extreme at first, but in a short time I learned that this is actually how I am supposed to write object-oriented code. You see, I started learning programming using structural languages such
-as C, where a program was divided into procedures or functions and data structures. Then I moved on to object-oriented languages that had far better mechanisms for abstraction, but my style of coding didn't really change
-much. I would still have procedures and functions, but now more abstract (divided into objects) and data structures, but now more abstract (i.e. objects with setters, getters and some other query methods).
+For me the idea of no getters was very extreme at first, but in a short time I learned that this is actually how I am supposed to write object-oriented code. You see, I started learning programming using structural languages such
+as C, where a program was divided into procedures or functions and data structures. Then I moved on to object-oriented languages that had far better mechanisms for abstraction, but my style of coding didn't really change much. I would still have procedures and functions, just divided into objects. I would still have data structures, but now more abstract, e.g. objects with setters, getters and some other query methods.
 
 But what alternatives do we have? Well, I already introduced Tell Don't Ask, so you should know the answer. Even though you should, I want to show you another example, this time specifically about getters and setters. 
 
-Let's say that we have a piece of software that handles user sessions. A session is represented in code using a `Session` class. We want to be able to do three things with our sessions: display them on the GUI, send them through the network and persist them. In our application, we want each of these responsibilities handled by a separate class. 
+Let's say that we have a piece of software that handles user sessions. A session is represented in code using a `Session` class. We want to be able to do three things with our sessions: display them on the GUI, send them through the network and persist them. In our application, we want each of these responsibilities handled by a separate class, because we think it is good if they are not tied together. 
 
-This means that each of these classes should somehow obtain the data from the session. Otherwise, how can the data be e.g. persisted? So it seems we have no choice and we have to expose the session data using getters. 
+So, we need three classes dealing with data owned by the session. This means that each of these classes should somehow obtain access to the data. Otherwise, how can this data be e.g. persisted? It seems we have no choice and we have to expose it using getters. 
 
-Of course, we might re-think our choice of creating separate classes for sending, persistence etc. and consider a choice where we put all this logic inside a `Session` class. If we did that, however, we would make a core domain concept (a session) dependent on a nasty set of third-party libraries (e.g. a particular GUI library), which would mean that e.g. every time some GUI displaying concept changed, we would be forced to tinker in core domain code, which is pretty risky. Also, if we did that, the `Session` would be hard to reuse, because every place we would want to reuse this class, we would need to take all these heavy libraries it depends on with us. Plus, we would not be able to e.g. reuse `Session` with different GUI or persistence libraries. So, again, it seems like our (not so good, as we will see) only choice is to introduce getters for the information pieces stored inside a session, like this:
+Of course, we might re-think our choice of creating separate classes for sending, persistence etc. and consider a choice where we put all this logic inside a `Session` class. If we did that, however, we would make a core domain concept (a session) dependent on a nasty set of third-party libraries (like a particular GUI library), which would mean that e.g. every time some GUI displaying concept changes, we would be forced to tinker in core domain code, which is pretty risky. Also, if we did that, the `Session` would be hard to reuse, because every place we would want to reuse this class, we would need to take all these heavy libraries it depends on with us. Plus, we would not be able to e.g. reuse `Session` with different GUI or persistence libraries. So, again, it seems like our (not so good, as we will see) only choice is to introduce getters for the information pieces stored inside a session, like this:
 
 {lang="csharp"}
 ~~~
@@ -318,6 +317,8 @@ public interface Session
   DateTime GetExpiryTime();
 }
 ~~~
+
+TODO
 
 So yeah, in a way, we have decoupled `Session` from these third-party libraries and we may even say that we have achieved context-independence as far as `Session` is concerned - we can now pull all its data e.g. in a GUI code and display it as a table. The `Session` does not know anything about it. Let's see that:
 
@@ -543,13 +544,11 @@ TODO
 
 ## Law of Demeter
 
-As we discovered, exposing return values makes the protocols more
-complex and should be avoided if possible. TODO do we need this at all?
+As we discovered, exposing return values makes the protocols more complex and should be avoided if possible. TODO do we need this at all?
 
 Law of Demeter. Coupling to details of return values.
 
-Size of protocols. Even interface with a single method can return a lot
-of values. Example: different reports produced.
+Size of protocols. Even interface with a single method can return a lot of values. Example: different reports produced.
 
 ## Context independence
 
@@ -574,14 +573,11 @@ e.g. for employees:
 
 TODO example: with employees loop getters refactoring
 
-May be more coupling, but the coupling is very light - just an abstract
-interface, especially if we were following the rest guidelines. On the
-other hand, better information hiding and decoupling users from details.
+May be more coupling, but the coupling is very light - just an abstract interface, especially if we were following the rest guidelines. On the other hand, better information hiding and decoupling users from details.
 
 #### Protocols should rely on abstractions
 
-e.g. Id abstraction can be either in or string or a combination of
-those. The protocol stays stable regardless of these changes
+e.g. Id abstraction can be either in or string or a combination of those. The protocol stays stable regardless of these changes
 
 Plural is also an abstraction
 
