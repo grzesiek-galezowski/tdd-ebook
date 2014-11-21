@@ -50,6 +50,9 @@ task :clone_manuscript => 'diagrams:regenerate' do
   # replace asides with blocks
   replace_in_temp_markdown_files "^A> ", "> "
   replace_in_temp_markdown_files "^A>$", ">"
+  # replace warnings with blocks
+  replace_in_temp_markdown_files "^W> ", "> "
+  replace_in_temp_markdown_files "^W>$", ">"
   # replace tips with blocks
   replace_in_temp_markdown_files "^T> ", "> "
   replace_in_temp_markdown_files "^T>$", ">"

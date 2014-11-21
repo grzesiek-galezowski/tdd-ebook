@@ -13,7 +13,7 @@ W> ## Teaching one thing at a time
 W>
 W> For several next chapters, you will see me do a lot of code and design examples without writing any test. This may make you wonder whether you are still reading a TDD book. 
 W>
-W> I want to make it very clear that by omitting tests in these chapters I am not advocating writing code or refactoring without tests. The only reason I am doing it is that teaching and learning several things at the same time makes everything harder, both for the teacher and for the student. Thus, until I explain the object oriented design topics I need to, I want you to be focused only on them.
+W> I want to make it very clear that by omitting tests in these chapters I am not advocating writing code or refactoring without tests. The only reason I am doing this is that teaching and learning several things at the same time makes everything harder, both for the teacher and for the student. Thus, until I explain the necessary object oriented design topics, I want you to be focused only on them.
 W>
 W> Do not worry. After I am done laying ground for mock objects, I am going to re-introduce TDD and write lots of tests. Please trust me and be patient.
  
