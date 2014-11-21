@@ -9,11 +9,12 @@ Steve Freeman, one of the godfathers of using mock objects with TDD, [wrote](htt
 
 In order to do this, I need to cover some topics of object oriented design. That is why not all chapters in this part are specifically about TDD, but some are about object oriented techniques, practices and qualities you need to know to use TDD effectively in object oriented world. First of them being objects composability.
 
+W> ## Teaching one thing at a time
+W>
 W> For several next chapters, you will see me do a lot of code and design examples without writing any test. This may make you wonder whether you are still reading a TDD book. 
 W>
-W> I want to make it very clear that by omitting tests in these chapters I am not advocating writing code or refactoring without tests. The only reason is that I don't want you to learn several things at the same time, but rather introduce them one by one. Thus, until I explain the object oriented design topics I need to, I want you to be focused only on  them.
+W> I want to make it very clear that by omitting tests in these chapters I am not advocating writing code or refactoring without tests. The only reason I am doing it is that teaching and learning several things at the same time makes everything harder, both for the teacher and for the student. Thus, until I explain the object oriented design topics I need to, I want you to be focused only on them.
 W>
-W> After I am done laying ground for mock objects, I am going to re-introduce TDD and write lots of tests.
+W> Do not worry. After I am done laying ground for mock objects, I am going to re-introduce TDD and write lots of tests. Please trust me and be patient.
  
-
 After reading part 2, you will understand how mocks fit into test-driving object oriented code, how to make Statements using mocks maintainable and how some of the practices I introduced in the chapters of part 1 apply to mocks. You will also be able to test-drive simple object oriented systems.
