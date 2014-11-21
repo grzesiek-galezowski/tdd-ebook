@@ -10,6 +10,7 @@ contributions:
 -   Donghyun Lee
 -   Michael Whelan
 -   Reuven Yagel
+-   Rémi Goyard
 -   Sławomir Pająk
 -   Wiktor Żołnowski
 
