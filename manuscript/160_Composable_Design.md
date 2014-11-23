@@ -100,7 +100,7 @@ public class CompanyPolicies : IDisposable
       }
   
       //evaluate one-time bonus
-      if(employee.GetYearseOfService() == 5)
+      if(employee.GetYearsOfService() == 5)
       {
         var oneTimeBonus = employee.GetSalary() * 2;
         employee.SetBonusForYear(2014, oneTimeBonus);
