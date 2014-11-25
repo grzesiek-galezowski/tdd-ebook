@@ -306,7 +306,7 @@ Let's say that we have a piece of software that handles user sessions. A session
 
 So, we need three classes dealing with data owned by the session. This means that each of these classes should somehow obtain access to the data. Otherwise, how can this data be e.g. persisted? It seems we have no choice and we have to expose it using getters. 
 
-Of course, we might re-think our choice of creating separate classes for sending, persistence etc. and consider a choice where we put all this logic inside a `Session` class. If we did that, however, we would make a core domain concept (a session) dependent on a nasty set of third-party libraries (like a particular GUI library), which would mean that e.g. every time some GUI displaying concept changes, we would be forced to tinker in core domain code, which is pretty risky. Also, if we did that, the `Session` would be hard to reuse, because every place we would want to reuse this class, we would need to take all these heavy libraries it depends on with us. Plus, we would not be able to e.g. reuse `Session` with different GUI or persistence libraries. So, again, it seems like our (not so good, as we will see) only choice is to introduce getters for the information pieces stored inside a session, like this:
+Of course, we might re-think our choice of creating separate classes for sending, persistence etc. and consider a choice where we put all this logic inside a `Session` class. If we did that, however, we would make a core domain concept (a session) dependent on a nasty set of third-party libraries (like a particular GUI library), which would mean that e.g. every time some GUI displaying concept changes, we will be forced to tinker in core domain code, which is pretty risky. Also, if we did that, the `Session` would be hard to reuse, because every place we would want to reuse this class, we would need to take all these heavy libraries it depends on with us. Plus, we would not be able to e.g. use `Session` with different GUI or persistence libraries. So, again, it seems like our (not so good, as we will see) only choice is to introduce getters for the information pieces stored inside a session, like this:
 
 {lang="csharp"}
 ~~~
@@ -318,9 +318,7 @@ public interface Session
 }
 ~~~
 
-TODO
-
-So yeah, in a way, we have decoupled `Session` from these third-party libraries and we may even say that we have achieved context-independence as far as `Session` is concerned - we can now pull all its data e.g. in a GUI code and display it as a table. The `Session` does not know anything about it. Let's see that:
+So yeah, in a way, we have decoupled `Session` from these third-party libraries and we may even say that we have achieved context-independence as far as `Session` itself is concerned - we can now pull all its data e.g. in a GUI code and display it as a table. The `Session` does not know anything about it. Let's see that:
 
 {lang="csharp"}
 ~~~
@@ -335,14 +333,14 @@ foreach(var session in sessions)
 }
 ~~~
 
-It seems we solved the problem, by pulling data to a place that has the context, i.e. knows what to do with this data. Are we happy? We may be unless we look at how the other parts look like - the sending one:
+It seems we solved the problem, by separating the data from the context it is used in and pulling data to a place that has the context, i.e. knows what to do with this data. Are we happy? We may be unless we look at how the other parts look like - remember that in addition to displaying sessions, we also want to send them and persist them. The sending logic looks like this:
 
 {lang="csharp"}
 ~~~
 //part of sending logic
 foreach(var session in sessions)
 {
-  var message = Message.Blank();
+  var message = SessionMessage.Blank();
   message.Owner = session.GetOwner();
   message.Target = session.GetTarget();
   message.ExpiryTime = session.GetExpiryTime();
@@ -350,7 +348,7 @@ foreach(var session in sessions)
 }
 ~~~
 
-and the storing one:
+and the persistence logic like this:
 
 {lang="csharp"}
 ~~~
@@ -365,22 +363,21 @@ foreach(var session in sessions)
 }
 ~~~
 
-See anything disturbing here? If no, then imagine what happens when we add another piece of information to the `Session`, say, priority. We now have three places to update and we have to remember to update all of them every time. This is called "redundancy" or "asking for trouble". Also, composability of this class is pretty bad, because it will change a lot just because data in a session changes.
+See anything disturbing here? If no, then imagine what happens when we add another piece of information to the `Session`, say, priority. We now have three places to update and we have to remember to update all of them every time. This is called "redundancy" or "asking for trouble". Also, composability of these three classes is pretty bad, because they will have to change a lot just because data in a session changes.
 
-The reason for this is that we made the `Session` class effectively as a data structure. It does not implement any domain-related behaviors, just exposes data. There are two implications of this:
+The reason for this is that we made the `Session` class effectively a data structure. It does not implement any domain-related behaviors, just exposes data. There are two implications of this:
 
-this forces all users of this class to define session-related behaviors on behalf of the `Session`, meaning these behaviors are scattered all over the place. If one is to make change to the session, they must find all related behaviors and correct them.
+1.  This forces all users of this class to define session-related behaviors on behalf of the `Session`, meaning these behaviors are scattered all over the place[^featureenvy]. If one is to make change to the session, they must find all related behaviors and correct them.
+2.  As a set of object behaviors is generally more stable than its internal data (e.g. a session might have more than one target one day, but we will always be starting and stopping sessions), this leads to brittle interfaces and protocols - certainly the opposite of what we are striving for.
 
-as a set of object behaviors is generally more stable than its internal data (e.g. a session might have more than one target one day, but we will always be starting and stopping sessions), this leads to brittle interfaces and protocols - certainly the opposite of what we are striving for.
+Bummer, this solution is pretty bad, but we seem to be out of options. Should we just accept that there will be problems with this implementation and move on? Thankfully, we don't have to. So far, we have found the following options to be troublesome:
 
-As we see, the solution is pretty bad. But we seem to be out of solutions. Shouldn't we just accept that there will be problems with this implementation and move on? Thankfully, no. So far, we have found the following options to be troublesome:
+1.  The `Session` class containing the display, store and send logic, i.e. all the context needed - too much coupling to heavy dependencies.
+2.  The `Session` class to expose its data via getters, so that we may pull it where we have enough context to know how to use it - communication is too brittle and redundancy creeps in (by the way, this design will also be bad for multithreading, but that's something for another time).
 
-1.  The `Session` class containing the display, store and send logic, i.e. all the context needed - too much coupling to heavy dependencies
-2.  The `Session` class to expose its data so that we may pull it where we have enough context to know how to use it - communication is too brittle and redundancy creeps in (by the way, this design will also be bad for multithreading, but that's something for another time)
+Thankfully, we have a third alternative, which is better than the two we already mentioned. We can just **pass** the context **into** the `Session` class. "Isn't this just another way to do what we outlined in point 1? If we pass the context in, isn't `Session` still coupled to this context?", you may ask. The answer is: not necessarily, because we can make `Session` class depend on interfaces only instead of the real thing to make it context-independent enough.
 
-Thankfully, we have a third alternative, which is better than the two we already mentioned. We can just **pass** the context **into** the `Session` class. "Isn't this just another way to do what we outlined in point 1? If we pass the context in, isn't `Session` still coupled to this context?", you may ask. The answer is: no, because we can make `Session` class depend on interfaces only to make it context-independent.
-
-Let's see how this plays out in practice. First let's remove those ugly getters from the `Session` and introduce new method called `Dump()` that will take the `Destination` interface as parameter:
+Let's see how this plays out in practice. First let's remove those ugly getters from the `Session` and introduce new method called `DumpInto()` that will take a `Destination` interface implementation as a parameter:
 
 {lang="csharp"}
 ~~~
@@ -390,11 +387,11 @@ public interface Session
 }
 ~~~
 
-Its implementation can pass all fields into this destination like so:
+The implementation of `Session`, e.g. a `RealSession` can pass all fields into this destination like so:
 
 {lang="csharp"}
 ~~~
-public class TimedSession : Session
+public class RealSession : Session
 {
   //...
 
@@ -416,12 +413,11 @@ And the looping through sessions now looks like this:
 ~~~
 foreach(var session : sessions)
 {
-  var newDestination = destinationFactory.Create();
-  session.DumpInto(newDestination);
+  session.DumpInto(destination);
 }
 ~~~
 
-In this design, `Session` itself decides which parameters to pass - no one is asking for its data. This `Dump()` method is fairly general, so we can use it to implement all three mentioned behaviors (displaying, storing, sending), by creating adapters for each type of destination, e.g. for GUI, it might look like this:
+In this design, `RealSession` itself decides which parameters to pass and in what order (if that matters) - no one is asking for its data. This `DumpInto()` method is fairly general, so we can use it to implement all three mentioned behaviors (displaying, persistence, sending), by creating a implementation for each type of destination, e.g. for GUI, it might look like this:
 
 {lang="csharp"}
 ~~~
@@ -455,9 +451,10 @@ public class GuiDestination : Destination
   {
     _table.Add(_row);
   }
-
 }
 ~~~
+
+TODO
 
 Note that with the current design, adding new property to the `Session` that would need to be displayed, stored or sent, means adding new method to the `Destination` interface. All implementing classes must implement this new method, or they stop compiling, so there is no way to mistakenly forget about one of them.
 
@@ -639,3 +636,5 @@ A> 2. Second item.
 [^humanprotocols]: Of course, human interactions are way more complex, so I am not trying to tell you "object interaction is like human interaction", just using this example as a nice illustration. 
 
 [^domainspecificlanguages]: This topic is outside the scope of the book, but you can take a look at: M. Fowler, Domain-Specific Languages, Addison-Wesley 2010
+
+[^featureenvy]: This is sometimes called Feature Envy. It means that a class is more interested in other class' data than in its own.
