@@ -454,11 +454,7 @@ public class GuiDestination : Destination
 }
 ~~~
 
-TODO
-
-Note that with the current design, adding new property to the `Session` that would need to be displayed, stored or sent, means adding new method to the `Destination` interface. All implementing classes must implement this new method, or they stop compiling, so there is no way to mistakenly forget about one of them.
-
-Also, unnoticeably, the protocol got more stable. Previously, when we had the getters in the `Session` class:
+The protocol is now more stable as far as the consumers of session data are concerned. Previously, when we had the getters in the `Session` class:
 
 {lang="csharp"}
 ~~~
@@ -470,7 +466,7 @@ public class Session
 }
 ~~~
 
-the getters **had to** return **something**. So what if we didn't want to display, send and store expired timed sessions anymore? we would have to add another getter, called `IsExpired()` and checking it everywhere... you see where this is going. On the other hand, with the current design of the `Session` interface, we can e.g. introduce a feature where the expired sessions are not processed at all:
+the getters **had to** return **something**. So what if we had sessions that could expire and decided we want to ignore them (i.e. do not display, store, send or do anything else with them) after they expire? In case of the "getter approach" seen in the snippet above, we would have to add another getter, e.g. called `IsExpired()` to the session class and remember to update each consumer the same way - to check the expiry before consuming the data... you see where this is going, don't you? On the other hand, with the current design of the `Session` interface, we can e.g. introduce a feature where the expired sessions are not processed at all in a single place:
 
 {lang="csharp"}
 ~~~
@@ -493,7 +489,7 @@ public class TimedSession : Session
 }
 ~~~
 
-and there is no need to change any other code to get this working.
+and there is no need to change any other code to get this working[^statemachine]. 
 
 Another added bonus of this situation that we do not have to return anything from methods is that we are free to apply proxy and decorator patterns more freely. For example, we may have hidden sessions, that are not displayed at all, but retain the rest of the session functionality. We may implement it as a proxy, that forwards all messages received to
 the original, wrapped `Session` object, while discarding the Dump calls:
@@ -528,10 +524,10 @@ public class HiddenSession : Session
 
 The most important thing is that when we are not forced to return anything, we are more free to do as we like. Again, "Tell, don't ask".
 
-The notion of passing context where the data is instead of pulling the data right into the context is often referred to as "context independence". Context independence is not only about passing context in methods - it applies to constructors the same way. Being context independent is one of the most important requirements for a class to be
+This notion of passing context where the data is instead of pulling the data right into the context is often referred to as "context independence". Being context independent is one of the most important requirements for a class to be
 composable with other classes.
 
-TODO sometimes ask
+TODO
 
 ## Single Responsibility
 
@@ -638,3 +634,5 @@ A> 2. Second item.
 [^domainspecificlanguages]: This topic is outside the scope of the book, but you can take a look at: M. Fowler, Domain-Specific Languages, Addison-Wesley 2010
 
 [^featureenvy]: This is sometimes called Feature Envy. It means that a class is more interested in other class' data than in its own.
+
+[^statemachine]: We can even further refactor this into a state machine using a Gang of Four *State* pattern. There would be two states in such a state machine: started and expired.
