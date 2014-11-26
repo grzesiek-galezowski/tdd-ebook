@@ -491,8 +491,7 @@ public class TimedSession : Session
 
 and there is no need to change any other code to get this working[^statemachine]. 
 
-Another added bonus of this situation that we do not have to return anything from methods is that we are free to apply proxy and decorator patterns more freely. For example, we may have hidden sessions, that are not displayed at all, but retain the rest of the session functionality. We may implement it as a proxy, that forwards all messages received to
-the original, wrapped `Session` object, while discarding the Dump calls:
+Another added bonus of this situation that `Session` does not have to return anything from methods is that we are free to apply proxy and decorator patterns more freely to the `Session`. For example, we may have hidden sessions, that are not displayed/stored/sent at all, but retain the rest of the session functionality. We may implement the feature using a proxy, that forwards all messages it receives to the original, wrapped `Session` object, but discards the `DumpInto()` calls:
 
 {lang="csharp"}
 ~~~
@@ -507,7 +506,7 @@ public class HiddenSession : Session
 
   public void DoSomethig()
   {
-    // forward the message:
+    // forward the message to wrapped instance:
     _innerSession.DoSomething();
   }
 
@@ -522,16 +521,11 @@ public class HiddenSession : Session
 }
 ~~~
 
-The most important thing is that when we are not forced to return anything, we are more free to do as we like. Again, "Tell, don't ask".
-
-This notion of passing context where the data is instead of pulling the data right into the context is often referred to as "context independence". Being context independent is one of the most important requirements for a class to be
-composable with other classes.
-
-TODO
+When we are not forced to return anything, we are more free to do as we like. Again, "Tell, don't ask".
 
 ## Single Responsibility
 
-I already said that we want our system to be a web of composable objects. Also, I said that we want to be able to unplug a cluster of objects at any place and plug in something different. TODO
+I already said that we want our system to be a web of composable objects. Also, I said that we want to be able to unplug a cluster of objects at any place and plug in something different. This leads to a question: what is the granule of composability? How much should a class do to be composable?
 
 TODO
 
@@ -550,6 +544,8 @@ TODO
 ## Avoid statics
 
 ## Instead of pulling the data where context is, pass the context where the data is
+
+TODO move this earlier in the chapter
 
 If you are like me, you probably learned programming starting from
 procedural languages.
