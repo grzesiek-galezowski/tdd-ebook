@@ -499,7 +499,7 @@ further automation in such scenarios. One of them is called
 is why it might seem a bit magical at first. Do not worry, you will get
 used to it).
 
-Using NSubstitute, out first test can be rewritten as such:
+Using NSubstitute, our first test can be rewritten as such:
 
 {lang="csharp"}
 ~~~
