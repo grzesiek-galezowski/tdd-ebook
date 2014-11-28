@@ -293,6 +293,33 @@ As I already said, there are places where Tell Don't Ask does not apply. Here ar
 4. Some APIs accessed via network - while it is good to use as much Tell Don't Ask as we can, web APIs have one limitation - it is hard or impossible to pass behaviors as polymorphic objects through them. Usually, we can only pass data.
 5. So called "fluent APIs", also called "internal domain-specific languages"[^domainspecificlanguages]
 
+Even in cases where we obtain other objects from a method call, we want to be able to apply Tell Don't Ask to these other objects. For example, we want to avoid the following chain of calls:
+
+{lang="csharp"}
+~~~
+Radio radio = radioRepository().GetRadio(12);
+var userName = radio.GetUsers().First().GetName();
+primaryUsersList.Add(userName);
+~~~
+
+This way we make the communication tied to the following assumptions:
+
+1.  Radio has many users
+2.  Radio must have at least one user
+3.  Each user must have a name
+4.  The name is not null
+
+On the other hand, consider this implementation:
+
+{lang="csharp"}
+~~~
+Radio radio = radioRepository().GetRadio(12);
+radio.AddPrimaryUserNameTo(primaryUsersList);
+~~~
+
+It does not have any of the weaknesses of the previous example. Thus, it is more stable in face of change.
+ 
+
 ## Getters should be removed, return values should be avoided
 
 The above stated guideline of "Tell Don't Ask" has a practical implication of getting rid of (almost) all the getters. We did say that each object should stick to its work and tell other objects to do their work, passing context to them, didn't we? If so, then why should we "get" anything from other objects?
@@ -525,7 +552,10 @@ When we are not forced to return anything, we are more free to do as we like. Ag
 
 ## Single Responsibility
 
-I already said that we want our system to be a web of composable objects. Also, I said that we want to be able to unplug a cluster of objects at any place and plug in something different. This leads to a question: what is the granule of composability? How much should a class do to be composable?
+I already said that we want our system to be a web of composable objects. Obviously, an object is a granule of composability - we cannot e.g. unplug half of object and plug in another half. Thus, a valid question to ask is this: how big should an object be to make the composability comfortable - to let us unplug as much logic as we want, leaving the rest untouched.
+
+
+This leads to a question: what is the granule of composability? How much should a class do to be composable?
 
 TODO
 
@@ -538,10 +568,6 @@ Law of Demeter. Coupling to details of return values.
 Size of protocols. Even interface with a single method can return a lot of values. Example: different reports produced.
 
 ## Context independence
-
-TODO
-
-## Avoid statics
 
 ## Instead of pulling the data where context is, pass the context where the data is
 
@@ -571,6 +597,11 @@ e.g. Id abstraction can be either in or string or a combination of those. The pr
 Plural is also an abstraction
 
 --------------------------------
+
+TODO
+
+## Avoid statics
+
 
 #### Interactions are not an implementation detail
 
