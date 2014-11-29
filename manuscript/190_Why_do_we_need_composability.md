@@ -179,16 +179,7 @@ Thanks to this, I create the alarm once, and then I can take it and pass
 it to ten, a hundred or a thousand different places where I will not
 have to determine the alarm kind anymore to use it correctly.
 
-This allows writing a lot of classes that have no knowledge whatsoever
-about the real class of the alarm they are dealing with, yet are able to
-use the alarm just fine only by knowing a common abstract type -
-`Alarm`. If we are able to do that, we arrive at a situation where we
-can add more alarms implementing `Alarm` and watch existing
-objects that are already using `Alarm` work with these new alarms without any
-change in their source code! There is one condition, however -- the
-**creation of the alarm instances must be moved out of the classes that use them**.
-That's because, as we already observed, to create an alarm using a `new` operator, we have to know the exact type of the alarm we are creating. So whoever creates an instance of `LoudAlarm` or `SilentAlarm`, loses its uniformity,
-since it is not able to depend solely on the `Alarm` interface.
+This allows writing a lot of classes that have no knowledge whatsoever about the real class of the alarm they are dealing with, yet are able to use the alarm just fine only by knowing a common abstract type -- `Alarm`. If we are able to do that, we arrive at a situation where we can add more alarms implementing `Alarm` and watch existing objects that are already using `Alarm` work with these new alarms without any change in their source code! There is one condition, however -- the **creation of the alarm instances must be moved out of the classes that use them**. That's because, as we already observed, to create an alarm using a `new` operator, we have to know the exact type of the alarm we are creating. So whoever creates an instance of `LoudAlarm` or `SilentAlarm`, loses its uniformity, since it is not able to depend solely on the `Alarm` interface.
 
 The power of composition
 ------------------------

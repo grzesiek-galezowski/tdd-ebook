@@ -426,7 +426,7 @@ ShouldThrowOutOfRangeExceptionWhenTryingToSetAlarmHourOutsideValidRange(
   //GIVEN
   var clock = new Clock();
 
-  //WHEN -- THEN
+  //WHEN - THEN
   Assert.Throws<OutOfRangeException>( 
     ()=> clock.SetAlarmHour(inputHour)
   );

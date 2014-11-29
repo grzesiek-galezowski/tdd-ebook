@@ -285,13 +285,8 @@ heuristics.
 Fourth technique: Constant Specification
 ----------------------------------------
 
-Let us consider another modification that we are requested to make -
-this time, the backup file name needs to contain version number of our
-application as well. Remembering that we want to use Derived Values, we
-will not hardcode the version number into our Statement. Instead, we are
-going to use a constant that is already defined somewhere else in the
-application (this way we also avoid duplication of this version number
-across the application):
+Let us consider another modification that we are requested to make -- this time, the backup file name needs to contain version number of our application as well. Remembering that we want to use Derived Values, we will not hardcode the version number into our Statement. Instead, we are going to use a constant that is already defined somewhere else in the
+application (this way we also avoid duplication of this version number across the application):
 
 ```csharp
 [Fact] public void 
@@ -415,9 +410,4 @@ implementation of Any class is
 Summary
 -------
 
-That was a long ride, wasn’t it? I hope that this chapter, gave you some
-understanding of how different TDD styles came into existence and why
-I use some of the techniques I do (and how these techniques are not just
-a series of random choices). In the next chapters, I will try to
-introduce some more techniques to help you grow a bag of neat tricks -
-a coherent style.
+That was a long ride, wasn’t it? I hope that this chapter, gave you some understanding of how different TDD styles came into existence and why I use some of the techniques I do (and how these techniques are not just a series of random choices). In the next chapters, I will try to introduce some more techniques to help you grow a bag of neat tricks -- a coherent style.

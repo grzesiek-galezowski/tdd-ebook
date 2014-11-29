@@ -18,11 +18,7 @@ It may sound obvious, but some people are having serious trouble
 describing the behavior they expect from their code. If you can name
 such behavior, it is a great starting point.
 
-I know not everybody pays attention to naming their Statements, mainly
-because the Statements are considered as tests and second-level citizens
-- as long as they run and “prove the code does not contain defects",
-they are considered sufficient. We will take a look at some examples of
-bad names and then I will introduce to you some rules of good naming.
+I know not everybody pays attention to naming their Statements, mainly because the Statements are considered as tests and second-level citizens -- as long as they run and “prove the code does not contain defects", they are considered sufficient. We will take a look at some examples of bad names and then I will introduce to you some rules of good naming.
 
 ### Consequences of bad naming
 
@@ -326,7 +322,7 @@ ShouldAppearEqualToAnotherUserWithTheSameName()
 }
 ```
 
-And that is it -- the Statement is complete!
+And that's it -- the Statement is complete!
 
 Start from the end
 ------------------

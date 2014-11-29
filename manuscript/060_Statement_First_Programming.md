@@ -4,61 +4,21 @@ Statement-first programming
 What is the point of writing specification after the fact? 
 ----------------------------------------------------------
 
-In the last chapter, I said that in TDD a ‘test’ takes another role -
-one of a statement being a part of a specification. If we put things
-this way, then the whole controversial concept of “writing a test before
-the code" does not pose a problem at all. Quite the contrary -- it only
-seems natural to specify what we are going to write before we attempt to
-write it. Does the other way round even make sense? A specification
-written after completing the implementation is nothing more than an
-attempt at documenting the existing solution. Sure, such attempts can
-provide some value when done as a kind of reverse-engineering (i.e.
-writing specification for something that was implemented long ago and we
-do not really know the exact business rules or policies, which we
-discover as we document the existing solution) -- it has an excitement of
-discovery in it, but doing it just after we, ourselves, made all the
-decisions seems like a waste of time, not to mention that it is dead
-boring (Do not believe me? Try implementing a simple calculator app and
-the write specification for it just after it is implemented and
-working). Anyway, specifying how something should work after the fact
-can hardly be considered creative.
+In the last chapter, I said that in TDD a ‘test’ takes another role -- one of a statement being a part of a specification. If we put things this way, then the whole controversial concept of “writing a test before the code" does not pose a problem at all. Quite the contrary -- it only seems natural to specify what we are going to write before we attempt to write it. Does the other way round even make sense? A specification written after completing the implementation is nothing more than an attempt at documenting the existing solution. Sure, such attempts can provide some value when done as a kind of reverse-engineering (i.e. writing specification for something that was implemented long ago and we do not really know the exact business rules or policies, which we discover as we document the existing solution) -- it has an excitement of discovery in it, but doing it just after we, ourselves, made all the decisions seems like a waste of time, not to mention that it is dead boring (Do not believe me? Try implementing a simple calculator app and the write specification for it just after it is implemented and working). Anyway, specifying how something should work after the fact can hardly be considered creative.
 
-Oh, and did I tell you that without a specification of any kind we do
-not really know whether we are done implementing our changes or not
-(because in order to know it, we need to compare the implemented
-functionality to ‘something’, even if this ‘something’ is only in the
-customer’s head).
+Oh, and did I tell you that without a specification of any kind we do not really know whether we are done implementing our changes or not (because in order to know it, we need to compare the implemented functionality to ‘something’, even if this ‘something’ is only in the customer’s head).
 
-Another thing I mentioned in the previous chapter was that one of the
-differences between a textual specification and our Specification
-consisting of executable Statements is that, although the code follows
-the Specification, we do not write our Specification fully up-front. The
-usual sequence is to specify a bit first and then code a bit, then
-repeat one Statement at a time. When doing TDD, we are traversing
-repeatedly through few phases that make up a cycle. We like these cycles
-to be short, so that we can get a quick feedback. Being able to get this
-quick feedback is essential, because it allows us to move forward with
-confidence that what we already have works as we intended. Also, it
-allows us to use the knowledge we gained in the previous cycle to make
-the next cycle more efficient (if you do not believe me that quick
-feedback is good, ask yourself a question: “how many times a day do
-I compile the code I work on?").
+Another thing I mentioned in the previous chapter was that one of the differences between a textual specification and our Specification consisting of executable Statements is that, although the code follows the Specification, we do not write our Specification fully up-front. The usual sequence is to specify a bit first and then code a bit, then repeat one Statement at a time. When doing TDD, we are traversing repeatedly through few phases that make up a cycle. We like these cycles to be short, so that we can get a quick feedback. Being able to get this quick feedback is essential, because it allows us to move forward with confidence that what we already have works as we intended. Also, it allows us to use the knowledge we gained in the previous cycle to make the next cycle more efficient (if you do not believe me that quick feedback is good, ask yourself a question: “how many times a day do I compile the code I work on?").
 
-Reading so much about cycles, it is probably no surprise to you that the
-traditional illustration of the TDD process is modeled visually as
-a circle-like flow:
+Reading so much about cycles, it is probably no surprise to you that the traditional illustration of the TDD process is modeled visually as a circle-like flow:
 
 ![Basic TDD cycle](images/RedGreenRefactor.png)
 
-Note that the above form uses the traditional terminology of TDD, so
-before I explain the steps, I will translate it to use our terms of
-Specification and Statements:
+Note that the above form uses the traditional terminology of TDD, so before I explain the steps, I will translate it to use our terms of Specification and Statements:
 
 ![Basic TDD cycle with changed terminology](images/RedGreenRefactor2.png)
 
-The second version seems more like common sense than the first one -
-specifying how something should behave before putting that behavior in
-place is way more intuitive than testing something that does not exist.
+The second version seems more like common sense than the first one -- specifying how something should behave before putting that behavior in place is way more intuitive than testing something that does not exist.
 
 Anyway, these three steps demand some explanation. In the coming
 chapters, I will give you some examples of how this process works in
@@ -140,18 +100,7 @@ public class CalculatorSpecification
 }
 ```
 
-Now, imagine that you are writing this Statement post-factum as a unit
-test in an environment that has, let us say, more than thirty Statements
-- you have written the code, now you are just creating a test after test
-“to ensure" (as you see, this is not my favorite reason for writing unit
-tests) the code works. Code, test -- pass, test -- pass, test -- pass. You
-almost always evaluate your code against the whole Specification, since
-it is usually easier than selecting what to evaluate each time, plus,
-you get more confidence this way that you did not break by mistake
-something that is already working. So, this is really: Code, Test -- all
-pass, test -- all pass, test -- all pass... Hopefully, you use some kind of
-snippets mechanism for creating new Statements, but if not (and many do
-not actually do this), once in a while, you do something like this:
+Now, imagine that you are writing this Statement post-factum as a unit test in an environment that has, let us say, more than thirty Statements -- you have written the code, now you are just creating a test after test “to ensure" (as you see, this is not my favorite reason for writing unit tests) the code works. Code, test -- pass, test -- pass, test -- pass. You almost always evaluate your code against the whole Specification, since it is usually easier than selecting what to evaluate each time, plus, you get more confidence this way that you did not break by mistake something that is already working. So, this is really: Code, Test -- all pass, test -- all pass, test -- all pass... Hopefully, you use some kind of snippets mechanism for creating new Statements, but if not (and many do not actually do this), once in a while, you do something like this:
 
 ```csharp
 public class CalculatorSpecification
@@ -176,15 +125,8 @@ does not give you any feedback on your mistake. So, what you end up is
 a Statement that not only will never be false -- **it will never be
 evaluated**.
 
-How does treating tests as Statements and evaluating them before making
-them true help here? **Because then, a Statement that starts off being
-evaluated as true is what DOES disturb your work flow.** In TDD, the
-work flow is: Statement -- unfulfilled -- fulfilled (ok, and refactor, but
-for the sake of THIS discussion, it does not matter so much), Statement
-- unfulfilled -- fulfilled, Statement -- unfulfilled -- fulfilled... So every
-time you fail to see the “unfulfilled" stage, you get feedback from your
-process that something suspicious is happening. This lets you
-investigate and, if necessary, fix the situation at hand.
+How does treating tests as Statements and evaluating them before making them true help here? **Because then, a Statement that starts off being evaluated as true is what DOES disturb your work flow.** In TDD, the work flow is: Statement -- unfulfilled -- fulfilled (ok, and refactor, but for the sake of THIS discussion, it does not matter so much), Statement
+-- unfulfilled -- fulfilled, Statement -- unfulfilled -- fulfilled... So every time you fail to see the “unfulfilled" stage, you get feedback from your process that something suspicious is happening. This lets you investigate and, if necessary, fix the situation at hand.
 
 #### 2. Misplacing mock setup
 

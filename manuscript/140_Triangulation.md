@@ -526,12 +526,4 @@ avoid “analysis paralysis".
 Summary
 -------
 
-As I stated before, triangulation is most useful when you have no idea
-how the internal design of a piece of functionality will look like (e.g.
-even if there are work-flows, they cannot be easily derived from your
-knowledge of the domain) and it’s not obvious along which axes your
-design must provide generality, but you are able to give some examples
-of the observable behavior of that functionality given certain inputs.
-These are usually situations where you need to slow down and take tiny
-steps that slowly bring you closer to the right design and functionality
-- and that’s what triangulation is for!
+As I stated before, triangulation is most useful when you have no idea how the internal design of a piece of functionality will look like (e.g. even if there are work-flows, they cannot be easily derived from your knowledge of the domain) and it’s not obvious along which axes your design must provide generality, but you are able to give some examples of the observable behavior of that functionality given certain inputs. These are usually situations where you need to slow down and take tiny steps that slowly bring you closer to the right design and functionality -- and that’s what triangulation is for!
