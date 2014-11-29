@@ -41,8 +41,7 @@ framework.
 
 Let us assume that our application looks like this:
 
-{lang="csharp"}
-~~~
+```csharp
 public static void Main(string[] args) 
 {
   try
@@ -60,7 +59,7 @@ public static void Main(string[] args)
     Console.WriteLine("Addition failed because of: " + e);
   } 
 }
-~~~
+```
 
 Now, let us assume we want to check whether it produces correct results.
 The most obvious way would be to invoke the application from command
@@ -68,12 +67,11 @@ line with some exemplary arguments, check the output to the console and
 compare it with what we expect to see. Such session could look like
 this:
 
-{lang="text"}
-~~~
+```text
 C:\MultiplicationApp\MultiplicationApp.exe 3 7
 21
 C:\MultiplicationApp\
-~~~
+```
 
 As you can see, the application produced a result of 21 for
 multiplication of 7 by 3. This is correct, so we assume the test is
@@ -87,8 +85,7 @@ do this for us! In order to do this, we will create a second application
 that will also use the Multiplication class, but in a little different
 way:
 
-{lang="csharp"}
-~~~
+```csharp
 public static void Main(string[] args) 
 {
   var multiplication = new Multiplication(3,7);
@@ -100,14 +97,13 @@ public static void Main(string[] args)
     throw new Exception("Failed! Expected: 21 but was: " + result);
   }
 }
-~~~
+```
 
 Sounds easy, right? Let us take another step and extract the result
 check into something more reusable - after all, we will be adding
 division in a second, remember? So here goes:
 
-{lang="csharp"}
-~~~
+```csharp
 public static void Main(string[] args) 
 {
   var multiplication = new Multiplication(3,7);
@@ -126,15 +122,14 @@ public static void AssertTwoIntegersAreEqual(
       "Failed! Expected: " + expected + " but was: " + actual);
   }
 }
-~~~
+```
 
 Note that I started the name of the method with “Assert" - we will get
 back to the naming soon, for now just assume that this is just a good
 name for the method. Let us take one last round and put the test into
 its own method:
 
-{lang="csharp"}
-~~~
+```csharp
 public static void Main(string[] args) 
 {
   Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers();
@@ -162,7 +157,7 @@ public static void AssertTwoIntegersAreEqual(
     "Failed! Expected: " + expected + " but was: " + actual);
   }
 }
-~~~
+```
 
 And we are finished. Now if we need another test, e.g. for division, we
 can just add a new method call to the `Main()` method and implement it.
@@ -212,8 +207,7 @@ Quite to our joy, those three elements are present in xUnit frameworks
 as well. To illustrate it, here is (finally!) the same test we wrote,
 but with an xUnit framework (this one is called XUnit.Net):
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void 
 Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
 {
@@ -226,7 +220,7 @@ Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
   //then the result should be...
   Assert.Equal(21, result);
 }
-~~~
+```
 
 As you can see, it looks like two methods that we previously had are
 gone now and the test is the only thing that is left. Well, to tell you
@@ -282,8 +276,7 @@ Let us pretend that we have the following code for adding new set of
 orders for products to a database and handling exceptions (by writing
 a message to a log) when it fails:
 
-{lang="csharp"}
-~~~
+```csharp
 public class OrderProcessing
 {
   //other code...
@@ -302,15 +295,14 @@ public class OrderProcessing
 
   //other code...
 }
-~~~
+```
 
 Now, imagine we need to test it - how do we do it? I can already see you
 shaking your head and saying: “Let us just create this database, invoke
 this method and see if the record is added properly". In such case, the
 first test would look like this:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact]
 public void ShouldInsertNewOrderToDatabase()
 {
@@ -333,7 +325,7 @@ public void ShouldInsertNewOrderToDatabase()
   var allOrders = orderDatabase.SelectAllOrders();
   Assert.Contains(order, allOrders);
 }
-~~~
+```
 
 As you see, at the beginning of the test, we are opening a connection
 and cleaning all existing orders (more on that shortly!), then creating
@@ -383,8 +375,7 @@ object, which is an instance of another custom class that implements the
 same interface as MySqlOrderDatabase, but does not write to a database
 at all - it only stores the inserted records in a list:
 
-{lang="csharp"}
-~~~
+```csharp
 public class FakeOrderDatabase : OrderDatabase
 {
   public Order _receivedArgument;
@@ -399,13 +390,12 @@ public class FakeOrderDatabase : OrderDatabase
     return new List<Order>() { _receivedOrder; };
   }
 }
-~~~
+```
 
 Now, we can substitute the real implementation of order database with
 the fake instance:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void 
 ShouldInsertNewOrderToDatabase()
 {
@@ -426,15 +416,14 @@ ShouldInsertNewOrderToDatabase()
   var allOrders = orderDatabase.SelectAllOrders();
   Assert.Contains(order, allOrders);
 }
-~~~
+```
 Note that we do not clean the fake database object, since we create it
 as fresh each time the test is run. Also, the test is going to be much
 quicker now. But, that is not the end! We can easily write a test for an
 exception situation. How do we do it? Just make another fake object
 implemented like this:
 
-{lang="csharp"}
-~~~
+```csharp
 public class ExplodingOrderDatabase : OrderDatabase
 {
   public void Insert(Order order)
@@ -446,7 +435,7 @@ public class ExplodingOrderDatabase : OrderDatabase
   {
   }
 }
-~~~
+```
 
 Ok, so far so good, but the bad is that now we have got two classes of
 fake objects to maintain (and chances are we will need even more). Any
@@ -454,8 +443,7 @@ method or argument added will need to be propagated to all these
 objects. We can spare some coding by making our mocks a little more
 generic so their behavior can be configured using lambda expressions:
 
-{lang="csharp"}
-~~~
+```csharp
 public class ConfigurableOrderDatabase : OrderDatabase
 {
   public Action<Order> doWhenInsertCalled;
@@ -471,27 +459,25 @@ public class ConfigurableOrderDatabase : OrderDatabase
     return doWhenSelectAllOrdersCalled();
   }
 }
-~~~
+```
 
 Now, we do not have to create additional classes for new scenarios, but
 our syntax gets awkward. See for yourself how we configure the fake
 order database to remember and yield the inserted order:
 
-{lang="csharp"}
-~~~
+```csharp
 var db = new ConfigurableOrderDatabase();
 Order gotOrder = null;
 db.doWhenInsertCalled = o => {gotOrder = o;};
 db.doWhenSelectAllOrdersCalled = () => new List<Order>() { gotOrder };
-~~~
+```
 
 And if we want it to throw an exception when anything is inserted:
 
-{lang="csharp"}
-~~~
+```csharp
 var db = new ConfigurableOrderDatabase();
 db.doWhenInsertCalled = o => {throw new Exception();};
-~~~
+```
 
 Thankfully, some smart programmers created frameworks that provide
 further automation in such scenarios. One of them is called
@@ -501,8 +487,7 @@ used to it).
 
 Using NSubstitute, our first test can be rewritten as such:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void 
 ShouldInsertNewOrderToDatabase()
 {
@@ -522,7 +507,7 @@ ShouldInsertNewOrderToDatabase()
   //THEN
   orderDatabase.Received(1).Insert(order);
 }
-~~~
+```
 
 Note that we do not need the `SelectAllOrders()` method. If no one
 except this test needs it, we can delete it and spare some more
@@ -543,8 +528,7 @@ these values are, although it does not (the database does, but we
 already got rid of it from the test). Let us move it to a method with
 descriptive name:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void 
 ShouldInsertNewOrderToDatabase()
 {
@@ -569,7 +553,7 @@ public Order AnonymousOrder()
     date: DateTime.Now,
     quantity: 1);
 }
-~~~
+```
 
 Now that is better. Not only did we make the test shorter, we also
 provided a hint to the test reader that the actual values used to create
@@ -584,8 +568,7 @@ them for us? Susprise, surprise, there is one! It is called
 Data Builder pattern, but let us skip this discussion here). After
 refactoring our test to use AutoFixture, we arrive at the following:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void 
 ShouldInsertNewOrderToDatabase()
 {
@@ -602,13 +585,12 @@ ShouldInsertNewOrderToDatabase()
 }
 
 private Fixture any = new Fixture();
-~~~
+```
 
 Nice, huh? AutoFixture has a lot of advanced features, but personally
 I am conservative and wrap it behind a static class called `Any`:
 
-{lang="csharp"}
-~~~
+```csharp
 public static class Any
 {
   private static any = new Fixture();
@@ -618,7 +600,7 @@ public static class Any
     return any.Create<T>();
   }
 }
-~~~
+```
 
 In the next chapters, you will see me using a lot of different methods
 from the `Any` type. The more you use this class, the more it grows with

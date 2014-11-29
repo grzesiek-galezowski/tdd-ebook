@@ -49,8 +49,7 @@ reader the rules according to which objects and functions work. The
 following oversimplified example shows a Statement where it is not
 explicitly stated what is the relationship between input and output:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostName()
 {
@@ -63,7 +62,7 @@ ShouldCreateBackupFileNameContainingPassedHostName()
   //THEN
   Assert.Equal("backup_MY_HOST_NAME.zip", name);
 }
-~~~
+```
 
 Although the relationship can be guessed quite easily, remember it is
 just an example. Also, seeing code like that makes me ask questions
@@ -84,8 +83,7 @@ specified functionality. In our case, we can pass whatever string we
 want (the object is not responsible for input validation), so we will
 name our method `AnyString()`:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostName()
 {
@@ -104,7 +102,7 @@ public string AnyString()
 {
   return "MY_HOST_NAME";
 }
-~~~
+```
 
 By using **anonymous input**, we provide a better documentation of the
 input value. Here, I wrote `AnyString()`, but of course, there can be
@@ -135,8 +133,7 @@ To better document the relationship between input and output, we have to
 simply derive the expected value we assert on from the input value. Here
 is the same Statement with the assertion changed:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostName()
 {
@@ -156,7 +153,7 @@ public string AnyString()
 {
   return "MY_HOST_NAME";
 }
-~~~
+```
 
 This looks more like a part of specification, because we are documenting
 the format of the backup file name and show which part of the format is
@@ -183,8 +180,7 @@ pattern must change as well to include this information. Of course, we
 are trying to use the anonymous input again as a proven technique and we
 end up with:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostNameAndUserName()
 {
@@ -206,7 +202,7 @@ public string AnyString()
 {
   return "MY_HOST_NAME";
 }
-~~~
+```
 
 Now, we can clearly see that there is something wrong with this
 Statement. AnyString() is used twice and each time it returns the same
@@ -217,8 +213,7 @@ when user name is used instead of host name in specified production
 code. This means that if we still want to use the anonymous input
 effectively, we have to make the two values distinct, e.g. like this:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostNameAndUserName()
 {
@@ -245,15 +240,14 @@ public string AnyString2()
 {
   return "MY_USER_NAME";
 }
-~~~
+```
 
 We solved the problem (for now) by introducing another helper method.
 However, this, as you can see, is not a very scalable solution. Thus,
 let us try to reduce the amount of helper methods for string generation
 to one and make it return a different value each time:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostNameAndUserName()
 {
@@ -275,7 +269,7 @@ public string AnyString()
 {
   return Guid.NewGuid.ToString();
 }
-~~~
+```
 
 This time, we are not returning an understandable string, but rather
 a guid, which gives us the fairly strong guarantee of generating
@@ -299,8 +293,7 @@ going to use a constant that is already defined somewhere else in the
 application (this way we also avoid duplication of this version number
 across the application):
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void 
 ShouldCreateBackupFileNameContainingPassedHostNameAndUserNameAndVersion()
 {
@@ -324,7 +317,7 @@ public string AnyString()
 {
   return Guid.NewGuid.ToString();
 }
-~~~
+```
 
 Note that I didn’t use the literal constant value, but rather, the value
 inside the `Version.Number` constant. This allows us to use derived
@@ -336,14 +329,13 @@ that should be specified itself!
 To keep everyone happy, we write a single Statement just for the
 constant to specify what the value should be:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void 
 ShouldContainNumberEqualTo1_0()
 {
   Assert.Equal("1.0", Version.Number);
 }
-~~~
+```
 
 By doing so, we make the value in the production code just echo what is
 in our executable Specification, which we can fully trust.
@@ -409,11 +401,10 @@ Seemann himself has invented the AutoFixture library for C\# that is [freely
 available to download](https://github.com/AutoFixture/AutoFixture). Here is a shortest possible
 snippet to generate an anonymous integer using AutoFixture:
 
-{lang="csharp"}
-~~~
+```csharp
 Fixture fixture = new Fixture();
 var anonymousInteger = fixture.Create<int>();
-~~~
+```
 
 I, after Amir Kolsky and Scott Bain, like to use Any class as seen in
 the previous chapters of this book. Any takes a slightly different

@@ -129,8 +129,7 @@ Let us take xUnit.Net as an example. As I stated previously, In
 xUnit.Net, to turn a method into a Statement, you mark it with `[Fact]`
 attribute the following way:
 
-{lang="csharp"}
-~~~
+```csharp
 public class CalculatorSpecification
 {
   [Fact]
@@ -139,7 +138,7 @@ public class CalculatorSpecification
     //... 
   }
 }
-~~~
+```
 
 Now, imagine that you are writing this Statement post-factum as a unit
 test in an environment that has, let us say, more than thirty Statements
@@ -154,8 +153,7 @@ pass, test - all pass, test - all pass... Hopefully, you use some kind of
 snippets mechanism for creating new Statements, but if not (and many do
 not actually do this), once in a while, you do something like this:
 
-{lang="csharp"}
-~~~
+```csharp
 public class CalculatorSpecification
 {
   //... some Statements here
@@ -166,7 +164,7 @@ public class CalculatorSpecification
     //... 
   }
 }
-~~~
+```
 
 And you do not even notice that this will not be evaluated with the rest
 of the Specification, because it already consists of so many Statements
@@ -200,8 +198,7 @@ Let us take a look at the following Statement saying that setting
 a value higher than allowed to a field of a frame should produce error
 result:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact]
 public void ShouldRecognizeTimeSlotAboveMaximumAllowedAsInvalid()
 {
@@ -221,7 +218,7 @@ public void ShouldRecognizeTimeSlotAboveMaximumAllowedAsInvalid()
     ValidationFailureReasons.AboveAcceptableLimit, 
     result.Reason);
 }
-~~~
+```
 
 Note how the method `PerformForTimeSlotIn()`, which triggers the
 specified behavior is accidentally called BEFORE the mock is actually
@@ -244,15 +241,14 @@ risking regression, then just test my changes and it is all good...").
 So, you start writing the new Statement. The Specification class already
 contains a field member like this:
 
-{lang="csharp"}
-~~~
+```csharp
 public class XmlConfigurationSpecification
 {
   XmlConfiguration config = new XmlConfiguration(xmlFixtureString);
   
   //...
   //...
-~~~
+```
 
 What it does is to set up an object used by every Statement. So, each
 Statement uses a `config` object initialized with the same
@@ -263,21 +259,19 @@ does not need all this crap that is inside this string. So, you decide
 to start fresh and create a separate object of `XmlConfiguration` class
 with your own, minimal string. Your Statement begins like this:
 
-{lang="csharp"}
-~~~
+```csharp
 string customFixture = CreateMyOwnFixtureForThisTestOnly();
 var configuration = new XmlConfiguration(customFixture);
 ...
-~~~
+```
 
 And it passes - cool... not. Ok, what is wrong with this? Nothing big,
 unless you read the source code of XmlConfiguration class carefully.
 Inside, you can see, how the xml string is stored:
 
-{lang="csharp"}
-~~~
+```csharp
 private static string xmlText; //note the static keyword!
-~~~
+```
 
 What the...? Well, well, here is what happened: the author of this class
 coded in a small little optimization. He thought: “In this app, the

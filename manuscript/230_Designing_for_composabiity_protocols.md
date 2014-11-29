@@ -11,18 +11,16 @@ Really? Are there any rules? Is it not enough the the objects can be composed to
 
 Let us imagine a class `Sender` that, in one of its methods, asks `Recipient` (let's assume `Recipient` is an interface) to extract status code from some kind of response object and makes a decision based on that code whether or not to notify an observer about an error:
 
-{lang="csharp"}
-~~~
+```csharp
 if(recipient.ExtractStatusCodeFrom(response) == -1)
 {
   observer.NotifyErrorOccured();
 }
-~~~
+```
 
 This design is a bit simplistic, but never mind. Its role is to make a certain point. Whoever the `recipient` is, it is expected to report error by returning a value of `-1`. Otherwise, the `Sender` (which is explicitly checking for this value) will not be able to react to the error situation appropriately. Similarly, if there is no error, the recipient must not report this by returning `-1`, because if it does, the `Sender` will be mistakenly recognize this as error. So for example this implementation of `Recipient`, although implementing the interface required by `Sender`, is wrong, because it does not behave as `Sender` expects it to:
 
-{lang="csharp"}
-~~~
+```csharp
 public class WrongRecipient : Recipient
 {
   public int ExtractStatusFrom(Response response)
@@ -37,23 +35,21 @@ public class WrongRecipient : Recipient
     }
   }
 }
-~~~
+```
 
 So as you see, we cannot just write anything in a class implementing an interface, because of a protocol that imposes certain constraints on both a sender and a recipient. 
 
 This protocol may not only determine the return values necessary for two objects to interact properly, it can also determine types of exceptions thrown, or the order of method calls. For example, anybody using some kind of connection object would imagine the following way of using the connection: first open it, then do something with it and close it when finished, e.g.
 
-{lang="csharp"}
-~~~
+```csharp
 connection.Open();
 connection.Send(data);
 connection.Close();
-~~~
+```
 
 Assuming the above `connection` is an implementation of `Connection` interface, if we were to implement it like this:
 
-{lang="csharp"}
-~~~
+```csharp
 public class WrongConnection : Connection
 {
   public void Open()
@@ -68,7 +64,7 @@ public class WrongConnection : Connection
     // *opening* the connection is here!! 
   }
 }
-~~~
+```
 
 it would compile just fine, but fail badly when executed. This is because the behavior would be against the protocol set between `Connection` abstraction and its user. All implementations of `Connection` must follow this protocol.
 
@@ -101,19 +97,17 @@ The protocols are simpler if they are designed from the perspective of the objec
 
 As an example, let us look at a code for logging in that uses an instance of an `AccessGuard` class:
 
-{lang="csharp"}
-~~~
+```csharp
 accessGuard.SetLogin(login);
 accessGuard.SetPassword(password);
 accessGuard.Login();
-~~~
+```
 
 In this little snippet, the sender must send three messages to the `accessGuard` object: `SetLogin()`, `SetPassword()` and `Login()`, even though there is no real need to divide the logic into three steps - they are all executed in the same place anyway. The maker of the `AccessGuard` class might have thought that this division makes the class more "general purpose", but it seems this is a "premature optimization" that only makes it harder for the sender to work with the `accessGuard` object. Thus, the protocol that is simpler from the perspective of a sender would be: 
 
-{lang="csharp"}
-~~~
+```csharp
 accessGuard.LoginWith(login, password);
-~~~
+```
 
 ### Naming by intention
 
@@ -127,12 +121,11 @@ This is important, because if the name represents the sender's intention, the me
 
 Sometimes at work, I am asked to conduct a design workshop. The example I often give to my colleagues is to design a system for order reservation (customers place orders and shop deliverers can reserve who gets to deliver which order). The thing that struck me the first few times I did this workshop was that even though the application was all about orders and their reservation, nearly none of the attendees introduced any kind of `Order` interface or class with `Reserve()` method on it. Most of the attendees assume that `Order` is a data structure and handle reservation by adding it to a "collection of reserved items" which can be imagined as the following code fragment:
 
-{lang="csharp"}
-~~~
+```csharp
 // order is just a data structure,
 // added to a collection
 reservedOrders.Add(order)
-~~~
+```
 
 While this achieves the goal in technical terms (i.e. the application works), the code does not reflect the domain. 
 
@@ -140,10 +133,9 @@ If roles, responsibilities and collaborations between objects reflect the domain
 
 On the other hand, let's assume that we have modeled the design after the domain and have introduced a proper `Order` role. Then, the logic for reserving an order may look like this:
 
-{lang="csharp"}
-~~~
+```csharp
 order.ReserveBy(deliverer);
-~~~
+```
 
 Note that this line is as stable as the domain itself. It needs to change e.g. when orders are not reserved anymore, or someone other than deliverers starts reserving the orders. Thus, I'd say the stability of this tiny interaction is darn high. 
 
@@ -153,8 +145,7 @@ Even in cases when the understanding of the domain evolves and changes rapidly, 
 
 Let's assume that we have a code for handling alarms. When alarm is triggered, all gates are closed, sirens are turned on and message is sent to special forces with highest priority to arrive and terminate the intruder. Any error in this procedure leads to shutting down power in the building. If this workflow is coded like this:
 
-{lang="csharp"}
-~~~
+```csharp
 try
 {
   gates.CloseAll();
@@ -165,7 +156,7 @@ catch(SecurityFailure failure)
 {
   powerSystem.TurnOffBecauseOf(failure);
 }
-~~~
+```
 
 Then the risk of this code changing for other reasons than the change of how domain works (e.g. we do not close the gates anymore but activate laser guns instead) is small. Thus, interactions that use abstractions
 and methods that directly express domain rules are more stable.
@@ -186,35 +177,32 @@ Here's the deal between us and the tax expert summarized as a table:
 
 It is us who hire the expert and us who initiate the deal, so we need to provide the context, as seen in the above table. If we were to model this deal as an interaction between two objects, it could e.g. look like this:
 
-{lang="csharp"}
-~~~
+```csharp
 taxExpert.PayAnnualIncomeTax(
   ourIncomeDocuments,
   ourBank);
-~~~
+```
 
 One day, our friend, Joan, tells us she needs a tax expert as well. We are happy with the one we hired, so we recommend him to Joan. She has her own income documents, but they are functionally similar to ours, just with different numbers here and there and maybe some different formatting. Also, Joan uses a different bank, but interacting with any bank these days is almost identical. Thus, our tax expert knows how to handle her request. If we model this as interaction between objects, it may look like this: 
 
-{lang="csharp"}
-~~~
+```csharp
 taxExpert.PayAnnualIncomeTax(
   joansIncomeDocuments,
   joansBank);
-~~~
+```
 
 Thus, when interacting with Joan, the tax expert can still use his abilities to calculate and pay taxes the same way as in our case. This is because his skills are independent of the context.
 
 Another day, we decide we are not happy anymore with our tax expert, so we decide to make a deal with a new one. Thankfully, we do not need to know how tax experts do their work - we just tell them to do it, so we can interact with the new one just as with the previous one:
 
-{lang="csharp"}
-~~~
+```csharp
 //this is the new tax expert, 
 //but no change to the way we talk to him:
 
 taxExpert.PayAnnualIncomeTax(
   ourIncomeDocuments,
   ourBank);
-~~~
+```
 
 This small example should not be taken literally. Social interactions are far more complicated and complex than what objects usually do. But I hope I managed to illustrate with it an important aspect of the communication style that is preferred in object oriented design: the *Tell Don't Ask* heuristic. 
 
@@ -222,10 +210,9 @@ Tell Don't Ask basically means that each object, as an expert in its job, is not
 
 This can be illustrated with a generic code pattern:
 
-{lang="csharp"}
-~~~
+```csharp
 recipient.DoSomethingForMe(allTheContextYouNeedToKnow);
-~~~
+```
 
 This way, a double benefit is gained:
 1.  Our recipient (e.g. `taxExpert` from the example) can be used by other senders (e.g. pay tax for Joan) without needing to change. All it needs is a different context passed inside a constructor and messages.
@@ -239,21 +226,19 @@ Again, quoting Scott Bain, "what you hide, you can change". Thus, telling an obj
 
 All of these benefits are, by the way, exactly what Johnny and Benjamin were aiming at when refactoring the payroll system. They went from this code, where they *asked* `employee` a lot of questions:
 
-{lang="csharp"}
-~~~
+```csharp
 var newSalary 
   = employee.GetSalary() 
   + employee.GetSalary() 
   * 0.1;
 employee.SetSalary(newSalary);
-~~~
+```
 
 to this design that *told* `employee` do do its job:
 
-{lang="csharp"}
-~~~
+```csharp
 employee.EvaluateRaise();
-~~~
+```
 
 This way, they were able to make this code interact with both `RegularEmployee` and `ContractorEmployee` the same way.
 
@@ -261,17 +246,15 @@ This guideline should be treated very, very seriously and applied in almost an e
 
 Oh, I almost forgot one thing! The context that we are passing is not necessarily data. It is even more frequent to pass around behavior than to pass data. For example, in our interaction with the tax expert:
 
-{lang="csharp"}
-~~~
+```csharp
 taxExpert.PayAnnualIncomeTax(
   ourIncomeDocuments,
   ourBank);
-~~~
+```
 
 Bank is probably not a piece of data. Rather, I would imagine Bank to implement an interface that looks like this:
 
-{lang="csharp"}
-~~~
+```csharp
 public interface Bank
 {
   void TransferMoney(
@@ -279,7 +262,7 @@ public interface Bank
     AccountId sourceAccount,
     AccountId destinationAccount); 
 }
-~~~
+```
 
 So as you can see, this `Bank` is a piece of behavior, not data, and it itself follows the Tell Don't Ask style as well (it does something well and takes all the context it needs from outside).
 
@@ -295,12 +278,11 @@ As I already said, there are places where Tell Don't Ask does not apply. Here ar
 
 Even in cases where we obtain other objects from a method call, we want to be able to apply Tell Don't Ask to these other objects. For example, we want to avoid the following chain of calls:
 
-{lang="csharp"}
-~~~
+```csharp
 Radio radio = radioRepository().GetRadio(12);
 var userName = radio.GetUsers().First().GetName();
 primaryUsersList.Add(userName);
-~~~
+```
 
 This way we make the communication tied to the following assumptions:
 
@@ -311,11 +293,10 @@ This way we make the communication tied to the following assumptions:
 
 On the other hand, consider this implementation:
 
-{lang="csharp"}
-~~~
+```csharp
 Radio radio = radioRepository().GetRadio(12);
 radio.AddPrimaryUserNameTo(primaryUsersList);
-~~~
+```
 
 It does not have any of the weaknesses of the previous example. Thus, it is more stable in face of change.
  
@@ -335,20 +316,18 @@ So, we need three classes dealing with data owned by the session. This means tha
 
 Of course, we might re-think our choice of creating separate classes for sending, persistence etc. and consider a choice where we put all this logic inside a `Session` class. If we did that, however, we would make a core domain concept (a session) dependent on a nasty set of third-party libraries (like a particular GUI library), which would mean that e.g. every time some GUI displaying concept changes, we will be forced to tinker in core domain code, which is pretty risky. Also, if we did that, the `Session` would be hard to reuse, because every place we would want to reuse this class, we would need to take all these heavy libraries it depends on with us. Plus, we would not be able to e.g. use `Session` with different GUI or persistence libraries. So, again, it seems like our (not so good, as we will see) only choice is to introduce getters for the information pieces stored inside a session, like this:
 
-{lang="csharp"}
-~~~
+```csharp
 public interface Session
 {
   string GetOwner();
   string GetTarget();
   DateTime GetExpiryTime();
 }
-~~~
+```
 
 So yeah, in a way, we have decoupled `Session` from these third-party libraries and we may even say that we have achieved context-independence as far as `Session` itself is concerned - we can now pull all its data e.g. in a GUI code and display it as a table. The `Session` does not know anything about it. Let's see that:
 
-{lang="csharp"}
-~~~
+```csharp
 // Display sessions as a table on GUI
 foreach(var session in sessions)
 {
@@ -358,12 +337,11 @@ foreach(var session in sessions)
   tableRow.SetCellContentFor("expiryTime", session.GetExpiryTime());
   table.Add(tableRow);
 }
-~~~
+```
 
 It seems we solved the problem, by separating the data from the context it is used in and pulling data to a place that has the context, i.e. knows what to do with this data. Are we happy? We may be unless we look at how the other parts look like - remember that in addition to displaying sessions, we also want to send them and persist them. The sending logic looks like this:
 
-{lang="csharp"}
-~~~
+```csharp
 //part of sending logic
 foreach(var session in sessions)
 {
@@ -373,12 +351,11 @@ foreach(var session in sessions)
   message.ExpiryTime = session.GetExpiryTime();
   connection.Send(message);
 }
-~~~
+```
 
 and the persistence logic like this:
 
-{lang="csharp"}
-~~~
+```csharp
 //part of storing logic
 foreach(var session in sessions)
 {
@@ -388,7 +365,7 @@ foreach(var session in sessions)
   dataRecord.ExpiryTime = session.GetExpiryTime();
   database.Save(record);
 }
-~~~
+```
 
 See anything disturbing here? If no, then imagine what happens when we add another piece of information to the `Session`, say, priority. We now have three places to update and we have to remember to update all of them every time. This is called "redundancy" or "asking for trouble". Also, composability of these three classes is pretty bad, because they will have to change a lot just because data in a session changes.
 
@@ -406,18 +383,16 @@ Thankfully, we have a third alternative, which is better than the two we already
 
 Let's see how this plays out in practice. First let's remove those ugly getters from the `Session` and introduce new method called `DumpInto()` that will take a `Destination` interface implementation as a parameter:
 
-{lang="csharp"}
-~~~
+```csharp
 public interface Session
 {
   void DumpInto(Destination destination);
 }
-~~~
+```
 
 The implementation of `Session`, e.g. a `RealSession` can pass all fields into this destination like so:
 
-{lang="csharp"}
-~~~
+```csharp
 public class RealSession : Session
 {
   //...
@@ -432,22 +407,20 @@ public class RealSession : Session
 
   //...
 }
-~~~
+```
 
 And the looping through sessions now looks like this:
 
-{lang="csharp"}
-~~~
+```csharp
 foreach(var session : sessions)
 {
   session.DumpInto(destination);
 }
-~~~
+```
 
 In this design, `RealSession` itself decides which parameters to pass and in what order (if that matters) - no one is asking for its data. This `DumpInto()` method is fairly general, so we can use it to implement all three mentioned behaviors (displaying, persistence, sending), by creating a implementation for each type of destination, e.g. for GUI, it might look like this:
 
-{lang="csharp"}
-~~~
+```csharp
 public class GuiDestination : Destination
 {
   private TableRow _row;
@@ -479,24 +452,22 @@ public class GuiDestination : Destination
     _table.Add(_row);
   }
 }
-~~~
+```
 
 The protocol is now more stable as far as the consumers of session data are concerned. Previously, when we had the getters in the `Session` class:
 
-{lang="csharp"}
-~~~
+```csharp
 public class Session
 {
   string GetOwner();
   string GetTarget();
   DateTime GetExpiryTime();
 }
-~~~
+```
 
-the getters **had to** return **something**. So what if we had sessions that could expire and decided we want to ignore them (i.e. do not display, store, send or do anything else with them) after they expire? In case of the "getter approach" seen in the snippet above, we would have to add another getter, e.g. called `IsExpired()` to the session class and remember to update each consumer the same way - to check the expiry before consuming the data... you see where this is going, don't you? On the other hand, with the current design of the `Session` interface, we can e.g. introduce a feature where the expired sessions are not processed at all in a single place:
+the getters **had to** return **something**. So what if we had sessions that could expire and decided we want to ignore them when they do (i.e. do not display, store, send or do anything else with them)? In case of the "getter approach" seen in the snippet above, we would have to add another getter, e.g. called `IsExpired()` to the session class and remember to update each consumer the same way - to check the expiry before consuming the data... you see where this is going, don't you? On the other hand, with the current design of the `Session` interface, we can e.g. introduce a feature where the expired sessions are not processed at all in a single place:
 
-{lang="csharp"}
-~~~
+```csharp
 public class TimedSession : Session
 {
   //...
@@ -514,14 +485,13 @@ public class TimedSession : Session
 
   //...
 }
-~~~
+```
 
 and there is no need to change any other code to get this working[^statemachine]. 
 
 Another added bonus of this situation that `Session` does not have to return anything from methods is that we are free to apply proxy and decorator patterns more freely to the `Session`. For example, we may have hidden sessions, that are not displayed/stored/sent at all, but retain the rest of the session functionality. We may implement the feature using a proxy, that forwards all messages it receives to the original, wrapped `Session` object, but discards the `DumpInto()` calls:
 
-{lang="csharp"}
-~~~
+```csharp
 public class HiddenSession : Session
 {
   private Session _innerSession;
@@ -546,7 +516,7 @@ public class HiddenSession : Session
 
   //...
 }
-~~~
+```
 
 When we are not forced to return anything, we are more free to do as we like. Again, "Tell, don't ask".
 

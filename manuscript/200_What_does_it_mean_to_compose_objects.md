@@ -34,8 +34,7 @@ Let's try to model this behavior in code. As you might have guessed, we will hav
 
 First, we do not want the alarm to have to distinguish between an automatic and a mechanical lift - this would only add complexity to alarm system, especially that there are plans to add a third kind of lift - a more modern one, so if we made the alarm aware of the different kinds, we would have to modify it each time a new kind of lift is introduced. Thus, we need a special **interface** (let's call it `Lift`) to communicate with both `AutoLift` and `MechanicalLift` (and `ModernLift` in the future). Through this interface, an alarm will be able to send messages to both types of lifts without having to know the difference between them.
 
-{lang="csharp"}
-~~~
+```csharp
 public interface Lift
 {
   ...
@@ -50,14 +49,13 @@ public class MechanicalLift : Lift
 {
   ...
 }
-~~~
+```
 
 Next, to be able to communicate with specific lifts through the `Lift`
 interface, an alarm object has to acquire **"addresses"** of the lift objects
  (i.e. references to them). We can pass them e.g. through a constructor:
 
-{lang="csharp"}
-~~~
+```csharp
 public class Alarm
 {
   private readonly IEnumerable<Lift> _lifts;
@@ -69,26 +67,24 @@ public class Alarm
     _lifts = lifts;
   }
 }
-~~~
+```
 
 Then, the alarm can send three kinds of **messages**: `GoToBottomFloor()`,
 `OpenDoor()`, and `DisablePower()` to any of the lifts through the
 `Lift` interface:
 
-{lang="csharp"}
-~~~
+```csharp
 public interface Lift
 {
   void GoToBottomFloor();
   void OpenDoor();
   void DisablePower();
 }
-~~~
+```
 
 and, as a matter of fact, it sends all these messages when triggered. The `Trigger()` method on the alarm looks like this:
 
-{lang="csharp"}
-~~~
+```csharp
 public void Trigger()
 {
   foreach(var lift in _lifts)
@@ -98,7 +94,7 @@ public void Trigger()
     lift.DisablePower();
   }
 }
-~~~
+```
 
 By the way, note that the order in which the messages are sent **does**
 matter. For example, if we disabled the power first, asking the powerless
@@ -119,8 +115,7 @@ Ok, I hope we got that part straight. Time for some new requirements. It has bee
 
 Here is an exemplary code of `Alarm` handling the malfunction reports in its `Trigger()` method:
 
-{lang="csharp"}
-~~~
+```csharp
 public void Trigger()
 {
   foreach(var lift in _lifts)
@@ -137,7 +132,7 @@ public void Trigger()
     }
   }
 }
-~~~
+```
 
 This is a second example of a **protocol** existing between `Alarm` and `Lift` that must be adhered to by both sides.
 

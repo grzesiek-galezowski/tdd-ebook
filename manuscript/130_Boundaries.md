@@ -22,8 +22,7 @@ methods. An example would be an addition of two numbers - whatever
 numbers we would supply, the answer would always be a sum of those
 numbers:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void
 ShouldCalculateTheSumOfTwoNumbers()
 {
@@ -37,7 +36,7 @@ ShouldCalculateTheSumOfTwoNumbers()
   //THEN
   Assert.Equal(a + b, result);
 }
-~~~
+```
 
 In this case, the integer numbers can really be “any" - the described
 relationship between input and output is independent of the actual
@@ -72,8 +71,7 @@ Statements: one for the mediocre rating and other for all the others.
 Here is the Statement for mediocre grade (let us imagine that all grades
 are members of an enum):
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void
 ShouldNotPassTheExamWhenGradeIsMediocre()
 {
@@ -86,7 +84,7 @@ ShouldNotPassTheExamWhenGradeIsMediocre()
   //THEN
   Assert.False(examPassed);
 }
-~~~
+```
 
 Note that here, we used the literal value of `Grades.Mediocre`. This is
 because no other value gives the same behavior as this one, so
@@ -96,8 +94,7 @@ The second Statement is for all the other cases. Here, we are going to
 use another method of the `Any` class for generating ay enum member
 other than specified:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void
 ShouldPassTheExamWhenGradeIsOtherThanMediocre()
 {
@@ -111,7 +108,7 @@ ShouldPassTheExamWhenGradeIsOtherThanMediocre()
   //THEN
   Assert.True(examPassed);
 }
-~~~
+```
 
 Here, `Any.Besides()` takes care of the enum value generation, producing
 a nice, readable code as a side effect.
@@ -173,8 +170,7 @@ assuming we’re implementing the mentioned absolute value calculation for
 integers. The first Statement is for values smaller than 0 and we want
 to use the left edge value here ilke this:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void
 ShouldNegateTheNumberWhenItIsLessThan0()
 {
@@ -188,13 +184,12 @@ ShouldNegateTheNumberWhenItIsLessThan0()
   //THEN
   Assert.Equal(-lessThan0, result);
 }
-~~~
+```
 
 And the next Statement for values at least 0 and we want to use the
 right edge value:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void
 ShouldNotNegateTheNumberWhenItIsGreaterOrEqualTo0()
 {
@@ -208,7 +203,7 @@ ShouldNotNegateTheNumberWhenItIsGreaterOrEqualTo0()
   //THEN
   Assert.Equal(moreOrEqualTo0, result);
 }
-~~~
+```
 
 There are two things to note about these examples. The first one is that
 we don’t use any kind of `Any` methods. We explicitly take the edges,
@@ -236,20 +231,18 @@ perform this exercise now and see what happens.
 
 First, let us document the named constant:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void
 ShouldIncludeSmallestValueNotToNegateSetToZero()
 {
   Assert.Equal(0, Constants.SmallestValueNotToNegate);
 }
-~~~
+```
 
 Now we have got everything we need to rewrite the two Statements we
 wrote earlier. The first would look like this:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void
 ShouldNegateTheNumberWhenItIsLessThanSmallestValueNotToNegate()
 {
@@ -264,12 +257,11 @@ ShouldNegateTheNumberWhenItIsLessThanSmallestValueNotToNegate()
   //THEN
   Assert.Equal(-lastNumberToNegate, result);
 }
-~~~
+```
 
 And the second Statement for values at least 0:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void
 ShouldNotNegateNumberWhenItIsGreaterOrEqualToSmallestValueNotToNegate()
 {
@@ -285,7 +277,7 @@ ShouldNotNegateNumberWhenItIsGreaterOrEqualToSmallestValueNotToNegate()
   Assert.Equal(
     Constants.SmallestValueNotToNegate, result);
 }
-~~~
+```
 
 As you can see, the first Statement contains the following expression:
 `Constants.SmallestValueNotToNegate - 1`, where 1 is the exact length of
@@ -336,8 +328,7 @@ functionality basically means that we can write the code of the
 Statement once, but make the xUnit framework invoke it twice with
 different sets of input values. Let’s see an example in XUnit.net:
 
-{lang="csharp"}
-~~~
+```csharp
 [Theory]
 [InlineData(17, QueryResults.TooYoung)]
 [InlineData(18, QueryResults.AllowedToApply)]
@@ -354,7 +345,7 @@ public void ShouldYieldResultForAge(int age, QueryResults expectedResult)
   //THEN
   Assert.Equal(expectedResult, result);
 }
-~~~
+```
 
 This way, there is only one Statement executed four times. The case of
 `AllowedToApply` is still evaluated twice for both edge cases (so there
@@ -373,8 +364,7 @@ exception.
 While some xUnit frameworks, like NUnit, allow us to handle both cases
 with one Statement by writing something like this:
 
-{lang="csharp"}
-~~~
+```csharp
 //NOTE: this is an example in NUnit framework!
 [TestCase(Hours.Min, Result=Hours.Min)]
 [TestCase(Hours.Max, Result=Hours.Max)]
@@ -394,7 +384,7 @@ ShouldBeAbleToSetHourBetweenMinAndMaxButNotOutsideThatRange(
   //THEN
   return setHour;
 }
-~~~
+```
 
 Others, like XUnit.NET, don’t (not that it’s a defect of the framework,
 it’s just that the philosophy behind those two is a little bit different
@@ -404,8 +394,7 @@ to solve it by writing two parameterized Statements - one where a value
 is returned (for valid cases) and one where exception is thrown (for
 invalid cases). The first would look like this:
 
-{lang="csharp"}
-~~~
+```csharp
 [Theory]
 [InlineData(Hours.Min)]
 [InlineData(Hours.Max)]
@@ -422,12 +411,11 @@ ShouldBeAbleToSetHourBetweenMinAndMax(int inputHour)
   //THEN
   Assert.Equal(inputHour, setHour);
 }
-~~~
+```
 
 and the second:
 
-{lang="csharp"}
-~~~
+```csharp
 [Theory]
 [InlineData(Hours.Min-1)]
 [InlineData(Hours.Max+1)]
@@ -443,7 +431,7 @@ ShouldThrowOutOfRangeExceptionWhenTryingToSetAlarmHourOutsideValidRange(
     ()=> clock.SetAlarmHour(inputHour)
   );
 }
-~~~
+```
 
 Summary
 -------

@@ -31,8 +31,7 @@ implementation in response to a Statetement. If the implementation is
 simple, this approach makes a lot of sense. Let’s take a trivial example
 of adding two numbers:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void
 ShouldAddTwoNumbersTogether()
 {
@@ -45,7 +44,7 @@ ShouldAddTwoNumbersTogether()
   //THEN
   Assert.Equal(8, result);
 }
-~~~
+```
 
 You may remember I told you that usually we write the simplest
 production code that would make the Statement true. This rule would
@@ -54,8 +53,7 @@ sufficient to make the Statement true. Instead, we can decide that the
 logic is so obvious, that we can just write it based on this one
 Statement:
 
-{lang="csharp"}
-~~~
+```csharp
 public class Sum
 {
   public int Of(int a, int b)
@@ -63,7 +61,7 @@ public class Sum
     return a+b;
   }
 }
-~~~
+```
 
 and this is it.
 
@@ -73,8 +71,7 @@ most (if not all) Statements we wrote so far in previous chapters, uses
 this approach because of this fact. Let’s take a look at how the above
 Statement would look if we used Constrained Non-Determinism:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void
 ShouldAddTwoNumbersTogether()
 {
@@ -89,7 +86,7 @@ ShouldAddTwoNumbersTogether()
   //THEN
   Assert.Equal(a + b, result);
 }
-~~~
+```
 
 Here, we don’t have any choice. The most obvious implementation that
 would make this Statement true is the correct implementation. We are
@@ -119,8 +116,7 @@ Let us apply Fake It to the same addition example as before (I promise,
 for triangulation, I will give you better one). The Statement looks the
 same as before:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void
 ShouldAddTwoNumbersTogether()
 {
@@ -133,14 +129,13 @@ ShouldAddTwoNumbersTogether()
   //THEN
   Assert.Equal(8, result);
 }
-~~~
+```
 
 Only this time, we are going to use the simplest implementation
 possible. As I wrote, this simplest implementation is almost always to
 return a constant:
 
-{lang="csharp"}
-~~~
+```csharp
 public class Sum
 {
   public int Of(int a, int b)
@@ -148,7 +143,7 @@ public class Sum
     return 8;
   }
 }
-~~~
+```
 
 The Statement evaluates to true (green) now, though the implementation
 is obviously wrong. BUT, the TDD cycle is not over yet. Remember that as
@@ -162,8 +157,7 @@ implementation - the implementation returns it and the Statement asserts
 on it. To reduce this duplication, let us break the 8 in the
 implementation into a sum:
 
-{lang="csharp"}
-~~~
+```csharp
 public class Sum
 {
   public int Of(int a, int b)
@@ -171,7 +165,7 @@ public class Sum
     return 3 + 5;
   }
 }
-~~~
+```
 
 Note the smart trick I did. I changed duplication between implementation
 and expected result to duplication between implementation and input
@@ -183,8 +177,7 @@ specified behavior - constructor parameters, fields etc. in contrast to
 result which we normally do not know until we invoke the behavior). The
 duplication of number 3 can be eliminated this way:
 
-{lang="csharp"}
-~~~
+```csharp
 public class Sum
 {
   public int Of(int a, int b)
@@ -192,15 +185,14 @@ public class Sum
     return a + 5;
   }
 }
-~~~
+```
 
 and we have just the number 5 duplicated, because we used variable to
 transfer the value of 3 from Statement method to the `Of`
 implementation, so we have it in one place now. Let us do the same with
 5:
 
-{lang="csharp"}
-~~~
+```csharp
 public class Sum
 {
   public int Of(int a, int b)
@@ -208,7 +200,7 @@ public class Sum
     return a + b;
   }
 }
-~~~
+```
 
 And that’s it. I used a trivial example, since I don’t want to spend too
 much time on this, but you can find more advanced ones in Kent Beck’s
@@ -262,7 +254,7 @@ our custom list class so that it fulfills its responsibility. Thus, we
 start with the simplest example of calculating a sum of 0 elements:
 
 {lang="csharp"}
-~~~~
+```
 [Fact] public void 
 ShouldReturn0AsASumOfNoElements()
 {
@@ -276,13 +268,13 @@ ShouldReturn0AsASumOfNoElements()
   //THEN
   Assert.Equal(0, result);
 }
-~~~~
+```
 
 Remember we want to write just enough code to make the Statement true.
 We can achieve it with just returning 0 from the `SumOfElements` method:
 
 {lang="csharp"}
-~~~~
+```
 public class ListWithAggregateOperations
 {
   public int SumOfElements()
@@ -290,13 +282,13 @@ public class ListWithAggregateOperations
     return 0;
   }
 }
-~~~~
+```
 
 This is not yet the implementation we are happy with, which makes us add
 another Statement - this time for a single element:
 
 {lang="csharp"}
-~~~~
+```
 [Fact] public void 
 ShouldReturnTheSameElementAsASumOfSingleElement()
 {
@@ -311,12 +303,12 @@ ShouldReturnTheSameElementAsASumOfSingleElement()
   //THEN
   Assert.Equal(singleElement, result);
 }
-~~~~
+```
 
 The naive implementation can be as follows:
 
 {lang="csharp"}
-~~~~
+```
 public class ListWithAggregateOperations
 {
   int _element = 0;
@@ -335,7 +327,7 @@ public class ListWithAggregateOperations
     return _element;
   }
 }
-~~~~
+```
 
 We have two examples, so let us check whether we can generalize now. We
 could try to get rid of the two constructors now, but let us wait just
@@ -355,7 +347,7 @@ axis - so it will use two elements instead of one or zero. This is how
 it looks like:
 
 {lang="csharp"}
-~~~~
+```
 [Fact] public void 
 ShouldReturnSumOfTwoElementsAsASumWhenTwoElementsAreSupplied()
 {
@@ -371,12 +363,12 @@ ShouldReturnSumOfTwoElementsAsASumWhenTwoElementsAreSupplied()
   //THEN
   Assert.Equal(firstElement + secondElement, result);
 }
-~~~~
+```
 
 And the naive implementation will look like this:
 
 {lang="csharp"}
-~~~~
+```
 public class ListWithAggregateOperations
 {
   int _element1 = 0;
@@ -403,7 +395,7 @@ public class ListWithAggregateOperations
     return _element1 + _element2; //changed
   }
 }
-~~~~
+```
 
 After adding and implementing the third example, the variability of
 elements count becomes obvious. Now that we have three examples, we see
@@ -419,7 +411,7 @@ Thankfully, C\# supports `params` keyword, that let us use it to remove
 the redundant constructor like this:
 
 {lang="csharp"}
-~~~~
+```
 public class ListWithAggregateOperations
 {
   int[] _elements;  
@@ -440,7 +432,7 @@ public class ListWithAggregateOperations
     return sum;
   }
 }
-~~~~
+```
 
 While the first Statement (“no elements") seems like a special case, the
 remaining two - for one and two elements - seem to be just two
@@ -452,7 +444,7 @@ replace these examples (I leave them in though, until I get this one to
 evaluate to true).
 
 {lang="csharp"}
-~~~~
+```
 [Fact]
 public void 
 ShouldReturnSumOfAllItsElementsWhenAskedForAggregateSum()
@@ -476,7 +468,7 @@ ShouldReturnSumOfAllItsElementsWhenAskedForAggregateSum()
    secondElement + 
    thirdElement, result);
 }
-~~~~
+```
 
 This Statement uses three values rather than zero, one or two as in the
 examples we had. When I need to use collections with deterministic size
@@ -499,7 +491,7 @@ badly implemented and see how our Statement will react (we expect it to
 evaluate to false):
 
 {lang="csharp"}
-~~~~
+```
 public int SumOfElements()
 {
   //changed
@@ -510,7 +502,7 @@ public int SumOfElements()
   }
   return sum + 1; //modified with "+1"!
 }
-~~~~
+```
 
 When we do this, we can see our last Statement evaluate to false with
 a message like “expected 21, got 22". We can now undo this one little

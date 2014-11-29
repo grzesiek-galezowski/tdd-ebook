@@ -72,10 +72,9 @@ what circumstances. Let us take a look at one of the names Steve freeman
 and Nat Pryce came up in their great book Growing Object Oriented
 Software Guided By Tests:
 
-{lang="java"}
-~~~ 
+```java
 notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort()
-~~~
+```
 
 Note few things about the name of the Statement:
 
@@ -104,8 +103,7 @@ Note few things about the name of the Statement:
     names. Sure, we could put all the information in the comment instead
     of Statement name and leave the name short, like this:
 
-    {lang="csharp"}
-    ~~~
+    ```csharp
     [Fact]
     //Notifies listeners that server 
     //is unavailable when cannot connect
@@ -114,7 +112,7 @@ Note few things about the name of the Statement:
     {
       //...
     }
-    ~~~
+    ```
     
     There are two downsides to this solution: one is that we now have to
     put extra information (`Statement_002`) which is required only by
@@ -163,8 +161,7 @@ The name of the Specification (i.e. class name) answers the question
 and want to say that it “should sort all items in ascending order when
 performed", I say it like this:
 
-{lang="csharp"}
-~~~
+```csharp
 public class SortingOperationSpecification
 {
  [Fact] public void
@@ -172,7 +169,7 @@ public class SortingOperationSpecification
  {
  }
 }
-~~~
+```
 
 The “should" word was introduced by Dan to weaken the statement
 following it and thus, to allow questioning what you are stating and ask
@@ -217,62 +214,54 @@ Let us try this on a simple problem of comparing two users. We assume that
 a user should be equal to another when it has the same name as the other
 one:
 
-{lang="gherkin"}
-~~~
+```gherkin
 Given a user with any name
 When I compare it to another user with the same name
 Then it should appear equal to this other user
-~~~
+```
 
 Let us start with the translation
 
 The first line:
 
-{lang="gherkin"}
-~~~~
+```gherkin
 Given a user with any name
-~~~~
+```
 
 can be translated literally to code like this:
 
-{lang="csharp"}
-~~~~
+```csharp
 var user = new User(anyName);
-~~~~
+```
 
 Then the second line:
 
-{lang="gherkin"}
-~~~~
+```gherkin
 When I compare it to another user with the same name
-~~~~
+```
 
 can be written as:
 
-{lang="csharp"}
-~~~~
+```csharp
 user.Equals(anotherUserWithTheSameName);
-~~~~
+```
 
 Great! Now the last line:
 
-{lang="gherkin"}
-~~~~
+```gherkin
 Then it should appear equal to this other user
-~~~~
+```
 
 and its translation into the code:
 
-{lang="csharp"}
-~~~~ 
+```csharp 
 Assert.True(areUsersEqual);
-~~~~
+```
 
 Ok, so we have made the translation, now let us summarize this and see
 what is missing to make this code compile:
 
-{lang="csharp"}
-~~~~
+```csharp
 [Fact] public void 
 ShouldAppearEqualToAnotherUserWithTheSameName()
 {
@@ -285,7 +274,7 @@ ShouldAppearEqualToAnotherUserWithTheSameName()
   //THEN
   Assert.True(areUsersEqual);
 }
-~~~~
+```
 
 As we expected, this will not compile. Notably, our compiler might point
 us towards the following gaps:
@@ -320,7 +309,7 @@ boils down to making a few trivial declarations and assignments:
 Putting it all together:
 
 {lang="csharp"}
-~~~~
+```
 [Fact] public void 
 ShouldAppearEqualToAnotherUserWithTheSameName()
 {
@@ -335,7 +324,7 @@ ShouldAppearEqualToAnotherUserWithTheSameName()
   //THEN
   Assert.True(areUsersEqual);
 }
-~~~~
+```
 
 And that is it - the Statement is complete!
 
@@ -362,11 +351,10 @@ in our domain the access can be either granted or denied. Let us take
 the successful case (just because it is the first one we can think of)
 and, starting backwards, start with the following assertion:
 
-{lang="csharp"}
-~~~
+```csharp
 //THEN
 Assert.True(accessGranted);
-~~~
+```
 
 Ok, that part was easy, but did we make any progress with that? Of
 course we did - we now have a non-compiling code and the compilation
@@ -383,13 +371,12 @@ Statements - it will only throw you off the track and steal your focus
 from what is important. The key to doing TDD successfully is to learn to
 use something that does not exist yet like it existed):
 
-{lang="csharp"}
-~~~
+```csharp
 //WHEN
 var accessGranted 
  = authorization.IsAccessToReportingGrantedTo(
   roleAllowedToUseReporting);
-~~~
+```
 
 Note that we do not know what `roleAllowedToUseReporting` is, neither do
 we know what is `authorization`, but that did not stop us from writing
@@ -411,11 +398,10 @@ call it? The instance name is `authorization`, so it is quite
 straightforward to name the class `Authorization` and instantiate it in
 the simplest way we can think of:
 
-{lang="csharp"}
-~~~
+```csharp
 //GIVEN
 var authorization = new Authorization();
-~~~
+```
 
 Now for the `roleAllowedToUseReporting`. The first question that comes
 to mind when looking at this is: which roles are allowed to use
@@ -425,18 +411,16 @@ of this variable. As for the type, there are various ways we can model
 a role, but the most obvious one for a type that has few possible values
 is an enum. So:
 
-{lang="csharp"}
-~~~
+```csharp
 //GIVEN
 var roleAllowedToUseReporting = Any.Of(Roles.Admin, Roles.Auditor);
-~~~
+```
 
 And so, working our way backwards, we have arrived at the final solution
 (we still need to give this Statement a name, but, provided what we
 already know, this is an easy task):
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void
 ShouldAllowAccessToReportingWhenAskedForEitherAdministratorOrAuditor()
 {
@@ -451,7 +435,7 @@ ShouldAllowAccessToReportingWhenAskedForEitherAdministratorOrAuditor()
  //THEN
  Assert.True(accessGranted);
 }
-~~~
+```
 
 Start by invoking a method when you have one
 --------------------------------------------
@@ -473,8 +457,7 @@ please sit down and enjoy your coffee for a few minutes as we take time
 to import your database" (given user name is Johnny). The class that
 implements it looks like this:
 
-{lang="csharp"}
-~~~
+```csharp
 public class FriendlyMessages
 {
   public string 
@@ -487,7 +470,7 @@ public class FriendlyMessages
       userName);
   }
 }
-~~~
+```
 
 Now, imagine that our management told us that they need to ship a trial
 version with some features disabled, including importing an existing
@@ -499,20 +482,18 @@ instance of another class implementing this interface when the
 application discovers that it is being run as a trial version. The
 extracted interface looks like this:
 
-{lang="csharp"}
-~~~
+```csharp
 public interface Messages
 {
   string HoldOnASecondWhileWeImportYourDatabase(string userName);
 }
-~~~
+```
 
 So our new implementation is forced to support the
 `HoldOnASecondWhileWeImportYourDatabase` method. Thus, we when
 implementing the class, we start with the following:
 
-{lang="csharp"}
-~~~
+```csharp
 public class TrialVersionMessages : Messages
 {
  public string HoldOnASecondWhileWeImportYourDatabase(string userName)
@@ -520,14 +501,13 @@ public class TrialVersionMessages : Messages
    throw new NotImplementedException();
  }
 }
-~~~
+```
 
 Now, we are ready to start writing a Statement. Assuming we do not know
 where to start, we just start with creating an object and invoking the
 method that needs to be implemented:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] 
 public void TODO()
 {
@@ -540,7 +520,7 @@ public void TODO()
  //THEN
  Assert.True(false); //to remember about it
 }
-~~~
+```
 
 As you can see, we added an assertion that always fails at the end
 because we do not have any assertions yet and the Statement would
@@ -554,8 +534,7 @@ what is its role in the behavior triggered by the
 name and we want it to be somewhere in the result of the method. Thus,
 we can add it to the Statement like this:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] 
 public void TODO()
 {
@@ -570,7 +549,7 @@ public void TODO()
  //THEN
  Assert.True(false); //to remember about it
 }
-~~~
+```
 
 Now, this compiles but is evaluated as false because of the guard
 assertion that we put at the end. Our goal is to substitute it with
@@ -579,8 +558,7 @@ a real assertion for a real expected result. The return value of the
 need to do is to come up with the message that we expect in case of
 trial version:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] 
 public void TODO()
 {
@@ -598,7 +576,7 @@ public void TODO()
 
  Assert.Equal(expectedMessage, message);
 }
-~~~
+```
 
 and all that is left is to find a good name for the Statement. This
 isn’t an issue since we already specified the desired behavior in the

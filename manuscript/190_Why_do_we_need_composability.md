@@ -18,7 +18,7 @@ and a silent alarm (that does not play any sound, but instead silently
 contacts the police) interchangeably, then usually, we could achieve this using a conditional like in the following function:
 
 {lang="c"}
-~~~
+```
 void triggerAlarm(Alarm* alarm)
 {
   if(alarm->kind == LOUD_ALARM)
@@ -30,25 +30,25 @@ void triggerAlarm(Alarm* alarm)
     notifyPolice(alarm);
   }
 }
-~~~
+```
 
 The code above makes decision based on the alarm kind which is embedded in the alarm structure:
 
 {lang="c"}
-~~~
+```
 struct Alarm
 {
   int kind;
   //other data
 };
-~~~
+```
 
 If the alarm kind is the loud one, it executes behavior associated with loud alarm. If this is a silent alarm, the behavior for silent alarms is executed. This seems to work. Unfortunately, if we wanted to make
 a second decision based on the alarm kind (e.g. we needed to disable the alarm), we would need to query the alarm kind again. This would mean duplicating the conditional code, just with a different set of
 actions to perform, depending on what kind of alarm we were dealing with:
 
 {lang="c"}
-~~~
+```
 void disableAlarm(Alarm* alarm)
 {
   if(alarm->kind == LOUD_ALARM)
@@ -60,7 +60,7 @@ void disableAlarm(Alarm* alarm)
     stopNotfyingPolice(alarm);
   }
 }
-~~~
+```
 
 Do I have to say why this duplication is bad? Do I hear a "no"? My
 apologies then, but I'll tell you anyway. The duplication means that
@@ -111,20 +111,18 @@ languages:
 So, in case of our alarms, we could make an interface with the following
 signature:
 
-{lang="csharp"}
-~~~
+```csharp
 public interface Alarm
 {
   void Trigger();
   void Disable();
 }
-~~~
+```
 
 and then make two classes: `LoudAlarm` and `SilentAlarm`, both
 implementing the `Alarm` interface. Example for `LoudAlarm`:
 
-{lang="csharp"}
-~~~
+```csharp
 public class LoudAlarm : Alarm
 {
   public void Trigger()
@@ -137,12 +135,12 @@ public class LoudAlarm : Alarm
     //stop playing the sound
   }
 }
-~~~
+```
 
 Now, we can make parts of code use the alarm, but by knowing the interface only instead of the concrete classes. This makes the parts of the code that use alarm this way not having to check which alarm they are dealing with. Thus, what previously looked like this:
 
 {lang="c"}
-~~~
+```
 if(alarm->kind == LOUD_ALARM)
 {
   playLoudSound(alarm);
@@ -151,14 +149,13 @@ else if(alarm->kind == SILENT_ALARM)
 {
   notifyPolice(alarm);
 }
-~~~
+```
 
 becomes just:
 
-{lang="csharp"}
-~~~
+```csharp
 alarm.Trigger();
-~~~~
+```
 
 where `alarm` is either `LoudAlarm` or `SilentAlarm`, but seen
 polymorphically as `Alarm`, so there's no need for 'if-else' anymore.
@@ -167,11 +164,10 @@ But hey, isn't this cheating? Even provided I can execute the trigger
 behavior on an alarm without knowing the actual class of the alarm, I
 still have to decide which class it is in the place where I create the actual instance:
 
-{lang="csharp"}
-~~~
+```csharp
 // we must know the exact type here:
 alarm = new LoudAlarm(); 
-~~~~
+```
 
 so it looks like I am not eliminating the 'else-if' after all, just moving it
 somewhere else! This may be true (we will talk more about it in future chapters), 
@@ -201,8 +197,7 @@ Moving creation of alarm instances away from the classes that use those
 alarms brings up an interesting problem - if an object does not create
 the objects it uses, then who does it? A solution is to make some special places in the code that are only responsible for composing a system from context-independent objects[^moreonindependence]. We saw this already as Johnny was explaining composability to Benjamin. He used the following example:
 
-{lang="csharp"}
-~~~
+```csharp
 new SqlRepository(
   new ConnectionString("..."), 
   new AccessPrivileges(
@@ -211,7 +206,7 @@ new SqlRepository(
   ),
   new InMemoryCache()
 );
-~~~
+```
 
 We can do the same with our alarms. Let's say that we have a secure area
 that has three buildings with different alarm policies:
@@ -224,8 +219,7 @@ Note that besides just triggering loud or silent alarm, we have a requirement fo
 
 Let's call the class implementing the choice between two alarms `DayNightSwitchedAlarm`. Here is the source code:
 
-{lang="csharp"}
-~~~
+```csharp
 public class DayNightSwitchedAlarm : Alarm
 {
   private readonly Alarm _dayAlarm;
@@ -257,14 +251,13 @@ public class DayNightSwitchedAlarm : Alarm
     _nightAlarm.Disable();
   }
 }
-~~~
+```
 
 Studying the above code, it is apparent that this is not an alarm *per se*, e.g. it does not raise any sound or notification, but rather, it contains some rules on how to use other alarms. This is the same concept as power splitters in real life, which act as electric devices but do not do anything other than redirecting the electricity to other devices. 
 
 Next, let's use the same approach and model the combination of two alarms as a class called `HybridAlarm`. Here is the source code:
 
-{lang="csharp"}
-~~~
+```csharp
 public class HybridAlarm : Alarm
 {
   private readonly Alarm _alarm1;
@@ -290,12 +283,11 @@ public class HybridAlarm : Alarm
     _alarm2.Disable();
   }
 }
-~~~
+```
 
 Using these two classes along with already existing alarms, we can implement the requirements by composing instances of those classes like this:
 
-{lang="csharp"}
-~~~
+```csharp
 new SecureArea(
   new OfficeBuilding(
     new DayNightSwitchedAlarm(
@@ -316,22 +308,20 @@ new SecureArea(
     )
   )
 );
-~~~
+```
 
 Note that the fact that we implemented combination and choice of alarms as separate objects implementing the `Alarm` interface allows us to define new, interesting alarm behaviors using the parts we already have, but composing them together differently. For example, we might have, as in the above example:
 
-{lang="csharp"}
-~~~
+```csharp
 new DayNightSwitchAlarm(
   new SilentAlarm("222-333-444"), 
   new LoudAlarm());
-~~~
+```
 
 which would mean triggering silent alarm during a day and loud one
 during night. However, instead of this combination, we might use:
 
-{lang="csharp"}
-~~~
+```csharp
 new DayNightSwitchAlarm(
   new SilentAlarm("222-333-444"),
   new HybridAlarm(
@@ -339,22 +329,20 @@ new DayNightSwitchAlarm(
     new LoudAlarm()
   )
 )
-~~~
+```
 
 Which would mean that we use silent alarm to notify the guards during the day, but a combination of silent (notifying police) and loud during the night. Of course, we are not limited to combining a silent alarm with a loud one only. We can as well combine two silent ones:
 
-{lang="csharp"}
-~~~
+```csharp
 new HybridAlarm(
   new SilentAlarm("919"),
   new SilentAlarm("222-333-444")
 )
-~~~
+```
 
 Additionally, if we suddenly decided that we do not want alarm at all during the day, we could use a special class called `NoAlarm` that would implement `Alarm` interface, but have both `Trigger` and `Disable` methods do nothing. The composition code would look like this:
 
-{lang="csharp"}
-~~~
+```csharp
 new DayNightSwitchAlarm(
   new NoAlarm(), // no alarm during the day
   new HybridAlarm(
@@ -362,17 +350,16 @@ new DayNightSwitchAlarm(
     new LoudAlarm()
   )
 )
-~~~
+```
 
 And, last but not least, we could completely remove all alarms from the
 guards building using the following code:
 
-{lang="csharp"}
-~~~
+```csharp
 new GuardsBuilding(
   new NoAlarm()
 )
-~~~
+```
 
 Noticed something funny about the last few examples? If not, here goes an explanation: in the last few examples, we have twisted the behaviors of our application in wacky ways, but all of this took place in the composition code! We did not have to modify any other existing classes! True, we had to write a new class called `NoAlarm`, but did not need to modify any other code than the composition code to make objects if this new class work with objects of existing classes!
 

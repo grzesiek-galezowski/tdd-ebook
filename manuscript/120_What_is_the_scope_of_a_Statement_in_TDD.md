@@ -28,7 +28,7 @@ Statements:
 Let us see the first example and try to answer this question:
 
 {lang="csharp"}
-~~~~
+```
 [Fact] public void
 ShouldThrowValidationExceptionWithFatalErrorLevelWhenValidatedStringIsEmpty()
 {
@@ -44,7 +44,7 @@ ShouldThrowValidationExceptionWithFatalErrorLevelWhenValidatedStringIsEmpty()
   //THEN
   Assert.True(exceptionThrown.IsFatalError);
 }
-~~~~
+```
 
 This is an example of a well-written unit-level Statement. Ok, so let us
 see... how many real classes take part in this spec? Three: a string, an
@@ -59,7 +59,7 @@ exercises one method of a specified object?
 Let us consider the following example:
 
 {lang="csharp"}
-~~~~
+```
 [Fact] public void 
 ShouldBeFulfilledWhenEventOccursThreeTimes()
 {
@@ -74,7 +74,7 @@ ShouldBeFulfilledWhenEventOccursThreeTimes()
   //THEN
   Assert.True(rule.IsFulfilled());
 }
-~~~~
+```
 
 Count with me: how many methods are called? Depending on how we count,
 it is two (`Queued()` and `IsFulfilled()`) or four
@@ -97,7 +97,7 @@ way, is a sign of poorly written Statement). Let us take a look at an
 example:
 
 {lang="csharp"}
-~~~~
+```
 [Fact] public void 
 ShouldReportItCanHandleStringWithLengthOf3ButNotOf4AndNotNullString()
 {
@@ -121,7 +121,7 @@ ShouldReportItCanHandleStringWithLengthOf3ButNotOf4AndNotNullString()
   //THEN again??
   Assert.False(resultForNull);
 }
-~~~~
+```
 
 Note that it specifies three (or two - depending on how you count)
 behaviors: acceptance of string of allowed size, refusal of handling
@@ -141,7 +141,7 @@ to be broader than those with class scope. Let us take the following
 example that proves it:
 
 {lang="csharp"}
-~~~~
+```
 [Fact] public void
 ShouldReportItIsStartedAndItDoesNotYetTransmitVoiceWhenItStarts()
 {
@@ -160,7 +160,7 @@ ShouldReportItIsStartedAndItDoesNotYetTransmitVoiceWhenItStarts()
     () => call.Transmit(Any.InstanceOf<Frame>())
   );
 }
-~~~~
+```
 
 Again, there are two behaviors here: reporting the call status after
 start and not being able to transmit frames after start. That is why

@@ -59,8 +59,7 @@ have now before we plan further steps.
 
 **Benjamin:** Let me just open my IDE... OK, here it is:
 
-{lang="csharp"}
-~~~
+```csharp
 public class CompanyPolicies 
 {
   readonly Repository _repository; 
@@ -99,7 +98,7 @@ public class CompanyPolicies
     }
   }
 }
-~~~
+```
 
 **Benjamin:** Look, Johnny, the class in fact contains all the four
 steps you mentioned, but they are not named explicitly - instead, their
@@ -133,8 +132,7 @@ we would either execute the logic for regular employees or for
 contractors. Assuming that the current structure of the code looks like
 this:
 
-{lang="csharp"}
-~~~
+```csharp
 foreach(var employee in employees)
 {
   //evaluate raise
@@ -145,12 +143,11 @@ foreach(var employee in employees)
   
   //save employee
 }
-~~~
+```
 
 the new structure would look like this:
 
-{lang="csharp"}
-~~~
+```csharp
 foreach(var employee in employees)
 {
   if(employee.IsContractor())
@@ -178,7 +175,7 @@ foreach(var employee in employees)
   //save employee
   ...
 }
-~~~
+```
 
 this way we would show that the steps are the same, but the
 implementation is different. Also, this would mostly require us to add
@@ -194,15 +191,14 @@ implementation of the steps from `CompanyPolicies` class into the
 `Employee` class itself, leaving only the names and the order of steps
 in `CompanyPolicies`:
 
-{lang="csharp"}
-~~~
+```csharp
 foreach(var employee in employees)
 {
   employee.EvaluateRaise();
   employee.EvaluateOneTimeBonus();
   employee.Save();
 }
-~~~
+```
 
 Then, we could change the `Employee` into an interface, so that it could
 be either a `RegularEmployee` or `ContractorEmployee` - both classes
@@ -220,22 +216,20 @@ some tests which we can run to see if a regression was introduced.
 **Johnny:** The first thing that is between us and our goal are these
 getters on the `Employee` class:
 
-{lang="csharp"}
-~~~
+```csharp
 GetSalary();
 GetGrade();
 GetYearsOfService();
-~~~
+```
 
 They just expose too much information specific to the regular employees.
 It would be impossible to use different implementations when these are
 around. These setters don't help much:
 
-{lang="csharp"}
-~~~
+```csharp
 SetSalary(newSalary)
 SetBonusForYear(year, amount);
-~~~
+```
 
 While these are not as bad, we'd better give ourselves more flexibility.
 Thus, let's hide all of this behind more abstract methods that hide what
@@ -243,8 +237,7 @@ actually happens, but reveal our intention.
 
 First, take a look at this code:
 
-{lang="csharp"}
-~~~
+```csharp
 //evaluate raise
 if(employee.GetSalary() < payGrade.Maximum)
 {
@@ -254,7 +247,7 @@ if(employee.GetSalary() < payGrade.Maximum)
     * 0.1;
   employee.SetSalary(newSalary);
 }
-~~~
+```
 
 Each time you see a block of code separated from the rest with blank
 lines and starting with a comment, you see something screaming "I want
@@ -264,29 +257,26 @@ comment!". Let's grant this wish and make it a separate method on the
 
 **Benjamin:** Ok, wait a minute... here:
 
-{lang="csharp"}
-~~~
+```csharp
 employee.EvaluateRaise();
-~~~
+```
 
 **Johnny:** Great! Now, we've got another example of this species here:
 
-{lang="csharp"}
-~~~
+```csharp
 //evaluate one-time bonus
 if(employee.GetYearsOfService() == 5)
 {
   var oneTimeBonus = employee.GetSalary() * 2;
   employee.SetBonusForYear(2014, oneTimeBonus);
 }
-~~~
+```
 
 **Benjamin:** This one should be even easier... Ok, take a look:
 
-{lang="csharp"}
-~~~
+```csharp
 employee.EvaluateOneTimeBonus();
-~~~
+```
 
 **Johnny:** Almost good. I'd only leave out the information that the
 bonus is one-time from the name.
@@ -302,10 +292,9 @@ making the method name lie. The names should reflect that we want to
 evaluate a bonus, whatever that means for a particular type of employee.
 Thus, let's make it:
 
-{lang="csharp"}
-~~~
+```csharp
 employee.EvaluateBonus();
-~~~
+```
 
 **Benjamin:** Ok, I get it. No problem.
 
@@ -313,8 +302,7 @@ employee.EvaluateBonus();
 `EvaluateIncentivePlan` method to see whether it is still coupled to
 details specific to regular employees. Here's the code:
 
-{lang="csharp"}
-~~~
+```csharp
 public void ApplyYearlyIncentivePlan()
 {
   var employees = _repository.CurrentEmployees();
@@ -326,7 +314,7 @@ public void ApplyYearlyIncentivePlan()
     employee.Save();
   }
 }
-~~~
+```
 
 **Benjamin:** It seems that there is no coupling to the details about
 regular employees anymore. Thus, we can safely make the repository

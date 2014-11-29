@@ -99,23 +99,21 @@ As I said, there are different levels you can apply this. Here is an
 example for such a behavior description from the perspective of its end
 user (this is called acceptance-level Statement):
 
-{lang="gherkin"}
-~~~
+```gherkin
 Given a bag of tea costs $20
 When I buy two of them
 Then I should be charged 30$ due to promotion
-~~~
+```
 
 And here is one for unit-level (note the line starting with “And" that
 adds to the context):
 
-{lang="gherkin"}
-~~~
+```gherkin
 Given a list with 2 items
 When I add another item
 And check items count
 Then the count should be 3
-~~~
+```
 
 While on acceptance level we put such behavior descriptions together
 with code as the same artifact (If this does not ring a bell, look at
@@ -127,8 +125,7 @@ about starting from Statement rather than code. I like to put the
 structure explicitly in my Statements - I find that it makes them more
 readable. So most of my unit-level Statements follow this template:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact]
 public void Should__BEHAVIOR__()
 {
@@ -141,14 +138,13 @@ public void Should__BEHAVIOR__()
   //THEN
   ...assertions etc....
 }
-~~~
+```
 
 Sometimes the WHEN and THEN sections are not so easily separable - then
 I join them, like in case of the following Statement specifying that an
 object throws an exception when asked to store null:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact]
 public void ShouldThrowExceptionWhenAskedToStoreNull()
 {
@@ -160,7 +156,7 @@ public void ShouldThrowExceptionWhenAskedToStoreNull()
     () => safeList.Store(null)
   );
 }
-~~~
+```
 
 By thinking in terms of these three parts of behavior, we may arrive at
 different circumstances (GIVEN) at which the behavior takes place, or

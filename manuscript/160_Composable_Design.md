@@ -75,8 +75,7 @@ synchronizing. Let's take a bite at the code!
 
 **Johnny:** Sure, here you go:
 
-{lang="csharp"}
-~~~
+```csharp
 public class CompanyPolicies : IDisposable
 {
   readonly SqlRepository _repository
@@ -115,7 +114,7 @@ public class CompanyPolicies : IDisposable
     _repository.Dispose();
   }
 }
-~~~
+```
 
 **Benjamin:** Wow, there is a lot of literal constants all around and
 functional decomposition is barely done!
@@ -132,13 +131,12 @@ somehow able to make the `CompanyPolicies` class database type-agnostic.
 For now, as you can see, the implementation is coupled to the specific
 `SqlRepository`, because it creates a specific instance itself:
 
-{lang="csharp"}
-~~~
+```csharp
 public class CompanyPolicies : IDisposable
 {
   readonly SqlRepository _repository
     = new SqlRepository();
-~~~
+```
 
 Now, we need to evaluate the options we have to pick the best one. What
 options do you see, Benjamin?
@@ -147,8 +145,7 @@ options do you see, Benjamin?
 `SqlRepository` and introduce an if statement to the constructor like
 this:
 
-{lang="csharp"}
-~~~
+```csharp
 public class CompanyPolicies : IDisposable
 {
   readonly Repository _repository;
@@ -164,7 +161,7 @@ public class CompanyPolicies : IDisposable
       _repository = new NoSqlRepository();
     }
   }
-~~~
+```
 
 **Johnny:** True, but this option has few deficiencies. First of all,
 remember we're trying to follow the scout rule and by using this option
@@ -179,8 +176,7 @@ next option?
 **Benjamin:** Another option would be to change the SqlRepository itself
 to be just a wrapper around the actual database access, like this:
 
-{lang="csharp"}
-~~~
+```csharp
 public class SqlRepository : IDisposable
 {
   readonly Repository _repository;
@@ -201,7 +197,7 @@ public class SqlRepository : IDisposable
   {
     return _repository.CurrentEmployees();
   }
-~~~
+```
 
 **Johnny:** Sure, this is an approach that could work and would be worth
 considering for very serious legacy code, as it does not force us to
@@ -220,8 +216,7 @@ choice. The last option I can think of is leaving this choice to
 another, "3rd party" code, that would choose the repository to use and
 pass it to the `CompanyPolicies` via constructor, like this:
 
-{lang="csharp"}
-~~~
+```csharp
 public class CompanyPolicies : IDisposable
 {
   private readonly Repository _repository;
@@ -230,7 +225,7 @@ public class CompanyPolicies : IDisposable
   {
     _repository = repository;
   }
-~~~     
+```
 
 This way, the `CompanyPolicies` won't know what exactly is passed to it
 via constructor and we can pass whatever we like - either an SQL
@@ -251,8 +246,7 @@ instance through it...
 
 **Benjamin:** Ha ha! Look at this! I am SUPREME!
 
-{lang="csharp"}
-~~~
+```csharp
 public class CompanyPolicies : IDisposable
 {
   //_repository is now an interface
@@ -275,7 +269,7 @@ public class CompanyPolicies : IDisposable
     _repository.Dispose();
   }
 }
-~~~
+```
 
 **Johnny:** Hey, hey, hold your horses! There is one thing wrong with
 this code.
@@ -304,8 +298,7 @@ still want to use it.
 **Johnny:** The same part of the code that creates it, for example the
 `Main` method. Let me show you an example of how this may look like:
 
-{lang="csharp"}
-~~~
+```csharp
 public static void Main(string[] args)
 {
   using(var repo = new SqlRepository())
@@ -316,15 +309,14 @@ public static void Main(string[] args)
     //for anything you like
   }
 }
-~~~
+```
 
 This way the repository is created at the start of the program and
 disposed of at the end. Thanks to this, the `CompanyPolicies` has no
 disposable fields and it itself does not have to be disposable - we can
 just delete the `Dispose()` method:
 
-{lang="csharp"}
-~~~
+```csharp
 //not implementing IDisposable anymore:
 public class CompanyPolicies 
 {
@@ -344,7 +336,7 @@ public class CompanyPolicies
 
   //no Dispose() method anymore
 }
-~~~
+```
 
 **Benjamin:** Cool. So, what now? Seems we have the `CompanyPolicies`
 class depending on repository abstraction instead of an actual
@@ -355,19 +347,17 @@ just pass it through the constructor instead of the original one.
 **Johnny:** Yes. For example, look at `CompanyPolicies` component. We
 can compose it with a repository like this:
 
-{lang="csharp"}
-~~~
+```csharp
 var policies 
   = new CompanyPolicies(new SqlRepository());
-~~~
+```
 
 or like this:
 
-{lang="csharp"}
-~~~
+```csharp
 var policies 
   = new CompanyPolicies(new NoSqlRepository());
-~~~
+```
 
 without changing the code of `CompanyPolicies`. This means that
 `CompanyPolicies` does not need to know what `Repository` exactly it is
@@ -377,8 +367,7 @@ throw exceptions when it is not supposed to do so). An implementation of
 `Repository` may be itself a very complex and composed of another set of
 classes, for example something like this:
 
-{lang="csharp"}
-~~~
+```csharp
 new SqlRepository(
   new ConnectionString("..."), 
   new AccessPrivileges(
@@ -387,7 +376,7 @@ new SqlRepository(
   ),
   new InMemoryCache()
 );
-~~~
+```
 
 but the `CompanyPolicies` neither knows or cares about this, as long as
 it can use our new `Repository` implementation just like other
@@ -401,13 +390,12 @@ looking for the coffee.
 
 **Benjamin:** Here:
 
-{lang="csharp"}
-~~~
+```csharp
 public interface Repository
 {
   IList<Employee> CurrentEmployees();
 }
-~~~
+```
 
 **Johnny:** Ok, so what we need is to create just another implementation
 and pass it through the constructor depending on what data source is

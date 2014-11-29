@@ -80,12 +80,11 @@ that is counter-intuitive - it occurs in our everyday lives. This is
 also true in software development. Let us take the following ‘test’ and
 see what kind of needs it specifies:
 
-{lang="csharp"}
-~~~
+```csharp
 var reporting = new ReportingFeature();
 var anyPowerUser = Any.Of(Users.Admin, Users.Auditor);
 Assert.True(reporting.CanBePerformedBy(anyPowerUser));
-~~~
+```
 
 (In this example, we used `Any.Of()` method that returns any enumeration
 value from the specified list. Here, we say “give me a value that is

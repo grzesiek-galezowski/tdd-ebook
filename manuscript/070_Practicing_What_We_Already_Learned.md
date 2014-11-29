@@ -330,8 +330,7 @@ should the calculator do?
 **Johnny:** In our case, “turning on" is creating a calculator. Let us
 write it down as a method name:
 
-{lang="csharp"}
-~~~
+```csharp
 public class CalculatorSpecification
 {
 
@@ -342,7 +341,7 @@ ShouldDisplay0WhenCreated()
 }
 
 }
-~~~
+```
 
 **Benjamin:** Why is the name of the class `CalculatorSpecification` and
 the name of the method `ShouldDisplay0WhenCreated`?
@@ -363,8 +362,7 @@ displaying “0", right? So let us just write it in form of an assertion.
 
 **Benjamin:** You mean something like this?
 
-{lang="csharp"}
-~~~
+```csharp
 public class CalculatorSpecification
 {
 
@@ -375,7 +373,7 @@ ShouldDisplay0WhenCreated()
 }
 
 }
-~~~
+```
 
 **Johnny:** Precisely.
 
@@ -394,8 +392,7 @@ displayed value from?
 
 **Johnny:** like this:
 
-{lang="csharp"}
-~~~
+```csharp
 public class CalculatorSpecification
 {
 
@@ -408,7 +405,7 @@ ShouldDisplay0WhenCreated()
 }
 
 }
-~~~
+```
 
 **Benjamin:** I see. Now the calculator is not created anywhere. I need
 to create it somewhere now or it will not compile and this is my next
@@ -418,8 +415,7 @@ step. Is this how it works?
 
 **Benjamin:** Ok then, here goes:
 
-{lang="csharp"}
-~~~
+```csharp
 public class CalculatorSpecification
 {
 
@@ -434,7 +430,7 @@ ShouldDisplay0WhenCreated()
 }
 
 }
-~~~
+```
 
 **Johnny:** Bravo!
 
@@ -445,18 +441,16 @@ the `Calculator` class at all...
 
 **Benjamin:** OK.
 
-{lang="csharp"}
-~~~
+```csharp
 public class Calculator
 {
 }
-~~~
+```
 
 **Benjamin:** Looks like the `Display()` method is missing too. I will
 add it.
 
-{lang="csharp"}
-~~~
+```csharp
 public class Calculator
 {
   public string Display()
@@ -464,7 +458,7 @@ public class Calculator
     return "0";
   } 
 }
-~~~
+```
 
 **Johnny:** Hey hey, not so fast!
 
@@ -476,8 +470,7 @@ and that is exactly what the code you wrote does. Before we arrive at
 this point, let us make sure this Statement can ever be evaluates as
 false. So for now, let us change it to this:
 
-{lang="csharp"}
-~~~
+```csharp
 public class Calculator
 {
   public string Display()
@@ -485,7 +478,7 @@ public class Calculator
     return "Once upon a time in Africa";
   } 
 }
-~~~
+```
 
 **Johnny:** Look, now we can run the Specification and watch that
 Statement evaluate to false, because it expects “0", but gets “Once upon
@@ -509,8 +502,7 @@ what do we do now?
 
 **Benjamin:** like this?
 
-{lang="csharp"}
-~~~
+```csharp
 public class Calculator
 {
   public string Display()
@@ -518,7 +510,7 @@ public class Calculator
     return "0";
   } 
 }
-~~~
+```
 
 **Johnny:** Yes.
 
@@ -557,23 +549,20 @@ duplicated between the Statement and the code?
 **Benjamin:** both of them contain the literal “0". The Statement has it
 here:
 
-{lang="csharp"}
-~~~
+```csharp
 Assert.Equal("0", displayedResult);
-~~~
+```
 
 and the implementation here:
 
-{lang="csharp"}
-~~~
+```csharp
 return "0";
-~~~
+```
 
 **Johnny:** Good, let us eliminate this duplication by introducing
 a constant called `InitialValue`. The Statement will now look like this:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void
 ShouldDisplayInitialValueWhenCreated()
 {
@@ -583,12 +572,11 @@ ShouldDisplayInitialValueWhenCreated()
 
  Assert.Equal(Calculator.InitialValue, displayedResult);
 }
-~~~
+```
 
 and the implementation:
 
-{lang="csharp"}
-~~~
+```csharp
 public class Calculator
 {
   public const string InitialValue = "0";
@@ -597,7 +585,7 @@ public class Calculator
     return InitialValue;
   } 
 }
-~~~
+```
 
 **Benjamin:** The code looks better and having the constant in one place
 will make it more maintainable, but I think the Statement in its current
@@ -628,8 +616,7 @@ behavior?
 
 **Benjamin:** I will try. Here goes:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void 
 ShouldDisplayEnteredDigits()
 {
@@ -642,7 +629,7 @@ ShouldDisplayEnteredDigits()
 
   Assert.Equal("123", displayedValue);
 }
-~~~
+```
 
 **Johnny:** I am glad that you got the part about naming and writing
 a Statement. One thing we will have to work on here though.
@@ -676,8 +663,7 @@ used:
 
 Hence, I propose the following:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void 
 ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 {
@@ -702,7 +688,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
   calculator.Display()
  );
 }
-~~~
+```
 
 **Benjamin:** Johnny, I am lost! Can you explain what is going on here?
 
@@ -751,14 +737,13 @@ I will tell you more about later.
 is going on - we can talk about the principles, pros and cons later. By
 the way, the following sequence of casts looks a little bit ugly:
 
-{lang="csharp"}
-~~~
+```csharp
 string.Format("{0}{1}{2}", 
  (int)nonZeroDigit, 
  (int)anyDigit1, 
  (int)anyDigit2
 )
-~~~
+```
 
 **Johnny:** We will get back to it and make it more “smarter" in
 a second after we make this statement true. For now, we need something
@@ -770,8 +755,7 @@ is the result?
 **Johnny:** Good, now let us write some code to make this Statement
 true. First, let us introduce an enumeration of digits:
 
-{lang="csharp"}
-~~~
+```csharp
 public enum DigitKeys
 {
  Zero = 0,
@@ -780,7 +764,7 @@ public enum DigitKeys
  TODO3, //TODO
  TODO4, //TODO
 }
-~~~
+```
 
 **Benjamin:** What is with all those bogus values? Should we not just
 enter all the digits we support?
@@ -807,8 +791,7 @@ effortless.
 **Johnny:** Now for the implementation. Just to remind you - up to now,
 it looked like this:
 
-{lang="csharp"}
-~~~
+```csharp
 public class Calculator
 {
  public const string InitialValue = "0";
@@ -817,14 +800,13 @@ public class Calculator
   return InitialValue;
  } 
 }
-~~~
+```
 
 This is not enough to support displaying multiple digits (as we saw,
 because the Statement saying they should be supported was evaluated to
 false). So let us evolve the code to handle this case:
 
-{lang="csharp"}
-~~~
+```csharp
 public class Calculator
 {
  private int _result = 0;
@@ -840,13 +822,12 @@ public class Calculator
   return _result.ToString();
  }
 }
-~~~
+```
 
 **Johnny:** Now the Statement is true so we can go back to it and make
 it a little bit prettier. Let us take a second look at it:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void 
 ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 {
@@ -871,7 +852,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
   calculator.Display()
  );
 }
-~~~
+```
 
 **Johnny:** Remember you said that you do not like the part where
 `string.Format()` is used?
@@ -883,8 +864,7 @@ more general - we will need a way of constructing expected displayed
 output in many of our future Statements. Here is my go at this helper
 method:
 
-{lang="csharp"}
-~~~
+```csharp
 string StringConsistingOf(params DigitKeys[] digits)
 {
  var result = string.Empty;
@@ -895,13 +875,12 @@ string StringConsistingOf(params DigitKeys[] digits)
  }
  return result;
 }
-~~~
+```
 
 Note that this is more general as it supports any number of parameters.
 And the Statement after this extraction looks like this:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void 
 ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 {
@@ -922,7 +901,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
   calculator.Display()
  );
 }
-~~~
+```
 
 **Benjamin:** Looks better to me. The Statement is still evaluated as
 true, which means we got it right, did we not?
@@ -931,14 +910,13 @@ true, which means we got it right, did we not?
 extra careful. Let us comment out the body of the `Enter()` method and
 see if this Statement can still be made false by the implementation:
 
-{lang="csharp"}
-~~~
+```csharp
 public void Enter(DigitKeys digit)
  {
   //_result *= 10;
   //_result += (int)digit; 
  }
-~~~
+```
 
 **Benjamin:** Running... Ok, it is false now. Expected “243", got “0".
 
@@ -952,8 +930,7 @@ it. It is really a variation of previous Statement.
 
 **Benjamin:** Let me try... ok, here it is:
 
-{lang="csharp"}
-~~~
+```csharp
 [Fact] public void 
 ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipleTimes()
 {
@@ -969,7 +946,7 @@ ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipl
   calculator.Display()
  );
 }
-~~~
+```
 
 **Johnny:** Good, you are learning fast! Let us evaluate this Statement.
 
@@ -985,8 +962,7 @@ modification to make it true again. This isn’t as obvious as previously,
 so let me do it. I will mark all the added lines with `//+` comment so
 that you can see them easily:
 
-{lang="csharp"}
-~~~
+```csharp
 public class Calculator
 {
  int _result = 0;
@@ -1011,7 +987,7 @@ public class Calculator
   return _result.ToString();
  }
 }
-~~~
+```
 
 **Benjamin:** Wow, looks like a lot of code just to make the Statement
 false! Is it worth the hassle? We will undo this whole modification in
