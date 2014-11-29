@@ -1,21 +1,12 @@
 Why do we need composability?
 =============================
 
-It might seem stupid to ask this question here -- if you have managed to
-stay with me this long, then you're probably motivated enough not to
-need a justification? Well, anyway, it's still worth discussing it a
-little. Hopefully, you'll learn as much reading this back-to-basics
-chapter as I did writing it.
+It might seem stupid to ask this question here -- if you have managed to stay with me this long, then you're probably motivated enough not to need a justification? Well, anyway, it's still worth discussing it a little. Hopefully, you'll learn as much reading this back-to-basics chapter as I did writing it.
 
 Pre-object oriented approaches
 ------------------------------
 
-Back in the days of procedural programming[^skipfunc], when we wanted to execute a
-different code based on some factor, it was usually achieved using an
-'if' statement. For example, if our application was in need to be able to use
-different kinds of alarms, like a loud alarm (that plays a loud sound)
-and a silent alarm (that does not play any sound, but instead silently
-contacts the police) interchangeably, then usually, we could achieve this using a conditional like in the following function:
+Back in the days of procedural programming[^skipfunc], when we wanted to execute a different code based on some factor, it was usually achieved using an 'if' statement. For example, if our application was in need to be able to use different kinds of alarms, like a loud alarm (that plays a loud sound) and a silent alarm (that does not play any sound, but instead silently contacts the police) interchangeably, then usually, we could achieve this using a conditional like in the following function:
 
 {lang="c"}
 ```
@@ -43,9 +34,7 @@ struct Alarm
 };
 ```
 
-If the alarm kind is the loud one, it executes behavior associated with loud alarm. If this is a silent alarm, the behavior for silent alarms is executed. This seems to work. Unfortunately, if we wanted to make
-a second decision based on the alarm kind (e.g. we needed to disable the alarm), we would need to query the alarm kind again. This would mean duplicating the conditional code, just with a different set of
-actions to perform, depending on what kind of alarm we were dealing with:
+If the alarm kind is the loud one, it executes behavior associated with loud alarm. If this is a silent alarm, the behavior for silent alarms is executed. This seems to work. Unfortunately, if we wanted to make a second decision based on the alarm kind (e.g. we needed to disable the alarm), we would need to query the alarm kind again. This would mean duplicating the conditional code, just with a different set of actions to perform, depending on what kind of alarm we were dealing with:
 
 {lang="c"}
 ```
@@ -62,32 +51,17 @@ void disableAlarm(Alarm* alarm)
 }
 ```
 
-Do I have to say why this duplication is bad? Do I hear a "no"? My
-apologies then, but I'll tell you anyway. The duplication means that
-every time a new kind of alarm is introduced, a developer has to
-remember to update both places that contain 'if-else' -- the compiler
-will not force this. As you are probably aware, in the context of teams,
-where one developer picks up work that another left and where, from time to time, people leave to find another job, expecting someone to "remember" to update all the
-places where the logic is duplicated is asking for trouble.
+Do I have to say why this duplication is bad? Do I hear a "no"? My apologies then, but I'll tell you anyway. The duplication means that every time a new kind of alarm is introduced, a developer has to remember to update both places that contain 'if-else' -- the compiler will not force this. As you are probably aware, in the context of teams, where one developer picks up work that another left and where, from time to time, people leave to find another job, expecting someone to "remember" to update all the places where the logic is duplicated is asking for trouble.
 
-So, we see that the duplication is bad, but can we do something about it?
-To answer this question, let us take a look at the reason the duplication was introduced.
-And the reason is: We have two things we want to be able to do with
-our alarms: triggering and disabling. In other words, we have a set of questions we want to be able to ask an alarm. Each kind of alarm has a different way of
-answering these questions -- resulting in having a set of "answers" specific to each alarm kind:
+So, we see that the duplication is bad, but can we do something about it? To answer this question, let us take a look at the reason the duplication was introduced. And the reason is: We have two things we want to be able to do with
+our alarms: triggering and disabling. In other words, we have a set of questions we want to be able to ask an alarm. Each kind of alarm has a different way of answering these questions -- resulting in having a set of "answers" specific to each alarm kind:
 
 | Alarm Kind          | Triggering                 |     Disabling              |
 |---------------------|----------------------------|------------------------|
 | Loud Alarm          | `playLoudSound()`     | `stopLoudSound()` |
 | Silent Alarm          | `notifyPolice()`     | `stopNotfyingPolice()` | 
 
-So, at least conceptually, as soon as we know the alarm kind, we already
-know which set of behaviors (represented as a row in the above table) it needs. 
-We could just decide the alarm
-kind once and associate the right set of behaviors with the data
-structure. Then, we would not have to query the alarm kind in few places as we
-did, but instead, we could say: "execute triggering behavior from the
-set of behaviors associated with this alarm, whatever it is".
+So, at least conceptually, as soon as we know the alarm kind, we already know which set of behaviors (represented as a row in the above table) it needs. We could just decide the alarm kind once and associate the right set of behaviors with the data structure. Then, we would not have to query the alarm kind in few places as we did, but instead, we could say: "execute triggering behavior from the set of behaviors associated with this alarm, whatever it is".
 
 Unfortunately, procedural programming does not let us bind behaviors
 with data. As a matter of fact, the whole paradigm of procedural
@@ -101,9 +75,7 @@ why we have the duplication.
 Object oriented programming to the rescue!
 ------------------------------------------
 
-On the other hand, object oriented programming has for a long time made
-available two mechanisms that enable what we didn't have in procedural
-languages:
+On the other hand, object oriented programming has for a long time made available two mechanisms that enable what we didn't have in procedural languages:
 
 1.  Classes -- that allow binding behavior together with data
 2.  Polymorphism -- allows executing behavior without knowing the exact class that holds them, but knowing only a set of behaviors that it supports. This knowledge is obtained by having an abstract type (interface or an abstract class) define this set of behaviors, with no real implementation. Then we can make other classes that provide their own implementation of the behaviors that are declared to be supported by the abstract type. Finally, we can use the instances of those classes where an instance of the abstract type is expected. In case of statically-typed languages, this requires implementing an interface or inheriting from an abstract class.
@@ -119,8 +91,7 @@ public interface Alarm
 }
 ```
 
-and then make two classes: `LoudAlarm` and `SilentAlarm`, both
-implementing the `Alarm` interface. Example for `LoudAlarm`:
+and then make two classes: `LoudAlarm` and `SilentAlarm`, both implementing the `Alarm` interface. Example for `LoudAlarm`:
 
 ```csharp
 public class LoudAlarm : Alarm
@@ -169,24 +140,16 @@ still have to decide which class it is in the place where I create the actual in
 alarm = new LoudAlarm(); 
 ```
 
-so it looks like I am not eliminating the 'else-if' after all, just moving it
-somewhere else! This may be true (we will talk more about it in future chapters), 
-but the good news is that I eliminated at least the
-duplication by making our dream of "picking the right set of behaviors to
-use with certain data once" come true.
+so it looks like I am not eliminating the 'else-if' after all, just moving it somewhere else! This may be true (we will talk more about it in future chapters), but the good news is that I eliminated at least the duplication by making our dream of "picking the right set of behaviors to use with certain data once" come true.
 
-Thanks to this, I create the alarm once, and then I can take it and pass
-it to ten, a hundred or a thousand different places where I will not
-have to determine the alarm kind anymore to use it correctly.
+Thanks to this, I create the alarm once, and then I can take it and pass it to ten, a hundred or a thousand different places where I will not have to determine the alarm kind anymore to use it correctly.
 
 This allows writing a lot of classes that have no knowledge whatsoever about the real class of the alarm they are dealing with, yet are able to use the alarm just fine only by knowing a common abstract type -- `Alarm`. If we are able to do that, we arrive at a situation where we can add more alarms implementing `Alarm` and watch existing objects that are already using `Alarm` work with these new alarms without any change in their source code! There is one condition, however -- the **creation of the alarm instances must be moved out of the classes that use them**. That's because, as we already observed, to create an alarm using a `new` operator, we have to know the exact type of the alarm we are creating. So whoever creates an instance of `LoudAlarm` or `SilentAlarm`, loses its uniformity, since it is not able to depend solely on the `Alarm` interface.
 
 The power of composition
 ------------------------
 
-Moving creation of alarm instances away from the classes that use those
-alarms brings up an interesting problem -- if an object does not create
-the objects it uses, then who does it? A solution is to make some special places in the code that are only responsible for composing a system from context-independent objects[^moreonindependence]. We saw this already as Johnny was explaining composability to Benjamin. He used the following example:
+Moving creation of alarm instances away from the classes that use those alarms brings up an interesting problem -- if an object does not create the objects it uses, then who does it? A solution is to make some special places in the code that are only responsible for composing a system from context-independent objects[^moreonindependence]. We saw this already as Johnny was explaining composability to Benjamin. He used the following example:
 
 ```csharp
 new SqlRepository(
@@ -199,8 +162,7 @@ new SqlRepository(
 );
 ```
 
-We can do the same with our alarms. Let's say that we have a secure area
-that has three buildings with different alarm policies:
+We can do the same with our alarms. Let's say that we have a secure area that has three buildings with different alarm policies:
 
 -   Office building -- the alarm should silently notify guards during the day (to keep office staff from panicking) and loud during the night, when guards are on patrol.
 -   Storage building -- as it is quite far and the workers are few, we want to trigger loud and silent alarms at the same time

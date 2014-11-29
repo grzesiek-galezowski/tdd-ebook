@@ -522,7 +522,7 @@ When we are not forced to return anything, we are more free to do as we like. Ag
 
 ## Summary
 
-TODO
+In this lengthy chapter I tried to show you the often underrated value of designing communication protocols between objects. They are not a "nice thing to have", but rather a fundamental part of the design approach that makes mock objects useful, as you will see when finally we get to them. But first, I need you to swallow few more object-oriented design ideas. I promise it will pay off. 
 
 [^emergentdesign]: Scott Bain, Emergent Design
 
