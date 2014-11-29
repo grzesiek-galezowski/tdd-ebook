@@ -42,14 +42,14 @@ When are objects composed?
 
 The quick answer to this question is: as early as possible. Now, that wasn't too helpful, was it? So here goes a clarification.
 
-Many of the objects we use in our applications can be created and connected up-front when the application starts and can stay this way until the application finishes executing (unless we are doing a web app - then most of the important stuff happens "per request"). Let's call this part the **static part** of the web.
+Many of the objects we use in our applications can be created and connected up-front when the application starts and can stay this way until the application finishes executing (unless we are doing a web app -- then most of the important stuff happens "per request"). Let's call this part the **static part** of the web.
 
-Apart from that, there's a **dynamic part** - a part that undergoes constant changes - objects are created, destroyed, connected temporarily, and then disconnected. There are at least two reasons this dynamic part exists:
+Apart from that, there's a **dynamic part** -- a part that undergoes constant changes -- objects are created, destroyed, connected temporarily, and then disconnected. There are at least two reasons this dynamic part exists:
 
 1. Some objects represent requests or user actions that arrive during the application runtime, are processed and then discarded. These objects cannot be composed up-front (because they do not exist yet), but only as early as the events they represent occur. Also, these objects do not live until the application is terminated, but are discarded as soon as the processing of a request is finished. Other objects represent e.g. items in cache that live for some time and then expire, so, again, we do not have these objects up-front and they often do not live as long as the application itself. All of these objects come and go, making temporary connections. 
 2. There are objects that have a life span as long as the application itself, but are connected only for the needs of a single interaction (e.g. when one object is passed to a method of another as an argument) or at some point during the application runtime. 
 
-It is perfectly possible for an object to be part of both static and dynamic part - some of its connections may be made up-front, while others may be created later, e.g. when it is passed inside a message sent to another object (i.e. passed as method parameter).
+It is perfectly possible for an object to be part of both static and dynamic part -- some of its connections may be made up-front, while others may be created later, e.g. when it is passed inside a message sent to another object (i.e. passed as method parameter).
 
 How does a sender obtain a reference to a recipient (i.e. how connections are made)?
 ------------------------------------------------
@@ -103,7 +103,7 @@ Composing using constructors has one significant advantage. By separating object
 sender.DoSomething()
 ```
 
-the `Sender` may then react by sending message to `Recipient`, but the code invoking the `DoSomething()` method is completely unaware of that - it is hidden. This is good, because "what you hide, you can change"[^kolskybain] - e.g. if we decide that the `Sender` needs not use the `Recipient` to do its duty, the code that uses `Sender` does not need to change at all - it still looks the same as before:
+the `Sender` may then react by sending message to `Recipient`, but the code invoking the `DoSomething()` method is completely unaware of that -- it is hidden. This is good, because "what you hide, you can change"[^kolskybain] -- e.g. if we decide that the `Sender` needs not use the `Recipient` to do its duty, the code that uses `Sender` does not need to change at all -- it still looks the same as before:
 
 ```csharp
 sender.DoSomething()
@@ -120,7 +120,7 @@ and the `Sender` class itself to work in a different way.
 
 #### Communication of intent: required recipient
 
-Another advantage of the constructor approach is that if a reference to `Recipient` is required for a `Sender` to work correctly and it does not make sense to create a `Sender` without a `Recipient`, the signature of the constructor makes it explicit - the compiler will not let us create a `Sender` without passing *something* as a `Recipient`.
+Another advantage of the constructor approach is that if a reference to `Recipient` is required for a `Sender` to work correctly and it does not make sense to create a `Sender` without a `Recipient`, the signature of the constructor makes it explicit -- the compiler will not let us create a `Sender` without passing *something* as a `Recipient`.
 
 #### Where to apply
 
@@ -158,7 +158,7 @@ public void DoSomethingWithHelpOf(Recipient recipient)
 
 #### Where to apply
 
-Contrary to the constructor approach, where a `Sender` could hide from its user the fact that it needs `Recipient`, in this case the user of `Sender` is explicitly responsible for supplying a `Recipient`. It may look like the coupling of user to `Recipient` is a disadvantage, but there are scenarios where it is actually **required** for a code using `Sender` to be able to provide its own `Recipient` - it lets us use the same sender with different recipients at different times (most often from different parts of the code):
+Contrary to the constructor approach, where a `Sender` could hide from its user the fact that it needs `Recipient`, in this case the user of `Sender` is explicitly responsible for supplying a `Recipient`. It may look like the coupling of user to `Recipient` is a disadvantage, but there are scenarios where it is actually **required** for a code using `Sender` to be able to provide its own `Recipient` -- it lets us use the same sender with different recipients at different times (most often from different parts of the code):
 
 ```csharp
 //in one place
@@ -175,7 +175,7 @@ If this ability is not required, the constructor approach is better as it remove
 
 ### Receive in response to a message (i.e. as method return value)
 
-This method of composing objects relies on an intermediary object - often a factory[^gofcreationpatterns] - to supply recipients on request. To simplify things, I will use factories as an example for the rest of this section, although what I tell you is true for some other creation patterns as well.  
+This method of composing objects relies on an intermediary object -- often a factory[^gofcreationpatterns] -- to supply recipients on request. To simplify things, I will use factories as an example for the rest of this section, although what I tell you is true for some other creation patterns as well.  
 
 To be able to ask a factory for recipients, the sender needs to obtain a reference to it first. Typically, a factory is composed with a sender through constructor (an approach we already discussed). For example:
 
@@ -241,9 +241,9 @@ Throughout this section, we have used a factory as our role model, but the appro
 ### Register a recipient with already created sender
 
 This means passing a recipient to an **already created** sender (contrary to passing as constructor parameter where recipient was passed **during** creation) as a parameter of a method that stores the 
-reference for later use. This may be a "setter" method, although I do not like naming it according to convention "setWhatever()" - after Kent Beck[^implementationpatterns] I find this convention too much implementation-focused instead of purpose-focused. Thus, I pick different names based on what domain concept is modeled by the registration method or what is its purpose.
+reference for later use. This may be a "setter" method, although I do not like naming it according to convention "setWhatever()" -- after Kent Beck[^implementationpatterns] I find this convention too much implementation-focused instead of purpose-focused. Thus, I pick different names based on what domain concept is modeled by the registration method or what is its purpose.
 
-Note that there is one similarity to "passing inside a message" approach - in both, a recipient is passed inside a message. The difference is that this time, contrary to "pass inside a message" approach, the passed recipient is not immediately used (and then forgotten), but rather only remembered (registered) for later use.
+Note that there is one similarity to "passing inside a message" approach -- in both, a recipient is passed inside a message. The difference is that this time, contrary to "pass inside a message" approach, the passed recipient is not immediately used (and then forgotten), but rather only remembered (registered) for later use.
 
 I hope I can clear up the confusion with a quick example.
 
@@ -290,7 +290,7 @@ public class TemperatureSensor
 }
 ```
 
-As you can see, by default, the sensor reports its values to nowhere (`NullObserver`), which is a safe default value (using a `null` for a default value instead would cause exceptions or force us to put an ugly null check inside the `Run()` method). We have already seen such "null objects" a few times before (e.g. in the previous chapter, when we introduced the `NoAlarm` class) - `NullObserver` is just another incarnation of this pattern.
+As you can see, by default, the sensor reports its values to nowhere (`NullObserver`), which is a safe default value (using a `null` for a default value instead would cause exceptions or force us to put an ugly null check inside the `Run()` method). We have already seen such "null objects" a few times before (e.g. in the previous chapter, when we introduced the `NoAlarm` class) -- `NullObserver` is just another incarnation of this pattern.
 
 #### Registering observers
 
@@ -317,7 +317,7 @@ This lets us overwrite the observer with a new one should we ever need to do it.
 
 #### Communication of intent: optional dependency
 
-Allowing registering recipients after a sender is created is a way of saying: "the recipient is optional - if you provide one, fine, if not, I will do my work without it". Please, do not use this kind of mechanism for **required** recipients - these should all be passed through constructor, making it harder to create invalid objects that are only partially ready to work. Placing a recipient in a constructor signature is effectively saying that "I will not work without it". Let's practice - just look at how the following class members signatures talk to you:
+Allowing registering recipients after a sender is created is a way of saying: "the recipient is optional -- if you provide one, fine, if not, I will do my work without it". Please, do not use this kind of mechanism for **required** recipients -- these should all be passed through constructor, making it harder to create invalid objects that are only partially ready to work. Placing a recipient in a constructor signature is effectively saying that "I will not work without it". Let's practice -- just look at how the following class members signatures talk to you:
 
 ```csharp
 public class Sender
@@ -359,7 +359,7 @@ foreach(var observer in _observers)
 ...
 ```
 
-Another, more flexible option, is to use something like we did in the previous chapter with a `HybridAlarm` (remember? It was an alarm aggregating other alarms) - i.e. instead of introducing a collection in the sensor, we can create a special kind of observer - a "broadcasting observer" that would itself hold collection of other observers (hurrah composability!) and broadcast the values to them every time it itself receives those values:
+Another, more flexible option, is to use something like we did in the previous chapter with a `HybridAlarm` (remember? It was an alarm aggregating other alarms) -- i.e. instead of introducing a collection in the sensor, we can create a special kind of observer -- a "broadcasting observer" that would itself hold collection of other observers (hurrah composability!) and broadcast the values to them every time it itself receives those values:
 
 ```csharp
 public class BroadcastingObserver 
@@ -422,7 +422,7 @@ Where are objects composed?
 
 Ok, we went through some ways of passing a recipient to a sender. We did it from the "internal" perspective of a sender that is given a recipient. What we left out for the most part is the "external" perspective, i.e. who should pass the recipient into the sender?
 
-For almost all of the approaches described above there is no limitation - you pass the recipient from where you need to pass it.
+For almost all of the approaches described above there is no limitation -- you pass the recipient from where you need to pass it.
 
 There is one approach, however, that is more limited, and this approach is **passing as constructor parameter**.
 
@@ -482,7 +482,7 @@ Now, I said (and I hope you see it in the code above) that the `Game`, `Level1` 
 
 #### Achieving separation of use from construction
 
-First, let us refactor the `Level1` and `Level2` according to the principle by moving instantiation of their castles out. As existence of a castle is required for a level to make sense at all - we will say this in code by using the approach of passing a castle through a `Level`'s constructor:
+First, let us refactor the `Level1` and `Level2` according to the principle by moving instantiation of their castles out. As existence of a castle is required for a level to make sense at all -- we will say this in code by using the approach of passing a castle through a `Level`'s constructor:
 
 ```csharp
 public class Level1
@@ -529,7 +529,7 @@ public class Game
 }
 ```
 
-But remember - this class suffers from the same violation of not separating objects use from construction as the levels did. Thus, to make this class compliant to the principle as well, we have do the same to it that we did to the level classes - move the creation of levels out of it:
+But remember -- this class suffers from the same violation of not separating objects use from construction as the levels did. Thus, to make this class compliant to the principle as well, we have do the same to it that we did to the level classes -- move the creation of levels out of it:
 
 ```csharp
 public class Game
@@ -579,7 +579,7 @@ public static void Main(string[] args)
 }
 ```
 
-Looking at the code above, we might come to another funny conclusion - this violates the principle of separating use from construction as well! First, we create and connect the web of objects and then send the `Play()` message to the `game` object. Shouldn't we fix this as well? 
+Looking at the code above, we might come to another funny conclusion -- this violates the principle of separating use from construction as well! First, we create and connect the web of objects and then send the `Play()` message to the `game` object. Shouldn't we fix this as well? 
 
 The answer is "no", for two reasons:
 
@@ -592,7 +592,7 @@ We say that composition root is "as close as possible" to application entry poin
 
 Apart from the constructor invocations, the composition root may also contain e.g. registrations of observers (see registration approach to passing recipients) if such observers are already known at this point. It is also responsible for disposing of all objects it created that require explicit disposal after the application finishes running. This is because it creates them and thus is the only place in the code that can safely determine when they are not needed.
 
-The composition root above looks quite small, but you can imagine it grow a lot in bigger applications. There are techniques of refactoring the composition root to make it more readable and cleaner - we will explore those techniques in further chapters.
+The composition root above looks quite small, but you can imagine it grow a lot in bigger applications. There are techniques of refactoring the composition root to make it more readable and cleaner -- we will explore those techniques in further chapters.
 
 ### Factories
 
@@ -602,7 +602,7 @@ When we previously talked about factories, we focused on it being just a source 
 
 But first, let's look at an example of a factory emerging in code that was not using it, as a mere consequence of trying to follow the principle of separating objects use from construction.
 
-#### Emerging factory - example  
+#### Emerging factory -- example  
 
 Consider the following code that receives a frame from the network (as raw data), then packs it into an object, validates and applies to the system:
  
@@ -638,7 +638,7 @@ public class MessageInbound
 
 Note that this code violates the principle of separating use from construction. The `change` is first created, depending on the frame type, and then used (validated and applied) in the same method. On the other hand, if we wanted to separate the construction of `change` from its use, we have to note that it is impossible to pass an instance of the `ChangeMessage` through the `MessageInbound` constructor, because this would require us to create the `ChangeMessage` before we create the `MessageInbound`. Achieving this is impossible, because we can create messages only as soon as we know the frame data which the `MessageInbound` receives.
 
-Thus, our choice is to make a special object that we would move the creation of new messages into. It would produce the new instances when requested, hence the name **factory**. The factory itself can be passed through constructor, since it does not require a frame to exist - it only needs one when it is asked to create a message.
+Thus, our choice is to make a special object that we would move the creation of new messages into. It would produce the new instances when requested, hence the name **factory**. The factory itself can be passed through constructor, since it does not require a frame to exist -- it only needs one when it is asked to create a message.
 
 Knowing this, we can refactor the above code to the following:
 
@@ -862,7 +862,7 @@ public class Version1ProtocolMessageFactory
 
 and the rest of the code could remain untouched.
 
-Using the factory to hide the real type of message returned makes maintaining the code easier, because there is less code to change when adding new types of messages to the system or removing existing ones (in our example - in case when we do not need to initiate a session anymore) [^encapsulatewhatvaries] - the factory hides that and the rest of the application is coded against the general scenario.
+Using the factory to hide the real type of message returned makes maintaining the code easier, because there is less code to change when adding new types of messages to the system or removing existing ones (in our example -- in case when we do not need to initiate a session anymore) [^encapsulatewhatvaries] -- the factory hides that and the rest of the application is coded against the general scenario.
 
 #### Factories are themselves polymorphic (encapsulation of rule)
 
@@ -1047,7 +1047,7 @@ Note that up to now, we considered three things factories encapsulate about crea
 
 Thus, if factories didn't exist, all these concepts would leak to sorrounding classes (we saw an example when we were talking about encapsulation of global context). Now, as soon as there is more than one class that needs to create instances, these things leak to all of these classes, creating redundancy. In such case, any change to how instances are created would mean a change to all classes needing those instances.
 
-Thankfully, by having a factory - an object that takes care of creating other objects and nothing else, we can reuse the ruleset, the global context and the type-related decisions across many classes without any unnecessary overhead. All we need to do is reference the factory and ask it for an object.
+Thankfully, by having a factory -- an object that takes care of creating other objects and nothing else, we can reuse the ruleset, the global context and the type-related decisions across many classes without any unnecessary overhead. All we need to do is reference the factory and ask it for an object.
 
 There are more benefits of factories, but I hope I already convinced you that this is a pretty darn beneficial concept for such a reasonably low cost.
 

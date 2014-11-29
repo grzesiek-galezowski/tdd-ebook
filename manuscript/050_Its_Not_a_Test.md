@@ -35,11 +35,11 @@ where, among others, there is a rigorous emphasis on eliminating waste.
 Every feature or product that is produced while not being needed by
 anyone is considered waste. That is because if something is not needed,
 there is no reason to assume it will ever be needed. In such case the
-entire feature or product is a waste - it has no value. Even if it WILL
+entire feature or product is a waste -- it has no value. Even if it WILL
 be ever needed, it will require some rework anyway to fit the real
 customer needs. In this case, the initial amount of work that went into
 the parts of solution that had to be replaced by another parts anyway is
-a waste - it never brought any money (I am not talking about such things
+a waste -- it never brought any money (I am not talking about such things
 as customer demos, but finished, polished features or products).
 
 So, in order to eliminate waste, there is huge pressure nowadays to
@@ -51,7 +51,7 @@ Going back to the exams, why the approach of first looking through the
 exemplary tests can be considered ‘lean’? That is because, when we treat
 passing an exam as our goal, then everything that does not put us closer
 to this goal is considered a waste. Let us suppose the exam is theory
-only - why then practice the exercises? It would probably pay off a lot
+only -- why then practice the exercises? It would probably pay off a lot
 more to study theoretical side of the topics. Such knowledge could be
 obtained from those exemplary tests. So, the tests were a kind of
 specification of what was needed to pass the exam, letting us pull the
@@ -76,7 +76,7 @@ Taking it to the software development land
 
 I chose this lengthy metaphor to show you that ‘test’ is really another
 way of specifying a requirement or a need and that it is not something
-that is counter-intuitive - it occurs in our everyday lives. This is
+that is counter-intuitive -- it occurs in our everyday lives. This is
 also true in software development. Let us take the following ‘test’ and
 see what kind of needs it specifies:
 
@@ -101,7 +101,7 @@ Count with me:
     administrator or an auditor
 4.  Power users will need to be privileged to use the reporting feature
     (note that it does not specify which other users should or should
-    not be able to use this feature - we would need a separate ‘test’
+    not be able to use this feature -- we would need a separate ‘test’
     for that).
 
 Also, are already after the phase of designing an API that will fulfill
@@ -129,8 +129,8 @@ for now).
 The time has come to make a deal: I will establish some naming
 conventions for this book to be consistent, but leave you with the
 freedom to follow your own if you so desire. The terminology shift is 
-for pedagogical reasons - I am not trying to create a movement to 
-change established terms or to invent a new methodology or anything - 
+for pedagogical reasons -- I am not trying to create a movement to 
+change established terms or to invent a new methodology or anything -- 
 my hope is that using this terminology throughout the book will let you 
 look differently at some things. So, let us agree that for the sake of 
 this book:
@@ -162,9 +162,9 @@ different than these specifications in at least few ways:
 
 1.  it is not written fully up-front (more on this in the next
     chapters).
-2.  it is executable - you can run it to see whether the code adheres to
+2.  it is executable -- you can run it to see whether the code adheres to
     the specification or not.
-3.  it is written in source code rather than in spoken language - which
-    is both good (less room for misunderstanding - source code is the
+3.  it is written in source code rather than in spoken language -- which
+    is both good (less room for misunderstanding -- source code is the
     most formal and structured way of writing specifications) and bad
     (great care must be taken to keep the specification readable).

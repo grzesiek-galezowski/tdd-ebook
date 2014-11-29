@@ -103,7 +103,7 @@ accessGuard.SetPassword(password);
 accessGuard.Login();
 ```
 
-In this little snippet, the sender must send three messages to the `accessGuard` object: `SetLogin()`, `SetPassword()` and `Login()`, even though there is no real need to divide the logic into three steps - they are all executed in the same place anyway. The maker of the `AccessGuard` class might have thought that this division makes the class more "general purpose", but it seems this is a "premature optimization" that only makes it harder for the sender to work with the `accessGuard` object. Thus, the protocol that is simpler from the perspective of a sender would be: 
+In this little snippet, the sender must send three messages to the `accessGuard` object: `SetLogin()`, `SetPassword()` and `Login()`, even though there is no real need to divide the logic into three steps -- they are all executed in the same place anyway. The maker of the `AccessGuard` class might have thought that this division makes the class more "general purpose", but it seems this is a "premature optimization" that only makes it harder for the sender to work with the `accessGuard` object. Thus, the protocol that is simpler from the perspective of a sender would be: 
 
 ```csharp
 accessGuard.LoginWith(login, password);
@@ -111,7 +111,7 @@ accessGuard.LoginWith(login, password);
 
 ### Naming by intention
 
-Another lesson learned from the above example is: setters (like `SetLogin` and `SetPassword` in our example) rarely reflect senders' intentions - more often they are artificial "things" introduced to directly manage object state. This may also have been the reason why someone introduced three messages instead of one - maybe the `AccessGuard` class was implemented to hold two fields (login and password) inside, so the programmer might have thought someone would want to manipulate them separately from the login step... Anyway, setters should be either avoided or changed to something that reflects the intention better. For example, when dealing with observer pattern, we don't want to say: `SetObserver(screen)`, but rather something like `FromNowOnReportCurrentWeatherTo(screen)`.
+Another lesson learned from the above example is: setters (like `SetLogin` and `SetPassword` in our example) rarely reflect senders' intentions -- more often they are artificial "things" introduced to directly manage object state. This may also have been the reason why someone introduced three messages instead of one -- maybe the `AccessGuard` class was implemented to hold two fields (login and password) inside, so the programmer might have thought someone would want to manipulate them separately from the login step... Anyway, setters should be either avoided or changed to something that reflects the intention better. For example, when dealing with observer pattern, we don't want to say: `SetObserver(screen)`, but rather something like `FromNowOnReportCurrentWeatherTo(screen)`.
 
 The issue of naming can be summarized as this: a name of an interface should assigned after the *role* that its implementations plays and methods should be named after the *responsibilities* we want the role to have. I love the example that Scott Bain gives in his Emergent Design book[^emergentdesign]: if I told you "give me your driving license number", you might've reacted differently based on whether the driving license is in your pocket, or your wallet, or your bag, or in your house (in which case you would need to call someone to read it for you). The point is: I, as a sender of this "give me your driving license number" message, do not care how you get it. I say `RetrieveDrivingLicenseNumber()`, not `OpenYourWalletAndReadTheNumber()`. 
 
@@ -161,12 +161,12 @@ catch(SecurityFailure failure)
 Then the risk of this code changing for other reasons than the change of how domain works (e.g. we do not close the gates anymore but activate laser guns instead) is small. Thus, interactions that use abstractions
 and methods that directly express domain rules are more stable.
 
-So, to sum up - if a design reflects the domain, it is easier to predict how a change of domain rules will affect 
+So, to sum up -- if a design reflects the domain, it is easier to predict how a change of domain rules will affect 
 the design. This contributes to maintainability and stability of the interactions and the design as a whole.
 
 ## Message recipients should be told what to do, instead of being asked for information
 
-Let's say we are paying an annual income tax yearly and are too busy (i.e. have too many responsibilities) to do this ourselves. Thus, we hire a tax expert to calculate and pay the taxes for us. He is an expert on paying taxes, knows how to calculate everything, where to submit it etc. but there is one thing he does not know - the context. In other word, he does not know which bank we are using or what we have earned this year that we need to pay the tax for. This is something we need to give him.
+Let's say we are paying an annual income tax yearly and are too busy (i.e. have too many responsibilities) to do this ourselves. Thus, we hire a tax expert to calculate and pay the taxes for us. He is an expert on paying taxes, knows how to calculate everything, where to submit it etc. but there is one thing he does not know -- the context. In other word, he does not know which bank we are using or what we have earned this year that we need to pay the tax for. This is something we need to give him.
 
 Here's the deal between us and the tax expert summarized as a table:
 
@@ -193,7 +193,7 @@ taxExpert.PayAnnualIncomeTax(
 
 Thus, when interacting with Joan, the tax expert can still use his abilities to calculate and pay taxes the same way as in our case. This is because his skills are independent of the context.
 
-Another day, we decide we are not happy anymore with our tax expert, so we decide to make a deal with a new one. Thankfully, we do not need to know how tax experts do their work - we just tell them to do it, so we can interact with the new one just as with the previous one:
+Another day, we decide we are not happy anymore with our tax expert, so we decide to make a deal with a new one. Thankfully, we do not need to know how tax experts do their work -- we just tell them to do it, so we can interact with the new one just as with the previous one:
 
 ```csharp
 //this is the new tax expert, 
@@ -270,10 +270,10 @@ So as you can see, this `Bank` is a piece of behavior, not data, and it itself f
 
 As I already said, there are places where Tell Don't Ask does not apply. Here are some examples from the top of my head: 
 
-1. Factories - these are objects that produce other objects for us, so they are inherently "pull-based" - they are always asked to deliver objects.
-2. Collections - they are merely containers for objects, so all we want from them is adding objects and retrieving objects (by index, by predicate, using a key etc.). Note however, that when we write a class that wraps a collection inside, we want this class to expose interface shaped in a Tell Don't Ask manner.
-3. Data sources, like databases - again, these are storage for data, so it is more probable that we will need to ask for this data to get it.
-4. Some APIs accessed via network - while it is good to use as much Tell Don't Ask as we can, web APIs have one limitation - it is hard or impossible to pass behaviors as polymorphic objects through them. Usually, we can only pass data.
+1. Factories -- these are objects that produce other objects for us, so they are inherently "pull-based" -- they are always asked to deliver objects.
+2. Collections -- they are merely containers for objects, so all we want from them is adding objects and retrieving objects (by index, by predicate, using a key etc.). Note however, that when we write a class that wraps a collection inside, we want this class to expose interface shaped in a Tell Don't Ask manner.
+3. Data sources, like databases -- again, these are storage for data, so it is more probable that we will need to ask for this data to get it.
+4. Some APIs accessed via network -- while it is good to use as much Tell Don't Ask as we can, web APIs have one limitation -- it is hard or impossible to pass behaviors as polymorphic objects through them. Usually, we can only pass data.
 5. So called "fluent APIs", also called "internal domain-specific languages"[^domainspecificlanguages]
 
 Even in cases where we obtain other objects from a method call, we want to be able to apply Tell Don't Ask to these other objects. For example, we want to avoid the following chain of calls:
@@ -325,7 +325,7 @@ public interface Session
 }
 ```
 
-So yeah, in a way, we have decoupled `Session` from these third-party libraries and we may even say that we have achieved context-independence as far as `Session` itself is concerned - we can now pull all its data e.g. in a GUI code and display it as a table. The `Session` does not know anything about it. Let's see that:
+So yeah, in a way, we have decoupled `Session` from these third-party libraries and we may even say that we have achieved context-independence as far as `Session` itself is concerned -- we can now pull all its data e.g. in a GUI code and display it as a table. The `Session` does not know anything about it. Let's see that:
 
 ```csharp
 // Display sessions as a table on GUI
@@ -339,7 +339,7 @@ foreach(var session in sessions)
 }
 ```
 
-It seems we solved the problem, by separating the data from the context it is used in and pulling data to a place that has the context, i.e. knows what to do with this data. Are we happy? We may be unless we look at how the other parts look like - remember that in addition to displaying sessions, we also want to send them and persist them. The sending logic looks like this:
+It seems we solved the problem, by separating the data from the context it is used in and pulling data to a place that has the context, i.e. knows what to do with this data. Are we happy? We may be unless we look at how the other parts look like -- remember that in addition to displaying sessions, we also want to send them and persist them. The sending logic looks like this:
 
 ```csharp
 //part of sending logic
@@ -372,12 +372,12 @@ See anything disturbing here? If no, then imagine what happens when we add anoth
 The reason for this is that we made the `Session` class effectively a data structure. It does not implement any domain-related behaviors, just exposes data. There are two implications of this:
 
 1.  This forces all users of this class to define session-related behaviors on behalf of the `Session`, meaning these behaviors are scattered all over the place[^featureenvy]. If one is to make change to the session, they must find all related behaviors and correct them.
-2.  As a set of object behaviors is generally more stable than its internal data (e.g. a session might have more than one target one day, but we will always be starting and stopping sessions), this leads to brittle interfaces and protocols - certainly the opposite of what we are striving for.
+2.  As a set of object behaviors is generally more stable than its internal data (e.g. a session might have more than one target one day, but we will always be starting and stopping sessions), this leads to brittle interfaces and protocols -- certainly the opposite of what we are striving for.
 
 Bummer, this solution is pretty bad, but we seem to be out of options. Should we just accept that there will be problems with this implementation and move on? Thankfully, we don't have to. So far, we have found the following options to be troublesome:
 
-1.  The `Session` class containing the display, store and send logic, i.e. all the context needed - too much coupling to heavy dependencies.
-2.  The `Session` class to expose its data via getters, so that we may pull it where we have enough context to know how to use it - communication is too brittle and redundancy creeps in (by the way, this design will also be bad for multithreading, but that's something for another time).
+1.  The `Session` class containing the display, store and send logic, i.e. all the context needed -- too much coupling to heavy dependencies.
+2.  The `Session` class to expose its data via getters, so that we may pull it where we have enough context to know how to use it -- communication is too brittle and redundancy creeps in (by the way, this design will also be bad for multithreading, but that's something for another time).
 
 Thankfully, we have a third alternative, which is better than the two we already mentioned. We can just **pass** the context **into** the `Session` class. "Isn't this just another way to do what we outlined in point 1? If we pass the context in, isn't `Session` still coupled to this context?", you may ask. The answer is: not necessarily, because we can make `Session` class depend on interfaces only instead of the real thing to make it context-independent enough.
 
@@ -418,7 +418,7 @@ foreach(var session : sessions)
 }
 ```
 
-In this design, `RealSession` itself decides which parameters to pass and in what order (if that matters) - no one is asking for its data. This `DumpInto()` method is fairly general, so we can use it to implement all three mentioned behaviors (displaying, persistence, sending), by creating a implementation for each type of destination, e.g. for GUI, it might look like this:
+In this design, `RealSession` itself decides which parameters to pass and in what order (if that matters) -- no one is asking for its data. This `DumpInto()` method is fairly general, so we can use it to implement all three mentioned behaviors (displaying, persistence, sending), by creating a implementation for each type of destination, e.g. for GUI, it might look like this:
 
 ```csharp
 public class GuiDestination : Destination
@@ -465,7 +465,7 @@ public class Session
 }
 ```
 
-the getters **had to** return **something**. So what if we had sessions that could expire and decided we want to ignore them when they do (i.e. do not display, store, send or do anything else with them)? In case of the "getter approach" seen in the snippet above, we would have to add another getter, e.g. called `IsExpired()` to the session class and remember to update each consumer the same way - to check the expiry before consuming the data... you see where this is going, don't you? On the other hand, with the current design of the `Session` interface, we can e.g. introduce a feature where the expired sessions are not processed at all in a single place:
+the getters **had to** return **something**. So what if we had sessions that could expire and decided we want to ignore them when they do (i.e. do not display, store, send or do anything else with them)? In case of the "getter approach" seen in the snippet above, we would have to add another getter, e.g. called `IsExpired()` to the session class and remember to update each consumer the same way -- to check the expiry before consuming the data... you see where this is going, don't you? On the other hand, with the current design of the `Session` interface, we can e.g. introduce a feature where the expired sessions are not processed at all in a single place:
 
 ```csharp
 public class TimedSession : Session
@@ -520,118 +520,9 @@ public class HiddenSession : Session
 
 When we are not forced to return anything, we are more free to do as we like. Again, "Tell, don't ask".
 
-## Single Responsibility
-
-I already said that we want our system to be a web of composable objects. Obviously, an object is a granule of composability - we cannot e.g. unplug half of object and plug in another half. Thus, a valid question to ask is this: how big should an object be to make the composability comfortable - to let us unplug as much logic as we want, leaving the rest untouched.
-
-
-This leads to a question: what is the granule of composability? How much should a class do to be composable?
+## Summary
 
 TODO
-
-## Law of Demeter
-
-As we discovered, exposing return values makes the protocols more complex and should be avoided if possible. TODO do we need this at all?
-
-Law of Demeter. Coupling to details of return values.
-
-Size of protocols. Even interface with a single method can return a lot of values. Example: different reports produced.
-
-## Context independence
-
-## Instead of pulling the data where context is, pass the context where the data is
-
-TODO move this earlier in the chapter
-
-If you are like me, you probably learned programming starting from
-procedural languages.
-
-this may sound like something non obvious
-
-1.  data - the information
-2.  context - what we want to do with information
-
-e.g. for employees:
-
-1.  data - employee name surname etc.
-2.  context - we want to print it on the screen
-
-TODO example: with employees loop getters refactoring
-
-May be more coupling, but the coupling is very light - just an abstract interface, especially if we were following the rest guidelines. On the other hand, better information hiding and decoupling users from details.
-
-#### Protocols should rely on abstractions
-
-e.g. Id abstraction can be either in or string or a combination of those. The protocol stays stable regardless of these changes
-
-Plural is also an abstraction
-
---------------------------------
-
-TODO
-
-## Avoid statics
-
-
-#### Interactions are not an implementation detail
-
-Todo interfaces checked by compiler, protocols not
-
-### multiple interfaces multiple roles
-
-Protocols must be published! They are not private internal details
-
-### Tell Don't Ask
-
-### Level of abstraction of protocols
-
-weaker = harder to implement another implementation
-
-stad wynika ze lepiej uzywac interfejsow niz klas
-
-TOOODOOO
-
-1.  Composition through constructor - a reference is passed by
-    constructor
-2.  Composition through factory
-3.  Composition through setter
-4.  Composition through passed in a method parameter
-
-Why did I leave out inline creation and singletons? context independence!
--------------------------------------------------------------------------
-
-1.  composability - learned from previous chapters
-2.  what does it mean to compose - obtain reference. Plug objects
-    together - show UML version of composition first, then the version
-    with "plugs".
-3.  composability long term (through constructor or setter) or short
-    term (through parameter)?
-4.  composability - strong or weak a) class vs interface, b)(continuum
-    -public field, getter, method that does something)
-5.  In order to compose - Protocols vs interfaces
-6.  Abstract protocols are better
-7.  web of composable objects - like a real web - metaphor (when?)
-8.  Tell Don't Ask (when?)
-9.  Why not events? Roles!!!
-10. discover interfaces - from inside or outside?
-11. need driven development
-
-TODO
-
-
-```csharp
-if(recipient.ExtractStatusCodeFrom(response) == -1)
-{
-  observer.NotifyErrorOccured();
-}
-```
-
-
-A> ##This is a block quote. This
-A> paragraph has two lines.
-A> 
-A> 1. This is a list inside a block quote.
-A> 2. Second item.
 
 [^emergentdesign]: Scott Bain, Emergent Design
 

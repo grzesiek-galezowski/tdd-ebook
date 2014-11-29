@@ -79,7 +79,7 @@ Gherkin
 Hungry? Too bad, because the Gkerkin I am gonna talk about is not
 edible. It is a notation and a way of thinking about behaviors of the
 specified piece of code. It can be applied on different levels of
-granularity - any behavior, whether of a whole system or a single class,
+granularity -- any behavior, whether of a whole system or a single class,
 may be described using it.
 
 We actually talked about Gherkin before in this book, just did not name
@@ -89,9 +89,9 @@ it and analyzing it further.
 
 In Gherkin, a behavior description consists of three parts:
 
-1.  Given - a context
-2.  When - a cause
-3.  Then - a effect
+1.  Given -- a context
+2.  When -- a cause
+3.  Then -- a effect
 
 In other words, the emphasis is on causality in a given context.
 
@@ -122,7 +122,7 @@ unit level the description is usually not written down literally, but in
 form of code only. Still, this structure is useful when thinking about
 behaviors required from an object or objects, as we saw when we talked
 about starting from Statement rather than code. I like to put the
-structure explicitly in my Statements - I find that it makes them more
+structure explicitly in my Statements -- I find that it makes them more
 readable. So most of my unit-level Statements follow this template:
 
 ```csharp
@@ -140,7 +140,7 @@ public void Should__BEHAVIOR__()
 }
 ```
 
-Sometimes the WHEN and THEN sections are not so easily separable - then
+Sometimes the WHEN and THEN sections are not so easily separable -- then
 I join them, like in case of the following Statement specifying that an
 object throws an exception when asked to store null:
 
@@ -177,7 +177,7 @@ current task.
 Suppose you are writing a piece of small logic that allows user access
 when he is an employee of a zoo, but denies access if he is a guest of
 the zoo. Then, after starting writing a Statement it gets to you that
-actually any employee can be a guest as well - for example, he might
+actually any employee can be a guest as well -- for example, he might
 choose to visit the zoo with his family during his vacation. Still, the
 two previous rules hold, so not to allow this case to distract you, you
 quickly add an item to the TODO list (like “TODO: what if someone is an
@@ -206,7 +206,7 @@ a reminder (“TODO: get something to eat!"). The list is yours!
 Which item to choose from the TODO list when you have several? I have no
 clear rule, although I tend to take into account the following factors:
 
-1.  Risk - if what I learn by implementing or discussing a particular
+1.  Risk -- if what I learn by implementing or discussing a particular
     item from the list can have big impact on design or behavior of the
     system, I tend to pick such items first. An example of such item is
     that you start implementing validation of a request that arrives to
@@ -216,13 +216,13 @@ clear rule, although I tend to take into account the following factors:
     a time and you have to answer yourself a question: which error code
     should be returned in such case? Or maybe the return codes should be
     accumulated for all validations and then returned as a list?
-2.  Difficulty - depending on my mental condition (how tired I am, how
+2.  Difficulty -- depending on my mental condition (how tired I am, how
     much noise is currently around my desk etc.), I tend to pick items
     with difficulty that best matches this condition. For example, after
     finishing an item that requires a lot of thinking and figuring out
     things, I tend to take on some small and easy items to feel wind
     blowing in my sails and to rest a little bit.
-3.  Completeness - in simplest words, when I finish test-driving an “if"
+3.  Completeness -- in simplest words, when I finish test-driving an “if"
     case, I usually pick up the “else" next. For example, after I finish
     implementing a Statement saying that something should return true
     for values less than 50, then the next item to pick up is the
@@ -242,7 +242,7 @@ a sheet of paper can tell you which place in code it is related to, is
 Another alternative is to use a TODO list functionality built-in into an
 IDE. Most IDEs, such as Visual Studio (and Resharper plugin has its own
 enhanced version), Xamarin Studio or eclipse-based IDEs have such
-functionality. The rules are simple - you put special comments in the
+functionality. The rules are simple -- you put special comments in the
 code and a special view in your IDE aggregates them for you, allowing
 you to navigate to each. Such lists are great because:
 
@@ -295,10 +295,10 @@ around it, I tend to use a different tag than TODO (many IDEs let you
 define your own tags, or support multiple tag types out of the box. E.g.
 with Resharper, I like to use “bug" tag, because this is something no
 one would leave in the code) and filter by it. Another options is, of
-course, getting rid of the leftover TODO items - if no one addressed it
+course, getting rid of the leftover TODO items -- if no one addressed it
 for a year, then probably no one ever will.
 
 Another downside is that when you work with multiple
 workspaces/solutions, your IDE will gather TODO items only from current
-solution/workspace, so you will have few TODO lists - one per workspace
+solution/workspace, so you will have few TODO lists -- one per workspace
 or solution. Fortunately, this isn’t usually a big deal.

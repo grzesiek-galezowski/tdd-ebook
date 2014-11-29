@@ -21,6 +21,6 @@ they are:
 
 A lot of questions, isn’t it? It is unfortunate that TDD has this high
 entry barrier, at least for someone used to the traditional way of
-writing code. Anyway, that is what this tutorial is for - to answer such
+writing code. Anyway, that is what this tutorial is for -- to answer such
 questions and lower this barrier. Thus, we will try to answer those
 questions one by one.

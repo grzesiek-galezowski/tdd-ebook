@@ -7,7 +7,7 @@ screen, then at me, then would say: “what now?". It is easy to say: “You
 know how to write code, you know how to write a unit test for it, just
 this time start with the latter rather than the first", but for many
 people, this is something that blocks them completely. If you are one of
-them, do not worry - you are not alone. I decided to dedicate this
+them, do not worry -- you are not alone. I decided to dedicate this
 chapter solely to techniques for kicking off a Statement when there is
 no code.
 
@@ -28,7 +28,7 @@ bad names and then I will introduce to you some rules of good naming.
 
 As I said, many people do not really care how their Statements are
 named. This is a symptom of treating the Specification as garbage or
-leftovers - such situation is dangerous, because as soon as this kind of
+leftovers -- such situation is dangerous, because as soon as this kind of
 thinking is established, it leads to bad, unmaintainable Specification
 that looks more like lumps of accidental code put together in a haste
 than a living documentation. Imagine that your Specification consists of
@@ -87,7 +87,7 @@ Note few things about the name of the Statement:
     because such description is what you can derive from thinking about
     responsibilities of a class, so you do not need to know any of its
     method signature or the code that is inside of the class. Hence,
-    this is something you can come up with before implementing - you
+    this is something you can come up with before implementing -- you
     just need to know why you created this class and build on this
     knowledge.
 2.  The name is relatively long. Really, really, **really** do not worry
@@ -96,7 +96,7 @@ Note few things about the name of the Statement:
     the Statements, because they try to apply the same rules to those
     names as to method names in production code (and in production code
     too long method name can be a sign of it having too many
-    responsibilities). Let me make it clear - these two cases are
+    responsibilities). Let me make it clear -- these two cases are
     different. In case of Statements, methods are not invoked by anyone
     besides the automatic runner applications, so they will not
     obfuscate any code that would need to call them with their long
@@ -116,11 +116,11 @@ Note few things about the name of the Statement:
     
     There are two downsides to this solution: one is that we now have to
     put extra information (`Statement_002`) which is required only by
-    compiler, because every method needs to have a name - there is
+    compiler, because every method needs to have a name -- there is
     usually no value a human could derive from such a name. The second
     downside is that when the Statement is evaluated to false, the
     automated runner shows you the following line:
-    `Statement_002: FAILED` - note that all the information included in
+    `Statement_002: FAILED` -- note that all the information included in
     the comment isn’t present in the failure report. It is really better
     to receive a report such as:
 
@@ -133,7 +133,7 @@ Note few things about the name of the Statement:
     quickly why the Statement is false when it is. Suppose a Statement
     is true when you start refactoring, but at one point it starts being
     evaluated as false and the report in the runner looks like this:
-    `TrySendingHttpRequest: FAILED` - it does not really tell you
+    `TrySendingHttpRequest: FAILED` -- it does not really tell you
     anything more than that an attempt is made to send a HTTP request,
     but, for instance, does not tell you whether your specified object
     is the sender (that should try to send this request under some
@@ -142,7 +142,7 @@ Note few things about the name of the Statement:
     Statement body and scan its source code. Now compare it to the
     following name:
     `ShouldRespondWithAnAckWheneverItReceivesAHttpRequest`. Now when it
-    evaluates to false, you can tell what is broken - the object no
+    evaluates to false, you can tell what is broken -- the object no
     longer responds with an ACK to HTTP request. Sometimes this is
     enough to identify which part of the code is in fault of this
     evaluation failure.
@@ -177,7 +177,7 @@ yourself the question: “should it really?". If this causes uncertainty,
 then it is high time to talk to a domain expert and make sure you
 understand well what you need to accomplish. If you are not a native
 English speaker, the “should" prefix will probably have a weaker
-influence on you - that is why I do not insist on you using it. I like
+influence on you -- that is why I do not insist on you using it. I like
 it though.
 
 When inventing a name, It is important to put the main focus on what
@@ -326,7 +326,7 @@ ShouldAppearEqualToAnotherUserWithTheSameName()
 }
 ```
 
-And that is it - the Statement is complete!
+And that is it -- the Statement is complete!
 
 Start from the end
 ------------------
@@ -357,7 +357,7 @@ Assert.True(accessGranted);
 ```
 
 Ok, that part was easy, but did we make any progress with that? Of
-course we did - we now have a non-compiling code and the compilation
+course we did -- we now have a non-compiling code and the compilation
 error is because of the `accessGranted` variable. Now, in contrast to
 the previous approach (with translating our GIVEN-WHEN-THEN structure
 into a Statement), our goal is not to make this compile as soon as
@@ -367,7 +367,7 @@ authorization of the allowed role. Ok, so let us just write it down,
 ignoring everything that stands in our way (I know that most of us have
 a habit to add a class or a variable as soon as we find out that we need
 it. If you are like that, then please turn off this habit while writing
-Statements - it will only throw you off the track and steal your focus
+Statements -- it will only throw you off the track and steal your focus
 from what is important. The key to doing TDD successfully is to learn to
 use something that does not exist yet like it existed):
 

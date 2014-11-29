@@ -68,7 +68,7 @@ def all_chapters_string(subdir)
   all_chapters = String.new
 
   File.open subdir + "Book.txt" do |f|
-    f.lines do |line|
+    f.each_line do |line|
       all_chapters += "./" + line.without_endline + " "
     end
   end

@@ -1,3 +1,88 @@
+
+
+## Single Responsibility
+
+I already said that we want our system to be a web of composable objects. Obviously, an object is a granule of composability - we cannot e.g. unplug half of object and plug in another half. Thus, a valid question to ask is this: how big should an object be to make the composability comfortable - to let us unplug as much logic as we want, leaving the rest untouched.
+
+
+This leads to a question: what is the granule of composability? How much should a class do to be composable?
+
+TODO
+
+## Law of Demeter
+
+As we discovered, exposing return values makes the protocols more complex and should be avoided if possible. TODO do we need this at all?
+
+Law of Demeter. Coupling to details of return values.
+
+Size of protocols. Even interface with a single method can return a lot of values. Example: different reports produced.
+
+## Context independence
+
+## Instead of pulling the data where context is, pass the context where the data is
+
+TODO move this earlier in the chapter
+
+If you are like me, you probably learned programming starting from
+procedural languages.
+
+this may sound like something non obvious
+
+1.  data - the information
+2.  context - what we want to do with information
+
+e.g. for employees:
+
+1.  data - employee name surname etc.
+2.  context - we want to print it on the screen
+
+TODO example: with employees loop getters refactoring
+
+May be more coupling, but the coupling is very light - just an abstract interface, especially if we were following the rest guidelines. On the other hand, better information hiding and decoupling users from details.
+
+#### Protocols should rely on abstractions
+
+e.g. Id abstraction can be either in or string or a combination of those. The protocol stays stable regardless of these changes
+
+Plural is also an abstraction
+
+--------------------------------
+
+TODO
+
+## Avoid statics
+
+
+#### Interactions are not an implementation detail
+
+Todo interfaces checked by compiler, protocols not
+
+### multiple interfaces multiple roles
+
+Protocols must be published! They are not private internal details
+
+
+TOOODOOO
+
+Why did I leave out inline creation and singletons? context independence!
+-------------------------------------------------------------------------
+
+1.  composability - learned from previous chapters
+2.  what does it mean to compose - obtain reference. Plug objects
+    together - show UML version of composition first, then the version
+    with "plugs".
+3.  composability long term (through constructor or setter) or short
+    term (through parameter)?
+4.  composability - strong or weak a) class vs interface, b)(continuum
+    -public field, getter, method that does something)
+5.  In order to compose - Protocols vs interfaces
+6.  Abstract protocols are better
+7.  web of composable objects - like a real web - metaphor (when?)
+8.  Tell Don't Ask (when?)
+9.  Why not events? Roles!!!
+10. discover interfaces - from inside or outside?
+11. need driven development
+
+
 1. In interfaces chapter - provide better examples in roles section (use some more real examples)
-2. Chapter on value objects
 3. change many single hyphens to double

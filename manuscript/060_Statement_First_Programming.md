@@ -7,7 +7,7 @@ What is the point of writing specification after the fact?
 In the last chapter, I said that in TDD a ‘test’ takes another role -
 one of a statement being a part of a specification. If we put things
 this way, then the whole controversial concept of “writing a test before
-the code" does not pose a problem at all. Quite the contrary - it only
+the code" does not pose a problem at all. Quite the contrary -- it only
 seems natural to specify what we are going to write before we attempt to
 write it. Does the other way round even make sense? A specification
 written after completing the implementation is nothing more than an
@@ -15,7 +15,7 @@ attempt at documenting the existing solution. Sure, such attempts can
 provide some value when done as a kind of reverse-engineering (i.e.
 writing specification for something that was implemented long ago and we
 do not really know the exact business rules or policies, which we
-discover as we document the existing solution) - it has an excitement of
+discover as we document the existing solution) -- it has an excitement of
 discovery in it, but doing it just after we, ourselves, made all the
 decisions seems like a waste of time, not to mention that it is dead
 boring (Do not believe me? Try implementing a simple calculator app and
@@ -66,7 +66,7 @@ practice and introduce an expanded version, but in the meantime, its
 sufficient to say that:
 
 Write a Statement you wish was true but is not
-:   means that the Statement evaluates to false (it shows on the test list as failing - in most xUnit frameworks, it will be marked with red color)
+:   means that the Statement evaluates to false (it shows on the test list as failing -- in most xUnit frameworks, it will be marked with red color)
 
 Add code to make it true
 :   means that we write just enough code to make the Statement true (in most xUnit frameworks, the true Statement will be marked with green color). Later in the course of the book, you will see how small can be “just enough"
@@ -75,7 +75,7 @@ Refactor
 :   is a step that I have silently discarded so far (and will do so for at least few next chapters. Do not worry, we will get back to it     eventually). Basically, it boils down to using the safety net of executable specification we already have in place to safely enhance the quality of the covered code while all mistakes we make in the process are quickly discovered by the running Specification.
 
 By the way, this process is sometimes referred to as
-“Red-Green-Refactor". I am just mentioning it here for the record - I am
+“Red-Green-Refactor". I am just mentioning it here for the record -- I am
 not planning to use this term further in the book.
 
 The benefit of failure
@@ -95,7 +95,7 @@ briefly.
 
 Every accurate Statement (do I have to tell you that such Statements are
 what we are interested in?) fails when it isn’t fulfilled and passes
-when it is. That is one of the main reasons we write it - to receive
+when it is. That is one of the main reasons we write it -- to receive
 this feedback. Also, after being fulfilled, the Statement becomes a part
 of the executable specification and starts failing as soon as the code
 stops fulfilling it (e.g. as a result of mistake made during code
@@ -106,7 +106,7 @@ will?
 
 The first time I encountered this argument (it was before I started
 thinking of unit tests as executable specification), it quickly raised
-my self-defense mechanism: “seriously?" - I thought - “I am a wise
+my self-defense mechanism: “seriously?" -- I thought -- “I am a wise
 person, I know what I am writing. If I make my unit tests small enough,
 it is self-evident that I am describing the correct behavior. This is
 paranoid". However, life quickly verified my claims and I was forced to
@@ -144,12 +144,12 @@ Now, imagine that you are writing this Statement post-factum as a unit
 test in an environment that has, let us say, more than thirty Statements
 - you have written the code, now you are just creating a test after test
 “to ensure" (as you see, this is not my favorite reason for writing unit
-tests) the code works. Code, test - pass, test - pass, test - pass. You
+tests) the code works. Code, test -- pass, test -- pass, test -- pass. You
 almost always evaluate your code against the whole Specification, since
 it is usually easier than selecting what to evaluate each time, plus,
 you get more confidence this way that you did not break by mistake
-something that is already working. So, this is really: Code, Test - all
-pass, test - all pass, test - all pass... Hopefully, you use some kind of
+something that is already working. So, this is really: Code, Test -- all
+pass, test -- all pass, test -- all pass... Hopefully, you use some kind of
 snippets mechanism for creating new Statements, but if not (and many do
 not actually do this), once in a while, you do something like this:
 
@@ -170,18 +170,18 @@ And you do not even notice that this will not be evaluated with the rest
 of the Specification, because it already consists of so many Statements
 that it is almost irrational to search for your added Statement in the
 list and make sure it is there each time. Also, note that the fact that
-you omitted the addition, does not disturb your work flow: test - all
-pass, test - all pass, test - all pass... In other words, your process
+you omitted the addition, does not disturb your work flow: test -- all
+pass, test -- all pass, test -- all pass... In other words, your process
 does not give you any feedback on your mistake. So, what you end up is
-a Statement that not only will never be false - **it will never be
+a Statement that not only will never be false -- **it will never be
 evaluated**.
 
 How does treating tests as Statements and evaluating them before making
 them true help here? **Because then, a Statement that starts off being
 evaluated as true is what DOES disturb your work flow.** In TDD, the
-work flow is: Statement - unfulfilled - fulfilled (ok, and refactor, but
+work flow is: Statement -- unfulfilled -- fulfilled (ok, and refactor, but
 for the sake of THIS discussion, it does not matter so much), Statement
-- unfulfilled - fulfilled, Statement - unfulfilled - fulfilled... So every
+- unfulfilled -- fulfilled, Statement -- unfulfilled -- fulfilled... So every
 time you fail to see the “unfulfilled" stage, you get feedback from your
 process that something suspicious is happening. This lets you
 investigate and, if necessary, fix the situation at hand.
@@ -265,7 +265,7 @@ var configuration = new XmlConfiguration(customFixture);
 ...
 ```
 
-And it passes - cool... not. Ok, what is wrong with this? Nothing big,
+And it passes -- cool... not. Ok, what is wrong with this? Nothing big,
 unless you read the source code of XmlConfiguration class carefully.
 Inside, you can see, how the xml string is stored:
 
@@ -290,13 +290,13 @@ I will ask this question again: ever had to write a requirement or
 design document for something that you already implemented? Was it fun?
 Was it valuable? Was it creative? No, I do not think so. The same is
 with our executable specification. After we write the code, we have
-little motivation to specify what is already written - some of the
+little motivation to specify what is already written -- some of the
 pieces of code “we can just see are correct", other pieces “we already
 saw working" when we copied our code over to our deployment machine and
 ran few sanity checks... The design is ready... Specification? Maybe next
 time...
 
-Another reason might be time pressure. Let us be honest - we are all in
+Another reason might be time pressure. Let us be honest -- we are all in
 a hurry, we are all under pressure and when this pressure is too high,
 it triggers heroic behaviors in us, especially when there is a risk of
 not making it with the sprint commitment. Such heroic behavior usually
@@ -327,10 +327,10 @@ My initial thought was that the comment was only about missing all the
 benefits that starting with false Statement brings you: the ability to
 see the Statement fail, the ability to do a clean-sheet analysis etc.,
 however, now I am of opinion that there is more to it. It is something
-I got from Amir Kolsky and Scott Bain - in order to be able to write
+I got from Amir Kolsky and Scott Bain -- in order to be able to write
 maintainable Specification for a piece of code, the code has to have
 a high level of a quality called **testability** (we will talk about
-testability later on, do not worry - for now let us assume that the
+testability later on, do not worry -- for now let us assume that the
 easier it is to write a Statement for a behavior of a class, the higher
 testability it has). That does not tell us much about where is the waste
 I mentioned, does it? To see it, let us see how dealing with testability

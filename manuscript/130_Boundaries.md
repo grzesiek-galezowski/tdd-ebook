@@ -18,7 +18,7 @@ Sometimes, anonymous value is not enough
 
 When we specify a behavior, there are times when this behavior should be
 the same no matter what arguments we pass to the constructor or invoked
-methods. An example would be an addition of two numbers - whatever
+methods. An example would be an addition of two numbers -- whatever
 numbers we would supply, the answer would always be a sum of those
 numbers:
 
@@ -38,7 +38,7 @@ ShouldCalculateTheSumOfTwoNumbers()
 }
 ```
 
-In this case, the integer numbers can really be “any" - the described
+In this case, the integer numbers can really be “any" -- the described
 relationship between input and output is independent of the actual
 values we use. As indicated in one of the previous chapters, this is the
 canonical case where Constrained Non-Determinism applies.
@@ -46,7 +46,7 @@ canonical case where Constrained Non-Determinism applies.
 Sometimes, however, objects exhibit different behaviors based on what is
 passed to their constructor and to their methods (OK, we also have
 static methods and singletons. Longer discussion on those will be
-included in one of the next chapters - for now we can safely ignore
+included in one of the next chapters -- for now we can safely ignore
 them). For example, in our application we may have a licensing policy
 where a feature is allowed to use only if the license is valid, and
 denied after it has expired. Another example would be that some shops
@@ -91,7 +91,7 @@ because no other value gives the same behavior as this one, so
 generating the value would not make any sense.
 
 The second Statement is for all the other cases. Here, we are going to
-use another method of the `Any` class for generating ay enum member
+use another method of the `Any` class for generating any enum member
 other than specified:
 
 ```csharp
@@ -147,10 +147,10 @@ can as well use -1 as edge value and say that:
 2.  for any X greater than -1, the result is X (e.g. absolute value of 3
     is 3).
 
-So a boundary is not a single number - it always has a length - the
+So a boundary is not a single number -- it always has a length -- the
 length between last value of the previous behavior and the first value
 of the next behavior. In case of our example, the length between -1
-(left edge - last negated number) and 0 (right edge - first non-negated)
+(left edge -- last negated number) and 0 (right edge -- first non-negated)
 is 1.
 
 Now, imagine that we are not talking about integer values anymore, but
@@ -160,7 +160,7 @@ because the rule applies to e.g. -0.9 as well. So what is the correct
 right edge value and the correct length of the boundary? Would the
 length be 0.1? Or 0.001? Or maybe 0.00000001? This is harder to answer
 and depends heavily on the context, but it is something that must be
-answered for each particular case - this way we know what kind of
+answered for each particular case -- this way we know what kind of
 precision is expected of us. In our Specification, we have to document
 the boundary length somehow.
 
@@ -288,12 +288,12 @@ technique to apply anytime, anywhere.
 Boundaries may look like they apply only to integer input, but they
 occur at many other places. There are boundaries associated with
 date/time (e.g. an action is performed again when time from last action
-is at least 30 seconds - the decision would need to be made whether we
+is at least 30 seconds -- the decision would need to be made whether we
 need precision in seconds or maybe in ticks), to strings (e.g.
 validation of user name where it must be at least 2 characters, or
 password that must contain at least 2 special characters) etc.
 
-Combination of boundaries - ranges
+Combination of boundaries -- ranges
 ----------------------------------
 
 So, what about a behavior that is valid in a range? Let us assume that
@@ -304,9 +304,9 @@ driving licenses). Let us also assume that we try to develop a class
 that answers the question whether we can apply for driving license and
 the return values of this query are as follows:
 
-1.  Age \< 17 - returns enum value `QueryResults.TooYoung`
-2.  17 \<= age \>= 65 - returns enum value `QueryResults.AllowedToApply`
-3.  Age \> 65 - returns enum value `QueryResults.TooOld`
+1.  Age \< 17 -- returns enum value `QueryResults.TooYoung`
+2.  17 \<= age \>= 65 -- returns enum value `QueryResults.AllowedToApply`
+3.  Age \> 65 -- returns enum value `QueryResults.TooOld`
 
 Now, remember I told you that we specify the behaviors near boundaries?
 This, however, when applied to the situation I just described, would
@@ -350,7 +350,7 @@ public void ShouldYieldResultForAge(int age, QueryResults expectedResult)
 This way, there is only one Statement executed four times. The case of
 `AllowedToApply` is still evaluated twice for both edge cases (so there
 is more time spent on executing it, which for small cases is not an
-issue), but the code maintenance issue is gone - we don’t have to
+issue), but the code maintenance issue is gone -- we don’t have to
 copy-paste the code to specify both edges of the behavior.
 
 Note that we’re quite lucky because the specified logic is strictly
@@ -390,7 +390,7 @@ Others, like XUnit.NET, don’t (not that it’s a defect of the framework,
 it’s just that the philosophy behind those two is a little bit different
 and that some features have hidden price attached to their usage which
 some frameworks are willing to pay, while others aren’t). Thus, we have
-to solve it by writing two parameterized Statements - one where a value
+to solve it by writing two parameterized Statements -- one where a value
 is returned (for valid cases) and one where exception is thrown (for
 invalid cases). The first would look like this:
 
@@ -426,7 +426,7 @@ ShouldThrowOutOfRangeExceptionWhenTryingToSetAlarmHourOutsideValidRange(
   //GIVEN
   var clock = new Clock();
 
-  //WHEN - THEN
+  //WHEN -- THEN
   Assert.Throws<OutOfRangeException>( 
     ()=> clock.SetAlarmHour(inputHour)
   );
@@ -440,5 +440,5 @@ In this chapter, we covered specifying numerical boundaries with
 a minimal amount of code, so that the Specification is more maintainable
 and runs fast. There is one more kind of situation left: when we have
 compound conditions (e.g. a password must be at least 10 characters and
-contain at least 2 special characters) - we’ll get back to those when we
+contain at least 2 special characters) -- we’ll get back to those when we
 introduce mocks.

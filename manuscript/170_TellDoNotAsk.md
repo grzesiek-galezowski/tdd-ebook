@@ -44,12 +44,12 @@ the implementation of some of the steps will be different for each type
 of employee.
 
 **Benjamin:** Correct me if I am wrong, but these "load" and "save"
-steps do not look like they belong with the remaining two - they
+steps do not look like they belong with the remaining two -- they
 describe something technical, while the other steps describe something
 strictly related to how the company operates...
 
 **Johnny:** Good catch, however, this is something we'll deal with
-later. Remember the scout rule - just don't make it worse. Still, we're
+later. Remember the scout rule -- just don't make it worse. Still, we're
 going to fix some of the design flaws today.
 
 **Benjamin:** Aww... I'd just fix all of it right away.
@@ -101,7 +101,7 @@ public class CompanyPolicies
 ```
 
 **Benjamin:** Look, Johnny, the class in fact contains all the four
-steps you mentioned, but they are not named explicitly - instead, their
+steps you mentioned, but they are not named explicitly -- instead, their
 internal implementation for regular employees is just inserted in here.
 How are we supposed to add the variation of the employee type?
 
@@ -201,12 +201,12 @@ foreach(var employee in employees)
 ```
 
 Then, we could change the `Employee` into an interface, so that it could
-be either a `RegularEmployee` or `ContractorEmployee` - both classes
+be either a `RegularEmployee` or `ContractorEmployee` -- both classes
 would have different implementations of the steps, but the
 `CompanyPolicies` would not notice, since it would not be coupled to the
-implementation of the steps anymore - just the names and the order.
+implementation of the steps anymore -- just the names and the order.
 
-**Johnny:** This solution would have one downside - we would need to
+**Johnny:** This solution would have one downside -- we would need to
 significantly change the current code, but you know what? I'm willing to
 do it, especially that I was told today that the logic is covered by
 some tests which we can run to see if a regression was introduced.
@@ -353,7 +353,7 @@ composability, which we talked about yesterday, increases!
 **Benjamin:** I see... So telling objects what to do instead of asking
 them for their data makes the interactions between objects more
 abstract, and so, more stable, increasing composability of interacting
-objects. This is a valuable lesson - it is the first time I hear this
+objects. This is a valuable lesson -- it is the first time I hear this
 and it seems a pretty powerful concept.
 
 A Quick Retrospective
@@ -374,7 +374,7 @@ the abstraction needs to not only provide answers to all those
 questions, but the answers are constrained to what the client expects.
 When abstraction is merely told what its client wants it to achieve, the
 clients is decoupled from most of the details of how this happens. This
-makes introducing new implementations of abstraction easier - it often
+makes introducing new implementations of abstraction easier -- it often
 even lets us define implementations with all methods empty without the
 client noticing at all.
 

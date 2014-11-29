@@ -153,7 +153,7 @@ slightly lick it). We can use the refactoring phase to remove
 duplication between the Statement and the implementing code.
 
 First, let us note that the number 8 is duplicated between Statement and
-implementation - the implementation returns it and the Statement asserts
+implementation -- the implementation returns it and the Statement asserts
 on it. To reduce this duplication, let us break the 8 in the
 implementation into a sum:
 
@@ -173,7 +173,7 @@ values of the Statement. After all, 3 and 5 are the exact values I used
 in the Statement, right? This kind of duplication is different in that
 it can be removed using variables (this applies not only to input
 variables, but basically anything we have access to prior to triggering
-specified behavior - constructor parameters, fields etc. in contrast to
+specified behavior -- constructor parameters, fields etc. in contrast to
 result which we normally do not know until we invoke the behavior). The
 duplication of number 3 can be eliminated this way:
 
@@ -285,7 +285,7 @@ public class ListWithAggregateOperations
 ```
 
 This is not yet the implementation we are happy with, which makes us add
-another Statement - this time for a single element:
+another Statement -- this time for a single element:
 
 {lang="csharp"}
 ```
@@ -338,12 +338,12 @@ Let’s add third example then. What would be the next more complex one?
 Note that the choice of next example is not random. Triangulation is
 about considering the axes of variability. If you carefully read the
 last example, you probably noticed that we already skipped one axis of
-variability - the value of the element. We used `Any.Integer()` where we
+variability -- the value of the element. We used `Any.Integer()` where we
 could use a literal value and add a second example with another value to
 make us turn it into variable. This time, however, I decided to **type
 the obvious implementation**. The second axis of variability is the
 number of elements. The third example will move us further along this
-axis - so it will use two elements instead of one or zero. This is how
+axis -- so it will use two elements instead of one or zero. This is how
 it looks like:
 
 {lang="csharp"}
@@ -435,7 +435,7 @@ public class ListWithAggregateOperations
 ```
 
 While the first Statement (“no elements") seems like a special case, the
-remaining two - for one and two elements - seem to be just two
+remaining two -- for one and two elements -- seem to be just two
 variations of the same behavior (“some elements"). Thus, it is a good
 idea to make a more general Statement that describes this logic to
 replace the two examples. After all, we don’t want more than one failure
@@ -514,9 +514,9 @@ the Statement about a behavior we expect when we calculate sum of no
 elements and the Statement about N elements we just wrote.
 
 And voilà! We have arrived at the final, generic solution. Note that the
-steps we took were tiny - so you might get the impression that the
+steps we took were tiny -- so you might get the impression that the
 effort was not worth it. Indeed, this example was only to show the
-mechanics of triangulation - in real life, if we encountered such simple
+mechanics of triangulation -- in real life, if we encountered such simple
 situation we’d know straight away what the design would be and we’d
 start with the general Statement straight away and just type in the
 obvious implementation. Triangulation shows its power in more complex

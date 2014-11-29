@@ -20,7 +20,7 @@ as they are working on another project...
 
 **Benjamin:** So, what's this assignment about?
 
-**Johnny:** Actually, it's nothing exciting - we'll have to add two
+**Johnny:** Actually, it's nothing exciting -- we'll have to add two
 features to a legacy application that's not prepared for the changes.
 
 **Benjamin:** What is the code for?
@@ -167,7 +167,7 @@ public class CompanyPolicies : IDisposable
 remember we're trying to follow the scout rule and by using this option
 we introduce more complexity to the CommonPolicies class. Also, let's
 say tomorrow someone writes another class for, say, reporting and this
-class will also need to access the repository - they will need to make
+class will also need to access the repository -- they will need to make
 the same decision on repositories in their code as we do in ours. This
 effectively means duplicating code. Thus, I'd rather evaluate further
 options and check if we can come up with something better. What's our
@@ -203,7 +203,7 @@ public class SqlRepository : IDisposable
 considering for very serious legacy code, as it does not force us to
 change the `CompanyPolicies` class at all. However, there are some
 issues with it. First of all, the `SqlRepository` name would be
-misleading. Second, look at the `CurrentEmployees()` method - all it
+misleading. Second, look at the `CurrentEmployees()` method -- all it
 does is delegating a call to the implementation chosen in the
 constructor. With every new method required of the repository, we'll
 need to add new delegating methods. In reality, it isn't such a big
@@ -228,11 +228,11 @@ public class CompanyPolicies : IDisposable
 ```
 
 This way, the `CompanyPolicies` won't know what exactly is passed to it
-via constructor and we can pass whatever we like - either an SQL
+via constructor and we can pass whatever we like -- either an SQL
 repository or a NoSQL one!
 
 **Johnny:** Great! This is the option we're looking for! For now, just
-believe me that this approach will lead us to many good things - you'll
+believe me that this approach will lead us to many good things -- you'll
 see why later.
 
 **Benjamin:** OK, so let me just pull the `SqlRepository` instance
@@ -313,7 +313,7 @@ public static void Main(string[] args)
 
 This way the repository is created at the start of the program and
 disposed of at the end. Thanks to this, the `CompanyPolicies` has no
-disposable fields and it itself does not have to be disposable - we can
+disposable fields and it itself does not have to be disposable -- we can
 just delete the `Dispose()` method:
 
 ```csharp

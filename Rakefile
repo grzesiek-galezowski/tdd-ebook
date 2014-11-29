@@ -42,9 +42,6 @@ task :clone_manuscript => 'diagrams:regenerate' do
   remove_pandoc_manuscript
   cp_r $MANUSCRIPT_DIR, $PD_MANUSCRIPT_DIR
   
-  # remove leanpub code language markers
-  #replace_in_temp_markdown_files 
-  puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri '/\\{lang=/d' *.md")
   # replace leanpub parts with chapters
   replace_in_temp_markdown_files "^-#", "# " 
   # replace asides with blocks
@@ -74,6 +71,9 @@ task :clone_manuscript => 'diagrams:regenerate' do
   # replace generic blocks with blocks
   replace_in_temp_markdown_files "^G> ", "> "
   replace_in_temp_markdown_files "^G>$", ">"
+  
+  #use java source code highlight as pandoc does not support C#
+  replace_in_temp_markdown_files "^```csharp", "```java"
 end
 
 def replace_in_temp_markdown_files(replaced, replacement)

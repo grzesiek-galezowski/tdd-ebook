@@ -9,11 +9,11 @@ The above quote took place just before a fighting scene in which
 a nameless warrior jumped at Sub-Zero only to be frozen and broken into
 multiple pieces upon hitting the wall. The scene was not spectacular in
 terms of fighting technique or length. Also, the nameless guy did not
-even try hard - the only thing he did was to jump only to be hit by
+even try hard -- the only thing he did was to jump only to be hit by
 a freezing ball, which, by the way, he actually saw coming. It looked
 a lot like the fight was set up only to showcase Sub-Zero’s freezing
 ability. Guess what? In this chapter, we are gonna do roughly the same
-thing - set up a fake, easy scenario just to showcase some of the basic
+thing -- set up a fake, easy scenario just to showcase some of the basic
 TDD elements!
 
 The previous chapter was filled with a lot of theory and philosophy,
@@ -41,7 +41,7 @@ as she wants them to do write a small program for her. Together with
 them, we will see how they interact with the customer and how Benjamin
 tries to understand the basics of TDD. Just as you, Benjamin is a novice
 so his questions may reflect yours. However, if you find anything
-explained in not enough details, do not worry - in the next chapters, we
+explained in not enough details, do not worry -- in the next chapters, we
 will be expanding on this material.
 
 Act 1: The Car
@@ -117,7 +117,7 @@ out and give us some feedback. However, before we can even implement
 addition, we will have to implement displaying digits on the screen as
 you enter them. Is that correct?
 
-**Jane:** yes, I want the display stuff to work as well - it is the most
+**Jane:** yes, I want the display stuff to work as well -- it is the most
 basic feature, so...
 
 **Johnny:** Ok then, this is a simple functionality, so let me suggest
@@ -168,7 +168,7 @@ some key examples of how the features work. The first story is...
 **Benjamin:** That makes me wonder... what should happen when I press "0"
 again at this stage?
 
-**Johnny:** Good catch, that is what these examples are for - they make
+**Johnny:** Good catch, that is what these examples are for -- they make
 our thinking concrete. As Ken Pugh says: “Often the complete
 understanding of a concept does not occur until someone tries to use the
 concept". We would normally put it on a TODO list, because it is part of
@@ -381,7 +381,7 @@ ShouldDisplay0WhenCreated()
 
 **Johnny:** the code not compiling is the feedback that you needed to
 proceed. While previously you did not know where to start, now you have
-a clear goal - make this code compile. Firstly, where do you get the
+a clear goal -- make this code compile. Firstly, where do you get the
 displayed value from?
 
 **Benjamin:** From the calculator display, of course!
@@ -601,7 +601,7 @@ initial value."
 
 **Johnny:** Ok. We should handle it now, especially that it is part of
 the story we are currently implementing, but I will leave it for later
-just to show you the power of TODO list in TDD - whatever is on the
+just to show you the power of TODO list in TDD -- whatever is on the
 list, we can forget and get back to when we have nothing better to do.
 Our next item from the list is this:
 
@@ -712,7 +712,7 @@ value from enumeration besides the one supplied as an argument. Hence,
 the call `Any.Besides(DigitKeys.Zero)` means “any of the values
 contained in DigitKeys enumeration, but not DigitKeys.Zero".
 
-The `Any.Of()` is simpler - it just returns any value in an enumeration.
+The `Any.Of()` is simpler -- it just returns any value in an enumeration.
 Note that when I create the values this way, I state explicitly that
 this behavior occurs when first digit is non-zero. This technique of
 using generated values instead of literals has its own principles, but
@@ -720,8 +720,8 @@ let us leave it for later. I promise to give you a detailed lecture on
 it. Agree?
 
 **Benjamin:** You better do, because for now, I feel a bit uneasy with
-generating the values - it seems like the Statement we are writing is
-getting less deterministic this way. The last question - what about
+generating the values -- it seems like the Statement we are writing is
+getting less deterministic this way. The last question -- what about
 those weird comments you put in the code? Given? When? Then?
 
 **Johnny:** Yes, this is a convention that I use, not only in writing,
@@ -734,7 +734,7 @@ displayed in order they were entered". This is also something that
 I will tell you more about later.
 
 **Benjamin:** Sure, for now I need just enough detail to understand what
-is going on - we can talk about the principles, pros and cons later. By
+is going on -- we can talk about the principles, pros and cons later. By
 the way, the following sequence of casts looks a little bit ugly:
 
 ```csharp
@@ -788,7 +788,7 @@ effortless.
 
 **Benjamin:** OK.
 
-**Johnny:** Now for the implementation. Just to remind you - up to now,
+**Johnny:** Now for the implementation. Just to remind you -- up to now,
 it looked like this:
 
 ```csharp
@@ -860,7 +860,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 **Benjamin:** Yeah, it seems a bit unreadable.
 
 **Johnny:** Let us extract this part into a utility method and make it
-more general - we will need a way of constructing expected displayed
+more general -- we will need a way of constructing expected displayed
 output in many of our future Statements. Here is my go at this helper
 method:
 
@@ -994,7 +994,7 @@ false! Is it worth the hassle? We will undo this whole modification in
 a second anyway
 
 **Johnny:** Depends on how confident you want to feel. I would say that
-it is usually worth it - at least you know that you got everything
+it is usually worth it -- at least you know that you got everything
 right. It might seem like a lot of work, but it actually took me about
 a minute to add this code and imagine you got it wrong and had to debug
 it on a production environment. \_That\_ would be a waste of time.
@@ -1014,5 +1014,5 @@ a feel of how the TDD cycle looks like, especially that Johnny and
 Benjamin had a lot of conversations on many other topics in the
 meantime. I will be revisiting these topics later in the book. For now,
 so if you felt lost or unconvinced on any of the topics mentioned by
-Johnny, do not worry - I do not expect you to be proficient with any of
+Johnny, do not worry -- I do not expect you to be proficient with any of
 the techniques shown in this chapter just yet. Time will come for that.

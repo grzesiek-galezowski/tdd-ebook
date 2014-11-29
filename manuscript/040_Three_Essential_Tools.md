@@ -1,43 +1,25 @@
 The three most essential tools
 ==============================
 
-Ever watched Karate Kid, either the old version or the new one? The
-thing they have in common is that when the kid starts learning Karate
-(or Kung-Fu) from his master, he is given a basic, repetitive task (like
-taking off a jacket, and putting it on again), not knowing yet where it
-would lead him. Or look at the first Rocky film (yeah, the one starring
-Sylvester Stallone), where Rocky was chasing a chicken in order to train
-agility.
+Ever watched Karate Kid, either the old version or the new one? The thing they have in common is that when the kid starts learning Karate (or Kung-Fu) from his master, he is given a basic, repetitive task (like taking off a jacket, and putting it on again), not knowing yet where it would lead him. Or look at the first Rocky film (yeah, the one starring
+Sylvester Stallone), where Rocky was chasing a chicken in order to train agility.
 
-When I first tried to learn how to play guitar, I found two advices on
-the web: the first was to start by mastering a single, difficult song.
-The second was to play with a single string, learn how to make it sound
-in different ways and try to play some melodies by ear just with this
-one string. Do I have to tell you that the second advice worked better?
+When I first tried to learn how to play guitar, I found two advices on the web: the first was to start by mastering a single, difficult song. The second was to play with a single string, learn how to make it sound in different ways and try to play some melodies by ear just with this one string. Do I have to tell you that the second advice worked better?
 
-Honestly, I could dive right into the core techniques of TDD, but this
-would be like putting you on a ring with a demanding opponent - you
-would most probably be discouraged before gaining the necessary skills.
-So, instead of explaining how to win a race, in this chapter we will
-take a look at what shiny cars we will be driving.
+Honestly, I could dive right into the core techniques of TDD, but this would be like putting you on a ring with a demanding opponent -- you would most probably be discouraged before gaining the necessary skills. So, instead of explaining how to win a race, in this chapter we will take a look at what shiny cars we will be driving.
 
-In other words, I will give you a brief tour of the three most essential
-tools we will be using throughout this book.
+In other words, I will give you a brief tour of the three most essential tools we will be using throughout this book.
 
 Our shiny tools
 ---------------
 
 ### A disclaimer 
 
-In this chapter, I will oversimplify some things just to
-get you up and running without getting into the philosophy of TDD yet
-(think: physics lessons in primary school). Do not worry about it :-),
-we will fix that in the coming chapters!
+In this chapter, I will oversimplify some things just to get you up and running without getting into the philosophy of TDD yet (think: physics lessons in primary school). Do not worry about it :-), we will fix that in the coming chapters!
 
 ### xUnit framework
 
-The first and most essential tool we are going to use is an xUnit
-framework.
+The first and most essential tool we are going to use is an xUnit framework.
 
 Let us assume that our application looks like this:
 
@@ -61,11 +43,7 @@ public static void Main(string[] args)
 }
 ```
 
-Now, let us assume we want to check whether it produces correct results.
-The most obvious way would be to invoke the application from command
-line with some exemplary arguments, check the output to the console and
-compare it with what we expect to see. Such session could look like
-this:
+Now, let us assume we want to check whether it produces correct results. The most obvious way would be to invoke the application from command line with some exemplary arguments, check the output to the console and compare it with what we expect to see. Such session could look like this:
 
 ```text
 C:\MultiplicationApp\MultiplicationApp.exe 3 7
@@ -73,17 +51,9 @@ C:\MultiplicationApp\MultiplicationApp.exe 3 7
 C:\MultiplicationApp\
 ```
 
-As you can see, the application produced a result of 21 for
-multiplication of 7 by 3. This is correct, so we assume the test is
-passed. But what if we produced an application that additionally does
-addition, subtraction, division, calculus etc.? How many times would we
-have to invoke the application to make sure every operation works
-correct?
+As you can see, the application produced a result of 21 for multiplication of 7 by 3. This is correct, so we assume the test is passed. But what if we produced an application that additionally does addition, subtraction, division, calculus etc.? How many times would we have to invoke the application to make sure every operation works correct?
 
-But wait, we are programmers, right? So we can write programs that can
-do this for us! In order to do this, we will create a second application
-that will also use the Multiplication class, but in a little different
-way:
+But wait, we are programmers, right? So we can write programs that can do this for us! In order to do this, we will create a second application that will also use the Multiplication class, but in a little different way:
 
 ```csharp
 public static void Main(string[] args) 
@@ -99,9 +69,7 @@ public static void Main(string[] args)
 }
 ```
 
-Sounds easy, right? Let us take another step and extract the result
-check into something more reusable - after all, we will be adding
-division in a second, remember? So here goes:
+Sounds easy, right? Let us take another step and extract the result check into something more reusable -- after all, we will be adding division in a second, remember? So here goes:
 
 ```csharp
 public static void Main(string[] args) 
@@ -124,10 +92,7 @@ public static void AssertTwoIntegersAreEqual(
 }
 ```
 
-Note that I started the name of the method with “Assert" - we will get
-back to the naming soon, for now just assume that this is just a good
-name for the method. Let us take one last round and put the test into
-its own method:
+Note that I started the name of the method with “Assert" -- we will get back to the naming soon, for now just assume that this is just a good name for the method. Let us take one last round and put the test into its own method:
 
 ```csharp
 public static void Main(string[] args) 
@@ -159,43 +124,18 @@ public static void AssertTwoIntegersAreEqual(
 }
 ```
 
-And we are finished. Now if we need another test, e.g. for division, we
-can just add a new method call to the `Main()` method and implement it.
-When implementing it, we can reuse the `AssertTwoIntegersAreEqual()`
-method, since the check for division would be analogous.
+And we are finished. Now if we need another test, e.g. for division, we can just add a new method call to the `Main()` method and implement it. When implementing it, we can reuse the `AssertTwoIntegersAreEqual()` method, since the check for division would be analogous. 
 
-As you can see, we can easily write automated checks like this, but this
-way has some disadvantages:
+As you can see, we can easily write automated checks like this, but this way has some disadvantages:
 
-1.  Every time we add new test, we have to maintain the `Main()` method,
-    adding a call to the new test. If you forget to add such a call, the
-    test will never be run. At first it isn’t a big deal, but as soon as
-    we have dozens of tests, it will get really hard to notice.
-2.  Imagine your system consists of more than one application - you
-    would have some problems trying to gather summary results for all of
-    the applications that your system consists of.
-3.  A need will very quickly arise to write a lot of other checks like
-    the existing `AssertTwoIntegersAreEqual()` - this one compares two
-    integers for equality, but what if you wanted to checka different
-    condition, e.g. that one integer is greater than another? What if
-    you wanted to check equality not for integers, but for characters,
-    strings, floats etc.? What if you wanted to check some conditions on
-    collections, e.g. that a collection is sorted or that all items in
-    the collection are unique?
-4.  Given that a test fails, it would be hard to navigate from the
-    commandline output to the line in your IDE. Would it not be easier
-    if you could click on the call stack to take you immediately to the
-    code where the failure took place?
+1.  Every time we add new test, we have to maintain the `Main()` method, adding a call to the new test. If you forget to add such a call, the test will never be run. At first it isn’t a big deal, but as soon as we have dozens of tests, it will get really hard to notice. 
+2.  Imagine your system consists of more than one application -- you would have some problems trying to gather summary results for all of the applications that your system consists of. 
+3.  A need will very quickly arise to write a lot of other checks like the existing `AssertTwoIntegersAreEqual()` -- this one compares two integers for equality, but what if you wanted to check a different condition, e.g. that one integer is greater than another? What if you wanted to check equality not for integers, but for characters, strings, floats etc.? What if you wanted to check some conditions on collections, e.g. that a collection is sorted or that all items in the collection are unique?
+4.  Given that a test fails, it would be hard to navigate from the commandline output to the line in your IDE. Would it not be easier if you could click on the call stack to take you immediately to the code where the failure took place?
 
-For these and other reasons, automated testing tools were born. Those
-testing tools are generally referenced to as **xUnit family**, because
-many of them have names that end with the word “Unit", e.g. CppUnit (for
-C++), JUnit (for Java), NUnit (for .NET) etc.
+For these and other reasons, automated testing tools were born. Those testing tools are generally referenced to as **xUnit family**, because many of them have names that end with the word “Unit", e.g. CppUnit (for C++), JUnit (for Java), NUnit (for .NET) etc.
 
-To be honest, I cannot wait to show you how the test we wrote just
-a minute ago looks like when xUnit framework is used, however, before
-I do this, I would like to recap quickly what we have in our brute-force
-naive approach to writing automated tests:
+To be honest, I cannot wait to show you how the test we wrote just a minute ago looks like when xUnit framework is used, however, before I do this, I would like to recap quickly what we have in our brute-force naive approach to writing automated tests:
 
 1.  The `Main()` method serves as a **Test List**
 2.  The
@@ -224,7 +164,7 @@ Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
 
 As you can see, it looks like two methods that we previously had are
 gone now and the test is the only thing that is left. Well, to tell you
-the truth, they are not gone - it is just that the framework handles
+the truth, they are not gone -- it is just that the framework handles
 these for us. Let us reiterate through the three elements of the
 previous version of the test that I promised would be there after the
 transition to xUnit framework:
@@ -235,16 +175,16 @@ transition to xUnit framework:
 2.  The **Test Method is here and looks almost the same as the last
     time.**
 3.  The **Assertion** took the form of a call to static `Assert.Equal()`
-    method - the xUnit.NET framework is bundled with a wide range of
+    method -- the xUnit.NET framework is bundled with a wide range of
     pre-made assertions for your convenience. Of course, no one stops
     you from writing your own custom one if you do not find what you are
     looking for in a default set.
 
 Phew, I hope I made the transition quite painless for you. Now the last
-thing to add - as there is not `Main()` method anymore in the last
+thing to add -- as there is not `Main()` method anymore in the last
 example, you surely must wonder how we run those tests, right? Ok, the
-last big secret unveiled - we use an external application for this (we
-will refer to it using a term **Test Runner**) - we tell it which
+last big secret unveiled -- we use an external application for this (we
+will refer to it using a term **Test Runner**) -- we tell it which
 assemblies to run and it loads them, runs them, reports results etc. It
 can take various forms, e.g. it can be a console application, a GUI
 application or a plugin to our IDEs. Here is an example of a stand-alone
@@ -297,7 +237,7 @@ public class OrderProcessing
 }
 ```
 
-Now, imagine we need to test it - how do we do it? I can already see you
+Now, imagine we need to test it -- how do we do it? I can already see you
 shaking your head and saying: “Let us just create this database, invoke
 this method and see if the record is added properly". In such case, the
 first test would look like this:
@@ -353,7 +293,7 @@ way. There are several reasons:
     results every time I run them. Do you?
 2.  Everyone running this test will have to set up a local database on
     their machine. What if their setup is slightly different than yours?
-    What if the schema gets outdated - will everyone manage to notice it
+    What if the schema gets outdated -- will everyone manage to notice it
     and update schema of their local databases accordingly? Will you
     re-run your database creation script only to ensure you have got the
     latest schema available to run your tests against?
@@ -373,7 +313,7 @@ Now, let us try something else. Let us assume that our database works OK
 test is our implementation. In this situation, we can create fake
 object, which is an instance of another custom class that implements the
 same interface as MySqlOrderDatabase, but does not write to a database
-at all - it only stores the inserted records in a list:
+at all -- it only stores the inserted records in a list:
 
 ```csharp
 public class FakeOrderDatabase : OrderDatabase
@@ -612,7 +552,7 @@ stop here.
 In this chapter, I tried to show you the three essential tools which we
 will be using in this book and which, when mastered, will make your
 test-driven development smoother. If this chapter leaves you with
-insufficient justification for their use, do not worry - we will dive
+insufficient justification for their use, do not worry -- we will dive
 into the philosophy behind them in the coming chapters. For now, I just
 want you to get familiar with the tools themselves and their syntax. Go
 on, download these tools, launch them, try to write something simple

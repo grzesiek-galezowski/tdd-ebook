@@ -159,7 +159,7 @@ This looks more like a part of specification, because we are documenting
 the format of the backup file name and show which part of the format is
 variable and which part is fixed. This is something you would probably
 find documented in a paper specification for the application you are
-writing - it would probably contain a sentence saying: “The format of
+writing -- it would probably contain a sentence saying: “The format of
 a backup file should be **backup\_H.zip**, where **H** is the current
 local host name".
 
@@ -322,8 +322,8 @@ public string AnyString()
 Note that I didn’t use the literal constant value, but rather, the value
 inside the `Version.Number` constant. This allows us to use derived
 value, but leaves us a little worried about whether the value of the
-constant is correct - after all, we are using it for creation of our
-expected value, but it is a part of production code - i.e. is something
+constant is correct -- after all, we are using it for creation of our
+expected value, but it is a part of production code -- i.e. is something
 that should be specified itself!
 
 To keep everyone happy, we write a single Statement just for the

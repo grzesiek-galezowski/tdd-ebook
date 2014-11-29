@@ -4,16 +4,16 @@ What is the scope of a unit-level Statement in TDD?
 Ha, now I have to admit that I deferred for a long time an answer to
 a pretty fundamental question: what should be the scope of a single
 Statement? If I put the whole system together, can I write a Statement
-for its behavior? Or maybe the other way round - there should be
+for its behavior? Or maybe the other way round -- there should be
 a Statement for each method of each class, including the private ones?
 Well, first thing I want to explain is that there are multiple levels we
 can write our Statements on. This varies depending on the TDD authority,
-but in this book, we will cover two of such levels - unit level and
+but in this book, we will cover two of such levels -- unit level and
 acceptance level. For now, let us stick to the unit level, which is what
 we have done so far anyway. The time will come for the rest.
 
 For unit level, let us consider the kind of Statements that you already
-saw in this book - where we take one object, invoke a method on it and
+saw in this book -- where we take one object, invoke a method on it and
 assert on the result. This is actually a special case of unit-level
 Statement and we will cover more in the coming chapters. This is,
 however, a good moment to stop and consider the “scope" of a single
@@ -123,12 +123,12 @@ ShouldReportItCanHandleStringWithLengthOf3ButNotOf4AndNotNullString()
 }
 ```
 
-Note that it specifies three (or two - depending on how you count)
+Note that it specifies three (or two -- depending on how you count)
 behaviors: acceptance of string of allowed size, refusal of handling
 string above the allowed size and a special case of null string. As
-I said - this is an antipattern and is sometimes called a “check-it-all
+I said -- this is an antipattern and is sometimes called a “check-it-all
 test". The issue with this kind of Statement is that it can be evaluated
-to false for at least two reasons - when the allowed string size changes
+to false for at least two reasons -- when the allowed string size changes
 and when null handling is done in another way. Also, xUnit tools by
 default stop execution on first error, so, assuming that the first
 assertion fails, we will not know the outcome of the next assertion
@@ -167,10 +167,10 @@ start and not being able to transmit frames after start. That is why
 this test should be split into two.
 
 How to catch that you are writing a Statement about two or more
-behaviors rather than one? First, take a look at the test name - if it
+behaviors rather than one? First, take a look at the test name -- if it
 looks strange and contains some “And" or “Or" words, it may (but does
 not have to) be about more than one behavior. Another way is to write
 the description of a behavior in a Given-When-Then way. If you have more
 than one item in the “When" section or the structure is not
-Given-When-Then, but rather a “Given-When-Then-When-Then" - that is also
+Given-When-Then, but rather a “Given-When-Then-When-Then" -- that is also
 a signal.
