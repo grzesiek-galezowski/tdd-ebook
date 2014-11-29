@@ -648,6 +648,15 @@ Why did I leave out inline creation and singletons? context independence!
 
 TODO
 
+
+```csharp
+if(recipient.ExtractStatusCodeFrom(response) == -1)
+{
+  observer.NotifyErrorOccured();
+}
+```
+
+
 A> ##This is a block quote. This
 A> paragraph has two lines.
 A> 
