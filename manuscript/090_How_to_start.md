@@ -77,7 +77,7 @@ Note few things about the name of the Statement:
 1.  It describes a behavior of an instance of a specified class. Note
     that it does not contain method name that triggers the behavior,
     because what is specified is not a method, but the behavior itself.
-    The name simply tells that what an instance does (“notifies
+    The name simply tells what an instance does (“notifies
     listeners that server is unavailable") under certain circumstances
     (“when cannot connect to its monitoring port"). It is important
     because such description is what you can derive from thinking about

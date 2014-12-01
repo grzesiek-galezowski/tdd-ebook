@@ -143,7 +143,7 @@ To be honest, I cannot wait to show you how the test we wrote just a minute ag
     method is a **Test Method**
 3.  The `AssertTwoIntegersAreEqual()` method is **an Assertion**
 
-Quite to our joy, those three elements are present in xUnit frameworks
+To our joy, those three elements are present in xUnit frameworks
 as well. To illustrate it, here is (finally!) the same test we wrote,
 but with an xUnit framework (this one is called XUnit.Net):
 
@@ -377,7 +377,7 @@ public class ExplodingOrderDatabase : OrderDatabase
 }
 ```
 
-Ok, so far so good, but the bad is that now we have got two classes of
+Ok, so far so good, but the bad thing is that now we have got two classes of
 fake objects to maintain (and chances are we will need even more). Any
 method or argument added will need to be propagated to all these
 objects. We can spare some coding by making our mocks a little more
