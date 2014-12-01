@@ -128,7 +128,7 @@ public static void AssertTwoIntegersAreEqual(
 
     <li>Imagine your system consists of more than one application - you would have some problems trying to gather summary results for all of the applications that your system consists of.</li>
 
-    <li>A need will very quickly arise to write a lot of other checks like the existing <code>AssertTwoIntegersAreEqual()</code> - this one compares two integers for equality, but what if you wanted to checka different condition, e.g. that one integer is greater than another? What if you wanted to check equality not for integers, but for characters, strings, floats etc.? What if you wanted to check some conditions on collections, e.g. that a collection is sorted or that all items in the collection are unique?</li>
+    <li>A need will very quickly arise to write a lot of other checks like the existing <code>AssertTwoIntegersAreEqual()</code> - this one compares two integers for equality, but what if you wanted to check a different condition, e.g. that one integer is greater than another? What if you wanted to check equality not for integers, but for characters, strings, floats etc.? What if you wanted to check some conditions on collections, e.g. that a collection is sorted or that all items in the collection are unique?</li>
 
     <li>Given that a test fails, it would be hard to navigate from the commandline output to the line in your IDE. Would it not be easier if you could click on the call stack to take you immediately to the code where the failure took place?</li>
   </ol>
@@ -145,7 +145,7 @@ public static void AssertTwoIntegersAreEqual(
     <li>The <code>AssertTwoIntegersAreEqual()</code> method is <strong>an Assertion</strong></li>
   </ol>
 
-  <p>Quite to our joy, those three elements are present in xUnit frameworks as well. To illustrate it, here is (finally!) the same test we wrote, but with an xUnit framework (this one is called XUnit.Net):</p>
+  <p>To our joy, those three elements are present in xUnit frameworks as well. To illustrate it, here is (finally!) the same test we wrote, but with an xUnit framework (this one is called XUnit.Net):</p>
   <pre>[Fact] public void 
 Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
 {
@@ -305,7 +305,7 @@ ShouldInsertNewOrderToDatabase()
 }
 </pre>
 
-  <p>Ok, so far so good, but the bad is that now we have got two classes of fake objects to maintain (and chances are we will need even more). Any method or argument added will need to be propagated to all these objects. We can spare some coding by making our mocks a little more generic so their behavior can be configured using lambda expressions:</p>
+  <p>Ok, so far so good, but the bad thing is that now we have got two classes of fake objects to maintain (and chances are we will need even more). Any method or argument added will need to be propagated to all these objects. We can spare some coding by making our mocks a little more generic so their behavior can be configured using lambda expressions:</p>
   <pre>public class ConfigurableOrderDatabase : OrderDatabase
 {
   public Action&lt;Order&gt; doWhenInsertCalled;
