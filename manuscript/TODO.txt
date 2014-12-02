@@ -1,14 +1,5 @@
 
 
-## Single Responsibility
-
-I already said that we want our system to be a web of composable objects. Obviously, an object is a granule of composability - we cannot e.g. unplug half of object and plug in another half. Thus, a valid question to ask is this: how big should an object be to make the composability comfortable - to let us unplug as much logic as we want, leaving the rest untouched.
-
-
-This leads to a question: what is the granule of composability? How much should a class do to be composable?
-
-TODO
-
 ## Law of Demeter
 
 As we discovered, exposing return values makes the protocols more complex and should be avoided if possible. TODO do we need this at all?
@@ -45,7 +36,6 @@ May be more coupling, but the coupling is very light - just an abstract interfac
 e.g. Id abstraction can be either in or string or a combination of those. The protocol stays stable regardless of these changes
 
 Plural is also an abstraction
-
 --------------------------------
 
 TODO
