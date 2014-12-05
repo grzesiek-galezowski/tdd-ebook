@@ -22,6 +22,7 @@ $PD_MANUSCRIPT_IMAGES_DIR = $PD_MANUSCRIPT_DIR + "images"
 $PD_MANUSCRIPT_COVER_IMAGE = $PD_MANUSCRIPT_IMAGES_DIR + "homemade_title_page.png"
 $PD_MANUSCRIPT_STYLESHEETS_DIR = $PD_MANUSCRIPT_DIR + "Stylesheets"
 $PD_MANUSCRIPT_GLOBAL_STYLESHEET = $PD_MANUSCRIPT_STYLESHEETS_DIR + "Global.css"
+$PANDOC_EXE = "/home/astral/.cabal/bin/pandoc"
 
 $EPUB_DEFAULT_STYLESHEET = Pathname.new(Dir.home) + ".pandoc"
 
@@ -125,7 +126,7 @@ end
 
 def generate_format(subdir, filename, additional_options)
   filename = filename.shellescape
-  cmd_begin = "cd #{subdir.to_s.shellescape} && pandoc #{$common_pandoc_opts} "
+  cmd_begin = "cd #{subdir.to_s.shellescape} && #{$PANDOC_EXE} #{$common_pandoc_opts} "
   cmd_custom = String.new
   additional_options.each { |opt| cmd_custom = cmd_custom + " " + opt + " " }
   

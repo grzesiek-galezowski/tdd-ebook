@@ -27,8 +27,7 @@ Statements:
 
 Let us see the first example and try to answer this question:
 
-{lang="csharp"}
-```
+```csharp
 [Fact] public void
 ShouldThrowValidationExceptionWithFatalErrorLevelWhenValidatedStringIsEmpty()
 {
@@ -58,8 +57,7 @@ exercises one method of a specified object?
 
 Let us consider the following example:
 
-{lang="csharp"}
-```
+```csharp
 [Fact] public void 
 ShouldBeFulfilledWhenEventOccursThreeTimes()
 {
@@ -96,8 +94,7 @@ Statements with method scope can span multiple behaviors (which, by the
 way, is a sign of poorly written Statement). Let us take a look at an
 example:
 
-{lang="csharp"}
-```
+```csharp
 [Fact] public void 
 ShouldReportItCanHandleStringWithLengthOf3ButNotOf4AndNotNullString()
 {
@@ -140,8 +137,7 @@ On the other hand, Statements with behavior scope do not necessary have
 to be broader than those with class scope. Let us take the following
 example that proves it:
 
-{lang="csharp"}
-```
+```csharp
 [Fact] public void
 ShouldReportItIsStartedAndItDoesNotYetTransmitVoiceWhenItStarts()
 {

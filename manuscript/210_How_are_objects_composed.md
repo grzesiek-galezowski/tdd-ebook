@@ -837,7 +837,7 @@ message.ApplyTo(_sessions);
 
 Note that the above code does not need to change in case we want to add a new type of message that is compatible with the existing flow of processing messages[^messageotherchangecase]. The only place we need to modify in such case is the factory. For example, imagine we decided to add a session refresh message. The modified factory would look like this: 
 
-```
+```csharp
 public class Version1ProtocolMessageFactory
   : MessageFactory
 {

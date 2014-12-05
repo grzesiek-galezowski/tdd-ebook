@@ -304,8 +304,7 @@ boils down to making a few trivial declarations and assignments:
 
 Putting it all together:
 
-{lang="csharp"}
-```
+```csharp
 [Fact] public void 
 ShouldAppearEqualToAnotherUserWithTheSameName()
 {

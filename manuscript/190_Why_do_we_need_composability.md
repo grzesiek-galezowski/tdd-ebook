@@ -8,8 +8,7 @@ Pre-object oriented approaches
 
 Back in the days of procedural programming[^skipfunc], when we wanted to execute a different code based on some factor, it was usually achieved using an 'if' statement. For example, if our application was in need to be able to use different kinds of alarms, like a loud alarm (that plays a loud sound) and a silent alarm (that does not play any sound, but instead silently contacts the police) interchangeably, then usually, we could achieve this using a conditional like in the following function:
 
-{lang="c"}
-```
+```c
 void triggerAlarm(Alarm* alarm)
 {
   if(alarm->kind == LOUD_ALARM)
@@ -25,8 +24,7 @@ void triggerAlarm(Alarm* alarm)
 
 The code above makes decision based on the alarm kind which is embedded in the alarm structure:
 
-{lang="c"}
-```
+```c
 struct Alarm
 {
   int kind;
@@ -36,8 +34,7 @@ struct Alarm
 
 If the alarm kind is the loud one, it executes behavior associated with loud alarm. If this is a silent alarm, the behavior for silent alarms is executed. This seems to work. Unfortunately, if we wanted to make a second decision based on the alarm kind (e.g. we needed to disable the alarm), we would need to query the alarm kind again. This would mean duplicating the conditional code, just with a different set of actions to perform, depending on what kind of alarm we were dealing with:
 
-{lang="c"}
-```
+```c
 void disableAlarm(Alarm* alarm)
 {
   if(alarm->kind == LOUD_ALARM)

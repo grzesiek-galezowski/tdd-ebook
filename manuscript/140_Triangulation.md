@@ -253,8 +253,7 @@ list. Let’s assume that we have no idea how to design the internals of
 our custom list class so that it fulfills its responsibility. Thus, we
 start with the simplest example of calculating a sum of 0 elements:
 
-{lang="csharp"}
-```
+```csharp
 [Fact] public void 
 ShouldReturn0AsASumOfNoElements()
 {
@@ -273,8 +272,7 @@ ShouldReturn0AsASumOfNoElements()
 Remember we want to write just enough code to make the Statement true.
 We can achieve it with just returning 0 from the `SumOfElements` method:
 
-{lang="csharp"}
-```
+```csharp
 public class ListWithAggregateOperations
 {
   public int SumOfElements()
@@ -287,8 +285,7 @@ public class ListWithAggregateOperations
 This is not yet the implementation we are happy with, which makes us add
 another Statement -- this time for a single element:
 
-{lang="csharp"}
-```
+```csharp
 [Fact] public void 
 ShouldReturnTheSameElementAsASumOfSingleElement()
 {
@@ -307,8 +304,7 @@ ShouldReturnTheSameElementAsASumOfSingleElement()
 
 The naive implementation can be as follows:
 
-{lang="csharp"}
-```
+```csharp
 public class ListWithAggregateOperations
 {
   int _element = 0;
@@ -346,8 +342,7 @@ number of elements. The third example will move us further along this
 axis -- so it will use two elements instead of one or zero. This is how
 it looks like:
 
-{lang="csharp"}
-```
+```csharp
 [Fact] public void 
 ShouldReturnSumOfTwoElementsAsASumWhenTwoElementsAreSupplied()
 {
@@ -367,8 +362,7 @@ ShouldReturnSumOfTwoElementsAsASumWhenTwoElementsAreSupplied()
 
 And the naive implementation will look like this:
 
-{lang="csharp"}
-```
+```csharp
 public class ListWithAggregateOperations
 {
   int _element1 = 0;
@@ -410,8 +404,7 @@ addition of multiple elements? A foreach loop through the collection!
 Thankfully, C\# supports `params` keyword, that let us use it to remove
 the redundant constructor like this:
 
-{lang="csharp"}
-```
+```csharp
 public class ListWithAggregateOperations
 {
   int[] _elements;  
@@ -443,8 +436,7 @@ for the same reason. So as the next step, I will write a Statement to
 replace these examples (I leave them in though, until I get this one to
 evaluate to true).
 
-{lang="csharp"}
-```
+```csharp
 [Fact]
 public void 
 ShouldReturnSumOfAllItsElementsWhenAskedForAggregateSum()
@@ -490,8 +482,7 @@ What we will do is to modify the implementation slightly to make it
 badly implemented and see how our Statement will react (we expect it to
 evaluate to false):
 
-{lang="csharp"}
-```
+```csharp
 public int SumOfElements()
 {
   //changed
