@@ -107,8 +107,7 @@ public class LoudAlarm : Alarm
 
 Now, we can make parts of code use the alarm, but by knowing the interface only instead of the concrete classes. This makes the parts of the code that use alarm this way not having to check which alarm they are dealing with. Thus, what previously looked like this:
 
-{lang="c"}
-```
+```c
 if(alarm->kind == LOUD_ALARM)
 {
   playLoudSound(alarm);
