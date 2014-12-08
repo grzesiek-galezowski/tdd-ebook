@@ -135,7 +135,7 @@ As you can see, we can easily write automated checks like this, but this way has
 
 For these and other reasons, automated testing tools were born. Those testing tools are generally referenced to as **xUnit family**, because many of them have names that end with the word “Unit", e.g. CppUnit (for C++), JUnit (for Java), NUnit (for .NET) etc.
 
-To be honest, I cannot wait to show you how the test we wrote just a minute ago looks like when xUnit framework is used, however, before I do this, I would like to recap quickly what we have in our brute-force naive approach to writing automated tests:
+To be honest, I cannot wait to show you how the test we wrote just a minute ago looks like when xUnit framework is used. However, before I do this, I would like to recap quickly what we have in our brute-force naive approach to writing automated tests:
 
 1.  The `Main()` method serves as a **Test List**
 2.  The
@@ -145,7 +145,7 @@ To be honest, I cannot wait to show you how the test we wrote just a minute ag
 
 To our joy, those three elements are present in xUnit frameworks
 as well. To illustrate it, here is (finally!) the same test we wrote,
-but with an xUnit framework (this one is called XUnit.Net):
+but with an xUnit framework (this one is called [XUnit.Net](http://xunit.github.io/)):
 
 ```csharp
 [Fact] public void 
@@ -192,15 +192,12 @@ runner for xUnit.NET framework:
 
 ![XUnit.NET window](images/XUnit_NET_Window.png)
 
-### Mocking framework
+### Mocking library
 
-Mocking frameworks are libraries that automate runtime creation of
-objects (called “mocks") that adhere to specified interface. Aside from
-the creation itself, the frameworks provide an API to configure our
-mocks on how they behave when certain methods are called on them and to
-let us inspect which calls they received.
+Mocking libraries automate runtime creation of objects (called “mocks") that adhere to specified interface. Aside from
+the creation itself, the libraries provide an API to configure our mocks on how they behave when certain methods are called on them and to let us inspect which calls they received.
 
-Mocking frameworks are not as old as xUnit frameworks and were not
+Mocking libraries are not as old as xUnit frameworks and were not
 present in TDD at very beginning. As you might be wondering why
 on earth do we need something like this, I will let you in on a secret:
 they were born with a goal of aiding a specific approach to object
@@ -208,7 +205,7 @@ oriented design in mind. This kind of design is what TDD can support quite well
 as you will soon experience.
 
 For now, however, let us try to keep things easy. I will defer
-explaining the actual rationale for mocking frameworks until later and
+explaining the actual rationale for mocking libraries until later and
 instead give you a quick example where you can see them in action.
 Ready? Let us go!
 
@@ -419,11 +416,8 @@ var db = new ConfigurableOrderDatabase();
 db.doWhenInsertCalled = o => {throw new Exception();};
 ```
 
-Thankfully, some smart programmers created frameworks that provide
-further automation in such scenarios. One of them is called
-**NSubstitute** and provides an API in a form of extension methods (that
-is why it might seem a bit magical at first. Do not worry, you will get
-used to it).
+Thankfully, some smart programmers created libraries that provide further automation in such scenarios. One of them is called
+[**NSubstitute**](http://nsubstitute.github.io/) and provides an API in a form of extension methods (that is why it might seem a bit magical at first. Do not worry, you will get used to it).
 
 Using NSubstitute, our first test can be rewritten as such:
 
@@ -460,13 +454,7 @@ behind them and we have only scratched the surface here.
 
 ### Anonymous values generator
 
-Look at the test in the previous section. Does it not trouble you that
-we fill the order object with so many values that are totally irrelevant
-to the test logic itself? They actually hinder readability of the test.
-Also, they make us believe that the tested object really cares what
-these values are, although it does not (the database does, but we
-already got rid of it from the test). Let us move it to a method with
-descriptive name:
+Look at the test in the previous section. Does it not trouble you that we fill the order object with so many values that are totally irrelevant to the test logic itself? They actually hinder readability of the test. Also, they make us believe that the tested object really cares what these values are, although it does not (the database does, but we already got rid of it from the test). Let us move it to a method with descriptive name:
 
 ```csharp
 [Fact] public void 
@@ -495,18 +483,9 @@ public Order AnonymousOrder()
 }
 ```
 
-Now that is better. Not only did we make the test shorter, we also
-provided a hint to the test reader that the actual values used to create
-an order do not matter from the perspective of tested order processing
-logic, hence the name `AnonymousOrder()`.
+Now that is better. Not only did we make the test shorter, we also provided a hint to the test reader that the actual values used to create an order do not matter from the perspective of tested order processing logic, hence the name `AnonymousOrder()`.
 
-By the way, would it not be nice if we did not have to provide the
-anonymous objects ourselves, but rely on another library to generate
-them for us? Susprise, surprise, there is one! It is called
-**Autofixture**. It is an example of an anonymous values generator
-(although its creator likes to say that it is an implementation of Test
-Data Builder pattern, but let us skip this discussion here). After
-refactoring our test to use AutoFixture, we arrive at the following:
+By the way, would it not be nice if we did not have to provide the anonymous objects ourselves, but rely on another library to generate them for us? Susprise, surprise, there is one! It is called [**Autofixture**](https://github.com/AutoFixture/AutoFixture). It is an example of an anonymous values generator (although its creator likes to say that it is an implementation of Test Data Builder pattern, but let us skip this discussion here). After refactoring our test to use AutoFixture, we arrive at the following:
 
 ```csharp
 [Fact] public void 
@@ -527,8 +506,7 @@ ShouldInsertNewOrderToDatabase()
 private Fixture any = new Fixture();
 ```
 
-Nice, huh? AutoFixture has a lot of advanced features, but personally
-I am conservative and wrap it behind a static class called `Any`:
+Nice, huh? AutoFixture has a lot of advanced features, but personally I am conservative and wrap it behind a static class called `Any`:
 
 ```csharp
 public static class Any
@@ -542,19 +520,8 @@ public static class Any
 }
 ```
 
-In the next chapters, you will see me using a lot of different methods
-from the `Any` type. The more you use this class, the more it grows with
-other methods for creating customized objects. For now, however, let us
-stop here.
+In the next chapters, you will see me using a lot of different methods from the `Any` type. The more you use this class, the more it grows with other methods for creating customized objects. For now, however, let us stop here.
 
 ### Summary 
 
-In this chapter, I tried to show you the three essential tools which we
-will be using in this book and which, when mastered, will make your
-test-driven development smoother. If this chapter leaves you with
-insufficient justification for their use, do not worry -- we will dive
-into the philosophy behind them in the coming chapters. For now, I just
-want you to get familiar with the tools themselves and their syntax. Go
-on, download these tools, launch them, try to write something simple
-with them. You do not need to understand their full purpose yet, just go
-out and play :-).
+In this chapter, I tried to show you the three essential tools which we will be using in this book and which, when mastered, will make your test-driven development smoother. If this chapter leaves you with insufficient justification for their use, do not worry -- we will dive into the philosophy behind them in the coming chapters. For now, I just want you to get familiar with the tools themselves and their syntax. Go on, download these tools, launch them, try to write something simple with them. You do not need to understand their full purpose yet, just go out and play :-).
