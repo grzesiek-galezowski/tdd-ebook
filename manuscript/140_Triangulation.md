@@ -150,7 +150,7 @@ is obviously wrong. BUT, the TDD cycle is not over yet. Remember that as
 soon as the Statement is true, refactoring phase kicks in. This is
 something we were ignoring silently for now (and here we will only
 slightly lick it). We can use the refactoring phase to remove
-duplication between the Statement and the implementing code.
+duplication between the Statement and it's implementing code.
 
 First, let us note that the number 8 is duplicated between Statement and
 implementation -- the implementation returns it and the Statement asserts
