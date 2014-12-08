@@ -454,7 +454,7 @@ behind them and we have only scratched the surface here.
 
 ### Anonymous values generator
 
-Look at the test in the previous section. Does it not trouble you that we fill the order object with so many values that are totally irrelevant to the test logic itself? They actually hinder readability of the test. Also, they make us believe that the tested object really cares what these values are, although it does not (the database does, but we already got rid of it from the test). Let us move it to a method with descriptive name:
+Look at the test in the previous section. Does it not trouble you that we fill the order object with so many values that are totally irrelevant to the test logic itself? They actually hinder readability of the test. Also, they make us believe that the tested object really cares what these values are, although it does not (the database does, but we already got rid of it from the test). Let us move it to a method with a descriptive name:
 
 ```csharp
 [Fact] public void 
