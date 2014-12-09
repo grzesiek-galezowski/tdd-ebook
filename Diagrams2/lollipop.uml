@@ -1,0 +1,16 @@
+@startuml
+
+skinparam class {
+  BackgroundColor White
+  ArrowColor Black
+  BorderColor Black
+}
+
+class ConcreteRecipient
+ConcreteRecipient -() Recipient1
+Recipient2 ()-- ConcreteRecipient  
+ConcreteRecipient --() Recipient3 
+
+hide members 
+hide circle
+@enduml

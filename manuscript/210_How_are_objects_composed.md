@@ -61,7 +61,7 @@ There are few ways this can happen, each of them useful in certain circumstances
 3. Receive in response to message (i.e. as method return value)
 4. Register a recipient with already created sender
 
-let's have a closer look at what each of them is about and which one to choose in what circumstances. 
+Let's have a closer look at what each of them is about and which one to choose in what circumstances. 
 
 ### Receive as constructor parameter
 
@@ -120,7 +120,7 @@ and the `Sender` class itself to work in a different way.
 
 #### Communication of intent: required recipient
 
-Another advantage of the constructor approach is that if a reference to `Recipient` is required for a `Sender` to work correctly and it does not make sense to create a `Sender` without a `Recipient`, the signature of the constructor makes it explicit -- the compiler will not let's create a `Sender` without passing *something* as a `Recipient`.
+Another advantage of the constructor approach is that if a reference to `Recipient` is required for a `Sender` to work correctly and it does not make sense to create a `Sender` without a `Recipient`, the signature of the constructor makes it explicit -- the compiler will not let us create a `Sender` without passing *something* as a `Recipient`.
 
 #### Where to apply
 
@@ -205,8 +205,7 @@ public class Sender
 
 This kind of composition is beneficial when a new recipient is needed each time `DoSomething()` is called. In this sense it may look much like in case of previously discussed approach of receiving a recipient inside a message. There is one difference, however. Contrary to passing a recipient inside a message, where the code using the `Sender` passed a `Recipient` "from outside" of the `Sender`, in this approach, we rely on a separate object that is used by a `Sender` "from the inside".
 
-To be more clear, let's compare the two approaches. Passing 
-recipient inside a message looks like this:
+To be more clear, let's compare the two approaches. Passing recipient inside a message looks like this:
 
 ```csharp
 //Sender gets a Recipient from the "outside":
@@ -402,7 +401,7 @@ var broadcastingObserver
 sensor.FromNowOnReportTo(broadcastingObserver);
 ```
 
-The additional benefit of modeling broadcasting as an observer is that it would let's change the broadcasting policy without touching either the sensor code or the other observers. For example, we might introduce `ParallelBroadcastObserver` that would notify each observer asynchronously instead of sequentially and put it to use by changing the composition code only:
+The additional benefit of modeling broadcasting as an observer is that it would let us change the broadcasting policy without touching either the sensor code or the other observers. For example, we might introduce `ParallelBroadcastObserver` that would notify each observer asynchronously instead of sequentially and put it to use by changing the composition code only:
 
 ```csharp
 //now using parallel observer
@@ -755,7 +754,7 @@ public class MyMessageFactory
 Even in this primitive shape the factory already has some value (e.g. we can make `MyMessage` an abstract type and return instances of its subclasses from the factory, and the only place impacted by the change is the factory itself[^essentialskills]). More often, however, when talking about simple factories, we think about something like this:
 
 ```csharp
-//let's assume MessageFactory 
+//Let's assume MessageFactory 
 //and Message are interfaces
 public class XmlMessageFactory : MessageFactory
 {
@@ -933,7 +932,7 @@ This example shows something I like calling "encapsulation of rule". The logic i
 
 #### Factories can hide some of the created object dependencies (encapsulation of global context)
 
-let's consider another simple example. We have an application that, again, can process messages. One of the things that is done with those messages is saving them in a database and another is validation. The processing of message is, like in previous examples, handled by a `MessageProcessing` class, which, this time, does not use any factory, but creates the messages based on the frame data itself. let's look at this class:
+Let's consider another simple example. We have an application that, again, can process messages. One of the things that is done with those messages is saving them in a database and another is validation. The processing of message is, like in previous examples, handled by a `MessageProcessing` class, which, this time, does not use any factory, but creates the messages based on the frame data itself. let's look at this class:
 
 ```csharp
 public class MessageProcessing

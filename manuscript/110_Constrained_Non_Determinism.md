@@ -170,7 +170,7 @@ input that was passed to provide a clear indication on what is the
 Third technique: Distinct Generated Values
 ------------------------------------------
 
-let's assume that some time after our initial version is shipped, we
+Let's assume that some time after our initial version is shipped, we
 are asked to make the backup feature applied locally per user only for
 this user’s data. As the customer does not want to confuse files from
 different users, we are asked to add name of the user doing backup to
@@ -285,7 +285,7 @@ heuristics.
 Fourth technique: Constant Specification
 ----------------------------------------
 
-let's consider another modification that we are requested to make -- this time, the backup file name needs to contain version number of our application as well. Remembering that we want to use Derived Values, we will not hardcode the version number into our Statement. Instead, we are going to use a constant that is already defined somewhere else in the
+Let's consider another modification that we are requested to make -- this time, the backup file name needs to contain version number of our application as well. Remembering that we want to use Derived Values, we will not hardcode the version number into our Statement. Instead, we are going to use a constant that is already defined somewhere else in the
 application (this way we also avoid duplication of this version number across the application):
 
 ```csharp

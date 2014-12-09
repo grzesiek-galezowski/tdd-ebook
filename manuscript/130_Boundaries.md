@@ -229,7 +229,7 @@ reality, I should have used the named constant in both Statements and it
 would show the boundary length even more clearly. Actually, let's
 perform this exercise now and see what happens.
 
-First, let's document the named constant:
+First, let's document the named constant with the following Statement:
 
 ```csharp
 [Fact] public void
@@ -296,11 +296,11 @@ password that must contain at least 2 special characters) etc.
 Combination of boundaries -- ranges
 ----------------------------------
 
-So, what about a behavior that is valid in a range? let's assume that
+So, what about a behavior that is valid in a range? Let's assume that
 we live in a country where a citizen can get a driving license only
 after their 17th birthday, but before 65th (the government decided that
 people after 65 have worse sight and it’s safer not to give them new
-driving licenses). let's also assume that we try to develop a class
+driving licenses). Let's also assume that we try to develop a class
 that answers the question whether we can apply for driving license and
 the return values of this query are as follows:
 

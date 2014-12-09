@@ -27,7 +27,7 @@ similarities to e.g. a TCP/IP network:
 
 ## Alarms, again!
 
-let's try to apply this terminology to an example. Let's say that we have an anti-fire alarm system in an office that, when triggered, makes all lifts go to bottom floor, opens them and then disables them. Among others, the office contains automatic lifts, that contain their own remote control systems and mechanical lifts, that are controlled from the
+Let's try to apply this terminology to an example. Imagine that we have an anti-fire alarm system in an office that, when triggered, makes all lifts go to bottom floor, opens them and then disables them. Among others, the office contains automatic lifts, that contain their own remote control systems and mechanical lifts, that are controlled from the
 outside by a special custom-made mechanism.
 
 Let's try to model this behavior in code. As you might have guessed, we will have some objects like alarm, automatic lift and mechanical lift. The alarm will control the lifts when triggered.

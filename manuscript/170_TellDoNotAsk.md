@@ -284,13 +284,7 @@ bonus is one-time from the name.
 **Benjamin:** Why? Don't we want to include what happens in the method
 name?
 
-**Johnny:** Actually, no. What we want to include is our intention. The
-bonus being one-time is something specific to the regular employees and
-we want to abstract away the details about this or that kind of
-employee, so that we can plug in different implementations without
-making the method name lie. The names should reflect that we want to
-evaluate a bonus, whatever that means for a particular type of employee.
-Thus, let's make it:
+**Johnny:** Actually, no. What we want to include is our intention. The bonus being one-time is something specific to the regular employees and we want to abstract away the details about this or that kind of employee, so that we can plug in different implementations without making the method name lie. The names should reflect that we want to evaluate a bonus, whatever that means for a particular type of employee. Thus, let's make it:
 
 ```csharp
 employee.EvaluateBonus();

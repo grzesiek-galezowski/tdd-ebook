@@ -85,9 +85,7 @@ Statements, whether by attributes (C\#, e.g. xUnit.Net’s `Fact`
 attribute) or annotations (Java) or with macros (C and C++) or by
 inheriting from common class, or just a naming convention.
 
-Let's take xUnit.Net as an example. As I stated previously, In
-xUnit.Net, to turn a method into a Statement, you mark it with `[Fact]`
-attribute the following way:
+Let's take xUnit.Net as an example. As I stated previously, In xUnit.Net, to turn a method into a Statement, you mark it with `[Fact]` attribute the following way:
 
 ```csharp
 public class CalculatorSpecification
@@ -136,9 +134,7 @@ to mention it. The example I am going to show uses manual mocks, but
 this can happen with dynamic mocks as well, especially if you are in
 a hurry.
 
-Let's take a look at the following Statement saying that setting
-a value higher than allowed to a field of a frame should produce error
-result:
+Let's take a look at the following Statement saying that setting a value higher than allowed to a field of a frame should produce error result:
 
 ```csharp
 [Fact]

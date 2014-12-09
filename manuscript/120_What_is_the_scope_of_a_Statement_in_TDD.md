@@ -20,12 +20,12 @@ however, a good moment to stop and consider the “scope" of a single
 unit-level Statement in TDD. Is it method scope? Class scope? Feature
 scope?
 
-let's try to answer the question by examining some TDD unit-level
+Let's try to answer the question by examining some TDD unit-level
 Statements:
 
 ### Is it class scope? 
 
-let's see the first example and try to answer this question:
+Let's see the first example and try to answer this question:
 
 ```csharp
 [Fact] public void
@@ -55,7 +55,7 @@ accurate description.
 So, maybe the scope covers a single method, meaning a Statement always
 exercises one method of a specified object?
 
-let's consider the following example:
+Let's consider the following example:
 
 ```csharp
 [Fact] public void 
@@ -91,7 +91,7 @@ It may look that “behavior" scope is actually broader than method or
 class levels, since such Statement can span multiple classes and
 multiple methods. This is only partially true. That is because e.g.
 Statements with method scope can span multiple behaviors (which, by the
-way, is a sign of poorly written Statement). let's take a look at an
+way, is a sign of poorly written Statement). Let's take a look at an
 example:
 
 ```csharp
@@ -134,7 +134,7 @@ unless we fix the previous one (does that mean we have to use a single
 now, let the answer be: “not necessarily").
 
 On the other hand, Statements with behavior scope do not necessary have
-to be broader than those with class scope. let's take the following
+to be broader than those with class scope. Let's take the following
 example that proves it:
 
 ```csharp

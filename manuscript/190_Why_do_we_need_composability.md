@@ -60,14 +60,7 @@ our alarms: triggering and disabling. In other words, we have a set of questions
 
 So, at least conceptually, as soon as we know the alarm kind, we already know which set of behaviors (represented as a row in the above table) it needs. We could just decide the alarm kind once and associate the right set of behaviors with the data structure. Then, we would not have to query the alarm kind in few places as we did, but instead, we could say: "execute triggering behavior from the set of behaviors associated with this alarm, whatever it is".
 
-Unfortunately, procedural programming does not let's bind behaviors
-with data. As a matter of fact, the whole paradigm of procedural
-programming is about separating behaviors and data! Well, honestly, they
-had some answers to those concerns, but these answers were mostly awkward (for
-those of you that still remember C language: I'm talking about macros and
-function pointers). So, as data and behaviors are separated, we need to
-query the data each time we want to pick a behavior based on it. That's
-why we have the duplication.
+Unfortunately, procedural programming does not let's bind behaviors with data. As a matter of fact, the whole paradigm of procedural programming is about separating behaviors and data! Well, honestly, they had some answers to those concerns, but these answers were mostly awkward (for those of you that still remember C language: I'm talking about macros and function pointers). So, as data and behaviors are separated, we need to query the data each time we want to pick a behavior based on it. That's why we have the duplication.
 
 Object oriented programming to the rescue!
 ------------------------------------------

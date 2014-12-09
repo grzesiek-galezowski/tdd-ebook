@@ -216,7 +216,7 @@ When I compare it to another user with the same name
 Then it should appear equal to this other user
 ```
 
-let's start with the translation
+Let's start with the translation
 
 The first line:
 
@@ -342,7 +342,7 @@ get there.
 Imagine we are writing a class for granting access to a reporting
 functionality based on roles. We do not have any idea what the API
 should look like and how to write our Statement, but we know one thing:
-in our domain the access can be either granted or denied. let's take
+in our domain the access can be either granted or denied. Let's take
 the successful case (just because it is the first one we can think of)
 and, starting backwards, start with the following assertion:
 
@@ -400,7 +400,7 @@ var authorization = new Authorization();
 
 Now for the `roleAllowedToUseReporting`. The first question that comes
 to mind when looking at this is: which roles are allowed to use
-reporting? let's assume that in our domain, this is either an
+reporting? Let's assume that in our domain, this is either an
 Administrator or an Auditor. Thus, we know what is going to be the value
 of this variable. As for the type, there are various ways we can model
 a role, but the most obvious one for a type that has few possible values

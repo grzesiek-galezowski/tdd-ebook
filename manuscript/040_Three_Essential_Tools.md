@@ -174,7 +174,7 @@ runner for xUnit.NET framework:
 
 ### Mocking library
 
-Mocking libraries automate runtime creation of objects (called “mocks") that adhere to specified interface. Aside from the creation itself, the libraries provide an API to configure our mocks on how they behave when certain methods are called on them and to let's inspect which calls they received.
+Mocking libraries automate runtime creation of objects (called “mocks") that adhere to specified interface. Aside from the creation itself, the libraries provide an API to configure our mocks on how they behave when certain methods are called on them and to let us inspect which calls they received.
 
 Mocking libraries are not as old as xUnit frameworks and were not present in TDD at very beginning. As you might be wondering why on earth do we need something like this, I will let you in on a secret: they were born with a goal of aiding a specific approach to object oriented design in mind. This kind of design is what TDD can support quite well as you will soon experience.
 

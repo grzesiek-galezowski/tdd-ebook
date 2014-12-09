@@ -749,7 +749,7 @@ is the result?
 **Benjamin:** Failed, expected “331", but was “0".
 
 **Johnny:** Good, now let's write some code to make this Statement
-true. First, let's introduce an enumeration of digits:
+true. First, we're going to introduce an enumeration of digits:
 
 ```csharp
 public enum DigitKeys
@@ -821,7 +821,7 @@ public class Calculator
 ```
 
 **Johnny:** Now the Statement is true so we can go back to it and make
-it a little bit prettier. let's take a second look at it:
+it a little bit prettier. Let's take a second look at it:
 
 ```csharp
 [Fact] public void 
@@ -855,7 +855,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 
 **Benjamin:** Yeah, it seems a bit unreadable.
 
-**Johnny:** let's extract this part into a utility method and make it
+**Johnny:** Let's extract this part into a utility method and make it
 more general -- we will need a way of constructing expected displayed
 output in many of our future Statements. Here is my go at this helper
 method:
@@ -902,9 +902,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 **Benjamin:** Looks better to me. The Statement is still evaluated as
 true, which means we got it right, did we not?
 
-**Johnny:** Not exactly. With moves such as this one, I like to be
-extra careful. let's comment out the body of the `Enter()` method and
-see if this Statement can still be made false by the implementation:
+**Johnny:** Not exactly. With moves such as this one, I like to be extra careful. Let's comment out the body of the `Enter()` method and see if this Statement can still be made false by the implementation:
 
 ```csharp
 public void Enter(DigitKeys digit)
@@ -916,8 +914,7 @@ public void Enter(DigitKeys digit)
 
 **Benjamin:** Running... Ok, it is false now. Expected “243", got “0".
 
-**Johnny:** good, now we are pretty sure that it works OK. let's
-uncomment the lines we just commented out and move forward.
+**Johnny:** good, now we are pretty sure that it works OK. Let's uncomment the lines we just commented out and move forward.
 
 ### Statement 3: Calculator should display only one zero digit if it is the only entered digit even if it is entered multiple times 
 
@@ -944,7 +941,7 @@ ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipl
 }
 ```
 
-**Johnny:** Good, you are learning fast! let's evaluate this Statement.
+**Johnny:** Good, you are learning fast! Let's evaluate this Statement.
 
 **Benjamin:** It seems that our current code already fulfills the
 Statement. Should I try to comment some code to make sure this Statement
