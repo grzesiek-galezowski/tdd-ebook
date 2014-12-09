@@ -69,7 +69,7 @@ Note that some items are already crossed out as done, while other remain
 undone and waiting to be addressed.
 
 Ok, that is it for the discussion. Now that we are sure that TDD is
-about analysis, let us focus on the tools we can use to aid and inform
+about analysis, let's focus on the tools we can use to aid and inform
 it. You already saw both of them in this book, now we are going to have
 a closer look.
 

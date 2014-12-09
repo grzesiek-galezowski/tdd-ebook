@@ -9,7 +9,7 @@ I do not want to introduce any scientific definition, so let's just establish an
 
 Really? Are there any rules? Is it not enough the the objects can be composed together through interfaces, as I explained in previous sections? Well, no, it's not enough and let me give you a quick example.
 
-Let us imagine a class `Sender` that, in one of its methods, asks `Recipient` (let's assume `Recipient` is an interface) to extract status code from some kind of response object and makes a decision based on that code whether or not to notify an observer about an error:
+let's imagine a class `Sender` that, in one of its methods, asks `Recipient` (let's assume `Recipient` is an interface) to extract status code from some kind of response object and makes a decision based on that code whether or not to notify an observer about an error:
 
 ```csharp
 if(recipient.ExtractStatusCodeFrom(response) == -1)
@@ -89,13 +89,13 @@ Based on analysis of the factors that make the stability of the protocols bad, w
 3.  protocols should be logical
 4.  protocols should be small
 
-And there are some heuristics that let us get closer to these qualities:
+And there are some heuristics that let's get closer to these qualities:
 
 ## Craft messages to reflect sender's intention
 
 The protocols are simpler if they are designed from the perspective of the object that sends the message, not the one that receives it. In other words, methods should reflect the intention of senders rather than capabilities of recipients.
 
-As an example, let us look at a code for logging in that uses an instance of an `AccessGuard` class:
+As an example, let's look at a code for logging in that uses an instance of an `AccessGuard` class:
 
 ```csharp
 accessGuard.SetLogin(login);

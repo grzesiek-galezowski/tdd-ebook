@@ -50,7 +50,7 @@ the effort is considered wasted and the money drown.
 Going back to the exams, why the approach of first looking through the
 exemplary tests can be considered ‘lean’? That is because, when we treat
 passing an exam as our goal, then everything that does not put us closer
-to this goal is considered a waste. Let us suppose the exam is theory
+to this goal is considered a waste. Let's suppose the exam is theory
 only -- why then practice the exercises? It would probably pay off a lot
 more to study theoretical side of the topics. Such knowledge could be
 obtained from those exemplary tests. So, the tests were a kind of
@@ -77,7 +77,7 @@ Taking it to the software development land
 I chose this lengthy metaphor to show you that ‘test’ is really another
 way of specifying a requirement or a need and that it is not something
 that is counter-intuitive -- it occurs in our everyday lives. This is
-also true in software development. Let us take the following ‘test’ and
+also true in software development. Let's take the following ‘test’ and
 see what kind of needs it specifies:
 
 ```csharp
@@ -90,7 +90,7 @@ Assert.True(reporting.CanBePerformedBy(anyPowerUser));
 value from the specified list. Here, we say “give me a value that is
 either `Users.Admin` or `Users.Auditor`“.)
 
-Let us look at those (only!) three lines of code, imagining that the
+Let's look at those (only!) three lines of code, imagining that the
 production code that makes this ‘test’ pass does not exist yet. What can
 we learn from these three lines about what the code needs to supply?
 Count with me:
@@ -123,7 +123,7 @@ things. For example, a ‘test’ is often referred to as ‘spec’, or an
 or a ‘fact about the developed system’ (the xUnit.NET framework marks
 each ‘test’ with a `[Fact]` attribute, suggesting that by writing it, we
 are stating a single fact about developed code. By the way, xUnit.NET
-also allows us to state ‘theories’ about our code, but let us leave it
+also allows us to state ‘theories’ about our code, but let's leave it
 for now).
 
 The time has come to make a deal: I will establish some naming
@@ -132,7 +132,7 @@ freedom to follow your own if you so desire. The terminology shift is
 for pedagogical reasons -- I am not trying to create a movement to 
 change established terms or to invent a new methodology or anything -- 
 my hope is that using this terminology throughout the book will let you 
-look differently at some things. So, let us agree that for the sake of 
+look differently at some things[^opensourcebook]. So, let's agree that for the sake of 
 this book:
 
 **Specification Statement** (or simply **Statement**, starting with capital letter)
@@ -168,3 +168,5 @@ different than these specifications in at least few ways:
     is both good (less room for misunderstanding -- source code is the
     most formal and structured way of writing specifications) and bad
     (great care must be taken to keep the specification readable).
+
+[^opensourcebook]: besides, this book is open source, so if you don't like it, you are free to create a fork and change the terminology!

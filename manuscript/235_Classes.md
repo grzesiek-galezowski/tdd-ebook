@@ -7,7 +7,7 @@ Classes implement and use interfaces, and communicate using protocols, so it may
 
 ## Single Responsibility
 
-I already said that we want our system to be a web of composable objects. Obviously, an object is a granule of composability - we cannot e.g. unplug a half of an object and plug in another half. Thus, a valid question to ask is this: how big should an object be to make the composability comfortable - to let us unplug as much logic as we want, leaving the rest untouched.
+I already said that we want our system to be a web of composable objects. Obviously, an object is a granule of composability - we cannot e.g. unplug a half of an object and plug in another half. Thus, a valid question to ask is this: how big should an object be to make the composability comfortable - to let's unplug as much logic as we want, leaving the rest untouched.
 
 The answer comes with a Single Responsibility Principle for classes[^SRPMethods], that basically says[^SRP]:
 

@@ -50,7 +50,7 @@ void disableAlarm(Alarm* alarm)
 
 Do I have to say why this duplication is bad? Do I hear a "no"? My apologies then, but I'll tell you anyway. The duplication means that every time a new kind of alarm is introduced, a developer has to remember to update both places that contain 'if-else' -- the compiler will not force this. As you are probably aware, in the context of teams, where one developer picks up work that another left and where, from time to time, people leave to find another job, expecting someone to "remember" to update all the places where the logic is duplicated is asking for trouble.
 
-So, we see that the duplication is bad, but can we do something about it? To answer this question, let us take a look at the reason the duplication was introduced. And the reason is: We have two things we want to be able to do with
+So, we see that the duplication is bad, but can we do something about it? To answer this question, let's take a look at the reason the duplication was introduced. And the reason is: We have two things we want to be able to do with
 our alarms: triggering and disabling. In other words, we have a set of questions we want to be able to ask an alarm. Each kind of alarm has a different way of answering these questions -- resulting in having a set of "answers" specific to each alarm kind:
 
 | Alarm Kind          | Triggering                 |     Disabling              |
@@ -60,7 +60,7 @@ our alarms: triggering and disabling. In other words, we have a set of questions
 
 So, at least conceptually, as soon as we know the alarm kind, we already know which set of behaviors (represented as a row in the above table) it needs. We could just decide the alarm kind once and associate the right set of behaviors with the data structure. Then, we would not have to query the alarm kind in few places as we did, but instead, we could say: "execute triggering behavior from the set of behaviors associated with this alarm, whatever it is".
 
-Unfortunately, procedural programming does not let us bind behaviors
+Unfortunately, procedural programming does not let's bind behaviors
 with data. As a matter of fact, the whole paradigm of procedural
 programming is about separating behaviors and data! Well, honestly, they
 had some answers to those concerns, but these answers were mostly awkward (for

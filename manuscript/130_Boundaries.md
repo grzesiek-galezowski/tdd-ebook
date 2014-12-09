@@ -68,7 +68,7 @@ exam is failed. If we imagine we have to specify an object that decides
 whether the exam is passed based on rating, we would have to write two
 Statements: one for the mediocre rating and other for all the others.
 
-Here is the Statement for mediocre grade (let us imagine that all grades
+Here is the Statement for mediocre grade (let's imagine that all grades
 are members of an enum):
 
 ```csharp
@@ -226,10 +226,10 @@ else instead of its literal. So why did i not use this technique?
 The only reason is that this might have looked a little bit silly with
 such extremely trivial example as calculating absolute value. In
 reality, I should have used the named constant in both Statements and it
-would show the boundary length even more clearly. Actually, let us
+would show the boundary length even more clearly. Actually, let's
 perform this exercise now and see what happens.
 
-First, let us document the named constant:
+First, let's document the named constant:
 
 ```csharp
 [Fact] public void
@@ -296,11 +296,11 @@ password that must contain at least 2 special characters) etc.
 Combination of boundaries -- ranges
 ----------------------------------
 
-So, what about a behavior that is valid in a range? Let us assume that
+So, what about a behavior that is valid in a range? let's assume that
 we live in a country where a citizen can get a driving license only
 after their 17th birthday, but before 65th (the government decided that
 people after 65 have worse sight and it’s safer not to give them new
-driving licenses). Let us also assume that we try to develop a class
+driving licenses). let's also assume that we try to develop a class
 that answers the question whether we can apply for driving license and
 the return values of this query are as follows:
 
@@ -356,7 +356,7 @@ copy-paste the code to specify both edges of the behavior.
 Note that we’re quite lucky because the specified logic is strictly
 functional (i.e. returns different results based on different inputs).
 Thanks to this, we could parameterize input values together with
-expected results. This is not always the case. For example, let us
+expected results. This is not always the case. For example, let's
 imagine that we have a clock class where we can set alarm time. The
 class allows us to set hour between 0 and 24, but otherwise throws an
 exception.

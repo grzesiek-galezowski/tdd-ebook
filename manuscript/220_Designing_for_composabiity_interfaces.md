@@ -42,7 +42,7 @@ Did I just say that composability is "one of the top priorities" in our design a
 
 Actually, it would, but it would also strip us from another very important aspect of our design approach that I did not mention explicitly until now. This aspect is: roles. When we use interfaces, we can say that each interface stands for a role for a real object to play. When these roles are explicit, they help design and describe the communication between objects.
 
-Let us look at an example of how not using defining explicit roles removes some clarity from the design. This is a sample method that sends some messages to two recipients held as interfaces:
+let's look at an example of how not using defining explicit roles removes some clarity from the design. This is a sample method that sends some messages to two recipients held as interfaces:
 
 ```csharp
 //role players:

@@ -64,7 +64,7 @@ questions:
 
 For the name of the Statement to be of any use, it has to describe the
 expected behavior. At minimum, it should describe what happens under
-what circumstances. Let us take a look at one of the names Steve freeman
+what circumstances. let's take a look at one of the names Steve freeman
 and Nat Pryce came up in their great book Growing Object Oriented
 Software Guided By Tests:
 
@@ -206,7 +206,7 @@ compile and run.
 
 ### Example
 
-Let us try this on a simple problem of comparing two users. We assume that
+let's try this on a simple problem of comparing two users. We assume that
 a user should be equal to another when it has the same name as the other
 one:
 
@@ -216,7 +216,7 @@ When I compare it to another user with the same name
 Then it should appear equal to this other user
 ```
 
-Let us start with the translation
+let's start with the translation
 
 The first line:
 
@@ -254,7 +254,7 @@ and its translation into the code:
 Assert.True(areUsersEqual);
 ```
 
-Ok, so we have made the translation, now let us summarize this and see
+Ok, so we have made the translation, now let's summarize this and see
 what is missing to make this code compile:
 
 ```csharp
@@ -342,7 +342,7 @@ get there.
 Imagine we are writing a class for granting access to a reporting
 functionality based on roles. We do not have any idea what the API
 should look like and how to write our Statement, but we know one thing:
-in our domain the access can be either granted or denied. Let us take
+in our domain the access can be either granted or denied. let's take
 the successful case (just because it is the first one we can think of)
 and, starting backwards, start with the following assertion:
 
@@ -358,7 +358,7 @@ the previous approach (with translating our GIVEN-WHEN-THEN structure
 into a Statement), our goal is not to make this compile as soon as
 possible. The goal is to answer ourselves a question: how do I know
 whether the access is granted or not? The answer: it is the result of
-authorization of the allowed role. Ok, so let us just write it down,
+authorization of the allowed role. Ok, so let's just write it down,
 ignoring everything that stands in our way (I know that most of us have
 a habit to add a class or a variable as soon as we find out that we need
 it. If you are like that, then please turn off this habit while writing
@@ -388,7 +388,7 @@ Anyway, this new line answers the question on where do we take the
 
 As for `authorization`, we do not have anything specific to say about it
 other than that it is an object of a class that we do not have yet. In
-order to proceed, let us pretend that we have such a class. How do we
+order to proceed, let's pretend that we have such a class. How do we
 call it? The instance name is `authorization`, so it is quite
 straightforward to name the class `Authorization` and instantiate it in
 the simplest way we can think of:
@@ -400,7 +400,7 @@ var authorization = new Authorization();
 
 Now for the `roleAllowedToUseReporting`. The first question that comes
 to mind when looking at this is: which roles are allowed to use
-reporting? Let us assume that in our domain, this is either an
+reporting? let's assume that in our domain, this is either an
 Administrator or an Auditor. Thus, we know what is going to be the value
 of this variable. As for the type, there are various ways we can model
 a role, but the most obvious one for a type that has few possible values

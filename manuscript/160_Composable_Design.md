@@ -15,7 +15,7 @@ Another task for Johnny and Benjamin
 ------------------------------------
 
 Remember Johnny and Benjamin? Looks like they managed their previous
-task and are up to something else. Let us listen to their conversation
+task and are up to something else. let's listen to their conversation
 as they are working on another project...
 
 **Benjamin:** So, what's this assignment about?

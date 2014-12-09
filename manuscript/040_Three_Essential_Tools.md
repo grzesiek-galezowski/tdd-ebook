@@ -1,8 +1,7 @@
 The three most essential tools
 ==============================
 
-Ever watched Karate Kid, either the old version or the new one? The thing they have in common is that when the kid starts learning Karate (or Kung-Fu) from his master, he is given a basic, repetitive task (like taking off a jacket, and putting it on again), not knowing yet where it would lead him. Or look at the first Rocky film (yeah, the one starring
-Sylvester Stallone), where Rocky was chasing a chicken in order to train agility.
+Ever watched Karate Kid, either the old version or the new one? The thing they have in common is that when the kid starts learning Karate (or Kung-Fu) from his master, he is given a basic, repetitive task (like taking off a jacket, and putting it on again), not knowing yet where it would lead him. Or look at the first Rocky film (yeah, the one starring Sylvester Stallone), where Rocky was chasing a chicken in order to train agility.
 
 When I first tried to learn how to play guitar, I found two advices on the web: the first was to start by mastering a single, difficult song. The second was to play with a single string, learn how to make it sound in different ways and try to play some melodies by ear just with this one string. Do I have to tell you that the second advice worked better?
 
@@ -21,7 +20,7 @@ In this chapter, I will oversimplify some things just to get you up and running
 
 The first and most essential tool we are going to use is an xUnit framework.
 
-Let us assume that our application looks like this:
+Let's assume that our application looks like this:
 
 ```csharp
 public static void Main(string[] args) 
@@ -43,7 +42,7 @@ public static void Main(string[] args)
 }
 ```
 
-Now, let us assume we want to check whether it produces correct results. The most obvious way would be to invoke the application from command line with some exemplary arguments, check the output to the console and compare it with what we expect to see. Such session could look like this:
+Now, let's assume we want to check whether it produces correct results. The most obvious way would be to invoke the application from command line with some exemplary arguments, check the output to the console and compare it with what we expect to see. Such session could look like this:
 
 ```text
 C:\MultiplicationApp\MultiplicationApp.exe 3 7
@@ -69,7 +68,7 @@ public static void Main(string[] args)
 }
 ```
 
-Sounds easy, right? Let us take another step and extract the result check into something more reusable -- after all, we will be adding division in a second, remember? So here goes:
+Sounds easy, right? Let's take another step and extract the result check into something more reusable -- after all, we will be adding division in a second, remember? So here goes:
 
 ```csharp
 public static void Main(string[] args) 
@@ -87,12 +86,13 @@ public static void AssertTwoIntegersAreEqual(
   if(actual != expected)
   {
     throw new Exception(
-      "Failed! Expected: " + expected + " but was: " + actual);
+      "Failed! Expected: " 
+        + expected + " but was: " + actual);
   }
 }
 ```
 
-Note that I started the name of the method with “Assert" -- we will get back to the naming soon, for now just assume that this is just a good name for the method. Let us take one last round and put the test into its own method:
+Note that I started the name of the method with “Assert" -- we will get back to the naming soon, for now just assume that this is just a good name for the method. Let's take one last round and put the test into its own method:
 
 ```csharp
 public static void Main(string[] args) 
@@ -143,9 +143,7 @@ To be honest, I cannot wait to show you how the test we wrote just a minute ag
     method is a **Test Method**
 3.  The `AssertTwoIntegersAreEqual()` method is **an Assertion**
 
-To our joy, those three elements are present in xUnit frameworks
-as well. To illustrate it, here is (finally!) the same test we wrote,
-but with an xUnit framework (this one is called [XUnit.Net](http://xunit.github.io/)):
+To our joy, those three elements are present in xUnit frameworks as well. To illustrate it, here is (finally!) the same test we wrote, but with an xUnit framework (this one is called [XUnit.Net](http://xunit.github.io/)):
 
 ```csharp
 [Fact] public void 
@@ -162,56 +160,29 @@ Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
 }
 ```
 
-As you can see, it looks like two methods that we previously had are
-gone now and the test is the only thing that is left. Well, to tell you
-the truth, they are not gone -- it is just that the framework handles
-these for us. Let us reiterate through the three elements of the
-previous version of the test that I promised would be there after the
-transition to xUnit framework:
+As you can see, it looks like two methods that we previously had are gone now and the test is the only thing that is left. Well, to tell you the truth, they are not gone -- it is just that the framework handles these for us. Let's reiterate through the three elements of the previous version of the test that I promised would be there after the transition to xUnit framework:
 
-1.  **Test List** is now created automatically by the framework from all
-    methods marked with a [Fact] attribute, so no need to maintain one
-    or more central lists. Thus, the `Main()` method is gone.
-2.  The **Test Method is here and looks almost the same as the last
-    time.**
-3.  The **Assertion** took the form of a call to static `Assert.Equal()`
-    method -- the xUnit.NET framework is bundled with a wide range of
-    pre-made assertions for your convenience. Of course, no one stops
-    you from writing your own custom one if you do not find what you are
-    looking for in a default set.
+1.  **Test List** is now created automatically by the framework from all methods marked with a [Fact] attribute, so no need to maintain one or more central lists. Thus, the `Main()` method is gone.
+2.  The **Test Method** is here and looks almost the same as the last time.
+3.  The **Assertion** took the form of a call to static `Assert.Equal()` method -- the xUnit.NET framework is bundled with a wide range of pre-made assertions for your convenience. Of course, no one stops you from writing your own custom one if you do not find what you are looking for in a default set.
 
-Phew, I hope I made the transition quite painless for you. Now the last
-thing to add -- as there is not `Main()` method anymore in the last
-example, you surely must wonder how we run those tests, right? Ok, the
-last big secret unveiled -- we use an external application for this (we
-will refer to it using a term **Test Runner**) -- we tell it which
-assemblies to run and it loads them, runs them, reports results etc. It
-can take various forms, e.g. it can be a console application, a GUI
-application or a plugin to our IDEs. Here is an example of a stand-alone
+Phew, I hope I made the transition quite painless for you. Now the last thing to add -- as there is not `Main()` method anymore in the last example, you surely must wonder how we run those tests, right? Ok, the last big secret unveiled -- we use an external application for this (we
+will refer to it using a term **Test Runner**) -- we tell it which assemblies to run and it loads them, runs them, reports results etc. It can take various forms, e.g. it can be a console application, a GUI application or a plugin to our IDEs. Here is an example of a stand-alone
 runner for xUnit.NET framework:
 
 ![XUnit.NET window](images/XUnit_NET_Window.png)
 
 ### Mocking library
 
-Mocking libraries automate runtime creation of objects (called “mocks") that adhere to specified interface. Aside from
-the creation itself, the libraries provide an API to configure our mocks on how they behave when certain methods are called on them and to let us inspect which calls they received.
+Mocking libraries automate runtime creation of objects (called “mocks") that adhere to specified interface. Aside from the creation itself, the libraries provide an API to configure our mocks on how they behave when certain methods are called on them and to let's inspect which calls they received.
 
-Mocking libraries are not as old as xUnit frameworks and were not
-present in TDD at very beginning. As you might be wondering why
-on earth do we need something like this, I will let you in on a secret:
-they were born with a goal of aiding a specific approach to object
-oriented design in mind. This kind of design is what TDD can support quite well 
-as you will soon experience.
+Mocking libraries are not as old as xUnit frameworks and were not present in TDD at very beginning. As you might be wondering why on earth do we need something like this, I will let you in on a secret: they were born with a goal of aiding a specific approach to object oriented design in mind. This kind of design is what TDD can support quite well as you will soon experience.
 
-For now, however, let us try to keep things easy. I will defer
-explaining the actual rationale for mocking libraries until later and
-instead give you a quick example where you can see them in action.
-Ready? Let us go!
+For now, however, I am trying to keep things simple. I will defer explaining the actual rationale for mocking libraries until later and instead give you a quick example where you can see them in action.
 
-Let us pretend that we have the following code for adding new set of
-orders for products to a database and handling exceptions (by writing
-a message to a log) when it fails:
+Ready? Let's go!
+
+Let's pretend that we have the following code for adding new set of orders for products to a database and handling exceptions (by writing a message to a log) when it fails:
 
 ```csharp
 public class OrderProcessing
@@ -234,10 +205,7 @@ public class OrderProcessing
 }
 ```
 
-Now, imagine we need to test it -- how do we do it? I can already see you
-shaking your head and saying: “Let us just create this database, invoke
-this method and see if the record is added properly". In such case, the
-first test would look like this:
+Now, imagine we need to test it -- how do we do it? I can already see you shaking your head and saying: “Let's just create this database, invoke this method and see if the record is added properly". In such case, the first test would look like this:
 
 ```csharp
 [Fact]
@@ -305,7 +273,7 @@ way. There are several reasons:
     tests that might need the table to run correctly), which may lead
     you to a conclusion that it is not worth to write such tests at all.
 
-Now, let us try something else. Let us assume that our database works OK
+Now, let's try something else. Let's assume that our database works OK
 (or will be tested by black-box tests) and the only thing we want to
 test is our implementation. In this situation, we can create fake
 object, which is an instance of another custom class that implements the
@@ -454,7 +422,7 @@ behind them and we have only scratched the surface here.
 
 ### Anonymous values generator
 
-Look at the test in the previous section. Does it not trouble you that we fill the order object with so many values that are totally irrelevant to the test logic itself? They actually hinder readability of the test. Also, they make us believe that the tested object really cares what these values are, although it does not (the database does, but we already got rid of it from the test). Let us move it to a method with a descriptive name:
+Look at the test in the previous section. Does it not trouble you that we fill the order object with so many values that are totally irrelevant to the test logic itself? They actually hinder readability of the test. Also, they make us believe that the tested object really cares what these values are, although it does not (the database does, but we already got rid of it from the test). Let's move it to a method with a descriptive name:
 
 ```csharp
 [Fact] public void 
@@ -485,7 +453,7 @@ public Order AnonymousOrder()
 
 Now that is better. Not only did we make the test shorter, we also provided a hint to the test reader that the actual values used to create an order do not matter from the perspective of tested order processing logic, hence the name `AnonymousOrder()`.
 
-By the way, would it not be nice if we did not have to provide the anonymous objects ourselves, but rely on another library to generate them for us? Susprise, surprise, there is one! It is called [**Autofixture**](https://github.com/AutoFixture/AutoFixture). It is an example of an anonymous values generator (although its creator likes to say that it is an implementation of Test Data Builder pattern, but let us skip this discussion here). After refactoring our test to use AutoFixture, we arrive at the following:
+By the way, would it not be nice if we did not have to provide the anonymous objects ourselves, but rely on another library to generate them for us? Susprise, surprise, there is one! It is called [**Autofixture**](https://github.com/AutoFixture/AutoFixture). It is an example of an anonymous values generator (although its creator likes to say that it is an implementation of Test Data Builder pattern, but let's skip this discussion here). After refactoring our test to use AutoFixture, we arrive at the following:
 
 ```csharp
 [Fact] public void 
@@ -520,7 +488,7 @@ public static class Any
 }
 ```
 
-In the next chapters, you will see me using a lot of different methods from the `Any` type. The more you use this class, the more it grows with other methods for creating customized objects. For now, however, let us stop here.
+In the next chapters, you will see me using a lot of different methods from the `Any` type. The more you use this class, the more it grows with other methods for creating customized objects. For now, however, let's stop here.
 
 ### Summary 
 

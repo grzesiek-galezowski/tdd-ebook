@@ -85,7 +85,7 @@ Statements, whether by attributes (C\#, e.g. xUnit.Net’s `Fact`
 attribute) or annotations (Java) or with macros (C and C++) or by
 inheriting from common class, or just a naming convention.
 
-Let us take xUnit.Net as an example. As I stated previously, In
+Let's take xUnit.Net as an example. As I stated previously, In
 xUnit.Net, to turn a method into a Statement, you mark it with `[Fact]`
 attribute the following way:
 
@@ -100,7 +100,7 @@ public class CalculatorSpecification
 }
 ```
 
-Now, imagine that you are writing this Statement post-factum as a unit test in an environment that has, let us say, more than thirty Statements -- you have written the code, now you are just creating a test after test “to ensure" (as you see, this is not my favorite reason for writing unit tests) the code works. Code, test -- pass, test -- pass, test -- pass. You almost always evaluate your code against the whole Specification, since it is usually easier than selecting what to evaluate each time, plus, you get more confidence this way that you did not break by mistake something that is already working. So, this is really: Code, Test -- all pass, test -- all pass, test -- all pass... Hopefully, you use some kind of snippets mechanism for creating new Statements, but if not (and many do not actually do this), once in a while, you do something like this:
+Now, imagine that you are writing this Statement post-factum as a unit test in an environment that has, let's say, more than thirty Statements -- you have written the code, now you are just creating a test after test “to ensure" (as you see, this is not my favorite reason for writing unit tests) the code works. Code, test -- pass, test -- pass, test -- pass. You almost always evaluate your code against the whole Specification, since it is usually easier than selecting what to evaluate each time, plus, you get more confidence this way that you did not break by mistake something that is already working. So, this is really: Code, Test -- all pass, test -- all pass, test -- all pass... Hopefully, you use some kind of snippets mechanism for creating new Statements, but if not (and many do not actually do this), once in a while, you do something like this:
 
 ```csharp
 public class CalculatorSpecification
@@ -136,7 +136,7 @@ to mention it. The example I am going to show uses manual mocks, but
 this can happen with dynamic mocks as well, especially if you are in
 a hurry.
 
-Let us take a look at the following Statement saying that setting
+Let's take a look at the following Statement saying that setting
 a value higher than allowed to a field of a frame should produce error
 result:
 
@@ -172,7 +172,7 @@ case of various boundary values (nulls etc.).
 #### 3. Using static data inside production code
 
 Once in a while, you have to jump in and add some new Statements to some
-class Specification and some logic to the class itself. Let us assume
+class Specification and some logic to the class itself. Let's assume
 that the class and its existing specification was written by someone
 else. Imagine this code is a wrapper around your product XML
 configuration file. You decide to write your Statements AFTER applying
@@ -238,65 +238,27 @@ saw working" when we copied our code over to our deployment machine and
 ran few sanity checks... The design is ready... Specification? Maybe next
 time...
 
-Another reason might be time pressure. Let us be honest -- we are all in
-a hurry, we are all under pressure and when this pressure is too high,
-it triggers heroic behaviors in us, especially when there is a risk of
-not making it with the sprint commitment. Such heroic behavior usually
-goes by the following rules: drop all the “baggage", stop learning and
-experimenting, revert to all of the old “safe" behaviors and “save what
-we can!". If Specification is written at the end, it is often sacrificed
-on the altar of making it with the commitment, since the code is already
-written, “and it will be tested anyway by real tests" (box tests, smoke
-tests, sanity tests etc.). It is quite the contrary when starting with
-a Statement, where the Statement evaluating to false is **a reason** to
-write any code. Thus, if we want to write code, Specification become
-irremovable part of your development. By the way, I bet in big
-corporations no one sane ever thinks they can abandon checking in the
-code to source control, at the same time treating Specification as “an
-optional addition".
+Another reason might be time pressure. Let's be honest -- we are all in a hurry, we are all under pressure and when this pressure is too high, it triggers heroic behaviors in us, especially when there is a risk of not making it with the sprint commitment. Such heroic behavior usually goes by the following rules: drop all the “baggage", stop learning and
+experimenting, revert to all of the old “safe" behaviors and “save what we can!". If Specification is written at the end, it is often sacrificed on the altar of making it with the commitment, since the code is already written, “and it will be tested anyway by real tests" (box tests, smoke tests, sanity tests etc.). It is quite the contrary when starting with
+a Statement, where the Statement evaluating to false is **a reason** to write any code. Thus, if we want to write code, Specification become irremovable part of your development. By the way, I bet in big corporations no one sane ever thinks they can abandon checking in the code to source control, at the same time treating Specification as “an optional addition".
 
 ### Not starting from specification leads to waste of time on making objects testable
 
-It so happens, that I like watching and reading Uncle Bob. One day,
-I was listening to [his keynote at Ruby Midwest 2011, called
-Architecture The Lost
-Years](http://www.confreaks.com/videos/759-rubymidwest2011-keynote-architecture-the-lost-years).
-At the end, Robert made some digressions, one of them being about TDD.
-He said that writing unit tests after the code is not TDD. It is a waste
-of time.
+It so happens, that I like watching and reading Uncle Bob. One day, I was listening to [his keynote at Ruby Midwest 2011, called Architecture The Lost Years](http://www.confreaks.com/videos/759-rubymidwest2011-keynote-architecture-the-lost-years). At the end, Robert made some digressions, one of them being about TDD. He said that writing unit tests after the code is not TDD. It is a waste of time.
 
-My initial thought was that the comment was only about missing all the
-benefits that starting with false Statement brings you: the ability to
-see the Statement fail, the ability to do a clean-sheet analysis etc.,
-however, now I am of opinion that there is more to it. It is something
-I got from Amir Kolsky and Scott Bain -- in order to be able to write
-maintainable Specification for a piece of code, the code has to have
-a high level of a quality called **testability** (we will talk about
-testability later on, do not worry -- for now let us assume that the
-easier it is to write a Statement for a behavior of a class, the higher
-testability it has). That does not tell us much about where is the waste
-I mentioned, does it? To see it, let us see how dealing with testability
-looks like in Statement-first workflow (let us assume that we are
-creating new code, not adding stuff to dirty, ugly legacy code):
+My initial thought was that the comment was only about missing all the benefits that starting with false Statement brings you: the ability to see the Statement fail, the ability to do a clean-sheet analysis etc., however, now I am of opinion that there is more to it. It is something I got from Amir Kolsky and Scott Bain -- in order to be able to write maintainable Specification for a piece of code, the code has to have a high level of a quality called **testability** (we will talk about testability later on, do not worry -- for now let's assume that the easier it is to write a Statement for a behavior of a class, the higher testability it has). That does not tell us much about where is the waste I mentioned, does it? To see it, let'us see how dealing with testability looks like in Statement-first workflow (let's assume that we are creating new code, not adding stuff to dirty, ugly legacy code):
 
-1.  Write false Statement (this step ensures that code has high
-    testability)
+1.  Write false Statement (this step ensures that code has high testability)
 2.  Write code to make the Statement true
 
-Now, how does it usually look like when we write the code first (extra
-steps marked with **strong text**):
+Now, how does it usually look like when we write the code first (extra steps marked with **strong text**):
 
-1.  Write some production code (probably spans few classes until we are
-    satisfied)
+1.  Write some production code (probably spans few classes until we are satisfied)
 2.  **Start writing unit tests**
-3.  **Notice that unit testing the whole set of classes is cumbersome
-    and unsustainable and contains high redundancy.**
-4.  **Restructure the code to be able to isolate objects and use mocks
-    (this step ensures that code has high testability)**
+3.  **Notice that unit testing the whole set of classes is cumbersome and unsustainable and contains high redundancy.**
+4.  **Restructure the code to be able to isolate objects and use mocks (this step ensures that code has high testability)**
 5.  Write unit tests
 
-What is the equivalent of the marked steps in Statement-first approach?
-Nothing! Doing these things is a waste of time! Sadly, this is a waste
-I see done over and over again.
+What is the equivalent of the marked steps in Statement-first approach? Nothing! Doing these things is a waste of time! Sadly, this is a waste I see done over and over again.
 
 Do you like wasting your time?

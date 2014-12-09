@@ -112,7 +112,7 @@ technique:
 2.  When doing it, rely on your sense of duplication between Statement
     and (fake) implementation
 
-Let us apply Fake It to the same addition example as before (I promise,
+let's apply Fake It to the same addition example as before (I promise,
 for triangulation, I will give you better one). The Statement looks the
 same as before:
 
@@ -152,9 +152,9 @@ something we were ignoring silently for now (and here we will only
 slightly lick it). We can use the refactoring phase to remove
 duplication between the Statement and it's implementing code.
 
-First, let us note that the number 8 is duplicated between Statement and
+First, let's note that the number 8 is duplicated between Statement and
 implementation -- the implementation returns it and the Statement asserts
-on it. To reduce this duplication, let us break the 8 in the
+on it. To reduce this duplication, let's break the 8 in the
 implementation into a sum:
 
 ```csharp
@@ -189,7 +189,7 @@ public class Sum
 
 and we have just the number 5 duplicated, because we used variable to
 transfer the value of 3 from Statement method to the `Of`
-implementation, so we have it in one place now. Let us do the same with
+implementation, so we have it in one place now. let's do the same with
 5:
 
 ```csharp
@@ -325,8 +325,8 @@ public class ListWithAggregateOperations
 }
 ```
 
-We have two examples, so let us check whether we can generalize now. We
-could try to get rid of the two constructors now, but let us wait just
+We have two examples, so let's check whether we can generalize now. We
+could try to get rid of the two constructors now, but let's wait just
 a little bit longer and see if this is the right path to go (after all,
 I told you that we need **at least** two examples).
 
@@ -401,7 +401,7 @@ another element of the sum computation. Time to generalize!
 How do we encapsulate the variability of the element count so that we
 can get rid of this redundancy? A collection! How do we generalize the
 addition of multiple elements? A foreach loop through the collection!
-Thankfully, C\# supports `params` keyword, that let us use it to remove
+Thankfully, C\# supports `params` keyword, that let's use it to remove
 the redundant constructor like this:
 
 ```csharp

@@ -9,10 +9,10 @@ a Statement for each method of each class, including the private ones?
 Well, first thing I want to explain is that there are multiple levels we
 can write our Statements on. This varies depending on the TDD authority,
 but in this book, we will cover two of such levels -- unit level and
-acceptance level. For now, let us stick to the unit level, which is what
+acceptance level. For now, let's stick to the unit level, which is what
 we have done so far anyway. The time will come for the rest.
 
-For unit level, let us consider the kind of Statements that you already
+For unit level, let's consider the kind of Statements that you already
 saw in this book -- where we take one object, invoke a method on it and
 assert on the result. This is actually a special case of unit-level
 Statement and we will cover more in the coming chapters. This is,
@@ -20,12 +20,12 @@ however, a good moment to stop and consider the “scope" of a single
 unit-level Statement in TDD. Is it method scope? Class scope? Feature
 scope?
 
-Let us try to answer the question by examining some TDD unit-level
+let's try to answer the question by examining some TDD unit-level
 Statements:
 
 ### Is it class scope? 
 
-Let us see the first example and try to answer this question:
+let's see the first example and try to answer this question:
 
 ```csharp
 [Fact] public void
@@ -45,7 +45,7 @@ ShouldThrowValidationExceptionWithFatalErrorLevelWhenValidatedStringIsEmpty()
 }
 ```
 
-This is an example of a well-written unit-level Statement. Ok, so let us
+This is an example of a well-written unit-level Statement. Ok, so let's
 see... how many real classes take part in this spec? Three: a string, an
 exception and the validation. So the class scope is not the most
 accurate description.
@@ -55,7 +55,7 @@ accurate description.
 So, maybe the scope covers a single method, meaning a Statement always
 exercises one method of a specified object?
 
-Let us consider the following example:
+let's consider the following example:
 
 ```csharp
 [Fact] public void 
@@ -91,7 +91,7 @@ It may look that “behavior" scope is actually broader than method or
 class levels, since such Statement can span multiple classes and
 multiple methods. This is only partially true. That is because e.g.
 Statements with method scope can span multiple behaviors (which, by the
-way, is a sign of poorly written Statement). Let us take a look at an
+way, is a sign of poorly written Statement). let's take a look at an
 example:
 
 ```csharp
@@ -134,7 +134,7 @@ unless we fix the previous one (does that mean we have to use a single
 now, let the answer be: “not necessarily").
 
 On the other hand, Statements with behavior scope do not necessary have
-to be broader than those with class scope. Let us take the following
+to be broader than those with class scope. let's take the following
 example that proves it:
 
 ```csharp

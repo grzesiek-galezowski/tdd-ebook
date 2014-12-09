@@ -170,7 +170,7 @@ input that was passed to provide a clear indication on what is the
 Third technique: Distinct Generated Values
 ------------------------------------------
 
-Let us assume that some time after our initial version is shipped, we
+let's assume that some time after our initial version is shipped, we
 are asked to make the backup feature applied locally per user only for
 this user’s data. As the customer does not want to confuse files from
 different users, we are asked to add name of the user doing backup to
@@ -244,7 +244,7 @@ public string AnyString2()
 
 We solved the problem (for now) by introducing another helper method.
 However, this, as you can see, is not a very scalable solution. Thus,
-let us try to reduce the amount of helper methods for string generation
+let's try to reduce the amount of helper methods for string generation
 to one and make it return a different value each time:
 
 ```csharp
@@ -285,7 +285,7 @@ heuristics.
 Fourth technique: Constant Specification
 ----------------------------------------
 
-Let us consider another modification that we are requested to make -- this time, the backup file name needs to contain version number of our application as well. Remembering that we want to use Derived Values, we will not hardcode the version number into our Statement. Instead, we are going to use a constant that is already defined somewhere else in the
+let's consider another modification that we are requested to make -- this time, the backup file name needs to contain version number of our application as well. Remembering that we want to use Derived Values, we will not hardcode the version number into our Statement. Instead, we are going to use a constant that is already defined somewhere else in the
 application (this way we also avoid duplication of this version number across the application):
 
 ```csharp
@@ -348,7 +348,7 @@ principles you value when doing TDD. I did so for two reasons:
     try to understand their principles and how their techniques of
     choice support those principles.
 
-Now, let us take a quick summary of all the techniques introduced in
+Now, let's take a quick summary of all the techniques introduced in
 example:
 
 Anonymous Input

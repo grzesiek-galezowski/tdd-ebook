@@ -35,7 +35,7 @@ And here are the answers to our questions:
 3.  Where are objects composed? Answer: at application entry point (`Main()` 
 method)
 
-Depending on circumstances, we have different sets of best answers. To find them, let us take the questions on one by one.
+Depending on circumstances, we have different sets of best answers. To find them, let's take the questions on one by one.
 
 When are objects composed?
 --------------------------
@@ -61,7 +61,7 @@ There are few ways this can happen, each of them useful in certain circumstances
 3. Receive in response to message (i.e. as method return value)
 4. Register a recipient with already created sender
 
-Let us have a closer look at what each of them is about and which one to choose in what circumstances. 
+let's have a closer look at what each of them is about and which one to choose in what circumstances. 
 
 ### Receive as constructor parameter
 
@@ -120,7 +120,7 @@ and the `Sender` class itself to work in a different way.
 
 #### Communication of intent: required recipient
 
-Another advantage of the constructor approach is that if a reference to `Recipient` is required for a `Sender` to work correctly and it does not make sense to create a `Sender` without a `Recipient`, the signature of the constructor makes it explicit -- the compiler will not let us create a `Sender` without passing *something* as a `Recipient`.
+Another advantage of the constructor approach is that if a reference to `Recipient` is required for a `Sender` to work correctly and it does not make sense to create a `Sender` without a `Recipient`, the signature of the constructor makes it explicit -- the compiler will not let's create a `Sender` without passing *something* as a `Recipient`.
 
 #### Where to apply
 
@@ -205,7 +205,7 @@ public class Sender
 
 This kind of composition is beneficial when a new recipient is needed each time `DoSomething()` is called. In this sense it may look much like in case of previously discussed approach of receiving a recipient inside a message. There is one difference, however. Contrary to passing a recipient inside a message, where the code using the `Sender` passed a `Recipient` "from outside" of the `Sender`, in this approach, we rely on a separate object that is used by a `Sender` "from the inside".
 
-To be more clear, let us compare the two approaches. Passing 
+To be more clear, let's compare the two approaches. Passing 
 recipient inside a message looks like this:
 
 ```csharp
@@ -402,7 +402,7 @@ var broadcastingObserver
 sensor.FromNowOnReportTo(broadcastingObserver);
 ```
 
-The additional benefit of modeling broadcasting as an observer is that it would let us change the broadcasting policy without touching either the sensor code or the other observers. For example, we might introduce `ParallelBroadcastObserver` that would notify each observer asynchronously instead of sequentially and put it to use by changing the composition code only:
+The additional benefit of modeling broadcasting as an observer is that it would let's change the broadcasting policy without touching either the sensor code or the other observers. For example, we might introduce `ParallelBroadcastObserver` that would notify each observer asynchronously instead of sequentially and put it to use by changing the composition code only:
 
 ```csharp
 //now using parallel observer
@@ -434,7 +434,7 @@ So, we have two cases to consider. I'll start with the second one.
 
 ### Composition Root
 
-Let us assume for fun that we are creating a mobile game where a player has to defend a castle. This game has two levels. Each level has a castle to defend. So, we can break down the domain logic into three classes: a `Game` that has two `Level`s and each of them that contain a `Castle`. Let us also assume that the first two classes violate the principle of separating use from construction, i.e. that a `Game` creates its own levels and each `Level` creates its own castle.
+let's assume for fun that we are creating a mobile game where a player has to defend a castle. This game has two levels. Each level has a castle to defend. So, we can break down the domain logic into three classes: a `Game` that has two `Level`s and each of them that contain a `Castle`. let's also assume that the first two classes violate the principle of separating use from construction, i.e. that a `Game` creates its own levels and each `Level` creates its own castle.
 
 A `Game` class is created in the `Main()` method of the application:
 
@@ -482,7 +482,7 @@ Now, I said (and I hope you see it in the code above) that the `Game`, `Level1` 
 
 #### Achieving separation of use from construction
 
-First, let us refactor the `Level1` and `Level2` according to the principle by moving instantiation of their castles out. As existence of a castle is required for a level to make sense at all -- we will say this in code by using the approach of passing a castle through a `Level`'s constructor:
+First, let's refactor the `Level1` and `Level2` according to the principle by moving instantiation of their castles out. As existence of a castle is required for a level to make sense at all -- we will say this in code by using the approach of passing a castle through a `Level`'s constructor:
 
 ```csharp
 public class Level1
@@ -933,7 +933,7 @@ This example shows something I like calling "encapsulation of rule". The logic i
 
 #### Factories can hide some of the created object dependencies (encapsulation of global context)
 
-Let us consider another simple example. We have an application that, again, can process messages. One of the things that is done with those messages is saving them in a database and another is validation. The processing of message is, like in previous examples, handled by a `MessageProcessing` class, which, this time, does not use any factory, but creates the messages based on the frame data itself. let us look at this class:
+let's consider another simple example. We have an application that, again, can process messages. One of the things that is done with those messages is saving them in a database and another is validation. The processing of message is, like in previous examples, handled by a `MessageProcessing` class, which, this time, does not use any factory, but creates the messages based on the frame data itself. let's look at this class:
 
 ```csharp
 public class MessageProcessing

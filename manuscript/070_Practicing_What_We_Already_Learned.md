@@ -104,7 +104,7 @@ months, I will have to pay psychotherapist instead of you guys. Apart
 from that, writing a calculator app seems like a simple task in my mind,
 so the cost isn’t going to be overwhelming, right?
 
-**Johnny:** I think I get it. Let us get it going then. We will be
+**Johnny:** I think I get it. Let's get it going then. We will be
 implementing the functionality incrementally, starting with the most
 essential ones. Which feature of the calculator would you consider the
 most essential?
@@ -151,7 +151,7 @@ do not.
 
 **Jane:** Ok, I am in. What do I do?
 
-**Johnny:** Let us go through stories one by one and see if we can find
+**Johnny:** Let's go through stories one by one and see if we can find
 some key examples of how the features work. The first story is...
 
 ### **In order to** know that the calculator is turned on, **As a** tax payer **I want** to see “0" on the screen as soon as I turn it on.
@@ -159,7 +159,7 @@ some key examples of how the features work. The first story is...
 **Jane:** I do not think there is much to talk about. If you display
 “0", I will be happy. That is all.
 
-**Johnny:** Let us write down this example:
+**Johnny:** Let's write down this example:
 
 | key sequence | Displayed output | Notes                   |
 |--------------|------------------|-------------------------|
@@ -172,7 +172,7 @@ again at this stage?
 our thinking concrete. As Ken Pugh says: “Often the complete
 understanding of a concept does not occur until someone tries to use the
 concept". We would normally put it on a TODO list, because it is part of
-a different story, but we are actually done with this one, so let us
+a different story, but we are actually done with this one, so let's
 move straight to the story about displaying entered digits. How about
 it, Jane?
 
@@ -180,7 +180,7 @@ it, Jane?
 
 ### **In order to** see what numbers I am currently operating on, **As a** tax payer, **I want** the calculator to display the values I enter
 
-**Johnny:** Let us begin with the case raised by Benjamin. What should
+**Johnny:** Let's begin with the case raised by Benjamin. What should
 happen when I input “0" multiple times after I have only “0" on the
 display?
 
@@ -219,7 +219,7 @@ with examples!
 
 **Johnny:** Good. Is there anything else, Jane?
 
-**Jane:** No, that is pretty much it. Let us take another story.
+**Jane:** No, that is pretty much it. Let's start working on another story.
 
 ### **In order to** calculate sum of my different incomes, **As a** tax payer **I want** the calculator to enable addition of multiple numbers
 
@@ -246,7 +246,7 @@ digits limit? Is it OK that we truncate it like this?
 
 **Jane:** Sure, I do not mind. I do not add such big numbers anyway.
 
-**Johnny:** There is still one question we missed. Let us say that
+**Johnny:** There is still one question we missed. Let's say that
 I input a number, then press “+" and then another number without asking
 for result with “=". What should I see?
 
@@ -265,7 +265,7 @@ on should result in “0".
 |--------------|------------------|-----------------------------------|
 | =            | 0                | Result key in itself does nothing |
 
-**Johnny:** Let us sum up our discoveries:
+**Johnny:** Let's sum up our discoveries:
 
 | key sequence                | Displayed output | Notes    |
 |-----------------------------|------------------|---------------------------------------------------------------------------------------------------|
@@ -309,7 +309,7 @@ both applying the same set of principles, just on different levels.
 
 **Johnny:** Sure. If we followed the ATDD process, we would start
 writing what we call acceptance-level specification. In our case,
-however, a unit-level specification will be enough. Let us take the
+however, a unit-level specification will be enough. Let's take the
 first example:
 
 ### Statement 1: Calculator should display 0 on creation
@@ -327,7 +327,7 @@ should the calculator do?
 
 **Benjamin:** It should display “0" when I turn the application on.
 
-**Johnny:** In our case, “turning on" is creating a calculator. Let us
+**Johnny:** In our case, “turning on" is creating a calculator. Let's
 write it down as a method name:
 
 ```csharp
@@ -358,7 +358,7 @@ when created".
 **Johnny:** That is right. Now, the second trick I can sell to you is
 that if you do not know what code to start with, start with the expected
 result. In our case, we are expecting that the behavior will end up as
-displaying “0", right? So let us just write it in form of an assertion.
+displaying “0", right? So let's just write it in form of an assertion.
 
 **Benjamin:** You mean something like this?
 
@@ -464,7 +464,7 @@ public class Calculator
 
 **Benjamin:** What?
 
-**Johnny:** You already provided an implementation that will make our current Statement true. Remember its name? `ShouldDisplay0WhenCreated` -- and that is exactly what the code you wrote does. Before we arrive at this point, let us make sure this Statement can ever be evaluates as false. So for now, let us change it to this:
+**Johnny:** You already provided an implementation that will make our current Statement true. Remember its name? `ShouldDisplay0WhenCreated` -- and that is exactly what the code you wrote does. Before we arrive at this point, let's make sure this Statement can ever be evaluates as false. So for now, let's change it to this:
 
 ```csharp
 public class Calculator
@@ -535,7 +535,7 @@ going to be different. What we did, however, is still valuable because:
 used to this kind of working.
 
 **Johnny:** do not worry, it is central to TDD, so you will grasp it in
-no time. Now, before we proceed to the next Statement, let us look at
+no time. Now, before we proceed to the next Statement, let's look at
 what we already achieved. First, we wrote a Statement that turned out
 false. Then, we wrote just enough code to make the Statement true. Time
 for a step called Refactoring. In this step, we will take a look at the
@@ -555,7 +555,7 @@ and the implementation here:
 return "0";
 ```
 
-**Johnny:** Good, let us eliminate this duplication by introducing
+**Johnny:** Good, let's eliminate this duplication by introducing
 a constant called `InitialValue`. The Statement will now look like this:
 
 ```csharp
@@ -712,7 +712,7 @@ The `Any.Of()` is simpler -- it just returns any value in an enumeration.
 Note that when I create the values this way, I state explicitly that
 this behavior occurs when first digit is non-zero. This technique of
 using generated values instead of literals has its own principles, but
-let us leave it for later. I promise to give you a detailed lecture on
+let's leave it for later. I promise to give you a detailed lecture on
 it. Agree?
 
 **Benjamin:** You better do, because for now, I feel a bit uneasy with
@@ -743,13 +743,13 @@ string.Format("{0}{1}{2}",
 
 **Johnny:** We will get back to it and make it more “smarter" in
 a second after we make this statement true. For now, we need something
-obvious. Something we know works. Let us evaluate this Statement. What
+obvious. Something we know works. let's evaluate this Statement. What
 is the result?
 
 **Benjamin:** Failed, expected “331", but was “0".
 
-**Johnny:** Good, now let us write some code to make this Statement
-true. First, let us introduce an enumeration of digits:
+**Johnny:** Good, now let's write some code to make this Statement
+true. First, let's introduce an enumeration of digits:
 
 ```csharp
 public enum DigitKeys
@@ -800,7 +800,7 @@ public class Calculator
 
 This is not enough to support displaying multiple digits (as we saw,
 because the Statement saying they should be supported was evaluated to
-false). So let us evolve the code to handle this case:
+false). So let's evolve the code to handle this case:
 
 ```csharp
 public class Calculator
@@ -821,7 +821,7 @@ public class Calculator
 ```
 
 **Johnny:** Now the Statement is true so we can go back to it and make
-it a little bit prettier. Let us take a second look at it:
+it a little bit prettier. let's take a second look at it:
 
 ```csharp
 [Fact] public void 
@@ -855,7 +855,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 
 **Benjamin:** Yeah, it seems a bit unreadable.
 
-**Johnny:** Let us extract this part into a utility method and make it
+**Johnny:** let's extract this part into a utility method and make it
 more general -- we will need a way of constructing expected displayed
 output in many of our future Statements. Here is my go at this helper
 method:
@@ -903,7 +903,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 true, which means we got it right, did we not?
 
 **Johnny:** Not exactly. With moves such as this one, I like to be
-extra careful. Let us comment out the body of the `Enter()` method and
+extra careful. let's comment out the body of the `Enter()` method and
 see if this Statement can still be made false by the implementation:
 
 ```csharp
@@ -916,7 +916,7 @@ public void Enter(DigitKeys digit)
 
 **Benjamin:** Running... Ok, it is false now. Expected “243", got “0".
 
-**Johnny:** good, now we are pretty sure that it works OK. Let us
+**Johnny:** good, now we are pretty sure that it works OK. let's
 uncomment the lines we just commented out and move forward.
 
 ### Statement 3: Calculator should display only one zero digit if it is the only entered digit even if it is entered multiple times 
@@ -944,7 +944,7 @@ ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipl
 }
 ```
 
-**Johnny:** Good, you are learning fast! Let us evaluate this Statement.
+**Johnny:** Good, you are learning fast! let's evaluate this Statement.
 
 **Benjamin:** It seems that our current code already fulfills the
 Statement. Should I try to comment some code to make sure this Statement
