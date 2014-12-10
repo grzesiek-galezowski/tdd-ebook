@@ -90,11 +90,24 @@ public void ApplyYearlyIncentivePlanTo(Employee employee)
 }
 ```
 
-The looping is handled by separate code.
+The looping, which is a separate responsibility, is handled by a different class.
  
 ### How far do we go?
 
-A valid question becomes: do we know a way to be sure we separated all responsibilities?
+The above example begs three questions:
+
+1.  Is there a point where we are sure we have separated all responsibilities?
+2.  If there is, how can we be sure we have reached it?
+
+The answer to the first question is: probably no. While some reasons to change are common sense, others can be drawn from our experience as developers, there are always some that are unexpected and until they surface, we cannot foresee them. Thus, the answer is "no" for the second question as well.
+
+### The mutual relationship between Single Responsibility Principle and composability
+
+3.  If there isn't, where do we stop in separating responsibilities?
+
+This makes the third question interesting.
+
+TODO composability reinforces SRP, SRP reinforces composability
 
 TODO: answer no, never 
 
