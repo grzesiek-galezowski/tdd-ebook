@@ -103,6 +103,13 @@ The answer to the first question is: probably no. While some reasons to change a
 
 ### The mutual relationship between Single Responsibility Principle and composability
 
+Why am I writing about all this? It is because there is a mutual relationship between SRP and composability. As I said, there's no way to compose half of an object with half of another one. When we pick an object, that's it - we get everything that's "in stock". I also said that object is a granule of composability. The truth is, responsibility is a granule of composability as well. On one hand, it doesn't make sense to e.g. compose half of responsibility with another half. If we have a situation like that, these "halves" are in reality separate responsibilities.
+
+Separating things that change for the same reason makes it easier to replace things changing for different reasons than our class.
+
+
+In order to have composable objects, we somehow need to divide responsibilities between them
+
 3.  If there isn't, where do we stop in separating responsibilities?
 
 This makes the third question interesting.
