@@ -4,7 +4,6 @@ We already covered interfaces and protocols. In our quest for composability, We 
 
 Classes implement and use interfaces, and communicate using protocols, so it may seem we are already done with them. The truth is that classes are still interesting on their own and there are few concepts related to them that need explanation.
 
-
 ## Single Responsibility
 
 I already said that we want our system to be a web of composable objects. Obviously, an object is a granule of composability - we cannot e.g. unplug a half of an object and plug in another half. Thus, a valid question to ask is this: how big should an object be to make the composability comfortable - to let us unplug as much logic as we want, leaving the rest untouched.
@@ -99,11 +98,13 @@ The above example begs three questions:
 1.  Is there a point where we are sure we have separated all responsibilities?
 2.  If there is, how can we be sure we have reached it?
 
-The answer to the first question is: probably no. While some reasons to change are common sense, others can be drawn from our experience as developers, there are always some that are unexpected and until they surface, we cannot foresee them. Thus, the answer is "no" for the second question as well.
+The answer to the first question is: probably no. While some reasons to change are common sense, others can be drawn from our experience as developers, there are always some that are unexpected and until they surface, we cannot foresee them. Thus, the answer for the second question is: "there is no way". Which does not mean we should not try to separate the different reasons we see - quite the contrary.
 
 ### The mutual relationship between Single Responsibility Principle and composability
 
-Why am I writing about all this? It is because there is a mutual relationship between SRP and composability. As I said, there's no way to compose half of an object with half of another one. When we pick an object, that's it - we get everything that's "in stock". I also said that object is a granule of composability. The truth is, responsibility is a granule of composability as well. On one hand, it doesn't make sense to e.g. compose half of responsibility with another half. If we have a situation like that, these "halves" are in reality separate responsibilities.
+Why am I writing about all this? It is because there is a symbiosis between SRP and composability. As I said, there's no way to compose half of an object with half of another one. When we pick an object, that's it - we get everything that's "in stock". I also said that object is a granule of composability. The truth is, responsibility is a granule of composability as well. On one hand, it doesn't make sense to e.g. compose half of responsibility with another half. If we have a situation like that, these "halves" are in reality separate responsibilities.
+
+We need composability between objects to achieve composability between responsibilities - this is our real goal.
 
 Separating things that change for the same reason makes it easier to replace things changing for different reasons than our class.
 
