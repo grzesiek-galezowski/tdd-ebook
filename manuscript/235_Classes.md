@@ -102,27 +102,9 @@ The answer to the first question is: probably no. While some reasons to change a
 
 ### The mutual relationship between Single Responsibility Principle and composability
 
-Why am I writing about all this? It is because there is a symbiosis between SRP and composability. As I said, there's no way to compose half of an object with half of another one. When we pick an object, that's it - we get everything that's "in stock". I also said that object is a granule of composability. The truth is, responsibility is a granule of composability as well. On one hand, it doesn't make sense to e.g. compose half of responsibility with another half. If we have a situation like that, these "halves" are in reality separate responsibilities.
+The reason I am writing all this is that responsibilities are the real granules of composability. The composability of objects that I talked about a lot already is actually a mean to achieve composability of responsibilities, which is our real goal. If we have two collaborating objects, each having a single responsibility, we can easily replace the way our application achieves one of these responsibilities without touching the other. Thus, objects conforming to SRP are the most comfortably composable. As the real reason for change in application is the change of responsibilities and the real reuse is reuse of responsibilities, this is a concept that determines the size of our objects[^notrdd].
 
-We need composability between objects to achieve composability between responsibilities - this is our real goal.
-
-Separating things that change for the same reason makes it easier to replace things changing for different reasons than our class.
-
-
-In order to have composable objects, we somehow need to divide responsibilities between them
-
-3.  If there isn't, where do we stop in separating responsibilities?
-
-This makes the third question interesting.
-
-TODO composability reinforces SRP, SRP reinforces composability
-
-TODO: answer no, never 
-
-  
-  
-
-TODO the notion of unit (hour, second, microsecond) - responsibility is granular - parallelism may also be a responsibility
+## Static fields and methods
 
 TODO independent deployability
 
@@ -130,17 +112,13 @@ TODO principle at different level of abstraction - single level of abstraction p
 
 TODO small amount of private methods
 
-This leads to a question: what is the granule of composability? How much should a class do to be composable?
-
 TODO how are we to determine responsibility? From experience: we know to count something in hours, not minutes. Second way: composition becomes awkward. Third way: tests (Statements) will tell us.
 
-
-## Static fields and methods
-## Work in constructors
-## How to name a class
 
 [^SRPMethods]: This principle can be applied to methods as well, but we are not going to cover this part, because it is not directly tied to the notion of composability and this is not a design book ;-).
 
 [^SRP]: http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod. 
 
 [^srponstackoverflow]: https://stackoverflow.fogbugz.com/default.asp?W29030
+
+[^notrdd]: note that I am talking about responsibilities the way SRP talks about them, not the way they are understood by e.g. Responsibility Driven Design. Thus, I am talking about responsibilities of a class, not responsibilities of its API.

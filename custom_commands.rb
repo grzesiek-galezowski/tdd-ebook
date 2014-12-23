@@ -15,6 +15,11 @@ $MANUSCRIPT_IMAGES_DIR = $MANUSCRIPT_DIR + "images"
 $MANUSCRIPT_COVER_IMAGE = $MANUSCRIPT_IMAGES_DIR + "homemade_title_page.png"
 $MANUSCRIPT_STYLESHEETS_DIR = $MANUSCRIPT_DIR + "Stylesheets"
 $MANUSCRIPT_GLOBAL_STYLESHEET = $MANUSCRIPT_STYLESHEETS_DIR + "Global.css"
+$BOOK_CHAPTERS_LIST = "Book.txt"
+$SAMPLE_CHAPTERS_LIST = "Sample.txt"
+
+$MANUSCRIPT_BOOK_CHAPTERS_LIST = $MANUSCRIPT_DIR + $BOOK_CHAPTERS_LIST
+$MANUSCRIPT_SAMPLE_CHAPTERS_LIST = $MANUSCRIPT_DIR + $SAMPLE_CHAPTERS_LIST
 
 #pandoc paths
 $PD_MANUSCRIPT_DIR = $ROOT + "temp_manuscript"
@@ -68,7 +73,7 @@ end
 def all_chapters_string(subdir)
   all_chapters = String.new
 
-  File.open subdir + "Book.txt" do |f|
+  File.open subdir + $BOOK_CHAPTERS_LIST do |f|
     f.each_line do |line|
       all_chapters += "./" + line.without_endline + " "
     end

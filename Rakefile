@@ -9,7 +9,7 @@ task :push, [:commit_message] => [:push_ebook, :push_html] do | t, args |
 end
 
 desc "Push ebook into source control"
-task :push_ebook, [:commit_message] => ['formats:all'] do | t, args |
+task :push_ebook, [:commit_message] => ['formats:all', 'sample:generate'] do | t, args |
   #TODO repair this
   remove_pandoc_manuscript
   git = Git.new $ROOT
@@ -29,7 +29,7 @@ task :push_html, [:commit_message] => 'formats:html' do | t, args |
 end
 
 namespace :diagrams do
-  #not diagrams, but images!!! 
+  #not diagrams, but images!!!
   desc "Regenerates all SVG diagrams from source and puts them in the source directory"
   task :regenerate do
     puts sh("cd ./Diagrams/ && ruby ./Generate.rb")
@@ -38,12 +38,12 @@ namespace :diagrams do
   end
 end
 
-task :clone_manuscript => 'diagrams:regenerate' do 
+task :clone_manuscript => 'diagrams:regenerate' do
   remove_pandoc_manuscript
   cp_r $MANUSCRIPT_DIR, $PD_MANUSCRIPT_DIR
-  
+
   # replace leanpub parts with chapters
-  replace_in_temp_markdown_files "^-#", "# " 
+  replace_in_temp_markdown_files "^-#", "# "
   # replace asides with blocks
   replace_in_temp_markdown_files "^A> ", "> "
   replace_in_temp_markdown_files "^A>$", ">"
@@ -71,13 +71,19 @@ task :clone_manuscript => 'diagrams:regenerate' do
   # replace generic blocks with blocks
   replace_in_temp_markdown_files "^G> ", "> "
   replace_in_temp_markdown_files "^G>$", ">"
-  
+
   #use java source code highlight as pandoc does not support C#
   replace_in_temp_markdown_files "^```csharp", "```java"
 end
 
 def replace_in_temp_markdown_files(replaced, replacement)
   puts sh("cd #{$PD_MANUSCRIPT_DIR.to_s.shellescape} && sed -ri 's/#{replaced}/#{replacement}/' *.md")
+end
+
+namespace :sample do
+  task :generate do
+    cp_r $MANUSCRIPT_BOOK_CHAPTERS_LIST, $MANUSCRIPT_SAMPLE_CHAPTERS_LIST
+  end
 end
 
 namespace :formats do
