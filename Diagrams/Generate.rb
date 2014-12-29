@@ -25,6 +25,8 @@ to_png "WebOfObjects.svg", :density => 95
 puts sh "java -jar ../tools/plantuml.jar -tsvg ./lollipop.uml"
 to_png "lollipop.svg", :density => 150
 
+#this will overwrite the old picture. For now, I am leaving the code that produces the old one
+#to be able to safely revert in the future. In long term, the old graphviz-based picture will b retired
 puts sh "dpic -v ./SenderRecipientMessage.pic > ./SenderRecipientMessage.svg"
 to_png "SenderRecipientMessage.svg", :density => 150
 

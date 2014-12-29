@@ -100,11 +100,22 @@ The above example begs three questions:
 
 The answer to the first question is: probably no. While some reasons to change are common sense, others can be drawn from our experience as developers, there are always some that are unexpected and until they surface, we cannot foresee them. Thus, the answer for the second question is: "there is no way". Which does not mean we should not try to separate the different reasons we see - quite the contrary.
 
+I like the comparison to our usage of time in real life. Brewing time of black tea is usually around three to five minutes. This is what is printed on the package we buy: "3 --- 5 minutes". Nobody gives the time in seconds, because such granularity is not needed. If seconds made a difference in the process of brewing tea, we would probably be given time in seconds. But they don't. When we estimate tasks in software engineering, we also use different time granularity depending on the need.
+
+A simplest software program that prints "hello world" on the screen may fit into a single "main" method we will probably not see it as several responsibilities. But as soon as we get a requirement to write "hello world" in a native language of the currently running operating system, obtaining the text becomes a separate responsibility from putting it on the screen. It all depends on what granularity we need at the moment (which, as I said, may be spotted from code or known up-front from our experience as developers).
+
 ### The mutual relationship between Single Responsibility Principle and composability
 
 The reason I am writing all this is that responsibilities are the real granules of composability. The composability of objects that I talked about a lot already is actually a mean to achieve composability of responsibilities, which is our real goal. If we have two collaborating objects, each having a single responsibility, we can easily replace the way our application achieves one of these responsibilities without touching the other. Thus, objects conforming to SRP are the most comfortably composable. As the real reason for change in application is the change of responsibilities and the real reuse is reuse of responsibilities, this is a concept that determines the size of our objects[^notrdd].
 
-## Static fields and methods
+## No work in constructors
+
+A conclusion from 
+
+TODO give open connection instead of opening it in constructor
+TODO validation - put in factories, except nulls - an object requires valid peers.
+http://misko.hevery.com/code-reviewers-guide/flaw-constructor-does-real-work/
+
 
 TODO independent deployability
 
