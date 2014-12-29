@@ -10,7 +10,7 @@ The book binaries [are now hosted on Leanpub](https://leanpub.com/tdd-ebook), as
 <a href="https://leanpub.com/tdd-ebook">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-mobi.png" />Mobi
 </a>&nbsp;
-<a href="https://leanpub.com/tdd-ebook">
+<a href="http://samples.leanpub.com/tdd-ebook-sample.pdf">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-pdf.png" />PDF
 </a>
 <a href="https://leanpub.com/tdd-ebook/read/">
