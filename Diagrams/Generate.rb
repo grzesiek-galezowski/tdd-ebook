@@ -22,9 +22,11 @@ to_png "RedGreenRefactor2.svg", :density => 150
 to_png "SenderRecipientMessage.svg", :density => 150
 to_png "WebOfObjects.svg", :density => 95
 
-
 puts sh "java -jar ../tools/plantuml.jar -tsvg ./lollipop.uml"
 to_png "lollipop.svg", :density => 150
+
+puts sh "dpic -v ./SenderRecipientMessage.pic > ./SenderRecipientMessage.svg"
+to_png "SenderRecipientMessage.svg", :density => 150
 
 #Pathname.glob("./*.svg") do |svg_image|
 #  png_image = svg_image.sub_ext ".png"
