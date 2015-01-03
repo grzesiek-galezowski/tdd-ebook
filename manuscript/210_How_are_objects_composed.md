@@ -593,7 +593,7 @@ Apart from the constructor invocations, the composition root may also contain e.
 
 The composition root above looks quite small, but you can imagine it grow a lot in bigger applications. There are techniques of refactoring the composition root to make it more readable and cleaner -- we will explore those techniques in further chapters.
 
-### Factories
+### Factories 
 
 As I previously said, it is not always possible to pass everything through the constructor. One of the approach we discussed that we can use in such cases is **a factory**.
 

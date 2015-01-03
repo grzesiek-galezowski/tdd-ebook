@@ -317,3 +317,8 @@ I> When you give a value a name that belongs to the problem domain, it means tha
 And it's a nice one to remember, especially because we often tend to model such values as a library types and wake up when it's already too late to make the transition to value object effectively. I'm an example of this and that's why I re-learned this principle by hard many times.
 
 And that's it for today. I'll be happy to hear your thoughts. Until then, see ya!
+
+
+TODO talk about static const value objects. const can be used only for types that have literals. Thus static readonly is used.
+
+

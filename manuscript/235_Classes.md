@@ -162,8 +162,7 @@ var quotedPrintableEncoding = new QuotedPrintableEncoding();
 
 //...other initialization
 ``` 
-
-Now, in our case, we need to create new messages dynamically, one demand, so we need a factory for them. We will also instantiate this factory in the composition root and pass both encodings inside:
+Now, in our case, we need to create new messages dynamically, on demand, so we need a factory for them. We will also instantiate this factory in the composition root and pass both encodings inside:
 
 ```csharp
 //...other initialization
@@ -174,20 +173,60 @@ var messageFactory
 //...other initialization
 ```  
 
-The factory itself, when asked to create a message with a given encoding, will just pass the single instances passed from composition root: 
+The factory itself, when asked to create a message with a given encoding, will just pass the single instances received from composition root: 
 
+```csharp
+public class SmtpMessageFactory : MessageFactory
+{
+  private Encoding _quotedPrintable;
+  private Encoding _base64;
+  
+  public SmtpMessageFactory(
+    Encoding quotedPrintable, 
+    Encoding base64)
+  {
+    _quotedPrintable = quotedPrintable;
+    _base64 = base64;
+  }
+  
+  public Message CreateFrom(string content, MessageLanguage language)
+  {
+    if(language.IsLatinBased)
+    {
+      //each message gets the same instance of encoding:
+      return new StmpMessage(content, _quotedPrintable); 
+    }
+    else
+    {
+      //each message gets the same instance of encoding:
+      return new StmpMessage(content, _base64);
+    }
+  }
+}  
 
-TODO hard to compose. The only choice - static setter.
+```
 
-### Where they don't work
-### better solution - pass through constructor
-### TODO disposing of statics - who is the owner (include in static setter)
-### Where they work - readonly constant value objects
+The performance and memory saving is not exactly as big as when using a static field (e.g. each `SmtpMessage` instance uses must store a separate reference to the received encoding), but it is still a huge improvement over creating a separate encoding for each message. 
 
+### Where statics work?
+
+What I wrote does not mean that statics do not have their uses. They do, but these uses are very specific. I will show you one of such uses in the next chapters after I introduce value objects.
 
 ## No work in constructors
 
-A conclusion from 
+A constructor of a class should do little or no work. This is a conclusion from Single Responsibility Principle and also enhances composability.
+
+If, aside from implementing the methods a class exposes, you feel you need to do additional work in a constructor, that may be a sign that this "additional work" changes for other reason than the main logic. Thus it should be put elsewhere.
+
+### What can a constructor do?
+
+Most of the times, we can get away using the following guideline: assigning fields or null checks. 
+
+### What a constructor cannot do?
+
+if it does too much, it means it's a separate responsibility. Move it to the factory.
+
+
 
 TODO give open connection instead of opening it in constructor
 TODO validation - put in factories, except nulls - an object requires valid peers.
