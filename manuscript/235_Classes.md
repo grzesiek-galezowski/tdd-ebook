@@ -6,7 +6,7 @@ Classes implement and use interfaces, and communicate using protocols, so it may
 
 ## Single Responsibility
 
-I already said that we want our system to be a web of composable objects. Obviously, an object is a granule of composability - we cannot e.g. unplug a half of an object and plug in another half. Thus, a valid question to ask is this: how big should an object be to make the composability comfortable - to let us unplug as much logic as we want, leaving the rest untouched.
+I already said that we want our system to be a web of composable objects. Obviously, an object is a granule of composability - we cannot e.g. unplug a half of an object and plug in another half. Thus, a valid question to ask is this: how big should an object be to make the composability comfortable - to let us unplug as much logic as we want, leaving the rest untouched and ready tow rok with the new things we plug in.
 
 The answer comes with a Single Responsibility Principle for classes[^SRPMethods], that basically says[^SRP]:
 
@@ -93,7 +93,7 @@ The looping, which is a separate responsibility, is handled by a different class
  
 ### How far do we go?
 
-The above example begs three questions:
+The above example begs some questions:
 
 1.  Is there a point where we are sure we have separated all responsibilities?
 2.  If there is, how can we be sure we have reached it?
@@ -102,11 +102,88 @@ The answer to the first question is: probably no. While some reasons to change a
 
 I like the comparison to our usage of time in real life. Brewing time of black tea is usually around three to five minutes. This is what is printed on the package we buy: "3 --- 5 minutes". Nobody gives the time in seconds, because such granularity is not needed. If seconds made a difference in the process of brewing tea, we would probably be given time in seconds. But they don't. When we estimate tasks in software engineering, we also use different time granularity depending on the need.
 
-A simplest software program that prints "hello world" on the screen may fit into a single "main" method we will probably not see it as several responsibilities. But as soon as we get a requirement to write "hello world" in a native language of the currently running operating system, obtaining the text becomes a separate responsibility from putting it on the screen. It all depends on what granularity we need at the moment (which, as I said, may be spotted from code or known up-front from our experience as developers).
+A simplest software program that prints "hello world" on the screen may fit into a single "main" method we will probably not see it as several responsibilities. But as soon as we get a requirement to write "hello world" in a native language of the currently running operating system, obtaining the text becomes a separate responsibility from putting it on the screen. It all depends on what granularity we need at the moment (which, as I said, may be spotted from code or, in some cases, known up-front from our experience as developers).
 
 ### The mutual relationship between Single Responsibility Principle and composability
 
 The reason I am writing all this is that responsibilities are the real granules of composability. The composability of objects that I talked about a lot already is actually a mean to achieve composability of responsibilities, which is our real goal. If we have two collaborating objects, each having a single responsibility, we can easily replace the way our application achieves one of these responsibilities without touching the other. Thus, objects conforming to SRP are the most comfortably composable. As the real reason for change in application is the change of responsibilities and the real reuse is reuse of responsibilities, this is a concept that determines the size of our objects[^notrdd].
+
+## Static recipients
+
+While static fields may sometimes seem like a good idea of "sharing" recipient references between objects of the same class and something that is more "memory efficient", they actually hurt composability. Let's take a look at a simple example to get a feeling of how this may be.
+
+### SMTP Server
+
+Let's consider a scenario where we need to write an e-mail server that receives and send SMTP messages. In our code, have an `OutboundSmtpMessage` class which symbolizes SMTP messages we send to other parties. To send the message, we need to encode it. We always use a Base64 encoding, so we have the class `OutboundSmtpMessage` declare a private field of type `Base64Encoding`:
+
+```csharp
+public class OutboundSmtpMessage
+{
+  //... other code
+  
+  private Encoding _encoding = new Base64Encoding();
+  
+  //... other code
+}
+```  
+
+One day we notice that it is a waste for each message to define its own encoding objects, since they are plain algorithms and each use of encoding does not affect further uses in any way - so we can as well have a single instance and use it in all messages. Also, it may save us some performance, since creating an encoding each time we create a new message has its cost in high throughput scenarios. Thus, it seems like a good idea to use static field for this purpose, so we modify our `OutboundSmtpMessage` message class to hold `Base64Encoding` instance as static field:
+
+```csharp
+public class OutboundSmtpMessage
+{
+  //... other code
+  
+  private static Encoding _encoding = new Base64Encoding();
+  
+  //... other code
+}
+```  
+
+There, we fixed it! But didn't our mommies tell us not to optimize prematurely? Oh well...
+
+### Welcome, change!
+
+One day it turns out that we need to support not only Base64 encoding but also another one, called Quoted-Printable. With our current design, we cannot do that, because single encoding is shared between all messages. Thus, if we change the encoding for message that requires Quoted-Printable encoding, it will also change the encoding for the messages that require Base64. Thus, we constraint the composability with this premature optimization.
+
+### So what about optimizations?
+
+So, are we doomed to return to the previous solution to have one encoding per message? What if this really becomes a performance of memory problem? Is our observation that we don't need to create the same encoding many times useless?
+
+Not at all. We can still use this observation and get a lot (albeit not all) of the benefits of static field. How do we do it? Well, we already answered this question few chapters ago - create a single instance of each encoding in composition root and pass it to each message in constructor.
+
+Let's examine this solution. First, we need to create the encodings in the composition root:
+
+```csharp
+//...other initialization
+
+var base64Encoding = new Base64Encoding();
+var quotedPrintableEncoding = new QuotedPrintableEncoding();
+
+//...other initialization
+``` 
+
+Now, in our case, we need to create new messages dynamically, one demand, so we need a factory for them. We will also instantiate this factory in the composition root and pass both encodings inside:
+
+```csharp
+//...other initialization
+
+var messageFactory 
+  = new StmpMessageFactory(base64Encoding, quotedPrintableEncoding);
+
+//...other initialization
+```  
+
+The factory itself, when asked to create a message with a given encoding, will just pass the single instances passed from composition root: 
+
+
+TODO hard to compose. The only choice - static setter.
+
+### Where they don't work
+### better solution - pass through constructor
+### TODO disposing of statics - who is the owner (include in static setter)
+### Where they work - readonly constant value objects
+
 
 ## No work in constructors
 
@@ -116,7 +193,7 @@ TODO give open connection instead of opening it in constructor
 TODO validation - put in factories, except nulls - an object requires valid peers.
 http://misko.hevery.com/code-reviewers-guide/flaw-constructor-does-real-work/
 
-
+TODO static collaborators - not context independent - each service cannot obtain its own context, but rather context is forced on them.
 TODO independent deployability
 
 TODO principle at different level of abstraction - single level of abstraction principle
@@ -124,6 +201,7 @@ TODO principle at different level of abstraction - single level of abstraction p
 TODO small amount of private methods
 
 TODO how are we to determine responsibility? From experience: we know to count something in hours, not minutes. Second way: composition becomes awkward. Third way: tests (Statements) will tell us.
+
 
 
 [^SRPMethods]: This principle can be applied to methods as well, but we are not going to cover this part, because it is not directly tied to the notion of composability and this is not a design book ;-).
