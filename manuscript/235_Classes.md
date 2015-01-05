@@ -111,13 +111,13 @@ Likewise, a simplest software program that prints "hello world" on the screen ma
 
 ### The mutual relationship between Single Responsibility Principle and composability
 
-The reason I am writing all this is that responsibilities are the real granules of composability. The composability of objects that I have talked about a lot already is actually a mean to achieve composability of responsibilities. So, this is what's our real goal. If we have two collaborating objects, each having a single responsibility, we can easily replace the way our application achieves one of these responsibilities without touching the other. Thus, objects conforming to SRP are the most comfortably composable and the best size.[^notrdd].
-
-TODO
+The reason I am writing all this is that responsibilities are the real granules of composability. The composability of objects that I have talked about a lot already is actually a mean to achieve composability of responsibilities. So, this is what's our real goal. If we have two collaborating objects, each having a single responsibility, we can easily replace the way our application achieves one of these responsibilities without touching the other. Thus, objects conforming to SRP are the most comfortably composable and the right size.[^notrdd].
 
 ## Static recipients
 
-While static fields may sometimes seem like a good idea of "sharing" recipient references between objects of the same class and something that is more "memory efficient", they actually hurt composability. Let's take a look at a simple example to get a feeling of how this may be.
+While static fields in a class body may sometimes seem like a good idea of "sharing" recipient references between its instances and smart way to make the code more "memory efficient", they actually hurt composability more often than not. Let's take a look at a simple example to get a feeling of how static fields constraint our design.
+
+TODO
 
 ### SMTP Server
 
