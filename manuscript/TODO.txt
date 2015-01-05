@@ -76,3 +76,28 @@ Why did I leave out inline creation and singletons? context independence!
 
 1. In interfaces chapter - provide better examples in roles section (use some more real examples)
 3. change many single hyphens to double
+
+## No work in constructors
+
+A constructor of a class should do little or no work. This is a conclusion from Single Responsibility Principle which also enhances composability.
+
+If, aside from implementing the methods a class exposes, you feel you need to do additional work in a constructor, that may be a sign that this "additional work" changes for other reason than the main logic of the class. Thus it should be put elsewhere.
+
+
+
+### What can a constructor do?
+
+Most of the times, we can get away using the following guideline: assigning fields or null checks. 
+
+### What a constructor cannot do?
+
+if it does too much, it means it's a separate responsibility. Move it to the factory.
+
+
+
+TODO give open connection instead of opening it in constructor
+TODO validation - put in factories, except nulls - an object requires valid peers.
+http://misko.hevery.com/code-reviewers-guide/flaw-constructor-does-real-work/
+
+
+TODO small amount of private methods

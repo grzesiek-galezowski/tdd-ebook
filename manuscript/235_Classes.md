@@ -1,24 +1,28 @@
 # Classes
 
-We already covered interfaces and protocols. In our quest for composability, We need to look at classes as well.
+We already covered interfaces and protocols. In our quest for composability, We need to look at classes as well. Classes:
 
-Classes implement and use interfaces, and communicate using protocols, so it may seem we are already done with them. The truth is that classes are still interesting on their own and there are few concepts related to them that need explanation.
+*  implement interfaces (i.e. play roles)
+*  communicate through interfaces to other services
+*  follow protocols in this communication
 
-## Single Responsibility
+So in a way, what is "inside" a class is a byproduct of how objects of this class acts on the "outside". Still, it does not mean there is nothing to say about classes themselves that contributes to better composability.
 
-I already said that we want our system to be a web of composable objects. Obviously, an object is a granule of composability - we cannot e.g. unplug a half of an object and plug in another half. Thus, a valid question to ask is this: how big should an object be to make the composability comfortable - to let us unplug as much logic as we want, leaving the rest untouched and ready tow rok with the new things we plug in.
+## Single Responsibility Principle
 
-The answer comes with a Single Responsibility Principle for classes[^SRPMethods], that basically says[^SRP]:
+I already said that we want our system to be a web of composable objects. Obviously, an object is a granule of composability - we cannot e.g. unplug a half of an object and plug in another half. Thus, a valid question to ask is: how big should an object be to make the composability comfortable - to let us unplug as much logic as we want, leaving the rest untouched and ready to work with the new recipients we plug in?
+
+The answer comes with a *Single Responsibility Principle* (in short: SRP) for classes[^SRPMethods], which basically says[^SRP]:
 
 A> A code of a Class should have only one reason to change.
 
-There has been a lot written about the principle on the web, so I am not going to be wiser than google. Still, I believe it is useful to explain this principle in terms of composability.
+There has been a lot written about the principle on the web, so I am not going to be wiser than your favourite web search engine (my recent search yielded over 74 thousands results). Still, I believe it is useful to explain this principle in terms of composability.
 
-Usually, the hard part about this principle is the what is "a reason to change". Robert C. Martin explains[^srponstackoverflow] that this is about a single source of entropy that generates changes to the class. And we will study it on an example we already know.
+Usually, the hard part about this principle is how to understand "a reason to change". Robert C. Martin explains[^srponstackoverflow] that this is about a single source of entropy that generates changes to the class. Which leads us to another trouble of defining a "source of entropy". So I think it's better to just give you an example.
 
 ### Separating responsibilities
 
-Remember the code Johnny and Benjamin used to apply incentine plans to employees? In case not, here it is (it's just a single method, but it will suffice):
+Remember the code Johnny and Benjamin used to apply incentive plans to employees? In case you don't, here it is (it's just a single method, not a whole class, but it should be enough for our needs):
 
 ```csharp
 public void ApplyYearlyIncentivePlan()
@@ -34,9 +38,9 @@ public void ApplyYearlyIncentivePlan()
 }
 ```
 
-So... how many reasons to change does this piece of code have? If "reason to change" was defined as a "way to change", there would be multiple such ways. For example, someone may decide that we are not giving raises anymore and the `employee.EvaluateRaise()` line would be gone. Likewise, a decision could be made that we are not giving bonuses, then the `employee.EvaluateBonus()` line would have to be removed. So, there are undoubtedly many ways this method could change. But would it be for different reasons? Actually, no. The reason in both cases would be that the CEO approved a new incentive plan. So, there is one reason to change, although there are many ways the code can change.
+So... how many reasons to change does this piece of code have? If we weren't talking about "reason to change" but simply a "change", the answer would be "many". For example, someone may decide that we are not giving raises anymore and the `employee.EvaluateRaise()` line would be gone. Likewise, a decision could be made that we are not giving bonuses, then the `employee.EvaluateBonus()` line would have to be removed. So, there are undoubtedly many ways this method could change. But would it be for different reasons? Actually, no. The reason in both cases would be (probably) that the CEO approved a new incentive plan. So, there is one "source of entropy" for these two changes, although there are many ways the code can change. Hence, the two changes are for the same reason.
 
-Now happens the more interesting discussion: what about saving the employees - is the reason for changing the way we save employees the same as for the bonuses and pays? For example, we may decide that we are not saving each employee separately, because it would cause a huge load on our data store, but instead, we will save them together in a single batch. This causes the code to change, e.g. like this:
+Now the more interesting part of the discussion: what about saving the employees - is the reason for changing how we save employees the same as for the bonuses and pays? For example, we may decide that we are not saving each employee separately, because it would cause a huge performance load on our data store, but instead, we will save them together in a single batch after we finish processing the last one. This causes the code to change, e.g. like this:
 
 ```csharp
 public void ApplyYearlyIncentivePlan()
@@ -49,11 +53,12 @@ public void ApplyYearlyIncentivePlan()
     employee.EvaluateBonus();
   }
   
+  //now all employees saved once
   _repository.SaveAll(employees);
 }
 ```
 
-So, as you might've already guessed, the reason for this change is different, thus, it is a separate responsibility and the logic for reading and storing employees should be separated from this class. The method would look something like this:
+So, as you might've already guessed, the reason for this change is different as for changing incentive plan, thus, it is a separate responsibility and the logic for reading and storing employees should be separated from this class. The method after the separation would look something like this:
 
 ```csharp
 public void ApplyYearlyIncentivePlanTo(IEnumerable<Employee> employees)
@@ -66,7 +71,7 @@ public void ApplyYearlyIncentivePlanTo(IEnumerable<Employee> employees)
 }
 ```
 
-Reading and writing would be handled by different code - thus, the responsibilities are separated. Do we now have a code that adheres to Single Reponsibility Principle? We may, but consider this situation: the evaluation of the raises and bonuses begins getting slow and, instead of doing this for all employees in a `for` loop, we would rather parallelize it. After this change, the code could look like this (this will the the C# parallel looping):
+In the example above, we moved reading and writing employees out, so that it is handled by different code - thus, the responsibilities are separated. Do we now have a code that adheres to Single Reponsibility Principle? We may, but consider this situation: the evaluation of the raises and bonuses begins getting slow and, instead of doing this for all employees in a sequential `for` loop, we would rather parallelize it to process every employee at the same time in a separate thread. After applying this change, the code could look like this (This uses C#-specific API for parallel looping, but I hope you get the idea):
 
 ```csharp
 public void ApplyYearlyIncentivePlanTo(IEnumerable<Employee> employees)
@@ -79,7 +84,7 @@ public void ApplyYearlyIncentivePlanTo(IEnumerable<Employee> employees)
 }
 ```
 
-Is this a new reason to change? Of course it is! So, we may say we have encountered another responsibility and separate it. The code looks like this now:
+Is this a new reason to change? Of course it is! Decisions on parallelizing processing come from different source than incentive plan modifications. So, we may say we encountered another responsibility and separate it. The code that remains in the `ApplyYearlyIncentivePlanTo()` method looks like this now:
 
 ```csharp
 public void ApplyYearlyIncentivePlanTo(Employee employee)
@@ -89,24 +94,26 @@ public void ApplyYearlyIncentivePlanTo(Employee employee)
 }
 ```
 
-The looping, which is a separate responsibility, is handled by a different class.
+The looping, which is a separate responsibility, is now handled by a different class.
  
 ### How far do we go?
 
 The above example begs some questions:
 
-1.  Is there a point where we are sure we have separated all responsibilities?
-2.  If there is, how can we be sure we have reached it?
+1.  Can we reach a point where we have separated all responsibilities?
+2.  If we can, how can we be sure we have reached it?
 
-The answer to the first question is: probably no. While some reasons to change are common sense, others can be drawn from our experience as developers, there are always some that are unexpected and until they surface, we cannot foresee them. Thus, the answer for the second question is: "there is no way". Which does not mean we should not try to separate the different reasons we see - quite the contrary.
+The answer to the first question is: probably no. While some reasons to change are common sense, and others can be drawn from our experience as developers or knowledge about the domain of the problem, there are always some that are unexpected and until they surface, we cannot foresee them. Thus, the answer for the second question is: "there is no way". Which does not mean we should not try to separate the different reasons we see - quite the contrary. We just don't get overzealous trying to predict every possible change.
 
-I like the comparison to our usage of time in real life. Brewing time of black tea is usually around three to five minutes. This is what is printed on the package we buy: "3 --- 5 minutes". Nobody gives the time in seconds, because such granularity is not needed. If seconds made a difference in the process of brewing tea, we would probably be given time in seconds. But they don't. When we estimate tasks in software engineering, we also use different time granularity depending on the need.
+I like the comparison of responsibilities to our usage of time in real life. Brewing time of black tea is usually around three to five minutes. This is what is usually printed on the package we buy: "3 --- 5 minutes". Nobody gives the time in seconds, because such granularity is not needed. If seconds made a noticeable difference in the process of brewing tea, we would probably be given time in seconds. But they don't. When we estimate tasks in software engineering, we also use different time granularity depending on the need[^storypoints] and the granularity becomes finer as we reach a point where the smaller differences matter more.
 
-A simplest software program that prints "hello world" on the screen may fit into a single "main" method we will probably not see it as several responsibilities. But as soon as we get a requirement to write "hello world" in a native language of the currently running operating system, obtaining the text becomes a separate responsibility from putting it on the screen. It all depends on what granularity we need at the moment (which, as I said, may be spotted from code or, in some cases, known up-front from our experience as developers).
+Likewise, a simplest software program that prints "hello world" on the screen may fit into a single "main" method and we will probably not see it as several responsibilities. But as soon as we get a requirement to write "hello world" in a native language of the currently running operating system, obtaining the text becomes a separate responsibility from putting it on the screen. It all depends on what granularity we need at the moment (which, as I said, may be spotted from code or, in some cases, known up-front from our experience as developers or domain knowledge).
 
 ### The mutual relationship between Single Responsibility Principle and composability
 
-The reason I am writing all this is that responsibilities are the real granules of composability. The composability of objects that I talked about a lot already is actually a mean to achieve composability of responsibilities, which is our real goal. If we have two collaborating objects, each having a single responsibility, we can easily replace the way our application achieves one of these responsibilities without touching the other. Thus, objects conforming to SRP are the most comfortably composable. As the real reason for change in application is the change of responsibilities and the real reuse is reuse of responsibilities, this is a concept that determines the size of our objects[^notrdd].
+The reason I am writing all this is that responsibilities are the real granules of composability. The composability of objects that I have talked about a lot already is actually a mean to achieve composability of responsibilities. So, this is what's our real goal. If we have two collaborating objects, each having a single responsibility, we can easily replace the way our application achieves one of these responsibilities without touching the other. Thus, objects conforming to SRP are the most comfortably composable and the best size.[^notrdd].
+
+TODO
 
 ## Static recipients
 
@@ -139,12 +146,11 @@ public class OutboundSmtpMessage
   //... other code
 }
 ```  
-
 There, we fixed it! But didn't our mommies tell us not to optimize prematurely? Oh well...
 
 ### Welcome, change!
 
-One day it turns out that we need to support not only Base64 encoding but also another one, called Quoted-Printable. With our current design, we cannot do that, because single encoding is shared between all messages. Thus, if we change the encoding for message that requires Quoted-Printable encoding, it will also change the encoding for the messages that require Base64. Thus, we constraint the composability with this premature optimization.
+One day it turns out that we need to support not only Base64 encoding but also another one, called Quoted-Printable. With our current design, we cannot do that, because single encoding is shared between all messages. Thus, if we change the encoding for message that requires Quoted-Printable encoding, it will also change the encoding for the messages that require Base64. Thus, we constraint the composability with this premature optimization. Any instance of such class is not context-independent - it cannot obtain its own context, but rather, context is forced on it.
 
 ### So what about optimizations?
 
@@ -203,7 +209,6 @@ public class SmtpMessageFactory : MessageFactory
     }
   }
 }  
-
 ```
 
 The performance and memory saving is not exactly as big as when using a static field (e.g. each `SmtpMessage` instance uses must store a separate reference to the received encoding), but it is still a huge improvement over creating a separate encoding for each message. 
@@ -212,37 +217,6 @@ The performance and memory saving is not exactly as big as when using a static f
 
 What I wrote does not mean that statics do not have their uses. They do, but these uses are very specific. I will show you one of such uses in the next chapters after I introduce value objects.
 
-## No work in constructors
-
-A constructor of a class should do little or no work. This is a conclusion from Single Responsibility Principle and also enhances composability.
-
-If, aside from implementing the methods a class exposes, you feel you need to do additional work in a constructor, that may be a sign that this "additional work" changes for other reason than the main logic. Thus it should be put elsewhere.
-
-### What can a constructor do?
-
-Most of the times, we can get away using the following guideline: assigning fields or null checks. 
-
-### What a constructor cannot do?
-
-if it does too much, it means it's a separate responsibility. Move it to the factory.
-
-
-
-TODO give open connection instead of opening it in constructor
-TODO validation - put in factories, except nulls - an object requires valid peers.
-http://misko.hevery.com/code-reviewers-guide/flaw-constructor-does-real-work/
-
-TODO static collaborators - not context independent - each service cannot obtain its own context, but rather context is forced on them.
-TODO independent deployability
-
-TODO principle at different level of abstraction - single level of abstraction principle
-
-TODO small amount of private methods
-
-TODO how are we to determine responsibility? From experience: we know to count something in hours, not minutes. Second way: composition becomes awkward. Third way: tests (Statements) will tell us.
-
-
-
 [^SRPMethods]: This principle can be applied to methods as well, but we are not going to cover this part, because it is not directly tied to the notion of composability and this is not a design book ;-).
 
 [^SRP]: http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod. 
@@ -250,3 +224,5 @@ TODO how are we to determine responsibility? From experience: we know to count s
 [^srponstackoverflow]: https://stackoverflow.fogbugz.com/default.asp?W29030
 
 [^notrdd]: note that I am talking about responsibilities the way SRP talks about them, not the way they are understood by e.g. Responsibility Driven Design. Thus, I am talking about responsibilities of a class, not responsibilities of its API.
+
+[^storypoints]: Provided we are not using a measure such as story points.

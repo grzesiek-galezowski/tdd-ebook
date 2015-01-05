@@ -294,8 +294,21 @@ new DayNightSwitchAlarm(
 )
 ```
 
-And, last but not least, we could completely remove all alarms from the
-guards building using the following code:
+And, last but not least, we could completely remove all alarms from the guards building using the following `NoAlarm` class (which is also an `Alarm`):
+
+```csharp
+public class NoAlarm : Alarm
+{
+  public void Trigger()
+  {
+  }
+
+  public void Disable()
+  {
+  }
+}
+```
+and passing it as the alarm to guards building:
 
 ```csharp
 new GuardsBuilding(
