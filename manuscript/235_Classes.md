@@ -226,6 +226,9 @@ The performance and memory saving is not exactly as big as when using a static f
 
 What I wrote does not mean that statics do not have their uses. They do, but these uses are very specific. I will show you one of such uses in the next chapters after I introduce value objects.
 
+## Summary
+
+In this chapter, I tried to give you some advice on designing classes that does not come so naturally from the concept of composability and interactions as those described in previous chapters. Still, as I hope I was able to show, they enhance composability and are valuable to us.
 
 [^SRPMethods]: This principle can be applied to methods as well, but we are not going to cover this part, because it is not directly tied to the notion of composability and this is not a design book ;-).
 
@@ -233,7 +236,7 @@ What I wrote does not mean that statics do not have their uses. They do, but the
 
 [^srponstackoverflow]: https://stackoverflow.fogbugz.com/default.asp?W29030
 
-[^notrdd]: note that I am talking about responsibilities the way SRP talks about them, not the way they are understood by e.g. Responsibility Driven Design. Thus, I am talking about responsibilities of a class, not responsibilities of its API.
+[^notrdd]: Note that I am talking about responsibilities the way SRP talks about them, not the way they are understood by e.g. Responsibility Driven Design. Thus, I am talking about responsibilities of a class, not responsibilities of its API.
 
 [^storypoints]: Provided we are not using a measure such as story points.
 
