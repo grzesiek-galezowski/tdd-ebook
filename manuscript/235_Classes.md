@@ -117,50 +117,57 @@ The reason I am writing all this is that responsibilities are the real granules 
 
 While static fields in a class body may sometimes seem like a good idea of "sharing" recipient references between its instances and smart way to make the code more "memory efficient", they actually hurt composability more often than not. Let's take a look at a simple example to get a feeling of how static fields constraint our design.
 
-TODO
-
 ### SMTP Server
 
-Let's consider a scenario where we need to write an e-mail server that receives and send SMTP messages. In our code, have an `OutboundSmtpMessage` class which symbolizes SMTP messages we send to other parties. To send the message, we need to encode it. We always use a Base64 encoding, so we have the class `OutboundSmtpMessage` declare a private field of type `Base64Encoding`:
+Imagine we need to implement an e-mail server that receives and sends SMTP messages[^smtp]. In our code, have an `OutboundSmtpMessage` class which symbolizes SMTP messages we send to other parties. To send the message, we need to encode it. For now, we always use an encoding called *Quoted-Printable*, which is declared in a separate class called `QuotedPrintableEncoding` and the class `OutboundSmtpMessage` declares a private field of this type:
 
 ```csharp
 public class OutboundSmtpMessage
 {
   //... other code
   
-  private Encoding _encoding = new Base64Encoding();
+  private Encoding _encoding = new QuotedPrintableEncoding();
   
   //... other code
 }
 ```  
 
-One day we notice that it is a waste for each message to define its own encoding objects, since they are plain algorithms and each use of encoding does not affect further uses in any way - so we can as well have a single instance and use it in all messages. Also, it may save us some performance, since creating an encoding each time we create a new message has its cost in high throughput scenarios. Thus, it seems like a good idea to use static field for this purpose, so we modify our `OutboundSmtpMessage` message class to hold `Base64Encoding` instance as static field:
+Note that each message has its own encoding objects, so when we have, say, 1000000 messages in memory, we also have the same amount of encoding objects. 
+
+### Premature optimization
+
+One day we notice that it is a waste for each message to define its own encoding object, since an encoding is pure algorithm and each use of this encoding does not affect further uses in any way - so we can as well have a single instance and use it in all messages - it will not cause any conflicts. Also, it may save us some CPU cycles, since creating an encoding each time we create a new message has its cost in high throughput scenarios. 
+
+But how we make the encoding shared between all instances? Out first thought - static fields! A static field seems fit for the job, since it gives us exactly what we want - a single object shared across many instances of its declaring class. Driven by our (supposedly) excellent idea, we modify our `OutboundSmtpMessage` message class to hold `QuotedPrintableEncoding` instance as a static field:
 
 ```csharp
 public class OutboundSmtpMessage
 {
   //... other code
   
-  private static Encoding _encoding = new Base64Encoding();
+  private static Encoding _encoding = new QuotedPrintableEncoding();
   
   //... other code
 }
 ```  
+
 There, we fixed it! But didn't our mommies tell us not to optimize prematurely? Oh well...
 
 ### Welcome, change!
 
-One day it turns out that we need to support not only Base64 encoding but also another one, called Quoted-Printable. With our current design, we cannot do that, because single encoding is shared between all messages. Thus, if we change the encoding for message that requires Quoted-Printable encoding, it will also change the encoding for the messages that require Base64. Thus, we constraint the composability with this premature optimization. Any instance of such class is not context-independent - it cannot obtain its own context, but rather, context is forced on it.
+One day it turns out that in our messages, we need to support not only Quoted-Printable encoding but also another one, called *Base64*. With our current design, we cannot do that, because, as a result of using a static field, a single encoding is shared between all messages. Thus, if we change the encoding for message that requires Base64 encoding, it will also change the encoding for the messages that require Quoted-Printable. This way, we constraint the composability with this premature optimization - we cannot compose each message with the encoding we want. All of the message use either one encoding, or another. A logical conclusion is that no instance of such class is context-independent - it cannot obtain its own context, but rather, context is forced on it.
 
 ### So what about optimizations?
 
-So, are we doomed to return to the previous solution to have one encoding per message? What if this really becomes a performance of memory problem? Is our observation that we don't need to create the same encoding many times useless?
+Are we doomed to return to the previous solution to have one encoding per message? What if this really becomes a performance or memory problem? Is our observation that we don't need to create the same encoding many times useless?
 
-Not at all. We can still use this observation and get a lot (albeit not all) of the benefits of static field. How do we do it? Well, we already answered this question few chapters ago - create a single instance of each encoding in composition root and pass it to each message in constructor.
+Not at all. We can still use this observation and get a lot (albeit not all) of the benefits of static field. How do we do it? How do we achieve sharing of encodings without the constraints of static field? Well, we already answered this question few chapters ago - give each message an encoding through its constructor. This way, we can pass the same encoding to many, many `OutboundSmtpMessage` instances, but if we want, we can always create a message that has another encoding passed. Using this idea, we will try to achieve the sharing of encodings by creating a single instance of each encoding in the composition root and have it passed it to a message through its constructor.
 
-Let's examine this solution. First, we need to create the encodings in the composition root:
+Let's examine this solution. First, we need to create one of each encoding in the composition root, like this:
 
 ```csharp
+// We are in a composition root!
+
 //...other initialization
 
 var base64Encoding = new Base64Encoding();
@@ -168,9 +175,11 @@ var quotedPrintableEncoding = new QuotedPrintableEncoding();
 
 //...other initialization
 ``` 
-Now, in our case, we need to create new messages dynamically, on demand, so we need a factory for them. We will also instantiate this factory in the composition root and pass both encodings inside:
+Ok, encodings are created, but we still have to pass them to the messages. In our case, we need to create new `OutboundSmtpMessage` object at the time we need to send a new message, i.e. on demand, so we need a factory to produce the message objects. This factory can (and should) be created in the composition root. When we create the factory, we can pass both encodings to its constructor as global context (remember that factories encapsulate global context?):
 
 ```csharp
+// We are in a composition root!
+
 //...other initialization
 
 var messageFactory 
@@ -179,7 +188,7 @@ var messageFactory
 //...other initialization
 ```  
 
-The factory itself, when asked to create a message with a given encoding, will just pass the single instances received from composition root: 
+The factory itself can be used for the on-demand message creation that we talked about. As the factory receives both encodings via its constructor, it can store them as private fields and pass whichever one is appropriate to a message object it creates: 
 
 ```csharp
 public class SmtpMessageFactory : MessageFactory
@@ -211,11 +220,12 @@ public class SmtpMessageFactory : MessageFactory
 }  
 ```
 
-The performance and memory saving is not exactly as big as when using a static field (e.g. each `SmtpMessage` instance uses must store a separate reference to the received encoding), but it is still a huge improvement over creating a separate encoding for each message. 
+The performance and memory saving is not exactly as big as when using a static field (e.g. each `OutboundSmtpMessage` instance uses must store a separate reference to the received encoding), but it is still a huge improvement over creating a separate encoding object per message. 
 
 ### Where statics work?
 
 What I wrote does not mean that statics do not have their uses. They do, but these uses are very specific. I will show you one of such uses in the next chapters after I introduce value objects.
+
 
 [^SRPMethods]: This principle can be applied to methods as well, but we are not going to cover this part, because it is not directly tied to the notion of composability and this is not a design book ;-).
 
@@ -226,3 +236,6 @@ What I wrote does not mean that statics do not have their uses. They do, but the
 [^notrdd]: note that I am talking about responsibilities the way SRP talks about them, not the way they are understood by e.g. Responsibility Driven Design. Thus, I am talking about responsibilities of a class, not responsibilities of its API.
 
 [^storypoints]: Provided we are not using a measure such as story points.
+
+[^smtp]: SMTP stands for Simple Mail Transfer Protocol and is a standard protocol for sending and receiving e-mail. You can read more on [Wikipedia](http://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol). 
+
