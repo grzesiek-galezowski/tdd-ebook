@@ -22,8 +22,8 @@
 210_How_are_objects_composed.md
 220_Designing_for_composabiity_interfaces.md
 230_Designing_for_composabiity_protocols.md
-End.md
 235_Classes.md
+End.md
 240_Refactoring_Object_Composition.md
 250_Value_Objects.md
 260_Dealing_with_3rd_party.md
