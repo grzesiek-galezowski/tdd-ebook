@@ -49,7 +49,7 @@ describe something technical, while the other steps describe something
 strictly related to how the company operates...
 
 **Johnny:** Good catch, however, this is something we'll deal with
-later. Remember the scout rule -- just don't make it worse. Still, we're
+later. Remember the boy scout rule -- just don't make it worse. Still, we're
 going to fix some of the design flaws today.
 
 **Benjamin:** Aww... I'd just fix all of it right away.

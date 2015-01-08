@@ -120,7 +120,7 @@ public class CompanyPolicies : IDisposable
 functional decomposition is barely done!
 
 **Johnny:** Yeah. We won't be fixing all of that today. Still, we will
-follow the scout rule and "leave the campground cleaner than we found
+follow the boy scout rule and "leave the campground cleaner than we found
 it".
 
 **Benjamin:** What's our assignment?
@@ -164,7 +164,7 @@ public class CompanyPolicies : IDisposable
 ```
 
 **Johnny:** True, but this option has few deficiencies. First of all,
-remember we're trying to follow the scout rule and by using this option
+remember we're trying to follow the boy scout rule and by using this option
 we introduce more complexity to the CommonPolicies class. Also, let's
 say tomorrow someone writes another class for, say, reporting and this
 class will also need to access the repository -- they will need to make
