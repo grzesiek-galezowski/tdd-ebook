@@ -358,16 +358,16 @@ to mention clarity) is reinforced when interactions between them are:
 abstract, logical and stable. Also, he discovered, with Johnny's help,
 that it is further strengthened by following a design style where
 objects are told what to do instead of asked to give away information to
-somebody who the makes the decision on their behalf. This is because if
+somebody who then makes the decision on their behalf. This is because if
 an API of an abstraction is built around answering to specific
 questions, the clients of the abstraction tend to ask it a lot of
-questions an are coupled to both those questions and some aspects of the
-answers (i.e. what it in the return values). This makes creating another
+questions and are coupled to both those questions and some aspects of the
+answers (i.e. what is in the return values). This makes creating another
 implementation of abstraction harder, because each new implementation of
 the abstraction needs to not only provide answers to all those
 questions, but the answers are constrained to what the client expects.
 When abstraction is merely told what its client wants it to achieve, the
-clients is decoupled from most of the details of how this happens. This
+clients are decoupled from most of the details of how this happens. This
 makes introducing new implementations of abstraction easier -- it often
 even lets us define implementations with all methods empty without the
 client noticing at all.
