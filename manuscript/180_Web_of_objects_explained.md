@@ -18,7 +18,7 @@ Composability... again!
 
 In the two previous chapters, we followed Johnny and Benjamin in
 discovering the benefits of and prerequisites for composability of
-objects. Actually, composability is number one quality of the design
+objects. Actually, composability is the number one quality of the design
 we're after. After reading Johhny and Benjamin's story, you might have
 some questions regarding composability. Hopefully, they are among the
 ones answered in the next few chapters. Ready?

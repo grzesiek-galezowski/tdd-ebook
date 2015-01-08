@@ -116,7 +116,7 @@ All we have to change is the composition code to remove the `Recipient`:
 new Sender();
 ```
 
-and the `Sender` class itself to work in a different way.
+and the `Sender` class itself will work in a different way.
 
 #### Communication of intent: required recipient
 
@@ -235,14 +235,14 @@ So far, all the factories we considered had creation methods with empty paramete
 
 #### Not only factories
 
-Throughout this section, we have used a factory as our role model, but the approach of obtaining a recipient in response to a message is wider than that. Other types of objects that fall into this category include: repositories, caches, builders and collections.   
+Throughout this section, we have used a factory as our role model, but the approach of obtaining a recipient in response to a message is wider than that. Other types of objects that fall into this category include: repositories, caches, builders and collections.  [[I suggest to add quick explantions and references to these new presented important concepts]]
 
 ### Register a recipient with already created sender
 
 This means passing a recipient to an **already created** sender (contrary to passing as constructor parameter where recipient was passed **during** creation) as a parameter of a method that stores the 
-reference for later use. This may be a "setter" method, although I do not like naming it according to convention "setWhatever()" -- after Kent Beck[^implementationpatterns] I find this convention too much implementation-focused instead of purpose-focused. Thus, I pick different names based on what domain concept is modeled by the registration method or what is its purpose.
+reference for later use. This may be a "setter" method, although I do not like naming it according to the convention "setWhatever()" -- after Kent Beck[^implementationpatterns] I find this convention too much implementation-focused instead of purpose-focused. Thus, I pick different names based on what domain concept is modeled by the registration method or what is its purpose.
 
-Note that there is one similarity to "passing inside a message" approach -- in both, a recipient is passed inside a message. The difference is that this time, contrary to "pass inside a message" approach, the passed recipient is not immediately used (and then forgotten), but rather only remembered (registered) for later use.
+Note that there is one similarity to the "passing inside a message" approach -- in both, a recipient is passed inside a message. The difference is that this time, contrary to "pass inside a message" approach, the passed recipient is not immediately used (and then forgotten), but rather only remembered (registered) for later use.
 
 I hope I can clear up the confusion with a quick example.
 
@@ -289,11 +289,11 @@ public class TemperatureSensor
 }
 ```
 
-As you can see, by default, the sensor reports its values to nowhere (`NullObserver`), which is a safe default value (using a `null` for a default value instead would cause exceptions or force us to put an ugly null check inside the `Run()` method). We have already seen such "null objects" a few times before (e.g. in the previous chapter, when we introduced the `NoAlarm` class) -- `NullObserver` is just another incarnation of this pattern.
+As you can see, by default, the sensor reports its values to nowhere (`NullObserver`), which is a safe default value (using a `null` for a default value instead would cause exceptions or force us to put an ugly null check inside the `Run()` method). We have already seen such "null objects" a few times before (e.g. in the previous chapter, when we introduced the `NoAlarm` class) -- `NullObserver` is just another incarnation of this pattern. [[I thinks the "null object pattern" is quite a common name so can be mentioned]]
 
 #### Registering observers
 
- Still, we want to be able to supply our own observer one day, when we start caring about the measured and calculated values (the fact that we "started caring" may be indicated to our application e.g. by a network message or an event from the user interface). This means we need to have a method inside the `TemperatureSensor` class to overwrite this default "do-nothing" observer with a custom one **after** the `TemperatureSensor` instance is created. As I said, I do not like the "SetXYZ()" convention, so I will name the registration method `FromNowOnReportTo()` and make the observer an argument. Here are the relevant parts of `TemperatureSensor` class:
+ Still, we want to be able to supply our own observer one day, when we start caring about the measured and calculated values (the fact that we "started caring" may be indicated to our application e.g. by a network message or an event from the user interface). This means we need to have a method inside the `TemperatureSensor` class to overwrite this default "do-nothing" observer with a custom one **after** the `TemperatureSensor` instance is created. As I said, I do not like the "SetXYZ()" convention, so I will name the registration method `FromNowOnReportTo()` and make the observer an argument. Here are the relevant parts of the `TemperatureSensor` class:
 
 ```csharp
 public class TemperatureSensor
@@ -312,11 +312,11 @@ public class TemperatureSensor
 }
 ```
 
-This lets us overwrite the observer with a new one should we ever need to do it. Note that, as I mentioned, this is the place where registration approach differs from the "pass inside a message" approach, where we also received a recipient in a message, but for immediate use. Here, we don't use the recipient (i.e. the observer) when we get it, but instead we save it for later.
+This lets us overwrite the observer with a new one should we ever need to do it. Note that, as I mentioned, this is the place where registration approach differs from the "pass inside a message" approach, where we also received a recipient in a message, but for immediate use. Here, we don't use the recipient (i.e. the observer) when we get it, but instead we save it for later use.
 
 #### Communication of intent: optional dependency
 
-Allowing registering recipients after a sender is created is a way of saying: "the recipient is optional -- if you provide one, fine, if not, I will do my work without it". Please, do not use this kind of mechanism for **required** recipients -- these should all be passed through constructor, making it harder to create invalid objects that are only partially ready to work. Placing a recipient in a constructor signature is effectively saying that "I will not work without it". Let's practice -- just look at how the following class members signatures talk to you:
+Allowing registering recipients after a sender is created is a way of saying: "the recipient is optional -- if you provide one, fine, if not, I will do my work without it". Please, do not use this kind of mechanism for **required** recipients -- these should all be passed through a constructor, making it harder to create invalid objects that are only partially ready to work. Placing a recipient in a constructor signature is effectively saying that "I will not work without it". Let's practice -- just look at how the following class members signatures talk to you:
 
 ```csharp
 public class Sender
@@ -333,6 +333,7 @@ public class Sender
 
 #### More than one observer
 
+[[Also here I think it is worth mentioning that this is the observer pattern. Also that for more complex scenarion there are messaging, pubsub etc. frameworks and patterns]]
 Now, the observer API we just skimmed over gives us the possibility to have a single observer at any given time. When we register a new observer, the reference to the old one is overwritten. This is not really useful in our context, is it? With real sensors, we often want them to report their measurements to multiple places (e.g. we want the measurements printed on screen, saved to database, used as part of more complex calculations). This can be achieved in two ways.
 
 The first way would be to just hold a collection of observers in our sensor, and add to this collection whenever a new observer is registered:
@@ -433,7 +434,7 @@ So, we have two cases to consider. I'll start with the second one.
 
 ### Composition Root
 
-let's assume for fun that we are creating a mobile game where a player has to defend a castle. This game has two levels. Each level has a castle to defend. So, we can break down the domain logic into three classes: a `Game` that has two `Level`s and each of them that contain a `Castle`. let's also assume that the first two classes violate the principle of separating use from construction, i.e. that a `Game` creates its own levels and each `Level` creates its own castle.
+let's assume, just for fun, that we are creating a mobile game where a player has to defend a castle. This game has two levels. Each level has a castle to defend. So, we can break down the domain logic into three classes: a `Game` that has two `Level`s and each of them that contain a `Castle`. let's also assume that the first two classes violate the principle of separating use from construction, i.e. that a `Game` creates its own levels and each `Level` creates its own castle.
 
 A `Game` class is created in the `Main()` method of the application:
 
@@ -528,7 +529,7 @@ public class Game
 }
 ```
 
-But remember -- this class suffers from the same violation of not separating objects use from construction as the levels did. Thus, to make this class compliant to the principle as well, we have do the same to it that we did to the level classes -- move the creation of levels out of it:
+But remember -- this class suffers from the same violation of not separating objects use from construction as the levels did. Thus, to make this class compliant to the principle as well, we have to do the same to it that we did to the level classes -- move the creation of levels out of it:
 
 ```csharp
 public class Game
@@ -562,7 +563,7 @@ public static void Main(string[] args)
 }
 ```
 
-By the way, the `Level1` and `Level2` differed only by the castle types and this difference is no more as we refactored it out, so we can make them a single class and call it e.g. `TimedLevel` (because it is considered passed when we defend our castle for a specific period of time). After this move, now we have:
+By the way, the `Level1` and `Level2` are differed only by the castle types and this difference is no more as we refactored it out, so we can make them a single class and call it e.g. `TimedLevel` (because it is considered passed[[??not clear]] when we defend our castle for a specific period of time). After this move, now we have:
 
 ```csharp
 public static void Main(string[] args)
@@ -585,17 +586,17 @@ The answer is "no", for two reasons:
  1. There is no further place we can defer the creation. Sure, we could move the creation of the `Game` object and its dependencies into a separate object responsible only for the creation (we call such object **a factory**, as you already know), but it's a dead end, because it would leave us with the question: where do we create the factory?
  2. The whole point of the principle we are trying to apply is decoupling, i.e. giving ourselves the ability to change one thing without having to change another. When we think of it, there is no point of decoupling the entry point of the application from the application itself, since this is the most application-specific and non-reusable part of the application we can imagine.
 
-What is important is that we reached a place where the web of objects is created using constructor approach and we have no place left to defer the the creation of the web (in other words, it is as close as possible to application entry point). Such place is called [**a composition root**](http://blog.ploeh.dk/2011/07/28/CompositionRoot/).
+What is important is that we reached a place where the web of objects is created using constructor approach and we have no place left to defer the the creation of the web (in other words, it is as close as possible to application entry point). Such a place is called [**a composition root**](http://blog.ploeh.dk/2011/07/28/CompositionRoot/).
 
 We say that composition root is "as close as possible" to application entry point, because there may be different frameworks in control of your application and you will not always have the `Main()` method at your service[^seemanndi].
 
-Apart from the constructor invocations, the composition root may also contain e.g. registrations of observers (see registration approach to passing recipients) if such observers are already known at this point. It is also responsible for disposing of all objects it created that require explicit disposal after the application finishes running. This is because it creates them and thus is the only place in the code that can safely determine when they are not needed.
+Apart from the constructor invocations, the composition root may also contain, e.g., registrations of observers (see registration approach to passing recipients) if such observers are already known at this point. It is also responsible for disposing of all objects it created that require explicit disposal after the application finishes running. This is because it creates them and thus it is the only place in the code that can safely determine when they are not needed.
 
-The composition root above looks quite small, but you can imagine it grow a lot in bigger applications. There are techniques of refactoring the composition root to make it more readable and cleaner -- we will explore those techniques in further chapters.
+The composition root above looks quite small, but you can imagine it grows a lot in bigger applications. There are techniques of refactoring the composition root to make it more readable and cleaner -- we will explore such techniques in further chapters.
 
 ### Factories 
 
-As I previously said, it is not always possible to pass everything through the constructor. One of the approach we discussed that we can use in such cases is **a factory**.
+As I previously said, it is not always possible to pass everything through the constructor. One of the approaches we discussed that we can use in such cases is **a factory**.
 
 When we previously talked about factories, we focused on it being just a source of objects. This time we will have a much closer look at what factory is and what are its benefits.
 
@@ -730,7 +731,7 @@ factory.CreateInstance();
 factory.CreateInstance();
 ```
 
-In the above example, two independent instances are created, eve though both are created in identical way (there is no local context that would differ them).
+In the above example, two independent instances are created, even though both are created in an identical way (there is no local context that would differ them).
  
 Both these reasons were present in our example:
 
@@ -770,7 +771,7 @@ Note the two things that the factory in the second example has that the one in t
 * it implements an interface (a level of indirection is introduced)
 * its `CreateSessionInitialization()` method declares a return type to be an interface (another level of indirection is introduced)
 
-In order for you to use factories effectively, I need you to understand why and how these levels of indirection are useful, especially that when I talk with people, they often do not understand the benefits of using factories, "because we already have the `new` operator to create objects". So, here are these benefits:
+In order for you to use factories effectively, I need you to understand why and how these levels of indirection are useful, especially when I talk with people, they often do not understand the benefits of using factories, "because we already have the `new` operator to create objects". So, here are these benefits:
 
 #### Factories allow creating objects polymorphically (encapsulation of type)
 
@@ -781,7 +782,7 @@ new List<int>(); //OK!
 new IList<int>(); //won't compile...
 ```
 
-This means that henver we want to use the class that does this instantiation with another concrete object (e.g. a sorted list), we have to wither change the code to delete the old type name and put new type name, or provide some kind of conditional (`if-else`). 
+This means that whenver we want to use the class that does this instantiation with another concrete object (e.g. a sorted list), we have to either change the code to delete the old type name and put new type name, or provide some kind of conditional (`if-else`). 
 
 Factories do not have this defficiency. Because we get objects from factories by invoking a method, not by saying explicitly which class we want to get instantiated, we can take advantage of polymorphism, i.e. our factory may have a method like this:
 
@@ -867,7 +868,7 @@ Using the factory to hide the real type of message returned makes maintaining th
 
 Another benefit of factories over inline constructors is that they are composable. This allows replacing the rule used to create objects with another one, by replacing one factory implementation with another.
 
-In the example from the previous section, we examined a situation where we extended the existing factory with a `SessionRefresh` message. This was done with assumption that we do not need the previous version of the factory. But consider a situation where we need both versions of the behavior adn want to be able to use the old version sometimes, and other times the new one. The "version 1" of the factory (the old one) would look like this:
+In the example from the previous section, we examined a situation where we extended the existing factory with a `SessionRefresh` message. This was done with assumption that we do not need the previous version of the factory. But consider a situation where we need both versions of the behavior and want to be able to use the old version sometimes, and other times the new one. The "version 1" of the factory (the old one) would look like this:
 
 ```csharp
 public class Version1ProtocolMessageFactory 
@@ -1048,7 +1049,7 @@ Thus, if factories didn't exist, all these concepts would leak to sorrounding cl
 
 Thankfully, by having a factory -- an object that takes care of creating other objects and nothing else, we can reuse the ruleset, the global context and the type-related decisions across many classes without any unnecessary overhead. All we need to do is reference the factory and ask it for an object.
 
-There are more benefits of factories, but I hope I already convinced you that this is a pretty darn beneficial concept for such a reasonably low cost.
+There are more benefits to factories, but I hope I already convinced you that this is a pretty darn beneficial concept for such a reasonably low cost.
 
 Summary
 -------------------------
