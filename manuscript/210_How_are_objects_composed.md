@@ -175,7 +175,7 @@ If this ability is not required, the constructor approach is better as it remove
 
 ### Receive in response to a message (i.e. as method return value)
 
-This method of composing objects relies on an intermediary object -- often a factory[^gofcreationpatterns] -- to supply recipients on request. To simplify things, I will use factories as an example for the rest of this section, although what I tell you is true for some other creation patterns as well.  
+This method of composing objects relies on an intermediary object -- often an implementation of a [factory pattern](http://www.netobjectivestest.com/PatternRepository/index.php?title=TheAbstractFactoryPattern) -- to supply recipients on request. To simplify things, I will use factories in examples presented in this section, although what I tell you is true for some other [creational patterns](http://en.wikipedia.org/wiki/Creational_pattern) as well (also, later in this chapter, I'll cover some aspects of factory pattern in depth). 
 
 To be able to ask a factory for recipients, the sender needs to obtain a reference to it first. Typically, a factory is composed with a sender through constructor (an approach we already discussed). For example:
 
@@ -235,7 +235,7 @@ So far, all the factories we considered had creation methods with empty paramete
 
 #### Not only factories
 
-Throughout this section, we have used a factory as our role model, but the approach of obtaining a recipient in response to a message is wider than that. Other types of objects that fall into this category include: repositories, caches, builders and collections.  [[I suggest to add quick explantions and references to these new presented important concepts]]
+Throughout this section, we have used a factory as our role model, but the approach of obtaining a recipient in response to a message is wider than that. Other types of objects that fall into this category include, among others: [repositories](http://martinfowler.com/eaaCatalog/repository.html), [caches](http://en.wikipedia.org/wiki/Cache_(computing)), [builders](http://www.blackwasp.co.uk/Builder.aspx), collections[^collectionsremark]. While they are all important topics (which you can look up on the web if you like), they are not required to progress through this chapter so I won't go in depth on them.
 
 ### Register a recipient with already created sender
 
@@ -250,7 +250,7 @@ I hope I can clear up the confusion with a quick example.
 
 Suppose we have a temperature sensor that can report its current and historically mean value to whoever subscribes with it. If no one subscribes, the sensor still does its job, because it still has to collect the data for calculating a history-based mean value in case anyone subscribes later. 
 
-We may solve the problem by introducing an observer registration mechanism in the sensor implementation. If no observer is registered, the values are not reported (in other words, a registered observer is not required for the object to function, but if there is one, it can take advantage of the reports). For this purpose, let's make our sensor depend on an interface called `TemperatureObserver` that could be implemented by various concrete observer classes. The interface declaration looks like this:
+We may solve the problem by introducing an [observer](http://www.oodesign.com/observer-pattern.html) registration mechanism in the sensor implementation. If no observer is registered, the values are not reported (in other words, a registered observer is not required for the object to function, but if there is one, it can take advantage of the reports). For this purpose, let's make our sensor depend on an interface called `TemperatureObserver` that could be implemented by various concrete observer classes. The interface declaration looks like this:
 
 ```csharp
 public interface TemperatureObserver
@@ -289,7 +289,7 @@ public class TemperatureSensor
 }
 ```
 
-As you can see, by default, the sensor reports its values to nowhere (`NullObserver`), which is a safe default value (using a `null` for a default value instead would cause exceptions or force us to put an ugly null check inside the `Run()` method). We have already seen such "null objects" a few levels before (e.g. in the previous chapter, when we introduced the `NoAlarm` class) -- `NullObserver` is just another incarnation of this pattern. [[I thinks the "null object pattern" is quite a common name so can be mentioned]]
+As you can see, by default, the sensor reports its values to nowhere (`NullObserver`), which is a safe default value (using a `null` for a default value instead would cause exceptions or force us to put an ugly null check inside the `Run()` method). We have already seen such "null objects"[^nullobject] a few times before (e.g. in the previous chapter, when we introduced the `NoAlarm` class) -- `NullObserver` is just another incarnation of this pattern.
 
 #### Registering observers
 
@@ -333,7 +333,6 @@ public class Sender
 
 #### More than one observer
 
-[[Also here I think it is worth mentioning that this is the observer pattern. Also that for more complex scenarion there are messaging, pubsub etc. frameworks and patterns]]
 Now, the observer API we just skimmed over gives us the possibility to have a single observer at any given time. When we register a new observer, the reference to the old one is overwritten. This is not really useful in our context, is it? With real sensors, we often want them to report their measurements to multiple places (e.g. we want the measurements printed on screen, saved to database, used as part of more complex calculations). This can be achieved in two ways.
 
 The first way would be to just hold a collection of observers in our sensor, and add to this collection whenever a new observer is registered:
@@ -563,7 +562,7 @@ public static void Main(string[] args)
 }
 ```
 
-By the way, the `Level1` and `Level2` are differed only by the castle types and this difference is no more as we refactored it out, so we can make them a single class and call it e.g. `TimedLevel` (because such level is considered completed when we manage to defend our castle for a specific period of time). After this move, now we have:
+By the way, the `Level1` and `Level2` are differed only by the castle types and this difference is no more as we refactored it out, so we can make them a single class and call it e.g. `TimeSurvivalLevel` (because such level is considered completed when we manage to defend our castle for a specific period of time). After this move, now we have:
 
 ```csharp
 public static void Main(string[] args)
@@ -571,8 +570,8 @@ public static void Main(string[] args)
   var game = 
     new Game(
       new Level[] { 
-        new TimedLevel(new SmallCastle()), 
-        new TimedLevel(new BigCastle())
+        new TimeSurvivalLevel(new SmallCastle()), 
+        new TimeSurvivalLevel(new BigCastle())
   });
   
   game.Play();
@@ -1063,8 +1062,6 @@ The rules outlined here apply to the overwhelming part of the objects in our app
 
 [^implementationpatterns]: Kent Beck, Implementation Patterns
 
-[^gofcreationpatterns]: While factory is the most often used, other creational patterns such as builder also fall into this category. Other than this, we may have caches, that usually hold ready to use objects and yields them when requested.
-
 [^encapsulatewhatvaries]: Note that this is an application of Gang of Four guideline: "encapsulate what varies".
 
 [^seemanndi]: For details, check Dependency Injection in .NET by Mark Seemann.
@@ -1072,3 +1069,7 @@ The rules outlined here apply to the overwhelming part of the objects in our app
 [^essentialskills]: A. Shalloway et al., Essential Skills For The Agile Developer
 
 [^messageotherchangecase]: although it does need to change when the rule "first validate, then apply to sessions" changes
+
+[^collectionsremark]: If you never used collections before and you are not a copy-editor, then you are probably reading the wrong book :-)
+
+[^nullobject]: Actually, this pattern has a name and the name is... Null Object (surprise!). You can read more on this pattern at http://www.cs.oberlin.edu/~jwalker/nullObjPattern/ and http://www.cs.oberlin.edu/~jwalker/refs/woolf.ps (a little older document)
