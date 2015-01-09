@@ -10,7 +10,7 @@ So in a way, what is "inside" a class is a byproduct of how objects of this clas
 
 ## Single Responsibility Principle
 
-I already said that we want our system to be a web of composable objects. Obviously, an object is a granule of composability - we cannot e.g. unplug a half of an object and plug in another half. Thus, a valid question to ask is: how big should an object be to make the composability comfortable - to let us unplug as much logic as we want, leaving the rest untouched and ready to work with the new recipients we plug in?
+I already said that we want our system to be a web of composable objects. Obviously, an object is a granule of composability -- we cannot e.g. unplug a half of an object and plug in another half. Thus, a valid question to ask is: how big should an object be to make the composability comfortable -- to let us unplug as much logic as we want, leaving the rest untouched and ready to work with the new recipients we plug in?
 
 The answer comes with a *Single Responsibility Principle* (in short: SRP) for classes[^SRPMethods], which basically says[^SRP]:
 
@@ -40,7 +40,7 @@ public void ApplyYearlyIncentivePlan()
 
 So... how many reasons to change does this piece of code have? If we weren't talking about "reason to change" but simply a "change", the answer would be "many". For example, someone may decide that we are not giving raises anymore and the `employee.EvaluateRaise()` line would be gone. Likewise, a decision could be made that we are not giving bonuses, then the `employee.EvaluateBonus()` line would have to be removed. So, there are undoubtedly many ways this method could change. But would it be for different reasons? Actually, no. The reason in both cases would be (probably) that the CEO approved a new incentive plan. So, there is one "source of entropy" for these two changes, although there are many ways the code can change. Hence, the two changes are for the same reason.
 
-Now the more interesting part of the discussion: what about saving the employees - is the reason for changing how we save employees the same as for the bonuses and pays? For example, we may decide that we are not saving each employee separately, because it would cause a huge performance load on our data store, but instead, we will save them together in a single batch after we finish processing the last one. This causes the code to change, e.g. like this:
+Now the more interesting part of the discussion: what about saving the employees -- is the reason for changing how we save employees the same as for the bonuses and pays? For example, we may decide that we are not saving each employee separately, because it would cause a huge performance load on our data store, but instead, we will save them together in a single batch after we finish processing the last one. This causes the code to change, e.g. like this:
 
 ```csharp
 public void ApplyYearlyIncentivePlan()
@@ -71,7 +71,7 @@ public void ApplyYearlyIncentivePlanTo(IEnumerable<Employee> employees)
 }
 ```
 
-In the example above, we moved reading and writing employees out, so that it is handled by different code - thus, the responsibilities are separated. Do we now have a code that adheres to Single Reponsibility Principle? We may, but consider this situation: the evaluation of the raises and bonuses begins getting slow and, instead of doing this for all employees in a sequential `for` loop, we would rather parallelize it to process every employee at the same time in a separate thread. After applying this change, the code could look like this (This uses C#-specific API for parallel looping, but I hope you get the idea):
+In the example above, we moved reading and writing employees out, so that it is handled by different code -- thus, the responsibilities are separated. Do we now have a code that adheres to Single Reponsibility Principle? We may, but consider this situation: the evaluation of the raises and bonuses begins getting slow and, instead of doing this for all employees in a sequential `for` loop, we would rather parallelize it to process every employee at the same time in a separate thread. After applying this change, the code could look like this (This uses C#-specific API for parallel looping, but I hope you get the idea):
 
 ```csharp
 public void ApplyYearlyIncentivePlanTo(IEnumerable<Employee> employees)
@@ -103,7 +103,7 @@ The above example begs some questions:
 1.  Can we reach a point where we have separated all responsibilities?
 2.  If we can, how can we be sure we have reached it?
 
-The answer to the first question is: probably no. While some reasons to change are common sense, and others can be drawn from our experience as developers or knowledge about the domain of the problem, there are always some that are unexpected and until they surface, we cannot foresee them. Thus, the answer for the second question is: "there is no way". Which does not mean we should not try to separate the different reasons we see - quite the contrary. We just don't get overzealous trying to predict every possible change.
+The answer to the first question is: probably no. While some reasons to change are common sense, and others can be drawn from our experience as developers or knowledge about the domain of the problem, there are always some that are unexpected and until they surface, we cannot foresee them. Thus, the answer for the second question is: "there is no way". Which does not mean we should not try to separate the different reasons we see -- quite the contrary. We just don't get overzealous trying to predict every possible change.
 
 I like the comparison of responsibilities to our usage of time in real life. Brewing time of black tea is usually around three to five minutes. This is what is usually printed on the package we buy: "3 --- 5 minutes". Nobody gives the time in seconds, because such granularity is not needed. If seconds made a noticeable difference in the process of brewing tea, we would probably be given time in seconds. But they don't. When we estimate tasks in software engineering, we also use different time granularity depending on the need[^storypoints] and the granularity becomes finer as we reach a point where the smaller differences matter more.
 
@@ -136,9 +136,9 @@ Note that each message has its own encoding objects, so when we have, say, 10000
 
 ### Premature optimization
 
-One day we notice that it is a waste for each message to define its own encoding object, since an encoding is pure algorithm and each use of this encoding does not affect further uses in any way - so we can as well have a single instance and use it in all messages - it will not cause any conflicts. Also, it may save us some CPU cycles, since creating an encoding each time we create a new message has its cost in high throughput scenarios. 
+One day we notice that it is a waste for each message to define its own encoding object, since an encoding is pure algorithm and each use of this encoding does not affect further uses in any way -- so we can as well have a single instance and use it in all messages -- it will not cause any conflicts. Also, it may save us some CPU cycles, since creating an encoding each time we create a new message has its cost in high throughput scenarios. 
 
-But how we make the encoding shared between all instances? Out first thought - static fields! A static field seems fit for the job, since it gives us exactly what we want - a single object shared across many instances of its declaring class. Driven by our (supposedly) excellent idea, we modify our `OutboundSmtpMessage` message class to hold `QuotedPrintableEncoding` instance as a static field:
+But how we make the encoding shared between all instances? Out first thought -- static fields! A static field seems fit for the job, since it gives us exactly what we want -- a single object shared across many instances of its declaring class. Driven by our (supposedly) excellent idea, we modify our `OutboundSmtpMessage` message class to hold `QuotedPrintableEncoding` instance as a static field:
 
 ```csharp
 public class OutboundSmtpMessage
@@ -155,13 +155,13 @@ There, we fixed it! But didn't our mommies tell us not to optimize prematurely? 
 
 ### Welcome, change!
 
-One day it turns out that in our messages, we need to support not only Quoted-Printable encoding but also another one, called *Base64*. With our current design, we cannot do that, because, as a result of using a static field, a single encoding is shared between all messages. Thus, if we change the encoding for message that requires Base64 encoding, it will also change the encoding for the messages that require Quoted-Printable. This way, we constraint the composability with this premature optimization - we cannot compose each message with the encoding we want. All of the message use either one encoding, or another. A logical conclusion is that no instance of such class is context-independent - it cannot obtain its own context, but rather, context is forced on it.
+One day it turns out that in our messages, we need to support not only Quoted-Printable encoding but also another one, called *Base64*. With our current design, we cannot do that, because, as a result of using a static field, a single encoding is shared between all messages. Thus, if we change the encoding for message that requires Base64 encoding, it will also change the encoding for the messages that require Quoted-Printable. This way, we constraint the composability with this premature optimization -- we cannot compose each message with the encoding we want. All of the message use either one encoding, or another. A logical conclusion is that no instance of such class is context-independent -- it cannot obtain its own context, but rather, context is forced on it.
 
 ### So what about optimizations?
 
 Are we doomed to return to the previous solution to have one encoding per message? What if this really becomes a performance or memory problem? Is our observation that we don't need to create the same encoding many times useless?
 
-Not at all. We can still use this observation and get a lot (albeit not all) of the benefits of static field. How do we do it? How do we achieve sharing of encodings without the constraints of static field? Well, we already answered this question few chapters ago - give each message an encoding through its constructor. This way, we can pass the same encoding to many, many `OutboundSmtpMessage` instances, but if we want, we can always create a message that has another encoding passed. Using this idea, we will try to achieve the sharing of encodings by creating a single instance of each encoding in the composition root and have it passed it to a message through its constructor.
+Not at all. We can still use this observation and get a lot (albeit not all) of the benefits of static field. How do we do it? How do we achieve sharing of encodings without the constraints of static field? Well, we already answered this question few chapters ago -- give each message an encoding through its constructor. This way, we can pass the same encoding to many, many `OutboundSmtpMessage` instances, but if we want, we can always create a message that has another encoding passed. Using this idea, we will try to achieve the sharing of encodings by creating a single instance of each encoding in the composition root and have it passed it to a message through its constructor.
 
 Let's examine this solution. First, we need to create one of each encoding in the composition root, like this:
 
