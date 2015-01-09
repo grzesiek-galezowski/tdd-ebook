@@ -168,24 +168,24 @@ Let's examine this solution. First, we need to create one of each encoding in th
 ```csharp
 // We are in a composition root!
 
-//...other initialization
+//...some initialization
 
 var base64Encoding = new Base64Encoding();
 var quotedPrintableEncoding = new QuotedPrintableEncoding();
 
-//...other initialization
+//...some more initialization
 ``` 
 Ok, encodings are created, but we still have to pass them to the messages. In our case, we need to create new `OutboundSmtpMessage` object at the time we need to send a new message, i.e. on demand, so we need a factory to produce the message objects. This factory can (and should) be created in the composition root. When we create the factory, we can pass both encodings to its constructor as global context (remember that factories encapsulate global context?):
 
 ```csharp
 // We are in a composition root!
 
-//...other initialization
+//...some initialization
 
 var messageFactory 
   = new StmpMessageFactory(base64Encoding, quotedPrintableEncoding);
 
-//...other initialization
+//...some more initialization
 ```  
 
 The factory itself can be used for the on-demand message creation that we talked about. As the factory receives both encodings via its constructor, it can store them as private fields and pass whichever one is appropriate to a message object it creates: 
