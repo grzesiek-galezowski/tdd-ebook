@@ -289,7 +289,7 @@ public class TemperatureSensor
 }
 ```
 
-As you can see, by default, the sensor reports its values to nowhere (`NullObserver`), which is a safe default value (using a `null` for a default value instead would cause exceptions or force us to put an ugly null check inside the `Run()` method). We have already seen such "null objects" a few times before (e.g. in the previous chapter, when we introduced the `NoAlarm` class) -- `NullObserver` is just another incarnation of this pattern. [[I thinks the "null object pattern" is quite a common name so can be mentioned]]
+As you can see, by default, the sensor reports its values to nowhere (`NullObserver`), which is a safe default value (using a `null` for a default value instead would cause exceptions or force us to put an ugly null check inside the `Run()` method). We have already seen such "null objects" a few levels before (e.g. in the previous chapter, when we introduced the `NoAlarm` class) -- `NullObserver` is just another incarnation of this pattern. [[I thinks the "null object pattern" is quite a common name so can be mentioned]]
 
 #### Registering observers
 
@@ -434,7 +434,7 @@ So, we have two cases to consider. I'll start with the second one.
 
 ### Composition Root
 
-let's assume, just for fun, that we are creating a mobile game where a player has to defend a castle. This game has two levels. Each level has a castle to defend. So, we can break down the domain logic into three classes: a `Game` that has two `Level`s and each of them that contain a `Castle`. let's also assume that the first two classes violate the principle of separating use from construction, i.e. that a `Game` creates its own levels and each `Level` creates its own castle.
+let's assume, just for fun, that we are creating a mobile game where a player has to defend a castle. This game has two levels. Each level has a castle to defend. When we manage to defend the castle long enough, the level is considered completed and we move to the next one. So, we can break down the domain logic into three classes: a `Game` that has two `Level`s and each of them that contain a `Castle`. let's also assume that the first two classes violate the principle of separating use from construction, i.e. that a `Game` creates its own levels and each `Level` creates its own castle.
 
 A `Game` class is created in the `Main()` method of the application:
 
@@ -563,7 +563,7 @@ public static void Main(string[] args)
 }
 ```
 
-By the way, the `Level1` and `Level2` are differed only by the castle types and this difference is no more as we refactored it out, so we can make them a single class and call it e.g. `TimedLevel` (because it is considered passed[[??not clear]] when we defend our castle for a specific period of time). After this move, now we have:
+By the way, the `Level1` and `Level2` are differed only by the castle types and this difference is no more as we refactored it out, so we can make them a single class and call it e.g. `TimedLevel` (because such level is considered completed when we manage to defend our castle for a specific period of time). After this move, now we have:
 
 ```csharp
 public static void Main(string[] args)
@@ -592,7 +592,7 @@ We say that composition root is "as close as possible" to application entry poin
 
 Apart from the constructor invocations, the composition root may also contain, e.g., registrations of observers (see registration approach to passing recipients) if such observers are already known at this point. It is also responsible for disposing of all objects it created that require explicit disposal after the application finishes running. This is because it creates them and thus it is the only place in the code that can safely determine when they are not needed.
 
-The composition root above looks quite small, but you can imagine it grows a lot in bigger applications. There are techniques of refactoring the composition root to make it more readable and cleaner -- we will explore such techniques in further chapters.
+The composition root above looks quite small, but you can imagine it growing a lot in bigger applications. There are techniques of refactoring the composition root to make it more readable and cleaner -- we will explore such techniques in further chapters.
 
 ### Factories 
 
