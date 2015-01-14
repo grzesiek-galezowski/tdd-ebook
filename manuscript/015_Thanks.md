@@ -27,7 +27,6 @@ that I gained all my knowledge from (listed alphabetically by name):
 -   Martin Fowler
 -   Nat Pryce
 -   Philip Schwarz
+-   Robert C. Martin
 -   Scott Bain
 -   Steve Freeman
--   Robert C. Martin
-
