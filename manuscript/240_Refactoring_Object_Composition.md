@@ -54,7 +54,7 @@ meant that we are arming an office building with an alarm that calls 222-333-444
 
 Let's sum up these two conclusions with the following statement:
 
-i> The composition code is a declarative description of the overall behavior of our application.
+I> The composition code is a declarative description of the overall behavior of our application.
 
 Wow, this is quite a statement, isn't it? But there is another problem with the composition code: readability. Even though the composition *is* the description of the system, it does not read naturally. We want to see the description of behavior, but most of what we see is: new, new new new new... There is a lot of syntactic noise involved, especially in real systems, where composition code is long. Can't we do something about it?
 
