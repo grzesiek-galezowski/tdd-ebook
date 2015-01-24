@@ -1052,7 +1052,7 @@ There are more benefits to factories, but I hope I already convinced you that th
 
 #### Factories can help increase readability and reveal intention (encapsulation of terminology)
 
-Let's assume we are writing an action-rpg game which consists of many levels. Players can start a new game or continue a saved game. When they choose to start a new game, they are immediately taken to the first level with empty inventory and no skills. Otherwise, when they choose to continue an old game, they have to select the file with saved game (then their level, skills and inventory are loaded from the file). Thus, we have two separate workflows in our game that end up with two different methods being invoked: `OnNewGame()` for new game mode and `OnContinue()` for resuming a saved game:
+Let's assume we are writing an action-RPG game which consists of many game levels (not to be mistaken with experience levels) . Players can start a new game or continue a saved game. When they choose to start a new game, they are immediately taken to the first level with empty inventory and no skills. Otherwise, when they choose to continue an old game, they have to select a file with a saved state (then the game level, skills and inventory are loaded from the file). Thus, we have two separate workflows in our game that end up with two different methods being invoked: `OnNewGame()` for new game mode and `OnContinue()` for resuming a saved game:
 
 ```csharp
 public void OnNewGame()
@@ -1067,7 +1067,7 @@ public void OnContinue(PathToFile savedGameFilePath)
 
 ```
 
-In each of these methods, we have to somehow assemble a `Game` class instance. The constructor of `Game` allows composing it with a starting level, player's inventory and a set of skills the player's character can use:
+In each of these methods, we have to somehow assemble a `Game` class instance. The constructor of `Game` allows composing it with a starting level, character's inventory and a set of skills the character can use:
 
 ```csharp
 public class FantasyGame : Game 
@@ -1081,7 +1081,7 @@ public class FantasyGame : Game
 }
 ```
 
-There is no special class for "new game" in our code. A new game is just a game starting from the first level with empty inventory and no skills:
+There is no special class for "new game" or for "resumed game" in our code. A new game is just a game starting from the first level with empty inventory and no skills:
 
 ```csharp
 var newGame = new FantasyGame(
@@ -1092,21 +1092,26 @@ var newGame = new FantasyGame(
 
 In other words, the "new game" concept is expressed by a composition of objects rather than by a single class, called e.g. `NewGame`. 
 
-On the other hand, when we want to create a game object representing resumed game, we do it like this:
+Likewise, when we want to create a game object representing resumed game, we do it like this:
 
 ```csharp
-saveFile.Open();
-
-var loadedGame = new FantasyGame(
-  saveFile.LoadLevel(),
-  saveFile.LoadInventory(),
-  saveFile.LoadSkills());
+try
+{
+  saveFile.Open();
   
-saveFile.Close();
+  var loadedGame = new FantasyGame(
+    saveFile.LoadLevel(),
+    saveFile.LoadInventory(),
+    saveFile.LoadSkills());
+}
+finally
+{  
+  saveFile.Close();
+}
 ```
-Again, the concept of "resumed game" is represented by the composition rather than a single class, just like in case of "new game". On the other hand, the concepts are part of the domain, so we must make them explicit somehow.
+Again, the concept of "resumed game" is represented by a composition rather than a single class, just like in case of "new game". On the other hand, the concepts of "new game" and "resumed game" are part of the domain, so we must make them explicit somehow or we loose readability.
 
-One of the ways to do this is to use a factory[^simplerbutnotflexible]. We can create one with two methods: one for creating new game, another for creating a resumed game. The code of the factory could look like this:
+One of the ways to do this is to use a factory[^simplerbutnotflexible]. We can create such factory and put inside two methods: one for creating a new game, another for creating a resumed game. The code of the factory could look like this:
 
 ```csharp
 public class FantasyGameFactory : GameFactory
@@ -1119,7 +1124,7 @@ public class FantasyGameFactory : GameFactory
       new KnightSkills());
   }
   
-  public Game LoadedGame(PathToFile savedGameFilePath)
+  public Game GameSavedIn(PathToFile savedGameFilePath)
   {
     var saveFile = new SaveFile(savedGameFilePath); 
     try
@@ -1156,25 +1161,25 @@ public void OnContinue(PathToFile savedGameFilePath)
 
 ```
 
-When we fill the gaps with the factory usage, the code ends up like this:
+When we fill the method bodies with the factory usage, the code ends up like this:
 
 ```csharp
 public void OnNewGame()
 {
-  var game = _gameFactory.NewGame()
+  var game = _gameFactory.NewGame();
   game.Start();
 }
 
 public void OnContinue(PathToFile savedGameFilePath)
 {
-  var game = _gameFactory.LoadFrom(savedGameFilePath);
+  var game = _gameFactory.GameSavedIn(savedGameFilePath);
   game.Start();
 }
 
 ```
-Note that using factory helps make the code more readable and intention-revealing. Instead of using a nameless set of connected objects, the two methods shown above ask using terminology from the domain. Thus, the domain concepts of "new game" and "resumed game" become explicit. This justifies the first part of the name of this section (i.e. "Factories can help increase readability and reveal intention").
+Note that using factory helps make the code more readable and intention-revealing. Instead of using a nameless set of connected objects, the two methods shown above ask using terminology from the domain (explicitly requesting either `NewGame()` or `GameSavedIn(path)`). Thus, the domain concepts of "new game" and "resumed game" become explicit. This justifies the first part of the name I gave this section (i.e. "Factories can help increase readability and reveal intention").
 
-There is, however, the second part of the section name, called "encapsulating terminology" which I need to explain, so here's an explanation: note that the factory is responsible for knowing what exactly the terms "new game" and "resumed game" mean. We can change the meaning of these terms throughout the application merely by changing the code in the factory. For example, we can say that new game starts with inventory that is not empty, but contains a basic sword and a shield, by changing the `NewGame()` method of the factory to this:
+There is, however, the second part of the section name: "encapsulating terminology" which I need to explain. Here's an explanation: note that the factory is responsible for knowing what exactly the terms "new game" and "resumed game" mean. As the  meaning of the terms is encapsulated in the factory, we can change the meaning of these terms throughout the application merely by changing the code inside the factory. For example, we can say that new game starts with inventory that is not empty, but contains a basic sword and a shield, by changing the `NewGame()` method of the factory to this:
 
 ```csharp
   public Game NewGame()
