@@ -1044,11 +1044,151 @@ Note that up to now, we considered three things factories encapsulate about crea
  2. Rule
  3. Global context
 
-Thus, if factories didn't exist, all these concepts would leak to sorrounding classes (we saw an example when we were talking about encapsulation of global context). Now, as soon as there is more than one class that needs to create instances, these things leak to all of these classes, creating redundancy. In such case, any change to how instances are created would mean a change to all classes needing those instances.
+Thus, if factories didn't exist, all these concepts would leak to surrounding classes (we saw an example when we were talking about encapsulation of global context). Now, as soon as there is more than one class that needs to create instances, these things leak to all of these classes, creating redundancy. In such case, any change to how instances are created would mean a change to all classes needing those instances.
 
 Thankfully, by having a factory -- an object that takes care of creating other objects and nothing else, we can reuse the ruleset, the global context and the type-related decisions across many classes without any unnecessary overhead. All we need to do is reference the factory and ask it for an object.
 
 There are more benefits to factories, but I hope I already convinced you that this is a pretty darn beneficial concept for such a reasonably low cost.
+
+#### Factories can help increase readability and reveal intention (encapsulation of terminology)
+
+Let's assume we are writing an action-rpg game which consists of many levels. Players can start a new game or continue a saved game. When they choose to start a new game, they are immediately taken to the first level with empty inventory and no skills. Otherwise, when they choose to continue an old game, they have to select the file with saved game (then their level, skills and inventory are loaded from the file). Thus, we have two separate workflows in our game that end up with two different methods being invoked: `OnNewGame()` for new game mode and `OnContinue()` for resuming a saved game:
+
+```csharp
+public void OnNewGame()
+{
+  //...
+}
+
+public void OnContinue(PathToFile savedGameFilePath)
+{
+  //...
+}
+
+```
+
+In each of these methods, we have to somehow assemble a `Game` class instance. The constructor of `Game` allows composing it with a starting level, player's inventory and a set of skills the player's character can use:
+
+```csharp
+public class FantasyGame : Game 
+{
+  public FantasyGame(
+      Level startingLevel, 
+      Inventory inventory, 
+      Skills skills)
+  {
+  }
+}
+```
+
+There is no special class for "new game" in our code. A new game is just a game starting from the first level with empty inventory and no skills:
+
+```csharp
+var newGame = new FantasyGame(
+  new FirstLevel(), 
+  new BackpackInventory(),
+  new KnightSkills());
+```
+
+In other words, the "new game" concept is expressed by a composition of objects rather than by a single class, called e.g. `NewGame`. 
+
+On the other hand, when we want to create a game object representing resumed game, we do it like this:
+
+```csharp
+saveFile.Open();
+
+var loadedGame = new FantasyGame(
+  saveFile.LoadLevel(),
+  saveFile.LoadInventory(),
+  saveFile.LoadSkills());
+  
+saveFile.Close();
+```
+Again, the concept of "resumed game" is represented by the composition rather than a single class, just like in case of "new game". On the other hand, the concepts are part of the domain, so we must make them explicit somehow.
+
+One of the ways to do this is to use a factory[^simplerbutnotflexible]. We can create one with two methods: one for creating new game, another for creating a resumed game. The code of the factory could look like this:
+
+```csharp
+public class FantasyGameFactory : GameFactory
+{
+  public Game NewGame()
+  {
+    return new FantasyGame(
+      new FirstLevel(), 
+      new BackpackInventory(),
+      new KnightSkills());
+  }
+  
+  public Game LoadedGame(PathToFile savedGameFilePath)
+  {
+    var saveFile = new SaveFile(savedGameFilePath); 
+    try
+    {
+      saveFile.Open();
+      
+      var loadedGame = new FantasyGame(
+        saveFile.LoadLevel(),
+        saveFile.LoadInventory(),
+        saveFile.LoadSkills());
+      
+      return loadedGame;
+    }
+    finally
+    {
+      saveFile.Close();
+    }    
+  }
+}
+``` 
+
+Now we can use the factory in the place where we are notified of the user choice. Remember? This was the place:
+
+```csharp
+public void OnNewGame()
+{
+  //...
+}
+
+public void OnContinue(PathToFile savedGameFilePath)
+{
+  //...
+}
+
+```
+
+When we fill the gaps with the factory usage, the code ends up like this:
+
+```csharp
+public void OnNewGame()
+{
+  var game = _gameFactory.NewGame()
+  game.Start();
+}
+
+public void OnContinue(PathToFile savedGameFilePath)
+{
+  var game = _gameFactory.LoadFrom(savedGameFilePath);
+  game.Start();
+}
+
+```
+Note that using factory helps make the code more readable and intention-revealing. Instead of using a nameless set of connected objects, the two methods shown above ask using terminology from the domain. Thus, the domain concepts of "new game" and "resumed game" become explicit. This justifies the first part of the name of this section (i.e. "Factories can help increase readability and reveal intention").
+
+There is, however, the second part of the section name, called "encapsulating terminology" which I need to explain, so here's an explanation: note that the factory is responsible for knowing what exactly the terms "new game" and "resumed game" mean. We can change the meaning of these terms throughout the application merely by changing the code in the factory. For example, we can say that new game starts with inventory that is not empty, but contains a basic sword and a shield, by changing the `NewGame()` method of the factory to this:
+
+```csharp
+  public Game NewGame()
+  {
+    return new FantasyGame(
+      new FirstLevel(), 
+      new BackpackInventory(
+        new BasicSword(),
+        new BasicShield()),
+      new KnightSkills());
+  }
+```
+
+Putting it all together, factories allow giving names to some specific object compositions to increase readability and introducing terminology that can be changed by changing code inside the factory methods.   
 
 Summary
 -------------------------
@@ -1073,3 +1213,5 @@ The rules outlined here apply to the overwhelming part of the objects in our app
 [^collectionsremark]: If you never used collections before and you are not a copy-editor, then you are probably reading the wrong book :-)
 
 [^nullobject]: Actually, this pattern has a name and the name is... Null Object (surprise!). You can read more on this pattern at http://www.cs.oberlin.edu/~jwalker/nullObjPattern/ and http://www.cs.oberlin.edu/~jwalker/refs/woolf.ps (a little older document)
+
+[^simplerbutnotflexible]: There are simple ways, yet none is as flexible as using factories.
