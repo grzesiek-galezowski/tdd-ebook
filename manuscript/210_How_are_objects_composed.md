@@ -1020,36 +1020,6 @@ So, instead of `DataDestination` and `ValidationRules` interfaces, the `MessageP
 
 The last thing that needs to be said is that not all dependencies can be hidden inside a factory. Note that the factory still needs to receive the `MessageData` from whoever is asking for a `Message`, because the `MessageData` is not available when the factory is created. You may remember that I call such dependencies a **local context** (because it is specific to a single use of a factory). On the other hand, what a factory accepts through its constructor can be called a **global context** (because it is the same throughout the factory lifetime). Using this terminology, the local context cannot be hidden from users of the factory, but the global context can. Thanks to this, the classes using the factory do not need to know about the global context and can stay cleaner, coupled to less things and more focused.
 
-#### Factories help eliminate redundancy
-
-Redundancy in code means that at least two things need to change for the same reason in the same way[^essentialskills]. Usually it is understood as code duplication, but actually, "conceptual duplication" is a better term. For example, the following two methods are not redundant, even though the code seems duplicated (by the way, the following is not an example of good code, just a simple illustration):
-
-```csharp
-public int MetersToCentimeters(int value)
-{
-  return value*100;
-}
-
-public int DollarsToCents(int value)
-{
-  return value*100;
-}
-```
-
-As I said, this is not redundancy, because the two methods represent different concepts that would change for different reasons. Even if we were to extract "common logic" from the two methods, the only sensible name we could come up with would be something like `MultiplyBy100()` which wouldn't add any value at all.
-
-Note that up to now, we considered three things factories encapsulate about creation of objects:
-
- 1. Type
- 2. Rule
- 3. Global context
-
-Thus, if factories didn't exist, all these concepts would leak to surrounding classes (we saw an example when we were talking about encapsulation of global context). Now, as soon as there is more than one class that needs to create instances, these things leak to all of these classes, creating redundancy. In such case, any change to how instances are created would mean a change to all classes needing those instances.
-
-Thankfully, by having a factory -- an object that takes care of creating other objects and nothing else, we can reuse the ruleset, the global context and the type-related decisions across many classes without any unnecessary overhead. All we need to do is reference the factory and ask it for an object.
-
-There are more benefits to factories, but I hope I already convinced you that this is a pretty darn beneficial concept for such a reasonably low cost.
-
 #### Factories can help increase readability and reveal intention (encapsulation of terminology)
 
 Let's assume we are writing an action-RPG game which consists of many game levels (not to be mistaken with experience levels) . Players can start a new game or continue a saved game. When they choose to start a new game, they are immediately taken to the first level with empty inventory and no skills. Otherwise, when they choose to continue an old game, they have to select a file with a saved state (then the game level, skills and inventory are loaded from the file). Thus, we have two separate workflows in our game that end up with two different methods being invoked: `OnNewGame()` for new game mode and `OnContinue()` for resuming a saved game:
@@ -1194,6 +1164,37 @@ There is, however, the second part of the section name: "encapsulating terminolo
 ```
 
 Putting it all together, factories allow giving names to some specific object compositions to increase readability and introducing terminology that can be changed by changing code inside the factory methods.   
+
+#### Factories help eliminate redundancy
+
+Redundancy in code means that at least two things need to change for the same reason in the same way[^essentialskills]. Usually it is understood as code duplication, but actually, "conceptual duplication" is a better term. For example, the following two methods are not redundant, even though the code seems duplicated (by the way, the following is not an example of good code, just a simple illustration):
+
+```csharp
+public int MetersToCentimeters(int value)
+{
+  return value*100;
+}
+
+public int DollarsToCents(int value)
+{
+  return value*100;
+}
+```
+
+As I said, this is not redundancy, because the two methods represent different concepts that would change for different reasons. Even if we were to extract "common logic" from the two methods, the only sensible name we could come up with would be something like `MultiplyBy100()` which wouldn't add any value at all.
+
+Note that up to now, we considered three things factories encapsulate about creation of objects:
+
+ 1. Type
+ 2. Rule
+ 3. Global context
+ 4. Terminology
+
+Thus, if factories didn't exist, all these concepts would leak to surrounding classes (we saw an example when we were talking about encapsulation of global context). Now, as soon as there is more than one class that needs to create instances, these things leak to all of these classes, creating redundancy. In such case, any change to how instances are created would mean a change to all classes needing those instances.
+
+Thankfully, by having a factory -- an object that takes care of creating other objects and nothing else, we can reuse the ruleset, the global context and the type-related decisions across many classes without any unnecessary overhead. All we need to do is reference the factory and ask it for an object.
+
+There are more benefits to factories, but I hope I already convinced you that this is a pretty darn beneficial concept for such a reasonably low cost.
 
 Summary
 -------------------------
