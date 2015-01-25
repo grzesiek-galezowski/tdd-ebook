@@ -60,8 +60,107 @@ Wow, this is quite a statement, isn't it? But there is another problem with the 
 
 ## Refactoring for readability
 
-TODO example 
+The declarativeness of composition code goes hand in hand with an approach of defining so called *fluent interfaces*. A fluent interface is an API made with readability and flow-like reading in mind. It is usually declarative and targeted towards specific domain, thus another name: *internal domain specific languages*.
 
+There are some simple patterns for creating such domain-specific language. One of them that can be applied to our situation is called *nested function*[^fowlerdsl]. Let's see how it plays out in practice. We will do this step by step, so there will be a lot of repeated code, but hopefully, you will be able to closely watch the process of improving the readability of composition code.
+
+Ok, Let's see the code again before making any changes to it:
+
+```csharp
+new SecureArea(
+  new OfficeBuilding(
+    new DayNightSwitchedAlarm(
+      new SilentAlarm("222-333-444"), 
+      new LoudAlarm()
+    )
+  ),
+  new StorageBuilding(
+    new HybridAlarm(
+      new SilentAlarm("222-333-444"),
+      new LoudAlarm()
+    )
+  ),
+  new GuardsBuilding(
+    new HybridAlarm(
+      new SilentAlarm("919"), //call police
+      new LoudAlarm()
+    )
+  )
+);
+```
+
+Note that we have few places where we create `SilentAlarm`. Let's move creation of these objects into a separate method:
+
+```csharp
+public Alarm Calls(string number)
+{
+  return new SilentAlarm(number);
+}
+```
+
+This step may look silly, (after all, we are introducing a method wrapping one line), but there is a lot of sense to it. First of all, it lets us reduce the syntax noise - when we need to create a silent alarm, we do not have to say `new` anymore. Another benefit is that we can describe the role a `SilentAlarm` instance plays in our composition (I will explain later why we are doing it using passive voice).
+
+After replacing each invocation of `SilentAlarm` constructor with a call to this method, we get:
+
+```csharp
+new SecureArea(
+  new OfficeBuilding(
+    new DayNightSwitchedAlarm(
+      Calls("222-333-444"), 
+      new LoudAlarm()
+    )
+  ),
+  new StorageBuilding(
+    new HybridAlarm(
+      Calls("222-333-444"),
+      new LoudAlarm()
+    )
+  ),
+  new GuardsBuilding(
+    new HybridAlarm(
+      Calls("919"), //police number
+      new LoudAlarm()
+    )
+  )
+);
+```
+Next, let's do the same with `LoudAlarm`, wrapping its creation with a method:
+
+```csharp
+public Alarm MakesLoudNoise()
+{
+  return new LoudAlarm();
+}
+```
+
+and the composition code after applying this methos looks like this:
+
+```csharp
+new SecureArea(
+  new OfficeBuilding(
+    new DayNightSwitchedAlarm(
+      Calls("222-333-444"), 
+      MakesLoudNoise()
+    )
+  ),
+  new StorageBuilding(
+    new HybridAlarm(
+      Calls("222-333-444"),
+      MakesLoudNoise()
+    )
+  ),
+  new GuardsBuilding(
+    new HybridAlarm(
+      Calls("919"), //police number
+      MakesLoudNoise()
+    )
+  )
+);
+```
+
+Note that we have removed some more `new`s. This is exactly what I meant by "reducing syntax noise".
+
+TODO the rest
 
 ## number of decisions in app is unchanged
 
@@ -81,3 +180,8 @@ TODO example
 2.  variadic covering method -- creating collection using variadic parameter method or variadic constructors
 3.  variable as terminator
 4.  Explaining method (i.e. returns its argument. Use with care)
+
+strive for achieving repeatable patterns - the best gain may be drawn from there.
+
+[^fowlerdsl]: M. Fowler, Domain-Specific Languages, Addison-Wesley 2010.
+

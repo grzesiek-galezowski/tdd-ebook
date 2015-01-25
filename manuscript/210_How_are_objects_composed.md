@@ -1211,7 +1211,7 @@ The rules outlined here apply to the overwhelming part of the objects in our app
 
 [^seemanndi]: For details, check Dependency Injection in .NET by Mark Seemann.
 
-[^essentialskills]: A. Shalloway et al., Essential Skills For The Agile Developer
+[^essentialskills]: A. Shalloway et al., Essential Skills For The Agile Developer.
 
 [^messageotherchangecase]: although it does need to change when the rule "first validate, then apply to sessions" changes
 
