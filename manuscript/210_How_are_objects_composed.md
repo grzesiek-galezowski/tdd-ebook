@@ -1183,7 +1183,7 @@ public int DollarsToCents(int value)
 
 As I said, this is not redundancy, because the two methods represent different concepts that would change for different reasons. Even if we were to extract "common logic" from the two methods, the only sensible name we could come up with would be something like `MultiplyBy100()` which wouldn't add any value at all.
 
-Note that up to now, we considered three things factories encapsulate about creation of objects:
+Note that up to now, we considered four things factories encapsulate about creation of objects:
 
  1. Type
  2. Rule
