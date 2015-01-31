@@ -160,9 +160,316 @@ new SecureArea(
 
 Note that we have removed some more `new`s. This is exactly what I meant by "reducing syntax noise".
 
-TODO the rest
+Now let's focus a bit on this part:
 
-## number of decisions in app is unchanged
+```csharp
+  new GuardsBuilding(
+    new HybridAlarm(
+      Calls("919"), //police number
+      MakesLoudNoise()
+    )
+  )
+```
+
+and try to apply the same trick to `HybridAlarm` creation and extract a method that handles the creation. You know, we are always told that class names should be nouns and that's why `HybridAlarm` is named like this. But it does not act well as a description of what the system does. Its real functionality is to trigger both alarms when it is triggered. Thus, should we name the method `TriggersBothAlarms()`? Naah, it's too much noise - we already know it's alarms that we are triggering, so we can leave the "alarms" part out. What about "triggers"? It says what the hybrid alarm does, which might seem good, but when we look at the composition, `Calls()` and `MakesLoudNoise()` already say what is being done. The `HybridAlarm` only says that both of those things happen simultaneously. We could leave `Trigger` if we changed the names of the other methods in the composition to look like this:
+
+```csharp
+  new GuardsBuilding(
+    TriggersBoth(
+      Calling("919"), //police number
+      LoudNoise()
+    )
+  )
+```
+
+But that would make the names `Calling()` and `LoudNoise()` out of place without being nested as `TriggersBoth()` arguments. For example, if we wanted to make another building that would only use a loud alarm, the composition would look like this:
+
+```csharp
+new OtherBuilding(LoudNoise());
+```
+
+or if we wanted to use silent one:
+
+```csharp
+new OtherBuilding(Calling("919"));
+```
+
+Instead, let's try to name the method wrapping construction of `HybridAlarm` just `Both()`. This way, our composition code is now:
+
+```csharp
+new GuardsBuilding(
+  Both(
+    Calls("919"), //police number
+    MakesLoudNoise()
+  )
+)
+```
+and the `Both()` method is obviously defined as:
+
+```csharp
+public Alarm Both(Alarm alarm1, Alarm alarm2)
+{
+  return new HybridAlarm(alarm1, alarm2);
+}
+```
+
+Remember that `HybridAlarm` was also used in the `StorageBuilding` instance composition:
+
+```csharp
+new StorageBuilding(
+  new HybridAlarm(
+    Calls("222-333-444"),
+    MakesLoudNoise()
+  )
+),
+```
+
+which now becomes:
+
+```csharp
+new StorageBuilding(
+  Both(
+    Calls("222-333-444"),
+    MakesLoudNoise()
+  )
+),
+```
+
+
+Now the most difficult part - finding a way to make the following piece of code readable:
+
+```csharp
+new OfficeBuilding(
+  new DayNightSwitchedAlarm(
+    Calls("222-333-444"), 
+    MakesLoudNoise()
+  )
+),
+```
+
+The difficulty here is that `DayNightSwitchedAlarm` accepts two alarms that are used alternatively. We need to invent a term that:
+
+ 1.  Says it's an alternative 
+ 1.  Says what kind of alternative it is (i.e. that one happens at day, and the other during the night).
+ 1.  Says which alarm is attached to which condition (silent alarm is used during the day and at night, loud alarm is used)
+
+If we introduce a single name, e.g. `FirstDuringDayAndSecondAtNight()`, it will feel awkward and we will loose the flow. Just look:
+
+```csharp
+new OfficeBuilding(
+  FirstDuringDayAndSecondAtNight(
+    Calls("222-333-444"), 
+    MakesLoudNoise()
+  )
+),
+```
+
+We need to find another approach to this situation. There are two approaches we may consider:
+
+### Approach 1: use named parameters
+
+Named parameters are a feature of languages like Python or C#. In short, when we have a method like this:
+
+```csharp
+public void DoSomething(int first, int second)
+{
+  //...
+}
+```
+
+we can call it like this:
+
+```csharp
+DoSomething(first: 12, second: 33);
+```
+
+We can use this technique to refactor the creation of `DayNightSwitchedAlarm` into the following method:
+
+```csharp
+public Alarm DependingOnTimeOfDay(
+    Alarm duringDay, Alarm atNight)
+{
+  return new DayNightSwitchedAlarm(duringDay, atNight);
+} 
+```
+
+This lets us write the composition code like this:
+
+```csharp
+new OfficeBuilding(
+  DependingOnTimeOfDay(
+    duringDay: Calls("222-333-444"), 
+    atNight: MakesLoudNoise()
+  )
+),
+```
+
+which is quite readable. Now, on to the second approach.
+
+### Approach 2: use method chaining
+
+This approach is better translatable to different languages and can be used e.g. in Java and C++. This time, before I show you the implementation, let's look at the final result we want to achieve:
+
+```csharp
+new OfficeBuilding(
+  DependingOnTimeOfDay
+    .DuringDay(Calls("222-333-444"))
+    .AtNight(MakesLoudNoise())
+  )
+),
+```
+
+So as you see, this is very similar, the main difference being that it's more work.
+
+Ok, let's decypher this strange construction:
+
+```csharp
+DependingOnTimeOfDay
+  .DuringDay(...)
+  .AtNight(...)
+```
+
+First, `DependingOnTimeOfDay` is a class:
+
+```csharp
+public class DependingOnTimeOfDay
+{
+}
+```
+
+which has a static method called `DuringDay()`:
+
+```csharp
+public static 
+DependingOnTimeOfDay DuringDay(Alarm alarm)
+{
+  return new DependingOnTimeOfDay(alarm);
+}
+
+private DependingOnTimeOfDay(Alarm dayAlarm)
+{
+  _dayAlarm = dayAlarm;
+}
+```
+
+Now, this method seems strange, doesn't it? It is a static method that returns an instance of its enclosing class. Also, the private constructor stores the passed alarm inside for later... why?
+
+The mystery resolves itself when we look at another method defined in the `DependingOnTimeOfDay` class:
+
+```csharp
+//note: this method is NOT static
+public Alarm AtNight(Alarm nightAlarm)
+{
+  return new DayNightSwitchedAlarm(_dayAlarm, nightAlarm);
+}
+```
+
+This method is not static and it returns the alarm that we were trying to create. To do so, it uses the first alarm passed through the constructor and the second one passed as its parameter. So if we were to take this construct:
+
+```csharp
+DependingOnTimeOfDay
+  .DuringDay(dayAlarm)
+  .AtNight(nightAlarm)
+```
+
+and assign a result of each operation to a separate variable, it would look like this:
+
+```csharp
+DependingOnTimeOfDay firstPart 
+  = DependingOnTimeOfDay.DuringDay(dayAlarm);
+Alarm final alarm = firstPart.AtNight(nightAlarm);
+```
+
+Now, we can just chaing these calls and get the result we wanted to:
+
+```csharp
+new OfficeBuilding(
+  DependingOnTimeOfDay
+    .DuringDay(Calls("222-333-444"))
+    .AtNight(MakesLoudNoise())
+  )
+),
+```
+
+### Discussion continued
+
+For now, I will assume we have chosen approach 1 because it is simpler.
+
+Our composition code looks like this so far:
+
+```csharp
+new SecureArea(
+  new OfficeBuilding(
+    DependingOnTimeOfDay(
+      duringDay: Calls("222-333-444"), 
+      atNight: MakesLoudNoise()
+    )
+  ),
+  new StorageBuilding(
+    Both(
+      Calls("222-333-444"),
+      MakesLoudNoise()
+    )
+  ),
+  new GuardsBuilding(
+    Both(
+      Calls("919"), //police number
+      MakesLoudNoise()
+    )
+  )
+);
+```
+
+There are few more finishing touches we need to make. First of all, let's try and extract these dial numbers like `222-333-444` into constants. For example, this code:
+
+```csharp
+Both(
+  Calls("919"), //police number
+  MakesLoudNoise()
+)
+```
+
+becomes
+
+```csharp
+Both(
+  Calls(Police),
+  MakesLoudNoise()
+)
+
+```
+
+And the last thing is to hide creation of the following classes: `SecureArea`, `OfficeBuilding`, `StorageBuilding`, `GuardsBuilding` and we have this:
+
+```csharp
+SecureAreaContaining(
+  OfficeBuildingWithAlarmThat(
+    DependingOnTimeOfDay(
+      duringDay: Calls(Guards), 
+      atNight: MakesLoudNoise()
+    )
+  ),
+  StorageBuildingWithAlarmThat(
+    Both(
+      Calls(Guards),
+      MakesLoudNoise()
+    )
+  ),
+  GuardsBuildingWithAlarmThat(
+    Both(
+      Calls(Police),
+      MakesLoudNoise()
+    )
+  )
+);
+```
+And here it is: the real, declarative description of our application! The composition reads better than when we started, doesn't it?
+
+## Composition as a language
+
+## Number of decisions in app is unchanged
+
+Thus far we were talkiung about readability now we take different angle.
 
  1.  remove unwanted decisions
  1.  optimize redundant decisions (i.e. polymorphism, factories)
@@ -173,6 +480,8 @@ TODO the rest
  1.  APIs
  1.  CASE tools/modelling tools
  1.  DSL - program on higher level
+
+Designing such dsls is a big challenge - a lot of discipline and a sense of direction is required
 
 ## Useful patterns
 
