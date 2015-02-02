@@ -113,6 +113,15 @@ Likewise, a simplest software program that prints "hello world" on the screen ma
 
 The reason I am writing all this is that responsibilities are the real granules of composability. The composability of objects that I have talked about a lot already is actually a mean to achieve composability of responsibilities. So, this is what's our real goal. If we have two collaborating objects, each having a single responsibility, we can easily replace the way our application achieves one of these responsibilities without touching the other. Thus, objects conforming to SRP are the most comfortably composable and the right size.[^notrdd].
 
+A good example from another playground where single responsibility goes hand in hand with composability is UNIX. UNIX is famous for its collection of single-purpose command-line tools, like `ls`, `grep`, `ps`, `sed` etc. The single-purposeness of these utilities along with the ability of UNIX commandline to pass output stream of one command to the input stream of another by using the `|` (pipe) operator. For example, we may combine three commands: `ls` (lists contents of directory), `sort` (sorts passed input) and `more` (allows comfortably viewing on the screen input that takes more than one screen) into a pipeline:
+
+```bash
+ls | sort | more
+``` 
+
+Which displays sorted content of current directory for comfortable view. This philosophy of composing a set of single-purpose tools into a more complex and more useful whole is what we are after, only that in object-oriented software development, we're using objects instead of executables. We will talk more about it in the next chapter.
+
+
 ## Static recipients
 
 While static fields in a class body may sometimes seem like a good idea of "sharing" recipient references between its instances and smart way to make the code more "memory efficient", they actually hurt composability more often than not. Let's take a look at a simple example to get a feeling of how static fields constraint our design.

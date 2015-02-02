@@ -469,6 +469,8 @@ And here it is: the real, declarative description of our application! The compos
 
 ## Number of decisions in app is unchanged
 
+TODO 1+2 = new Addition(new OneInteger(), new TwoInteger()) = plus(one(), two())
+
 Thus far we were talkiung about readability now we take different angle.
 
  1.  remove unwanted decisions
