@@ -467,9 +467,28 @@ And here it is: the real, declarative description of our application! The compos
 
 ## Composition as a language
 
-## Number of decisions in app is unchanged
+```csharp
+Both(
+  Calls(Police),
+  MakesLoudNoise()
+)
+```
+
+```csharp
+Both(
+  Both(
+    Calls(Police),
+    Calls(Security)),
+  Both(
+    Calls(Boss),
+    MakesLoudNoise()))
+)
+```
+we have defined a grammar
 
 TODO 1+2 = new Addition(new OneInteger(), new TwoInteger()) = plus(one(), two())
+
+## Number of decisions in app is unchanged
 
 Thus far we were talkiung about readability now we take different angle.
 
