@@ -467,12 +467,15 @@ And here it is: the real, declarative description of our application! The compos
 
 ## Composition as a language
 
+Written this way, object composition has another important property - it is extensible and can be extended using the same terms that are already used. For example, using the methods we invented to make the composition more readable, we may write something like this:
+
 ```csharp
 Both(
   Calls(Police),
   MakesLoudNoise()
 )
 ```
+but, using the same terms, we may as well write this:
 
 ```csharp
 Both(
@@ -484,27 +487,44 @@ Both(
     MakesLoudNoise()))
 )
 ```
-we have defined a grammar
 
-TODO 1+2 = new Addition(new OneInteger(), new TwoInteger()) = plus(one(), two())
+Note that we have invented something that has these properties:
 
-## Number of decisions in app is unchanged
+ 1. Defines some kind of *vocabulary* - in our case, the following "words" are form part of the vocabulary: `Both(), Calls(), MakesLoudNoise(), DependingOnTimeOfDay(), atNight, duringDay, SecureAreaContaining(), GuardsBuildingWithAlarmThat(), OfficeBuildingWithAlarmThat()`. 
+ 1. Allows combining the words from the vocabulary in certain combinations as which also have a meaning. For example: `Both(Calls(Police), Calls(Guards))` has the meaning of "calls both police and guards when triggered" - thus, this thing we invented allows creating *sentences*.
+ 1. Although we are quite liberal in defining behaviors for alarms, there are some rule as what can be composed with what (for example, we cannot compose guards building with an office, but each of them can only be composed with alarms). Thus, we can say we have created something that looks like a *grammar*.
+ 1. The vocabulary is *constrained to the domain* of alarms. On the other hand, it *is more powerful and expressive* as a description of this domain than a combination of `if` statements, `for` loops, variable assignments etc. available in a general-purpose language. 
+ 1. The sentences written define a behavior of the application - so by writing sentences like this, we still write software!
+ 
+All of these points suggest that we have created a *Domain-Specific Language*[^fowlerdsl], which, by the way, is a *higher level language*. 
 
-Thus far we were talkiung about readability now we take different angle.
+## The significance of higher level language
 
- 1.  remove unwanted decisions
- 1.  optimize redundant decisions (i.e. polymorphism, factories)
- 1.  use 3rd party component for some decisions - decisions become someone else's problem, at least as far as code maintenance is concerned
- 1.  renegotiate existing decisions (i.e. remove code, not needed features) - removing decisions that bring low business value
- 1.  use components/microservices to move away from decisions and focus on single topic
- 1.  use metadata/configuration - the decisions go to higher level
- 1.  APIs
- 1.  CASE tools/modelling tools
- 1.  DSL - program on higher level
+So.. why do we need a higher level language to describe the behavior of our application? After all, expressions, statements, loops and conditions (and objects and polymorphism) are our daily bread and butter. Why invent something that moves us away from this kind of programming into something "domain-specific"?
 
-Designing such dsls is a big challenge - a lot of discipline and a sense of direction is required
+My main answer is: to deal with more effectively with complexity. 
 
-## Useful patterns
+Complexity might be approximated by a number of decisions our application needs to make. As much as we try, we cannot reduce this number. What can we do when this number grows too large? We have the following choices:
+
+ 1. Remove some decisions - might be unacceptable from the business perspective.
+ 1. Optimize redundant decisions - is about making sure that each decision is made once in the code base - I already showed you some examples how polymorphism can help with that.    
+ 1. Use 3rd party component or a library - While this is quite easy for "infrastructure" code and utilities, it is very, very hard (impossible?) to find a library that will describe our "domain rules" for us. So if these rules are where the real complexity lies (and often they are), we are still left alone with our problem.
+ 1. Hide the decisions by programming on higher level of abstraction - this may span a whole range of techniques (one of them being e.g. garbage collection that takes away the decision about when to free memory from us). 
+
+So, as you see, only the last of the above points really helps in reducing complexity. This is where the idea of domain-specific languages falls in. If we carefully refactor our object composition into a set of domain-specific languages (one is often too little), one day we may find that we are adding new features by writing new sentences in these languages in a declarative way rather than adding new imperative code. Thus, if we have a good language and a firm understanding of its vocabulary and grammar, we can program on higher level of abstraction which is more expressive and less complex.
+
+This is very hard - it requires, among all:
+ 1. A huge discipline across a develoment team.
+ 1. A sense of direction of how to structure the composition and where to lead the languages as they evolve.
+ 1. Merciless refactoring.
+ 1. Some minimal knowledge of language design and experience in doing so. 
+
+Of course, not all parts of the composition make a good material to being structured like a language. Despite these difficulties, I think it's well worth the effort. Programming on higher level of abstraction with declarative code rather than imperative is my hope for writing maintainable and understandable systems. 
+
+## Some useful techniques
+
+In his wonderful book[^fowlerdsl] about creating domain-specific languages, Martin Fowler lists a set of techniques that help achieve "fluency" of syntax. Some of them include:
+
 
 1.  Factory method & method composition
 2.  variadic covering method -- creating collection using variadic parameter method or variadic constructors
