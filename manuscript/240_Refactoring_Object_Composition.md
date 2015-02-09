@@ -493,7 +493,7 @@ Note that we have invented something that has these properties:
  1. Defines some kind of *vocabulary* - in our case, the following "words" are form part of the vocabulary: `Both(), Calls(), MakesLoudNoise(), DependingOnTimeOfDay(), atNight, duringDay, SecureAreaContaining(), GuardsBuildingWithAlarmThat(), OfficeBuildingWithAlarmThat()`. 
  1. Allows combining the words from the vocabulary in certain combinations as which also have a meaning. For example: `Both(Calls(Police), Calls(Guards))` has the meaning of "calls both police and guards when triggered" - thus, this thing we invented allows creating *sentences*.
  1. Although we are quite liberal in defining behaviors for alarms, there are some rule as what can be composed with what (for example, we cannot compose guards building with an office, but each of them can only be composed with alarms). Thus, we can say we have created something that looks like a *grammar*.
- 1. The vocabulary is *constrained to the domain* of alarms. On the other hand, it *is more powerful and expressive* as a description of this domain than a combination of `if` statements, `for` loops, variable assignments etc. available in a general-purpose language. 
+ 1. The vocabulary is *constrained to the domain* of alarms. On the other hand, it *is more powerful and expressive* as a description of this domain than a combination of `if` statements, `for` loops, variable assignments and other elements of a general-purpose language. 
  1. The sentences written define a behavior of the application - so by writing sentences like this, we still write software!
  
 All of these points suggest that we have created a *Domain-Specific Language*[^fowlerdsl], which, by the way, is a *higher level language*. 
@@ -513,7 +513,8 @@ Complexity might be approximated by a number of decisions our application needs 
 
 So, as you see, only the last of the above points really helps in reducing complexity. This is where the idea of domain-specific languages falls in. If we carefully refactor our object composition into a set of domain-specific languages (one is often too little), one day we may find that we are adding new features by writing new sentences in these languages in a declarative way rather than adding new imperative code. Thus, if we have a good language and a firm understanding of its vocabulary and grammar, we can program on higher level of abstraction which is more expressive and less complex.
 
-This is very hard - it requires, among all:
+This is very hard - it requires, among others:
+
  1. A huge discipline across a develoment team.
  1. A sense of direction of how to structure the composition and where to lead the languages as they evolve.
  1. Merciless refactoring.
