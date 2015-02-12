@@ -464,7 +464,7 @@ public class Calculator
 
 **Benjamin:** What?
 
-**Johnny:** You already provided an implementation that will make our current Statement true. Remember its name? `ShouldDisplay0WhenCreated` -- and that is exactly what the code you wrote does. Before we arrive at this point, let's make sure this Statement can ever be evaluates as false. So for now, let's change it to this:
+**Johnny:** You already provided an implementation that will make our current Statement true. Remember its name? `ShouldDisplay0WhenCreated` -- and that is exactly what the code you wrote does. Before we arrive at this point, let's make sure this Statement can ever be evaluated as false. You won't achieve this by providing a correct implementation out of the box. So for now, let's change it to this:
 
 ```csharp
 public class Calculator
