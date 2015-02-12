@@ -1,4 +1,4 @@
-Practicing what we already learned
+Practicing what we have already learned
 ==================================
 
 > And now, a taste of things to come!
