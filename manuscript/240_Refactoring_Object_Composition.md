@@ -528,11 +528,20 @@ In his wonderful book[^fowlerdsl] about creating domain-specific languages, Mart
 
 
 1.  Factory method & method composition
-2.  variadic covering method -- creating collection using variadic parameter method or variadic constructors
-3.  variable as terminator
-4.  Explaining method (i.e. returns its argument. Use with care)
+- not necessarily one method per each constructor
+- hide ambient context in fields (logger, configuration) e.g. method ConfiguredLength()
+1.  Literal Collections (variadic covering method) -- creating collection using variadic parameter method or variadic constructors
+1.  Method chaining - expression builders build up context
+1.  variable as terminator ??? Explaining variables - for sharing
+1.  constants - can be useful like Police, but sometimes can be less useful - introducing constant not always leads to more readable code - but do we have another choice? If not, just not name it like pentium2.cores(numberOfCoresInPentium2) 
+1.  Explaining method (i.e. returns its argument. Use with care)
+1.  use simple anfd few elements - the language will be maintained by a team
+
+## A series of fluent interfaces instead of one
 
 strive for achieving repeatable patterns - the best gain may be drawn from there.
+
+Not all of composition can be a DSL - maybe look for a way to stress the configurable parts
 
 [^fowlerdsl]: M. Fowler, Domain-Specific Languages, Addison-Wesley 2010.
 

@@ -1,34 +1,18 @@
 How to start?
 =============
 
-Whenever I sat down with a person that was about to write their first
-code in a Statement-first manner, the person would first stare at the
-screen, then at me, then would say: “what now?". It is easy to say: “You
-know how to write code, you know how to write a unit test for it, just
-this time start with the latter rather than the first", but for many
-people, this is something that blocks them completely. If you are one of
-them, do not worry -- you are not alone. I decided to dedicate this
-chapter solely to techniques for kicking off a Statement when there is
-no code.
+Whenever I sat down with a person that was about to write their first code in a Statement-first manner, the person would first stare at the screen, then at me, then would say: “what now?". It is easy to say: “You know how to write code, you know how to write a unit test for it, just this time start with the latter rather than the first", but for many people, this is something that blocks them completely. If you are one of them, do not worry -- you are not alone. I decided to dedicate this chapter solely to techniques for kicking off a Statement when there is no code.
 
 Start with a good name
 ----------------------
 
-It may sound obvious, but some people are having serious trouble
-describing the behavior they expect from their code. If you can name
-such behavior, it is a great starting point.
+It may sound obvious, but some people are having serious trouble describing the behavior they expect from their code. If you can name such behavior, it is a great starting point.
 
 I know not everybody pays attention to naming their Statements, mainly because the Statements are considered as tests and second-level citizens -- as long as they run and “prove the code does not contain defects", they are considered sufficient. We will take a look at some examples of bad names and then I will introduce to you some rules of good naming.
 
 ### Consequences of bad naming
 
-As I said, many people do not really care how their Statements are
-named. This is a symptom of treating the Specification as garbage or
-leftovers -- such situation is dangerous, because as soon as this kind of
-thinking is established, it leads to bad, unmaintainable Specification
-that looks more like lumps of accidental code put together in a haste
-than a living documentation. Imagine that your Specification consists of
-names like this:
+As I said, many people do not really care how their Statements are named. This is a symptom of treating the Specification as garbage or leftovers -- such situation is dangerous, because as soon as this kind of thinking is established, it leads to bad, unmaintainable Specification that looks more like lumps of accidental code put together in a haste than a living documentation. Imagine that your Specification consists of names like this:
 
 -   `TrySendPacket()`
 -   `TrySendPacket2()`
@@ -36,8 +20,7 @@ names like this:
 -   `testWrongPacketOrder1()`
 -   `testWrongPacketOrder2()`
 
-and try for yourself how difficult it is to answer the following
-questions:
+and try for yourself how difficult it is to answer the following questions:
 
 1.  How do you know what situation each Statement describes?
 2.  How do you know whether the Statement describes a single situation,
@@ -62,11 +45,7 @@ questions:
 
 ### What does a good name contain? 
 
-For the name of the Statement to be of any use, it has to describe the
-expected behavior. At minimum, it should describe what happens under
-what circumstances. let's take a look at one of the names Steve freeman
-and Nat Pryce came up in their great book Growing Object Oriented
-Software Guided By Tests:
+For the name of the Statement to be of any use, it has to describe the expected behavior. At minimum, it should describe what happens under what circumstances. let's take a look at one of the names Steve freeman and Nat Pryce came up in their great book Growing Object Oriented Software Guided By Tests:
 
 ```java
 notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort()
@@ -74,30 +53,8 @@ notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort()
 
 Note few things about the name of the Statement:
 
-1.  It describes a behavior of an instance of a specified class. Note
-    that it does not contain method name that triggers the behavior,
-    because what is specified is not a method, but the behavior itself.
-    The name simply tells what an instance does (“notifies
-    listeners that server is unavailable") under certain circumstances
-    (“when cannot connect to its monitoring port"). It is important
-    because such description is what you can derive from thinking about
-    responsibilities of a class, so you do not need to know any of its
-    method signature or the code that is inside of the class. Hence,
-    this is something you can come up with before implementing -- you
-    just need to know why you created this class and build on this
-    knowledge.
-2.  The name is relatively long. Really, really, **really** do not worry
-    about it. As long as you are describing a single behavior, it is
-    alright. I know usually people are hesitant to give long names to
-    the Statements, because they try to apply the same rules to those
-    names as to method names in production code (and in production code
-    too long method name can be a sign of it having too many
-    responsibilities). Let me make it clear -- these two cases are
-    different. In case of Statements, methods are not invoked by anyone
-    besides the automatic runner applications, so they will not
-    obfuscate any code that would need to call them with their long
-    names. Sure, we could put all the information in the comment instead
-    of Statement name and leave the name short, like this:
+1.  It describes a behavior of an instance of a specified class. Note that it does not contain method name that triggers the behavior, because what is specified is not a method, but the behavior itself. The Statement name simply tells what an instance does (“notifies listeners that server is unavailable") under certain circumstances (“when cannot connect to its monitoring port"). It is important because such description is what you can derive from thinking about responsibilities of a class, so you do not need to know any of its method signature or the code that is inside of the class. Hence, this is something you can come up with before implementing -- you just need to know why you created this class and build on this knowledge.
+2.  The name is relatively long. Really, really, **really** do not worry about it. As long as you are describing a single behavior, it's fine. I know usually people are hesitant to give long names to the Statements, because they try to apply the same rules to those names as to method names in production code (and in production code too long method name can be a sign of it having too many responsibilities). Let me make it clear -- these two cases are different. In case of Statements, methods are not invoked by anyone besides the automatic runner applications, so they will not obfuscate any code that would need to call them with their long names. Sure, we could put all the information in the comment instead of Statement name and leave the name short, like this:
 
     ```csharp
     [Fact]
@@ -173,7 +130,7 @@ yourself the question: “should it really?". If this causes uncertainty,
 then it is high time to talk to a domain expert and make sure you
 understand well what you need to accomplish. If you are not a native
 English speaker, the “should" prefix will probably have a weaker
-influence on you -- that is why I do not insist on you using it. I like
+influence on you -- that is why I don't insist on you using it. I like
 it though.
 
 When inventing a name, It is important to put the main focus on what
@@ -192,6 +149,17 @@ away from our assumption that we are writing a Specification consisting
 of Statements. This name should be something more like:
 
 `ShouldReportThatItIsEqualToAnotherIdThatHasTheSameUserName()`.
+
+In general, when I find myself having trouble with naming like this, I am suspicious of the following things possibly happening:
+
+1.  I am not specifying a behavior class, but rather an outcome of a method
+2.  I am specifying more than one behavior
+3.  The behavior is too complicated and hence I need to change my design (more on this later)
+4.  I am naming the behavior on too low level of abstraction, putting too many details in the name - my personal rule is that I can only come to this conclusion when all the previous points fail me.
+
+### But can't the name really get too long?
+
+Few paragraphs ago, I told you not to worry about a length of Statement names. But I have to admit that there are times when the name really gets too long. A rule I try to follow is that a name of a Statement should be more readable than its content. Thus, if it takes me less time to understand the point of a Statement by reading its body than by reading its name, then the name is too long. In such case, I try to apply the heuristics described above to find and fix the root cause of the problem. 
 
 Start by filling the GIVEN-WHEN-THEN structure with the obvious
 ----------------------------------------------------------------
