@@ -522,9 +522,85 @@ This is very hard - it requires, among others:
 
 Of course, not all parts of the composition make a good material to being structured like a language. Despite these difficulties, I think it's well worth the effort. Programming on higher level of abstraction with declarative code rather than imperative is my hope for writing maintainable and understandable systems. 
 
-## Some useful techniques
+## Some advice
 
-In his wonderful book[^fowlerdsl] about creating domain-specific languages, Martin Fowler lists a set of techniques that help achieve "fluency" of syntax. Some of them include:
+So, eager to try this approach? Let me give you a few pieces of advice first:
+
+### Evolve the language as you evolve code
+
+even though I named this chapter refactoring, it really is better when the language evolves.
+
+### Composition is not a single DSL, but a series of mini DSLs
+
+### Do not use an extensive amount of DSL tricks
+
+Remember - this will be maintained by a whole team
+
+### Factory method nesting is your best friend
+
+This is the technique we have used the most in the example above. Basically, it means wrapping a constructor invocation with a factory method that has a name more fitting a context it is used in. So, this:
+
+```csharp
+new HybridAlarm(
+  new SilentAlarm("222-333-444"),
+  new LoudAlarm()
+)
+```
+
+Becomes:
+
+```csharp
+Both(
+  Calls("222-333-444"),
+  MakesLoudNoise()
+)
+```
+
+As you probably remember, each method wraps a constructor, e.g. `Calls()` is defined as:
+
+```csharp
+public Alarm Calls(string number)
+{
+  return new SilentAlarm(number);
+}
+```
+
+This technique is great for describing any kind of tree and graph-like structures as each method provides a natural scope for its arguments:
+
+```csharp
+Method1( //beginning of scope
+  NestedMethod1(),
+  NestedMethod2()
+);       //end of scope
+```  
+
+Thus, it is a natural fit for object composition, which *is* a graph-like structure.
+
+This approach looks great on paper but it's not like everything just fits all the time. There are two issues with factory methods that need some kind of solution.  
+
+#### Where to put these methods?
+
+use context superclass? - check the name
+
+#### Shared objects
+
+use explaining variables xxxxx
+
+### Use implicit collections instead of explicit ones
+
+i.e. params in C#
+
+### Hide irrelevant parts of composition
+
+#### Infrastructure variables (e.g. logger)
+
+use fields in composition root
+
+#### Less important constructor invocations
+
+Each method does not always need to cover single constructor.
+
+### Use constants with care
 
 
 1.  Factory method & method composition
@@ -535,7 +611,7 @@ In his wonderful book[^fowlerdsl] about creating domain-specific languages, Mart
 1.  variable as terminator ??? Explaining variables - for sharing
 1.  constants - can be useful like Police, but sometimes can be less useful - introducing constant not always leads to more readable code - but do we have another choice? If not, just not name it like pentium2.cores(numberOfCoresInPentium2) 
 1.  Explaining method (i.e. returns its argument. Use with care)
-1.  use simple anfd few elements - the language will be maintained by a team
+
 
 ## A series of fluent interfaces instead of one
 
