@@ -340,6 +340,7 @@ public class DependingOnTimeOfDay
 which has a static method called `DuringDay()`:
 
 ```csharp
+//note: this method is static
 public static 
 DependingOnTimeOfDay DuringDay(Alarm alarm)
 {
@@ -528,9 +529,21 @@ So, eager to try this approach? Let me give you a few pieces of advice first:
 
 ### Evolve the language as you evolve code
 
-even though I named this chapter refactoring, it really is better when the language evolves.
+My usage of the term "refactoring" in the name of this chapter does not at all mean waiting for a lot of composition code to appear and then trying to wrap all of it. It is true that I did just that in the alarm example, but this was just an example. 
+
+In reality, the language is better off evolving along the composition it wraps. One reason for this is because there is a lot of feedback about the composability of the design gained by actually trying to put a language on top of it. As I said in the chapter on single responsibility, if objects are not comfortably composable, something is probably wrong with the division of responsibilities between them. Don't miss out on this feedback!
+
+The second reason is because even if you can safely refactor all the code because you have an executable Specification protecting you from making mistakes, it's just too many decisions to handle at once (plus it takes a lot of time and your colleagues keep adding new code, don't they?). Good language grows and matures organically rather than being created in a big bang effort. Some decisions take time and a lot of thought to be made.
 
 ### Composition is not a single DSL, but a series of mini DSLs
+
+While it may be tempting to invent a single DSL to describe whole application, in practice it is hardly possible. Rather, there will be some areas that will open itself for crafting as DSLs. The alarm example shown above would probably be just a small part of a real composition. Not all parts would lend themselves to shape this way.
+
+Despite this, we still want to apply the DSL techniques even to those parts of the composition that are not easily turned into DSLs and hunt for an occasion when we will be able to do so.
+
+As [Nat Pryce puts it](http://www.natpryce.com/articles/000783.html), it's all about:
+
+> (...) clearly expressing the dependencies between objects in the code that composes them, so that the system structure can easily be refactored, and aggressively refactoring that compositional code to remove duplication and express intent, and thereby raising the abstraction level at which we can program (...). The end goal is to need less and less code to write more and more functionality as the system grows. 
 
 ### Do not use an extensive amount of DSL tricks
 
