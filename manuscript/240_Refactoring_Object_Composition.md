@@ -547,11 +547,11 @@ As [Nat Pryce puts it](http://www.natpryce.com/articles/000783.html), it's all a
 
 ### Do not use an extensive amount of DSL tricks
 
-Remember - this will be maintained by a whole team
+In creating internal DSLs, one can use a lot of neat tricks, some of them being very "hacky". But remember that the composition code is to be maintained by your team. Unless each and every member of your team is an expert on creating internal DSLs, do not show off with too sophisticated tricks. Keep to few of the proven ones that are simple to use and work, like the ones I have used in the alarm example.
 
 ### Factory method nesting is your best friend
 
-This is the technique we have used the most in the example above. Basically, it means wrapping a constructor invocation with a factory method that has a name more fitting a context it is used in. So, this:
+One of these techniques, the one I have used the most, is factory method nesting. Basically, it means wrapping a constructor invocation with a method that has a name more fitting a context it is used in. So, this:
 
 ```csharp
 new HybridAlarm(
@@ -593,6 +593,10 @@ This approach looks great on paper but it's not like everything just fits all th
 
 #### Where to put these methods?
 
+The problem with having these factory methods is that they are called on the current object -- `this`, so we have to put them somewhere. Where would that be?
+
+We have two options: either we just put them in the same class the the composition is in, or we put them in a superclass which we inherit (this is called *object scoping*). The first approach is more straightforward, while the second is a bit cleaner as it creates a separation between factory methods and the core composition, plus it lets us reuse the composition methods in case we want to split composition code into several classes[^staticimports].
+
 use context superclass? - check the name
 
 #### Shared objects
@@ -603,7 +607,9 @@ use explaining variables xxxxx
 
 i.e. params in C#
 
-### Hide irrelevant parts of composition
+###
+
+### Hide irrelevant parts of composition - few levels of composition code is enough
 
 #### Infrastructure variables (e.g. logger)
 
@@ -634,3 +640,4 @@ Not all of composition can be a DSL - maybe look for a way to stress the configu
 
 [^fowlerdsl]: M. Fowler, Domain-Specific Languages, Addison-Wesley 2010.
 
+[^staticimports] Of course, Java lets us use static imports which are part of C# as well starting with version 6.0. C++ has always supported bare functions, so it's not a topic there.
