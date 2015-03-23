@@ -534,7 +534,7 @@ public interface Interpreter
 Is the interface small? Of course! Is it abstract? Well, kind of, yes. Tell Don't Ask? Sure! But let's see how it's used by one of its collaborators:
 
 ```csharp
-public RunScript()
+public void RunScript()
 {
   _interpreter.Execute("cd dir1");
   _interpreter.Execute("copy *.cs ../../dir2/src");
