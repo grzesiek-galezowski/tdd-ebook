@@ -301,7 +301,7 @@ radio.AddPrimaryUserNameTo(primaryUsersList);
 It does not have any of the weaknesses of the previous example. Thus, it is more stable in face of change.
  
 
-## Getters should be removed, return values should be avoided
+## Most of the getters should be removed, return values should be avoided
 
 The above stated guideline of "Tell Don't Ask" has a practical implication of getting rid of (almost) all the getters. We did say that each object should stick to its work and tell other objects to do their work, passing context to them, didn't we? If so, then why should we "get" anything from other objects?
 
@@ -519,6 +519,41 @@ public class HiddenSession : Session
 ```
 
 When we are not forced to return anything, we are more free to do as we like. Again, "Tell, don't ask".
+
+## Protocols should be small and abstract
+
+I already said that interfaces should be small and abstract, so am I not just repeating myself here? The answer is: there is a difference between the size of protocols and the size of interfaces. As an extreme example, let's take the following interface:
+
+```csharp
+public interface Interpreter
+{
+  public void Execute(string command);
+}
+```
+
+Is the interface small? Of course! Is it abstract? Well, kind of, yes. Tell Don't Ask? Sure! But let's see how it's used by one of its collaborators:
+
+```csharp
+public RunScript()
+{
+  _interpreter.Execute("cd dir1");
+  _interpreter.Execute("copy *.cs ../../dir2/src");
+  _interpreter.Execute("copy *.xml ../../dir2/config");
+  _interpreter.Execute("cd ../../dir2/");
+  _interpreter.Execute("compile *.cs");
+  _interpreter.Execute("cd dir3");
+  _interpreter.Execute("copy *.cs ../../dir4/src");
+  _interpreter.Execute("copy *.xml ../../dir4/config");
+  _interpreter.Execute("cd ../../dir4/");
+  _interpreter.Execute("compile *.cs");
+  _interpreter.Execute("cd dir5");
+  _interpreter.Execute("copy *.cs ../../dir6/src");
+  _interpreter.Execute("copy *.xml ../../dir6/config");
+  _interpreter.Execute("cd ../../dir6/");
+  _interpreter.Execute("compile *.cs");
+}
+```
+The point is: the protocol is neither abstract nor small. Thus, making implementations of interface that is used as such can be pretty painful.
 
 ## Summary
 
