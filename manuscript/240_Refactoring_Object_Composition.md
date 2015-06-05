@@ -1,4 +1,4 @@
-#Refactoring Object Composition
+# Refactoring Object Composition
 
 When describing object compositon and Composition Root in particular, I promised to get back to the topic of making the composition root cleaner and more readable.
 
@@ -531,7 +531,7 @@ So, eager to try this approach? Let me give you a few pieces of advice first:
 
 My usage of the term "refactoring" in the name of this chapter does not at all mean waiting for a lot of composition code to appear and then trying to wrap all of it. It is true that I did just that in the alarm example, but this was just an example. 
 
-In reality, the language is better off evolving along the composition it wraps. One reason for this is because there is a lot of feedback about the composability of the design gained by actually trying to put a language on top of it. As I said in the chapter on single responsibility, if objects are not comfortably composable, something is probably wrong with the division of responsibilities between them. Don't miss out on this feedback!
+In reality, the language is better off evolving along the composition it describes. One reason for this is because there is a lot of feedback about the composability of the design gained by actually trying to put a language on top of it. As I said in the chapter on single responsibility, if objects are not comfortably composable, something is probably wrong with the distribution of responsibilities between them. Don't miss out on this feedback!
 
 The second reason is because even if you can safely refactor all the code because you have an executable Specification protecting you from making mistakes, it's just too many decisions to handle at once (plus it takes a lot of time and your colleagues keep adding new code, don't they?). Good language grows and matures organically rather than being created in a big bang effort. Some decisions take time and a lot of thought to be made.
 
@@ -545,13 +545,29 @@ As [Nat Pryce puts it](http://www.natpryce.com/articles/000783.html), it's all a
 
 > (...) clearly expressing the dependencies between objects in the code that composes them, so that the system structure can easily be refactored, and aggressively refactoring that compositional code to remove duplication and express intent, and thereby raising the abstraction level at which we can program (...). The end goal is to need less and less code to write more and more functionality as the system grows. 
 
+For example, a mini-DSL for setting up handling of some application configuration updates might look like this:
+
+```csharp
+return ConfigurationUpdates(
+  Of(log),
+  Of(localSettings),
+  OfResource(Departments()),
+  OfResource(Projects()));
+```
+
+Reading this code should not be difficult. It returns an object handling configuration updates of four things: application log, local settings, and two resources (resources here are things that can be added, deleted and modified). These two resources are: departments and projects (e.g. we can add a new project or delete an existing one).
+
+Note that the "keywords" in this language make sense only in context of creating configuration update handlers. Thus, they should be restricted to this part of composition. Other parts that have nothing to do with configuration updates, should not need to know these "keywords". 
+
 ### Do not use an extensive amount of DSL tricks
 
 In creating internal DSLs, one can use a lot of neat tricks, some of them being very "hacky". But remember that the composition code is to be maintained by your team. Unless each and every member of your team is an expert on creating internal DSLs, do not show off with too sophisticated tricks. Keep to few of the proven ones that are simple to use and work, like the ones I have used in the alarm example.
 
+Martin Fowler[^fowlerdsl] describes a lot of tricks for creating such DSLs and at the same time warns against using too many of them. 
+
 ### Factory method nesting is your best friend
 
-One of these techniques, the one I have used the most, is factory method nesting. Basically, it means wrapping a constructor invocation with a method that has a name more fitting a context it is used in. So, this:
+One of the DSL techniques, the one I have used the most, is factory method nesting. Basically, it means wrapping a constructor invocation with a method that has a name more fitting a context it is used in (and which hides the obscurity of the `new` keyword). This technique is what makes this:
 
 ```csharp
 new HybridAlarm(
@@ -560,7 +576,7 @@ new HybridAlarm(
 )
 ```
 
-Becomes:
+look like this:
 
 ```csharp
 Both(
@@ -593,51 +609,137 @@ This approach looks great on paper but it's not like everything just fits all th
 
 #### Where to put these methods?
 
-The problem with having these factory methods is that they are called on the current object -- `this`, so we have to put them somewhere. Where would that be?
+In the usual case, we want to be able to invoke these methods without any qualifier before them, i.e. we want to call `MakesLoudNoise()` instead of `alarmsFactory.MakesLoudNoise()` or `this.MakesLoudNoise()` or anything. 
 
-We have two options: either we just put them in the same class the the composition is in, or we put them in a superclass which we inherit (this is called *object scoping*). The first approach is more straightforward, while the second is a bit cleaner as it creates a separation between factory methods and the core composition, plus it lets us reuse the composition methods in case we want to split composition code into several classes[^staticimports].
+If so, where do we put such methods?
 
-use context superclass? - check the name
+There are two options[^staticimports]:
+  1. Put the methods in the class that performs the composition
+  1. Put the methods in superclass
+  
+Apart from that, we can choose between:
+  1. Making the factory methods static
+  1. Making the factory methods non-static
+  
+First, let's consider the first dillema of putting in composing class vs having a superclass. This choice is mainly determined by reuse. The methods that we use in one composition only and do not want to reuse are better off as private methods in the composing class. On the other hand, the methods that we want to reuse (e.g. in other applications or services belonging to the same system), are better put in a superclass which we can inherit from. Also, a combination of the two approaches is possible, where superclass contains a more general method, while composing class wraps it with another method that adjusts the creation to the current context.
 
-#### Shared objects
+The second choice between static and non-static is one of having access to instance fields - instance methods have this access, while static methods do not. Thus, if the following is an instance method of a class called `AlarmComposition`:
 
-use explaining variables xxxxx
+```csharp
+public class AlarmComposition
+{
+  //...
+  
+  public Alarm Calls(string number)
+  {
+    return new SilentAlarm(number);
+  }
+  
+  //...
+}
+```
 
-### Use implicit collections instead of explicit ones
+and I need to pass an additional dependency to `SilentAlarm` that I do not want to show in the main composition code, I am free to change the `Calls` method to:
 
-i.e. params in C#
+```csharp
+public Alarm Calls(string number)
+{
+  return new SilentAlarm(number, 
+    this._irrelevantDependency)
+}
+```
 
-###
+and this new dependency may be passed to the composing object via constructor:
 
-### Hide irrelevant parts of composition - few levels of composition code is enough
+```csharp
+public AlarmComposition(
+  IrrelevantDependency irrelevantDependency)
+{
+  _irrelevantDependency = irrelevantDependency;
+} 
+```
 
-#### Infrastructure variables (e.g. logger)
-
-use fields in composition root
-
-#### Less important constructor invocations
-
-Each method does not always need to cover single constructor.
-
-### Use constants with care
-
-
-1.  Factory method & method composition
-- not necessarily one method per each constructor
-- hide ambient context in fields (logger, configuration) e.g. method ConfiguredLength()
-1.  Literal Collections (variadic covering method) -- creating collection using variadic parameter method or variadic constructors
-1.  Method chaining - expression builders build up context
-1.  variable as terminator ??? Explaining variables - for sharing
-1.  constants - can be useful like Police, but sometimes can be less useful - introducing constant not always leads to more readable code - but do we have another choice? If not, just not name it like pentium2.cores(numberOfCoresInPentium2) 
-1.  Explaining method (i.e. returns its argument. Use with care)
+This way, I can hide it from the main composition code. This is freedom I do not have with static methods. 
 
 
-## A series of fluent interfaces instead of one
+#### Use implicit collections instead of explicit ones
 
-strive for achieving repeatable patterns - the best gain may be drawn from there.
+Most object-oriented languages support passing variable arguments (e.g. in C# this is achieved with `params` keyword, while Java has `...` operator). This is valuable in composition, because we often want to be able to pass arbitrary number of objects. Again, coming back to this composition:
 
-Not all of composition can be a DSL - maybe look for a way to stress the configurable parts
+```csharp
+return ConfigurationUpdates(
+  Of(log),
+  Of(localSettings),
+  OfResource(Departments()),
+  OfResource(Projects()));
+```
+
+the `ConfigurationUpdates()` method is using variable argument passing:
+
+```csharp
+public ConfigurationUpdates ConfigurationUpdates(
+  params ConfigurationUpdate[] updates)
+{
+  return new MyAppConfigurationUpdates(updates);
+}
+```
+
+Note that we could, of course, pass the array of `ConfigurationUpdate` instances  as literal array, but that would greatly hinder readabiliyty and flow of this composition. See for yourself:
+
+```csharp
+return ConfigurationUpdates(
+  new [] {
+    Of(log),
+    Of(localSettings),
+    OfResource(Departments()),
+    OfResource(Projects())
+  }
+);
+```
+
+Not so pretty, huh?
+
+#### A single method can create more than one object
+
+No one said each factory method must create one and only one object. For example, take a look again at this method creating configuration updates:
+
+```csharp
+public ConfigurationUpdates ConfigurationUpdates(
+  params ConfigurationUpdate[] updates)
+{
+  return new MyAppConfigurationUpdates(updates);
+}
+```
+
+Now, let's assume we need to synchronize to the instance of `ConfigurationUpdates` class and we want to achieve this by wrapping the `MyAppConfigurationUpdates` instance with a synchronizing proxy. For this purpose, we can reuse the method we already have, just adding the additional object creation there:
+
+```csharp
+public ConfigurationUpdates ConfigurationUpdates(
+  params ConfigurationUpdate[] updates)
+{
+  //now two objects created instead of one:
+  return new SynchronizedConfigurationUpdates(
+    new MyAppConfigurationUpdates(updates)
+  );
+}
+```
+
+## Summary
+
+TODO
+ 
+%% ### Hide irrelevant parts of composition - few levels of composition code is enough
+%% 1.  Factory method & method composition
+%% - not necessarily one method per each constructor
+%% - hide ambient context in fields (logger, configuration) e.g. method ConfiguredLength()
+%% 1.  Literal Collections (variadic covering method) -- creating collection using %% variadic parameter method or variadic constructors
+%% 1.  Method chaining - expression builders build up context
+%% 1.  variable as terminator ??? Explaining variables - for sharing
+%% 1.  constants - can be useful like Police, but sometimes can be less useful - introducing constant not always leads to more readable code - but do we have another choice? If not, just not name it like pentium2.cores(numberOfCoresInPentium2) 
+%% 1.  Explaining method (i.e. returns its argument. Use with care)
+
 
 [^fowlerdsl]: M. Fowler, Domain-Specific Languages, Addison-Wesley 2010.
 
-[^staticimports] Of course, Java lets us use static imports which are part of C# as well starting with version 6.0. C++ has always supported bare functions, so it's not a topic there.
+[^staticimports] In some languages, there is a third way: Java lets us use static imports which are part of C# as well starting with version 6.0. C++ has always supported bare functions, so it's not a topic there.
+.
