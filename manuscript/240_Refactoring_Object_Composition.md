@@ -1,18 +1,24 @@
 # Refactoring Object Composition
 
-When describing object compositon and Composition Root in particular, I promised to get back to the topic of making the composition root cleaner and more readable.
+When describing object compositon and composition root in particular, I promised to get back to the topic of making the composition code cleaner and more readable.
 
 Before I do this, however, we need to get one important question answered...
 
 ## Why bother?
 
-Up to now you have to be sick and tired from reading me stressing how important composability is. Also, I said that in order to reach high composability of a class, it has to be context-independent. To reach this independence, I introduced the principle of separating object use from construction, pushing the construction part away into specialized places. I also said that a lot can be contributed to this quality by making the interfaces and protocols abstract and having as small amount of implementation details there as possible.
+By now you have to be sick and tired of how I stress the importance of composability. I do so, however, because I believe it is one of the most important aspect of well-designed classes. Also, I said that in order to reach high composability of a class, it has to be context-independent. To explain how to reach this independence, I introduced the principle of separating object use from construction, pushing the construction part away into specialized places in code. I also said that a lot can be contributed to this quality by making the interfaces and protocols abstract and having them expose as small amount of implementation details as possible.
 
 All of this has its cost, however. Striving for high context-independence takes away from us the ability to look at a single class and determine its context just by reading its code. Such class is "dumb" about the context it operates in.
 
-On the other hand, the behavior of the application as a whole is important as well. Didn't I say that the goal of composability is to be able to change the behavior of application more easily? But how can we consciously make decision about changing application behavior when we do not understand it? And no longer than a paragraph ago we came to conclusion that just reading a class after class is not enough.
+TODO example!!
 
-So, where is the overall context that defines the behavior of the application? It is in the composition code - the code that defines the real web of objects that work together as the application.
+On the other hand, as much as context-independent classes and interfaces are important, the behavior of the application as a whole is important as well. Didn't I say that the goal of composability is to be able to change the behavior of application more easily? But how can we consciously make decision about changing application behavior when we do not understand it? And no longer than a paragraph ago we came to conclusion that just reading a class after class is not enough. We have to have a view of how these classes work together as a system. So, where is the overall context that defines the behavior of the application? 
+
+The context is in the composition code - the code that connects objects together, passing a real context to each object and showing how the overall context looks like.
+
+### Example
+
+TODO ends here
 
 I assume you barely remember the alarms example I gave you in one of the first chapters of this part of the book to explain changing behavior through composition. Anyway, just to remind you, we ended with a code that looked like this:
 
@@ -50,7 +56,7 @@ new OfficeBuilding(
 ),
 ```
 
-meant that we are arming an office building with an alarm that calls 222-333-444 when triggered during the day and plays loud sirens when activated during the night. We could read this straight from the composition code, provided we knew what each object adds to the overall composite behavior. So, again, composition of parts describes the behavior of the whole. There is, however, one more thing to note about this piece of code: it describes the behavior without explicitly stating its control flow (`if`, `else`, `for`, etc.). Such description is often called *declarative* - by composing objects, we write *what* we want to achieve without writing *how* to achieve it - the control flow itself is hidden inside the objects. 
+meant that we are arming an office building with an alarm that calls `222-333-444` when triggered during the day and plays loud sirens when activated during the night. We could read this straight from the composition code, provided we knew what each object adds to the overall composite behavior. So, again, composition of parts describes the behavior of the whole. There is, however, one more thing to note about this piece of code: it describes the behavior without explicitly stating its control flow (`if`, `else`, `for`, etc.). Such description is often called *declarative* - by composing objects, we write *what* we want to achieve without writing *how* to achieve it - the control flow itself is hidden inside the objects. 
 
 Let's sum up these two conclusions with the following statement:
 
@@ -726,7 +732,9 @@ public ConfigurationUpdates ConfigurationUpdates(
 
 ## Summary
 
-TODO
+While most of the earlier chapters talked a lot about viewing object composition as a web, this one took a different view - one of a language. These two views are remarkably similar in nature and complement each other in guiding design.
+
+This area of treating composition as a language is something I am experimenting with lately and am not as fluent as with other aspects of this book. Expect this chapter to grow or to be clarified in the future. For now, if you feel you need more information, please take a look at the video by Steve Freeman and Nat Pryce called ["Building on SOLID foundations"](https://vimeo.com/105785565).
  
 %% ### Hide irrelevant parts of composition - few levels of composition code is enough
 %% 1.  Factory method & method composition
