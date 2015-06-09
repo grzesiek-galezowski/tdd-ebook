@@ -1,10 +1,16 @@
-# Refactoring Object Composition
+# Object Composition as a Language
+
+While most of the earlier chapters talked a lot about viewing object composition as a web, this one will take a different view - one of a language. These two views are remarkably similar in nature and complement each other in guiding design.
+
+It might surprise you that I am comparing object composition to a language, but, as I hope you'll see, there are many similarities. Don't worry, we'll get there step by step, the first step being taking a second look at the composition root. 
+
+## More readable composition root
 
 When describing object compositon and composition root in particular, I promised to get back to the topic of making the composition code cleaner and more readable.
 
 Before I do this, however, we need to get one important question answered...
 
-## Why bother?
+### Why bother?
 
 By now you have to be sick and tired of how I stress the importance of composability. I do so, however, because I believe it is one of the most important aspect of well-designed classes. Also, I said that in order to reach high composability of a class, it has to be context-independent. To explain how to reach this independence, I introduced the principle of separating object use from construction, pushing the construction part away into specialized places in code. I also said that a lot can be contributed to this quality by making the interfaces and protocols abstract and having them expose as small amount of implementation details as possible.
 
@@ -18,9 +24,7 @@ The context is in the composition code - the code that connects objects together
 
 ### Example
 
-TODO ends here
-
-I assume you barely remember the alarms example I gave you in one of the first chapters of this part of the book to explain changing behavior through composition. Anyway, just to remind you, we ended with a code that looked like this:
+I assume you barely remember the alarms example I gave you in one of the first chapters of this part of the book to explain changing behavior by changing object composition. Anyway, just to remind you, we ended with a code that looked like this:
 
 ```csharp
 new SecureArea(
@@ -45,7 +49,7 @@ new SecureArea(
 );
 ```
 
-where the following part of the composition code:
+So we had three buildings all armed with alarms. The nice property of this code was that we could read the alarm setups from it, e.g. the following part of the composition:
 
 ```csharp
 new OfficeBuilding(
@@ -56,19 +60,19 @@ new OfficeBuilding(
 ),
 ```
 
-meant that we are arming an office building with an alarm that calls `222-333-444` when triggered during the day and plays loud sirens when activated during the night. We could read this straight from the composition code, provided we knew what each object adds to the overall composite behavior. So, again, composition of parts describes the behavior of the whole. There is, however, one more thing to note about this piece of code: it describes the behavior without explicitly stating its control flow (`if`, `else`, `for`, etc.). Such description is often called *declarative* - by composing objects, we write *what* we want to achieve without writing *how* to achieve it - the control flow itself is hidden inside the objects. 
+meant that we were arming an office building with an alarm that calls number `222-333-444` when triggered during the day, but plays loud sirens when activated during the night. We could read this straight from the composition code, provided we knew what each object added to the overall composite behavior. So, again, composition of parts describes the behavior of the whole. There is, however, one more thing to note about this piece of code: it describes the behavior without explicitly stating its control flow (`if`, `else`, `for`, etc.). Such description is often called *declarative* - by composing objects, we write *what* we want to achieve without writing *how* to achieve it - the control flow itself is hidden inside the objects. 
 
 Let's sum up these two conclusions with the following statement:
 
 I> The composition code is a declarative description of the overall behavior of our application.
 
-Wow, this is quite a statement, isn't it? But there is another problem with the composition code: readability. Even though the composition *is* the description of the system, it does not read naturally. We want to see the description of behavior, but most of what we see is: new, new new new new... There is a lot of syntactic noise involved, especially in real systems, where composition code is long. Can't we do something about it?
+Wow, this is quite a statement, isn't it? But, as we already noticed, it is true. There is, however, one problem with treating the composition code as overall application description: readability. Even though the composition *is* the description of the system, it does not read naturally. We want to see the description of behavior, but most of what we see is: `new`, `new`, `new`, `new`, `new`... There is a lot of syntactic noise involved, especially in real systems, where composition code is much longer than this tiny example. Can't we do something about it?
 
 ## Refactoring for readability
 
-The declarativeness of composition code goes hand in hand with an approach of defining so called *fluent interfaces*. A fluent interface is an API made with readability and flow-like reading in mind. It is usually declarative and targeted towards specific domain, thus another name: *internal domain specific languages*.
+The declarativeness of composition code goes hand in hand with an approach of defining so called *fluent interfaces*. A fluent interface is an API made with readability and flow-like reading in mind. It is usually declarative and targeted towards specific domain, thus another name: *internal domain specific languages*, in short: DSL.
 
-There are some simple patterns for creating such domain-specific language. One of them that can be applied to our situation is called *nested function*[^fowlerdsl]. Let's see how it plays out in practice. We will do this step by step, so there will be a lot of repeated code, but hopefully, you will be able to closely watch the process of improving the readability of composition code.
+There are some simple patterns for creating such domain-specific languages. One of them that can be applied to our situation is called *nested function*[^fowlerdsl], which, in our context, means wrapping a call to `new` with a more descriptive method. Don't worry if that confuses you, we'll see how it plays out in practice in a second. We will do this step by step, so there will be a lot of repeated code, but hopefully, you will be able to closely watch the process of improving the readability of composition code.
 
 Ok, Let's see the code again before making any changes to it:
 
@@ -104,7 +108,7 @@ public Alarm Calls(string number)
 }
 ```
 
-This step may look silly, (after all, we are introducing a method wrapping one line), but there is a lot of sense to it. First of all, it lets us reduce the syntax noise - when we need to create a silent alarm, we do not have to say `new` anymore. Another benefit is that we can describe the role a `SilentAlarm` instance plays in our composition (I will explain later why we are doing it using passive voice).
+This step may look silly, (after all, we are introducing a method wrapping a single line of code), but there is a lot of sense to it. First of all, it lets us reduce the syntax noise - when we need to create a silent alarm, we do not have to say `new` anymore. Another benefit is that we can describe the role a `SilentAlarm` instance plays in our composition (I will explain later why we are doing it using passive voice).
 
 After replacing each invocation of `SilentAlarm` constructor with a call to this method, we get:
 
@@ -139,7 +143,7 @@ public Alarm MakesLoudNoise()
 }
 ```
 
-and the composition code after applying this methos looks like this:
+and the composition code after applying this method looks like this:
 
 ```csharp
 new SecureArea(
@@ -164,7 +168,7 @@ new SecureArea(
 );
 ```
 
-Note that we have removed some more `new`s. This is exactly what I meant by "reducing syntax noise".
+Note that we have removed some more `new`s in favor of something that's more readable. This is exactly what I meant by "reducing syntax noise".
 
 Now let's focus a bit on this part:
 
@@ -177,7 +181,7 @@ Now let's focus a bit on this part:
   )
 ```
 
-and try to apply the same trick to `HybridAlarm` creation and extract a method that handles the creation. You know, we are always told that class names should be nouns and that's why `HybridAlarm` is named like this. But it does not act well as a description of what the system does. Its real functionality is to trigger both alarms when it is triggered. Thus, should we name the method `TriggersBothAlarms()`? Naah, it's too much noise - we already know it's alarms that we are triggering, so we can leave the "alarms" part out. What about "triggers"? It says what the hybrid alarm does, which might seem good, but when we look at the composition, `Calls()` and `MakesLoudNoise()` already say what is being done. The `HybridAlarm` only says that both of those things happen simultaneously. We could leave `Trigger` if we changed the names of the other methods in the composition to look like this:
+and try to apply the same trick of introducing factory method to `HybridAlarm` creation. You know, we are always told that class names should be nouns and that's why `HybridAlarm` is named like this. But it does not act well as a description of what the system does. Its real functionality is to trigger both alarms when it is triggered itself. Thus, we need to come up with a better name. Should we name the method `TriggersBothAlarms()`? Naah, it's too much noise - we already know it's alarms that we are triggering, so we can leave the "alarms" part out. What about "triggers"? It says what the hybrid alarm does, which might seem good, but when we look at the composition, `Calls()` and `MakesLoudNoise()` already say what is being done. The `HybridAlarm` only says that both of those things happen simultaneously. We could leave `Trigger` if we changed the names of the other methods in the composition to look like this:
 
 ```csharp
   new GuardsBuilding(
@@ -188,7 +192,7 @@ and try to apply the same trick to `HybridAlarm` creation and extract a method t
   )
 ```
 
-But that would make the names `Calling()` and `LoudNoise()` out of place without being nested as `TriggersBoth()` arguments. For example, if we wanted to make another building that would only use a loud alarm, the composition would look like this:
+But that would make the names `Calling()` and `LoudNoise()` out of place everywhere it is not being nested as `TriggersBoth()` arguments. For example, if we wanted to make another building that would only use a loud alarm, the composition would look like this:
 
 ```csharp
 new OtherBuilding(LoudNoise());
@@ -200,7 +204,7 @@ or if we wanted to use silent one:
 new OtherBuilding(Calling("919"));
 ```
 
-Instead, let's try to name the method wrapping construction of `HybridAlarm` just `Both()`. This way, our composition code is now:
+Instead, let's try to name the method wrapping construction of `HybridAlarm` just `Both()` - it is simple and communicates well the role hybrid alarms play - after all, they are just a kind of combining operators, not real alarms. This way, our composition code is now:
 
 ```csharp
 new GuardsBuilding(
@@ -210,7 +214,8 @@ new GuardsBuilding(
   )
 )
 ```
-and the `Both()` method is obviously defined as:
+
+and, by the way, the `Both()` method is defined as:
 
 ```csharp
 public Alarm Both(Alarm alarm1, Alarm alarm2)
@@ -241,7 +246,6 @@ new StorageBuilding(
 ),
 ```
 
-
 Now the most difficult part - finding a way to make the following piece of code readable:
 
 ```csharp
@@ -255,9 +259,9 @@ new OfficeBuilding(
 
 The difficulty here is that `DayNightSwitchedAlarm` accepts two alarms that are used alternatively. We need to invent a term that:
 
- 1.  Says it's an alternative 
+ 1.  Says it's an alternative.
  1.  Says what kind of alternative it is (i.e. that one happens at day, and the other during the night).
- 1.  Says which alarm is attached to which condition (silent alarm is used during the day and at night, loud alarm is used)
+ 1.  Says which alarm is attached to which condition (silent alarm is used during the day and  loud alarm is used at night).
 
 If we introduce a single name, e.g. `FirstDuringDayAndSecondAtNight()`, it will feel awkward and we will loose the flow. Just look:
 
@@ -270,7 +274,7 @@ new OfficeBuilding(
 ),
 ```
 
-We need to find another approach to this situation. There are two approaches we may consider:
+It just doesn't feel well... We need to find another approach to this situation. There are two approaches we may consider:
 
 ### Approach 1: use named parameters
 
@@ -283,7 +287,7 @@ public void DoSomething(int first, int second)
 }
 ```
 
-we can call it like this:
+we can call it with the names of its arguments stated explicitly, like this:
 
 ```csharp
 DoSomething(first: 12, second: 33);
@@ -310,7 +314,24 @@ new OfficeBuilding(
 ),
 ```
 
-which is quite readable. Now, on to the second approach.
+which is quite readable. Using named parameters has this small added benefit that it lets us pass the arguments in different order they were declared, thanks to their names stated explicitly. This makes both following invocations valid:
+
+```csharp
+//this is valid:
+DependingOnTimeOfDay(
+  duringDay: Calls("222-333-444"), 
+  atNight: MakesLoudNoise()
+)
+
+//arguments in different order,
+//but this is valid as well:
+DependingOnTimeOfDay(
+  atNight: MakesLoudNoise(),
+  duringDay: Calls("222-333-444")  
+)
+```
+
+Now, on to the second approach.
 
 ### Approach 2: use method chaining
 
@@ -325,9 +346,7 @@ new OfficeBuilding(
 ),
 ```
 
-So as you see, this is very similar, the main difference being that it's more work.
-
-Ok, let's decypher this strange construction:
+So as you see, this is very similar in reading, the main difference being that it's more work. It might not be obvious from the start how this kind of parameter passing works:
 
 ```csharp
 DependingOnTimeOfDay
@@ -335,7 +354,7 @@ DependingOnTimeOfDay
   .AtNight(...)
 ```
 
-First, `DependingOnTimeOfDay` is a class:
+so, let's decipher it. First, `DependingOnTimeOfDay`. This is just a class:
 
 ```csharp
 public class DependingOnTimeOfDay
@@ -353,13 +372,14 @@ DependingOnTimeOfDay DuringDay(Alarm alarm)
   return new DependingOnTimeOfDay(alarm);
 }
 
+//The constructor is private:
 private DependingOnTimeOfDay(Alarm dayAlarm)
 {
   _dayAlarm = dayAlarm;
 }
 ```
 
-Now, this method seems strange, doesn't it? It is a static method that returns an instance of its enclosing class. Also, the private constructor stores the passed alarm inside for later... why?
+Now, this method seems strange, doesn't it? It is a static method that returns an instance of its enclosing class (not an actual alarm!). Also, the private constructor stores the passed alarm inside for later... why?
 
 The mystery resolves itself when we look at another method defined in the `DependingOnTimeOfDay` class:
 
@@ -374,17 +394,16 @@ public Alarm AtNight(Alarm nightAlarm)
 This method is not static and it returns the alarm that we were trying to create. To do so, it uses the first alarm passed through the constructor and the second one passed as its parameter. So if we were to take this construct:
 
 ```csharp
-DependingOnTimeOfDay
-  .DuringDay(dayAlarm)
-  .AtNight(nightAlarm)
+DependingOnTimeOfDay //class
+  .DuringDay(dayAlarm) //static method
+  .AtNight(nightAlarm) //non-static method
 ```
 
 and assign a result of each operation to a separate variable, it would look like this:
 
 ```csharp
-DependingOnTimeOfDay firstPart 
-  = DependingOnTimeOfDay.DuringDay(dayAlarm);
-Alarm final alarm = firstPart.AtNight(nightAlarm);
+DependingOnTimeOfDay firstPart = DependingOnTimeOfDay.DuringDay(dayAlarm);
+Alarm alarm = firstPart.AtNight(nightAlarm);
 ```
 
 Now, we can just chaing these calls and get the result we wanted to:
@@ -397,6 +416,8 @@ new OfficeBuilding(
   )
 ),
 ```
+
+The advantage of this solution is that it does not require your programming language of choice to support named parameters. The downside is that the order of the calls is strictly defined. The `DuringDay` returns an object on which `AtNight` is invoked, so it must come first.
 
 ### Discussion continued
 
@@ -427,7 +448,7 @@ new SecureArea(
 );
 ```
 
-There are few more finishing touches we need to make. First of all, let's try and extract these dial numbers like `222-333-444` into constants. For example, this code:
+There are few more finishing touches we need to make. First of all, let's try and extract these dial numbers like `222-333-444` into constants. When we do so, then, for example, this code:
 
 ```csharp
 Both(
@@ -470,11 +491,12 @@ SecureAreaContaining(
   )
 );
 ```
-And here it is: the real, declarative description of our application! The composition reads better than when we started, doesn't it?
+
+And here it is - the real, declarative description of our application! The composition reads better than when we started, doesn't it?
 
 ## Composition as a language
 
-Written this way, object composition has another important property - it is extensible and can be extended using the same terms that are already used. For example, using the methods we invented to make the composition more readable, we may write something like this:
+Written this way, object composition has another important property - it is extensible and can be extended using the same terms that are already used (of course we can add new ones as well). For example, using the methods we invented to make the composition more readable, we may write something like this:
 
 ```csharp
 Both(
@@ -495,39 +517,41 @@ Both(
 )
 ```
 
-Note that we have invented something that has these properties:
+to obtain different behavior. Note that we have invented something that has these properties:
 
- 1. Defines some kind of *vocabulary* - in our case, the following "words" are form part of the vocabulary: `Both(), Calls(), MakesLoudNoise(), DependingOnTimeOfDay(), atNight, duringDay, SecureAreaContaining(), GuardsBuildingWithAlarmThat(), OfficeBuildingWithAlarmThat()`. 
- 1. Allows combining the words from the vocabulary in certain combinations as which also have a meaning. For example: `Both(Calls(Police), Calls(Guards))` has the meaning of "calls both police and guards when triggered" - thus, this thing we invented allows creating *sentences*.
- 1. Although we are quite liberal in defining behaviors for alarms, there are some rule as what can be composed with what (for example, we cannot compose guards building with an office, but each of them can only be composed with alarms). Thus, we can say we have created something that looks like a *grammar*.
- 1. The vocabulary is *constrained to the domain* of alarms. On the other hand, it *is more powerful and expressive* as a description of this domain than a combination of `if` statements, `for` loops, variable assignments and other elements of a general-purpose language. 
- 1. The sentences written define a behavior of the application - so by writing sentences like this, we still write software!
+ 1. It defines some kind of *vocabulary* - in our case, the following "words" are form part of the vocabulary: `Both`, `Calls`, `MakesLoudNoise`, `DependingOnTimeOfDay`, `atNight`, `duringDay`, `SecureAreaContaining`, `GuardsBuildingWithAlarmThat`, `OfficeBuildingWithAlarmThat`. 
+ 1. It allows combining the words from the vocabulary. These combinations have meaning, which is based solely on the meaning of used words and the way they are combined. For example: `Both(Calls(Police), Calls(Guards))` has the meaning of "calls both police and guards when triggered" - thus, what this thing we invented really does is allowing us to combine words into *sentences*.
+ 1. Although we are quite liberal in defining behaviors for alarms, there are some rules as what can be composed with what (for example, we cannot compose guards building with an office, but each of them can only be composed with alarms). Thus, we can say that the *sentences* we write have to obey certain rules that look a lot like *a grammar*.
+ 1. The vocabulary is *constrained to the domain* of alarms. On the other hand, it *is more powerful and expressive* as a description of this domain than a combination of `if` statements, `for` loops, variable assignments and other elements of a general-purpose language. It is tuned towards describing rules of a domain on a *higher level of abstraction*. 
+ 1. The sentences written define a behavior of the application - so by writing sentences like this, we still write software! Thus, what we do by combining *words* into *sentences* constrained by a *grammar* is still *programming*!
  
-All of these points suggest that we have created a *Domain-Specific Language*[^fowlerdsl], which, by the way, is a *higher level language*. 
+All of these points suggest that we have created a *Domain-Specific Language*[^fowlerdsl], which, by the way, is a *higher-level language*, meaning we describe our software on a higher level of abstraction. 
 
-## The significance of higher level language
+## The significance of higher-level language
 
-So.. why do we need a higher level language to describe the behavior of our application? After all, expressions, statements, loops and conditions (and objects and polymorphism) are our daily bread and butter. Why invent something that moves us away from this kind of programming into something "domain-specific"?
+So.. why do we need a higher-level language to describe the behavior of our application? After all, expressions, statements, loops and conditions (and objects and polymorphism) are our daily bread and butter. Why invent something that moves us away from this kind of programming into something "domain-specific"?
 
-My main answer is: to deal with more effectively with complexity. 
+My main answer is: to deal with with complexity more effectively. 
 
-Complexity might be approximated by a number of decisions our application needs to make. As much as we try, we cannot reduce this number. What can we do when this number grows too large? We have the following choices:
 
- 1. Remove some decisions - might be unacceptable from the business perspective.
- 1. Optimize redundant decisions - is about making sure that each decision is made once in the code base - I already showed you some examples how polymorphism can help with that.    
- 1. Use 3rd party component or a library - While this is quite easy for "infrastructure" code and utilities, it is very, very hard (impossible?) to find a library that will describe our "domain rules" for us. So if these rules are where the real complexity lies (and often they are), we are still left alone with our problem.
- 1. Hide the decisions by programming on higher level of abstraction - this may span a whole range of techniques (one of them being e.g. garbage collection that takes away the decision about when to free memory from us). 
+What't complexity? For our purpose we can approximate it as a number of different decisions our application needs to make. As we add new features and fix errors or implement missed requirements, the complexity of our software grows. What can we do when it grows so larger than we are able to manage? We have the following choices:
 
-So, as you see, only the last of the above points really helps in reducing complexity. This is where the idea of domain-specific languages falls in. If we carefully refactor our object composition into a set of domain-specific languages (one is often too little), one day we may find that we are adding new features by writing new sentences in these languages in a declarative way rather than adding new imperative code. Thus, if we have a good language and a firm understanding of its vocabulary and grammar, we can program on higher level of abstraction which is more expressive and less complex.
+ 1. Remove some decisions - i.e. remove features from our application. This is very cool when we actually *can* do this, but there are times when this might be unacceptable from the business perspective.
+ 1. Optimize away redundant decisions - this is about making sure that each decision is made once in the code base - I already showed you some examples how polymorphism can help with that.    
+ 1. Use 3rd party component or a library to handle some of the decisions for us - while this is quite easy for "infrastructure" code and utilities, it is very, very hard (impossible?) to find a library that will describe our "domain rules" for us. So if these rules are where the real complexity lies (and often they are), we are still left alone with our problem.
+ 1. Hide the decisions by programming on higher level of abstraction -- this is what we did in this chapter so far. The advantage is that it allows us to reduce complexity of our domain, by creating a bigger building blocks from which a behavior description can be created.
 
-This is very hard - it requires, among others:
+So, as you see, only the last of the above points really helps in reducing domain complexity. This is where the idea of domain-specific languages falls in. If we carefully craft our object composition into a set of domain-specific languages (one is often too little in all but simplest cases), one day we may find that we are adding new features by writing new sentences in these languages in a declarative way rather than adding new imperative code. Thus, if we have a good language and a firm understanding of its vocabulary and grammar, we can program on a higher level of abstraction which is more expressive and less complex.
+
+This is very hard to achieve -- it requires, among others:
 
  1. A huge discipline across a develoment team.
- 1. A sense of direction of how to structure the composition and where to lead the languages as they evolve.
+ 1. A sense of direction of how to structure the composition and where to lead the language designs as they evolve.
  1. Merciless refactoring.
- 1. Some minimal knowledge of language design and experience in doing so. 
+ 1. Some minimal knowledge of language design and experience in doing so.
+ 1. Knowledge of some techniques (like the ones we used in our example) that make constructs written in general-purpose language look like another language. 
 
-Of course, not all parts of the composition make a good material to being structured like a language. Despite these difficulties, I think it's well worth the effort. Programming on higher level of abstraction with declarative code rather than imperative is my hope for writing maintainable and understandable systems. 
+Of course, not all parts of the composition make a good material to being structured like a language. Despite these difficulties, I think it's well worth the effort. Programming on higher level of abstraction with declarative code rather than imperative is where I place my hope for writing maintainable and understandable systems. 
 
 ## Some advice
 
@@ -535,23 +559,21 @@ So, eager to try this approach? Let me give you a few pieces of advice first:
 
 ### Evolve the language as you evolve code
 
-My usage of the term "refactoring" in the name of this chapter does not at all mean waiting for a lot of composition code to appear and then trying to wrap all of it. It is true that I did just that in the alarm example, but this was just an example. 
+At the beginning of this chapter, we achieved our higher-level language by refactoring already existing object composition. This does not at all mean that in real projects we need to wait for a lot of composition code to appear and then try to wrap all of it. It is true that I did just that in the alarm example, but this was just an example and its purpose was mainly didactical. 
 
-In reality, the language is better off evolving along the composition it describes. One reason for this is because there is a lot of feedback about the composability of the design gained by actually trying to put a language on top of it. As I said in the chapter on single responsibility, if objects are not comfortably composable, something is probably wrong with the distribution of responsibilities between them. Don't miss out on this feedback!
+In reality, the language is better off evolving along the composition it describes. One reason for this is because there is a lot of feedback about the composability of the design gained by actually trying to put a language on top of it. As I said in the chapter on single responsibility, if objects are not comfortably composable, something is probably wrong with the distribution of responsibilities between them (for comparison of wrongly placed responsibilities, imagine a general-purpose language that would not have a separate `if` and `for` constructs but only a combination of them called `forif` :-)). Don't miss out on this feedback!
 
 The second reason is because even if you can safely refactor all the code because you have an executable Specification protecting you from making mistakes, it's just too many decisions to handle at once (plus it takes a lot of time and your colleagues keep adding new code, don't they?). Good language grows and matures organically rather than being created in a big bang effort. Some decisions take time and a lot of thought to be made.
 
 ### Composition is not a single DSL, but a series of mini DSLs
 
-While it may be tempting to invent a single DSL to describe whole application, in practice it is hardly possible. Rather, there will be some areas that will open itself for crafting as DSLs. The alarm example shown above would probably be just a small part of a real composition. Not all parts would lend themselves to shape this way.
+I already briefly noted this. While it may be tempting to invent a single DSL to describe whole application, in practice it is hardly possible, because our applications have different subdomains that often use different sets of terms. Rather, it pays off to hunt for such subdomains and create smaller languages for them. The alarm example shown above would probably be just a small part of a real composition. Not all parts would lend themselves to shape this way, at least not instantly. What starts off as a single class might become a subdomain with its own vocabulary at some point. We need to pay attention. Hence, we still want to apply some of the DSL techniques even to those parts of the composition that are not easily turned into DSLs and hunt for an occasion when we are be able to do so.
 
-Despite this, we still want to apply the DSL techniques even to those parts of the composition that are not easily turned into DSLs and hunt for an occasion when we will be able to do so.
-
-As [Nat Pryce puts it](http://www.natpryce.com/articles/000783.html), it's all about:
+As [Nat Pryce beautifully puts it](http://www.natpryce.com/articles/000783.html), it's all about:
 
 > (...) clearly expressing the dependencies between objects in the code that composes them, so that the system structure can easily be refactored, and aggressively refactoring that compositional code to remove duplication and express intent, and thereby raising the abstraction level at which we can program (...). The end goal is to need less and less code to write more and more functionality as the system grows. 
 
-For example, a mini-DSL for setting up handling of some application configuration updates might look like this:
+For example, a mini-DSL for setting up handling of an application configuration updates might look like this:
 
 ```csharp
 return ConfigurationUpdates(
@@ -561,9 +583,9 @@ return ConfigurationUpdates(
   OfResource(Projects()));
 ```
 
-Reading this code should not be difficult. It returns an object handling configuration updates of four things: application log, local settings, and two resources (resources here are things that can be added, deleted and modified). These two resources are: departments and projects (e.g. we can add a new project or delete an existing one).
+Reading this code should not be difficult, especially when we know what each term in the composition means. This code returns an object handling configuration updates of four things: application log, local settings, and two resources (in this subdomain, resources mean things that can be added, deleted and modified). These two resources are: departments and projects (e.g. we can add a new project or delete an existing one).
 
-Note that the "keywords" in this language make sense only in context of creating configuration update handlers. Thus, they should be restricted to this part of composition. Other parts that have nothing to do with configuration updates, should not need to know these "keywords". 
+Note that the constructs in this language make sense only in context of creating configuration update handlers. Thus, they should be restricted to this part of composition. Other parts that have nothing to do with configuration updates, should not need to know these constructs. 
 
 ### Do not use an extensive amount of DSL tricks
 
