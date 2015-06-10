@@ -569,7 +569,7 @@ The second reason is because even if you can safely refactor all the code becaus
 
 I already briefly noted this. While it may be tempting to invent a single DSL to describe whole application, in practice it is hardly possible, because our applications have different subdomains that often use different sets of terms. Rather, it pays off to hunt for such subdomains and create smaller languages for them. The alarm example shown above would probably be just a small part of a real composition. Not all parts would lend themselves to shape this way, at least not instantly. What starts off as a single class might become a subdomain with its own vocabulary at some point. We need to pay attention. Hence, we still want to apply some of the DSL techniques even to those parts of the composition that are not easily turned into DSLs and hunt for an occasion when we are be able to do so.
 
-As [Nat Pryce beautifully puts it](http://www.natpryce.com/articles/000783.html), it's all about:
+As [Nat Pryce puts it](http://www.natpryce.com/articles/000783.html), it's all about:
 
 > (...) clearly expressing the dependencies between objects in the code that composes them, so that the system structure can easily be refactored, and aggressively refactoring that compositional code to remove duplication and express intent, and thereby raising the abstraction level at which we can program (...). The end goal is to need less and less code to write more and more functionality as the system grows. 
 
@@ -583,19 +583,19 @@ return ConfigurationUpdates(
   OfResource(Projects()));
 ```
 
-Reading this code should not be difficult, especially when we know what each term in the composition means. This code returns an object handling configuration updates of four things: application log, local settings, and two resources (in this subdomain, resources mean things that can be added, deleted and modified). These two resources are: departments and projects (e.g. we can add a new project or delete an existing one).
+Reading this code should not be difficult, especially when we know what each term in the sentence means. This code returns an object handling configuration updates of four things: application log, local settings, and two resources (in this subdomain, resources mean things that can be added, deleted and modified). These two resources are: departments and projects (e.g. we can add a new project or delete an existing one).
 
-Note that the constructs in this language make sense only in context of creating configuration update handlers. Thus, they should be restricted to this part of composition. Other parts that have nothing to do with configuration updates, should not need to know these constructs. 
+Note that the constructs of this language make sense only in a context of creating configuration update handlers. Thus, they should be restricted to this part of composition. Other parts that have nothing to do with configuration updates, should not need to know these constructs. 
 
 ### Do not use an extensive amount of DSL tricks
 
-In creating internal DSLs, one can use a lot of neat tricks, some of them being very "hacky". But remember that the composition code is to be maintained by your team. Unless each and every member of your team is an expert on creating internal DSLs, do not show off with too sophisticated tricks. Keep to few of the proven ones that are simple to use and work, like the ones I have used in the alarm example.
+In creating internal DSLs, one can use a lot of neat tricks, some of them being very "hacky" and twisting the general-purpose language in many eays to achieve "flluent" syntax. But remember that the composition code is to be maintained by your team. Unless each and every member of your team is an expert on creating such DSLs, do not show off with too many, too sophisticated tricks. Stick with a few of the proven ones that are simple to use and work, like the ones I have used in the alarm example.
 
-Martin Fowler[^fowlerdsl] describes a lot of tricks for creating such DSLs and at the same time warns against using too many of them. 
+Martin Fowler[^fowlerdsl] describes a lot of tricks for creating such DSLs and at the same time warns against using too many of them in the same language. 
 
 ### Factory method nesting is your best friend
 
-One of the DSL techniques, the one I have used the most, is factory method nesting. Basically, it means wrapping a constructor invocation with a method that has a name more fitting a context it is used in (and which hides the obscurity of the `new` keyword). This technique is what makes this:
+One of the DSL techniques, the one I have used the most, is factory method nesting. Basically, it means wrapping a constructor (or constructors - no one said each factory method must wrap exactly one `new`) invocation with a method that has a name more fitting for a context it is used in (and which hides the obscurity of the `new` keyword). This technique is what makes this:
 
 ```csharp
 new HybridAlarm(
@@ -613,7 +613,7 @@ Both(
 )
 ```
 
-As you probably remember, each method wraps a constructor, e.g. `Calls()` is defined as:
+As you probably remember, in this case each method wraps a constructor, e.g. `Calls()` is defined as:
 
 ```csharp
 public Alarm Calls(string number)
@@ -633,7 +633,7 @@ Method1( //beginning of scope
 
 Thus, it is a natural fit for object composition, which *is* a graph-like structure.
 
-This approach looks great on paper but it's not like everything just fits all the time. There are two issues with factory methods that need some kind of solution.  
+This approach looks great on paper but it's not like everything just fits in all the time. There are two issues with factory methods that we need to address.  
 
 #### Where to put these methods?
 
@@ -642,14 +642,14 @@ In the usual case, we want to be able to invoke these methods without any qualif
 If so, where do we put such methods?
 
 There are two options[^staticimports]:
- 1.  Put the methods in the class that performs the composition
- 1.  Put the methods in superclass
+ 1.  Put the methods in the class that performs the composition.
+ 1.  Put the methods in superclass.
   
 Apart from that, we can choose between:
- 1.  Making the factory methods static
- 1.  Making the factory methods non-static
-  
-First, let's consider the first dillema of putting in composing class vs having a superclass. This choice is mainly determined by reuse. The methods that we use in one composition only and do not want to reuse are better off as private methods in the composing class. On the other hand, the methods that we want to reuse (e.g. in other applications or services belonging to the same system), are better put in a superclass which we can inherit from. Also, a combination of the two approaches is possible, where superclass contains a more general method, while composing class wraps it with another method that adjusts the creation to the current context.
+ 1.  Making the factory methods static.
+ 1.  Making the factory methods non-static.
+   
+First, let's consider the dilemma of putting in composing class vs having a superclass to inherit from. This choice is mainly determined by reuse needs. The methods that we use in one composition only and do not want to reuse are mostly better off as private methods in the composing class. On the other hand, the methods that we want to reuse (e.g. in other applications or services belonging to the same system), are better put in a superclass which we can inherit from. Also, a combination of the two approaches is possible, where superclass contains a more general method, while composing class wraps it with another method that adjusts the creation to the current context. By the way, remember that in most languages, we can inherit from a single class only - thus, putting methods for each language in a separate superclass forces us to distribute compositiion code across several classes, each inheriting its own set of methods and returning an object or several objects. This is not bad at all - quite the contrary, this is something we'd like to have, because it enables us to evolve a language and sentences written in this language in an isolated context.
 
 The second choice between static and non-static is one of having access to instance fields - instance methods have this access, while static methods do not. Thus, if the following is an instance method of a class called `AlarmComposition`:
 
@@ -672,18 +672,19 @@ and I need to pass an additional dependency to `SilentAlarm` that I do not want 
 ```csharp
 public Alarm Calls(string number)
 {
-  return new SilentAlarm(number, 
-    this._irrelevantDependency)
+  return new SilentAlarm(
+    number, 
+    _hiddenDependency) //field
 }
 ```
 
-and this new dependency may be passed to the composing object via constructor:
+and this new dependency may be passed to the `AlarmComposition` via constructor:
 
 ```csharp
 public AlarmComposition(
-  IrrelevantDependency irrelevantDependency)
+  HiddenDependency hiddenDependency)
 {
-  _irrelevantDependency = irrelevantDependency;
+  _hiddenDependency = hiddenDependency;
 } 
 ```
 
@@ -692,7 +693,7 @@ This way, I can hide it from the main composition code. This is freedom I do not
 
 #### Use implicit collections instead of explicit ones
 
-Most object-oriented languages support passing variable arguments (e.g. in C# this is achieved with `params` keyword, while Java has `...` operator). This is valuable in composition, because we often want to be able to pass arbitrary number of objects. Again, coming back to this composition:
+Most object-oriented languages support passing variable argument lists (e.g. in C# this is achieved with `params` keyword, while Java has `...` operator). This is valuable in composition, because we often want to be able to pass arbitrary number of objects to some places. Again, coming back to this composition:
 
 ```csharp
 return ConfigurationUpdates(
@@ -702,7 +703,7 @@ return ConfigurationUpdates(
   OfResource(Projects()));
 ```
 
-the `ConfigurationUpdates()` method is using variable argument passing:
+the `ConfigurationUpdates()` method is using variable argument list:
 
 ```csharp
 public ConfigurationUpdates ConfigurationUpdates(
@@ -712,11 +713,11 @@ public ConfigurationUpdates ConfigurationUpdates(
 }
 ```
 
-Note that we could, of course, pass the array of `ConfigurationUpdate` instances  as literal array, but that would greatly hinder readabiliyty and flow of this composition. See for yourself:
+Note that we could, of course, pass the array of `ConfigurationUpdate` instances  using explicit definition: `new ConfigurationUpdate[] {...}`, but that would greatly hinder readabiliyty and flow of this composition. See for yourself:
 
 ```csharp
 return ConfigurationUpdates(
-  new [] {
+  new [] { //explicit definition brings noise
     Of(log),
     Of(localSettings),
     OfResource(Departments()),
@@ -725,7 +726,7 @@ return ConfigurationUpdates(
 );
 ```
 
-Not so pretty, huh?
+Not so pretty, huh? This is why we like the ability to pass variable argument lists as it enhances readability.
 
 #### A single method can create more than one object
 
@@ -739,24 +740,26 @@ public ConfigurationUpdates ConfigurationUpdates(
 }
 ```
 
-Now, let's assume we need to synchronize to the instance of `ConfigurationUpdates` class and we want to achieve this by wrapping the `MyAppConfigurationUpdates` instance with a synchronizing proxy. For this purpose, we can reuse the method we already have, just adding the additional object creation there:
+Now, let's assume we need to trace each invocation on the instance of `ConfigurationUpdates` class and we want to achieve this by wrapping the `MyAppConfigurationUpdates` instance with a tracing proxy (a wrapping object that passes the calls along to a real object, but writes some trace messages before and after it does). For this purpose, we can reuse the method we already have, just adding the additional object creation there:
 
 ```csharp
 public ConfigurationUpdates ConfigurationUpdates(
   params ConfigurationUpdate[] updates)
 {
   //now two objects created instead of one:
-  return new SynchronizedConfigurationUpdates(
+  return new TracedConfigurationUpdates(
     new MyAppConfigurationUpdates(updates)
   );
 }
 ```
 
+Note that the `TracedConfigurationUpdates` is not important from the point of view of composition - it is pure infrastructure code, not a new domain rule. Because of that, it may be a good idea to hide it inside the factory method.
+
 ## Summary
 
-While most of the earlier chapters talked a lot about viewing object composition as a web, this one took a different view - one of a language. These two views are remarkably similar in nature and complement each other in guiding design.
+In this chapter, I tried to convey to you a vision of object composition as a language, with its own vocabulary, its own grammar, keywords and arguments. We can compose the words from the vocabulary in different sentences to create new behaviors on higher level of abstraction.
 
-This area of treating composition as a language is something I am experimenting with lately and am not as fluent as with other aspects of this book. Expect this chapter to grow or to be clarified in the future. For now, if you feel you need more information, please take a look at the video by Steve Freeman and Nat Pryce called ["Building on SOLID foundations"](https://vimeo.com/105785565).
+This area of object oriented design is something I am still experimenting with, trying to catch up with what authorities on this topic share. Thus, I am not as fluent in it as in other topics covered in this book. Expect this chapter to grow (maybe into several chapters) or to be clarified in the future. For now, if you feel you need more information, please take a look at the video by Steve Freeman and Nat Pryce called ["Building on SOLID foundations"](https://vimeo.com/105785565).
  
 %% ### Hide irrelevant parts of composition - few levels of composition code is enough
 %% 1.  Factory method & method composition
