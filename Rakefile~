@@ -5,14 +5,19 @@ task :default => :push do
 end
 
 desc "Push all deliverables into source control"
-task :push, [:commit_message] => [:sync_cloud_drive, :push_ebook, :push_html, :sync_cloud_drive] do | t, args |
+task :push, [:commit_message] => [:pre_sync_cloud_drive, :push_ebook, :push_html, :post_sync_cloud_drive] do | t, args |
 end
 
 desc "Synchronizes content with cloud drive"
-task :sync_cloud_drive do 
-  root = $ROOT.to_s.shellescape
-  puts sh("cd #{root}/../../../ && grive -s #{root}")
+task :pre_sync_cloud_drive do 
+  sync_google_drive_subdir
 end
+
+desc "Synchronizes content with cloud drive"
+task :post_sync_cloud_drive do 
+  sync_google_drive_subdir
+end
+
 
 desc "Push ebook into source control"
 task :push_ebook, [:commit_message] => ['formats:all', 'sample:generate'] do | t, args |

@@ -180,8 +180,3 @@ class Git
 
 end
 
-def sync_google_drive_subdir
-  root = $ROOT.to_s.shellescape
-  puts sh("cd #{root}/../../../ && grive -s #{root}")
-end
-
