@@ -1,6 +1,6 @@
 # Object Composition as a Language
 
-While most of the earlier chapters talked a lot about viewing object composition as a web, this one will take a different view - one of a language. These two views are remarkably similar in nature and complement each other in guiding design.
+While most of the earlier chapters talked a lot about viewing object composition as a web, this one will take a different view -- one of a language. These two views are remarkably similar in nature and complement each other in guiding design.
 
 It might surprise you that I am comparing object composition to a language, but, as I hope you'll see, there are many similarities. Don't worry, we'll get there step by step, the first step being taking a second look at the composition root. 
 
@@ -37,7 +37,7 @@ Here, the session knows that whatever the destination is, `Destination` it accep
 
 On the other hand, as much as context-independent classes and interfaces are important, the behavior of the application as a whole is important as well. Didn't I say that the goal of composability is to be able to change the behavior of application more easily? But how can we consciously make decision about changing application behavior when we do not understand it? And no longer than a paragraph ago we came to conclusion that just reading a class after class is not enough. We have to have a view of how these classes work together as a system. So, where is the overall context that defines the behavior of the application? 
 
-The context is in the composition code - the code that connects objects together, passing a real collaborators to each object and showing the connected parts make a whole.
+The context is in the composition code -- the code that connects objects together, passing a real collaborators to each object and showing the connected parts make a whole.
 
 ### Example
 
@@ -77,7 +77,7 @@ new OfficeBuilding(
 ),
 ```
 
-meant that we were arming an office building with an alarm that calls number `222-333-444` when triggered during the day, but plays loud sirens when activated during the night. We could read this straight from the composition code, provided we knew what each object added to the overall composite behavior. So, again, composition of parts describes the behavior of the whole. There is, however, one more thing to note about this piece of code: it describes the behavior without explicitly stating its control flow (`if`, `else`, `for`, etc.). Such description is often called *declarative* - by composing objects, we write *what* we want to achieve without writing *how* to achieve it - the control flow itself is hidden inside the objects. 
+meant that we were arming an office building with an alarm that calls number `222-333-444` when triggered during the day, but plays loud sirens when activated during the night. We could read this straight from the composition code, provided we knew what each object added to the overall composite behavior. So, again, composition of parts describes the behavior of the whole. There is, however, one more thing to note about this piece of code: it describes the behavior without explicitly stating its control flow (`if`, `else`, `for`, etc.). Such description is often called *declarative* -- by composing objects, we write *what* we want to achieve without writing *how* to achieve it -- the control flow itself is hidden inside the objects. 
 
 Let's sum up these two conclusions with the following statement:
 
@@ -125,7 +125,7 @@ public Alarm Calls(string number)
 }
 ```
 
-This step may look silly, (after all, we are introducing a method wrapping a single line of code), but there is a lot of sense to it. First of all, it lets us reduce the syntax noise - when we need to create a silent alarm, we do not have to say `new` anymore. Another benefit is that we can describe the role a `SilentAlarm` instance plays in our composition (I will explain later why we are doing it using passive voice).
+This step may look silly, (after all, we are introducing a method wrapping a single line of code), but there is a lot of sense to it. First of all, it lets us reduce the syntax noise -- when we need to create a silent alarm, we do not have to say `new` anymore. Another benefit is that we can describe the role a `SilentAlarm` instance plays in our composition (I will explain later why we are doing it using passive voice).
 
 After replacing each invocation of `SilentAlarm` constructor with a call to this method, we get:
 
@@ -198,7 +198,7 @@ Now let's focus a bit on this part:
   )
 ```
 
-and try to apply the same trick of introducing factory method to `HybridAlarm` creation. You know, we are always told that class names should be nouns and that's why `HybridAlarm` is named like this. But it does not act well as a description of what the system does. Its real functionality is to trigger both alarms when it is triggered itself. Thus, we need to come up with a better name. Should we name the method `TriggersBothAlarms()`? Naah, it's too much noise - we already know it's alarms that we are triggering, so we can leave the "alarms" part out. What about "triggers"? It says what the hybrid alarm does, which might seem good, but when we look at the composition, `Calls()` and `MakesLoudNoise()` already say what is being done. The `HybridAlarm` only says that both of those things happen simultaneously. We could leave `Trigger` if we changed the names of the other methods in the composition to look like this:
+and try to apply the same trick of introducing factory method to `HybridAlarm` creation. You know, we are always told that class names should be nouns and that's why `HybridAlarm` is named like this. But it does not act well as a description of what the system does. Its real functionality is to trigger both alarms when it is triggered itself. Thus, we need to come up with a better name. Should we name the method `TriggersBothAlarms()`? Naah, it's too much noise -- we already know it's alarms that we are triggering, so we can leave the "alarms" part out. What about "triggers"? It says what the hybrid alarm does, which might seem good, but when we look at the composition, `Calls()` and `MakesLoudNoise()` already say what is being done. The `HybridAlarm` only says that both of those things happen simultaneously. We could leave `Trigger` if we changed the names of the other methods in the composition to look like this:
 
 ```csharp
   new GuardsBuilding(
@@ -221,7 +221,7 @@ or if we wanted to use silent one:
 new OtherBuilding(Calling("919"));
 ```
 
-Instead, let's try to name the method wrapping construction of `HybridAlarm` just `Both()` - it is simple and communicates well the role hybrid alarms play - after all, they are just a kind of combining operators, not real alarms. This way, our composition code is now:
+Instead, let's try to name the method wrapping construction of `HybridAlarm` just `Both()` -- it is simple and communicates well the role hybrid alarms play -- after all, they are just a kind of combining operators, not real alarms. This way, our composition code is now:
 
 ```csharp
 new GuardsBuilding(
@@ -263,7 +263,7 @@ new StorageBuilding(
 ),
 ```
 
-Now the most difficult part - finding a way to make the following piece of code readable:
+Now the most difficult part -- finding a way to make the following piece of code readable:
 
 ```csharp
 new OfficeBuilding(
@@ -509,11 +509,11 @@ SecureAreaContaining(
 );
 ```
 
-And here it is - the real, declarative description of our application! The composition reads better than when we started, doesn't it?
+And here it is -- the real, declarative description of our application! The composition reads better than when we started, doesn't it?
 
 ## Composition as a language
 
-Written this way, object composition has another important property - it is extensible and can be extended using the same terms that are already used (of course we can add new ones as well). For example, using the methods we invented to make the composition more readable, we may write something like this:
+Written this way, object composition has another important property -- it is extensible and can be extended using the same terms that are already used (of course we can add new ones as well). For example, using the methods we invented to make the composition more readable, we may write something like this:
 
 ```csharp
 Both(
@@ -536,11 +536,11 @@ Both(
 
 to obtain different behavior. Note that we have invented something that has these properties:
 
- 1. It defines some kind of *vocabulary* - in our case, the following "words" are form part of the vocabulary: `Both`, `Calls`, `MakesLoudNoise`, `DependingOnTimeOfDay`, `atNight`, `duringDay`, `SecureAreaContaining`, `GuardsBuildingWithAlarmThat`, `OfficeBuildingWithAlarmThat`. 
- 1. It allows combining the words from the vocabulary. These combinations have meaning, which is based solely on the meaning of used words and the way they are combined. For example: `Both(Calls(Police), Calls(Guards))` has the meaning of "calls both police and guards when triggered" - thus, what this thing we invented really does is allowing us to combine words into *sentences*.
+ 1. It defines some kind of *vocabulary* -- in our case, the following "words" are form part of the vocabulary: `Both`, `Calls`, `MakesLoudNoise`, `DependingOnTimeOfDay`, `atNight`, `duringDay`, `SecureAreaContaining`, `GuardsBuildingWithAlarmThat`, `OfficeBuildingWithAlarmThat`. 
+ 1. It allows combining the words from the vocabulary. These combinations have meaning, which is based solely on the meaning of used words and the way they are combined. For example: `Both(Calls(Police), Calls(Guards))` has the meaning of "calls both police and guards when triggered" -- thus, what this thing we invented really does is allowing us to combine words into *sentences*.
  1. Although we are quite liberal in defining behaviors for alarms, there are some rules as what can be composed with what (for example, we cannot compose guards building with an office, but each of them can only be composed with alarms). Thus, we can say that the *sentences* we write have to obey certain rules that look a lot like *a grammar*.
  1. The vocabulary is *constrained to the domain* of alarms. On the other hand, it *is more powerful and expressive* as a description of this domain than a combination of `if` statements, `for` loops, variable assignments and other elements of a general-purpose language. It is tuned towards describing rules of a domain on a *higher level of abstraction*. 
- 1. The sentences written define a behavior of the application - so by writing sentences like this, we still write software! Thus, what we do by combining *words* into *sentences* constrained by a *grammar* is still *programming*!
+ 1. The sentences written define a behavior of the application -- so by writing sentences like this, we still write software! Thus, what we do by combining *words* into *sentences* constrained by a *grammar* is still *programming*!
  
 All of these points suggest that we have created a *Domain-Specific Language*[^fowlerdsl], which, by the way, is a *higher-level language*, meaning we describe our software on a higher level of abstraction. 
 
@@ -553,9 +553,9 @@ My main answer is: to deal with with complexity more effectively.
 
 What't complexity? For our purpose we can approximate it as a number of different decisions our application needs to make. As we add new features and fix errors or implement missed requirements, the complexity of our software grows. What can we do when it grows so larger than we are able to manage? We have the following choices:
 
- 1. Remove some decisions - i.e. remove features from our application. This is very cool when we actually *can* do this, but there are times when this might be unacceptable from the business perspective.
- 1. Optimize away redundant decisions - this is about making sure that each decision is made once in the code base - I already showed you some examples how polymorphism can help with that.    
- 1. Use 3rd party component or a library to handle some of the decisions for us - while this is quite easy for "infrastructure" code and utilities, it is very, very hard (impossible?) to find a library that will describe our "domain rules" for us. So if these rules are where the real complexity lies (and often they are), we are still left alone with our problem.
+ 1. Remove some decisions -- i.e. remove features from our application. This is very cool when we actually *can* do this, but there are times when this might be unacceptable from the business perspective.
+ 1. Optimize away redundant decisions -- this is about making sure that each decision is made once in the code base -- I already showed you some examples how polymorphism can help with that.    
+ 1. Use 3rd party component or a library to handle some of the decisions for us -- while this is quite easy for "infrastructure" code and utilities, it is very, very hard (impossible?) to find a library that will describe our "domain rules" for us. So if these rules are where the real complexity lies (and often they are), we are still left alone with our problem.
  1. Hide the decisions by programming on higher level of abstraction -- this is what we did in this chapter so far. The advantage is that it allows us to reduce complexity of our domain, by creating a bigger building blocks from which a behavior description can be created.
 
 So, as you see, only the last of the above points really helps in reducing domain complexity. This is where the idea of domain-specific languages falls in. If we carefully craft our object composition into a set of domain-specific languages (one is often too little in all but simplest cases), one day we may find that we are adding new features by writing new sentences in these languages in a declarative way rather than adding new imperative code. Thus, if we have a good language and a firm understanding of its vocabulary and grammar, we can program on a higher level of abstraction which is more expressive and less complex.
@@ -612,7 +612,7 @@ Martin Fowler[^fowlerdsl] describes a lot of tricks for creating such DSLs and a
 
 ### Factory method nesting is your best friend
 
-One of the DSL techniques, the one I have used the most, is factory method nesting. Basically, it means wrapping a constructor (or constructors - no one said each factory method must wrap exactly one `new`) invocation with a method that has a name more fitting for a context it is used in (and which hides the obscurity of the `new` keyword). This technique is what makes this:
+One of the DSL techniques, the one I have used the most, is factory method nesting. Basically, it means wrapping a constructor (or constructors -- no one said each factory method must wrap exactly one `new`) invocation with a method that has a name more fitting for a context it is used in (and which hides the obscurity of the `new` keyword). This technique is what makes this:
 
 ```csharp
 new HybridAlarm(
@@ -666,9 +666,9 @@ Apart from that, we can choose between:
  1.  Making the factory methods static.
  1.  Making the factory methods non-static.
    
-First, let's consider the dilemma of putting in composing class vs having a superclass to inherit from. This choice is mainly determined by reuse needs. The methods that we use in one composition only and do not want to reuse are mostly better off as private methods in the composing class. On the other hand, the methods that we want to reuse (e.g. in other applications or services belonging to the same system), are better put in a superclass which we can inherit from. Also, a combination of the two approaches is possible, where superclass contains a more general method, while composing class wraps it with another method that adjusts the creation to the current context. By the way, remember that in most languages, we can inherit from a single class only - thus, putting methods for each language in a separate superclass forces us to distribute compositiion code across several classes, each inheriting its own set of methods and returning an object or several objects. This is not bad at all - quite the contrary, this is something we'd like to have, because it enables us to evolve a language and sentences written in this language in an isolated context.
+First, let's consider the dilemma of putting in composing class vs having a superclass to inherit from. This choice is mainly determined by reuse needs. The methods that we use in one composition only and do not want to reuse are mostly better off as private methods in the composing class. On the other hand, the methods that we want to reuse (e.g. in other applications or services belonging to the same system), are better put in a superclass which we can inherit from. Also, a combination of the two approaches is possible, where superclass contains a more general method, while composing class wraps it with another method that adjusts the creation to the current context. By the way, remember that in most languages, we can inherit from a single class only -- thus, putting methods for each language in a separate superclass forces us to distribute compositiion code across several classes, each inheriting its own set of methods and returning an object or several objects. This is not bad at all -- quite the contrary, this is something we'd like to have, because it enables us to evolve a language and sentences written in this language in an isolated context.
 
-The second choice between static and non-static is one of having access to instance fields - instance methods have this access, while static methods do not. Thus, if the following is an instance method of a class called `AlarmComposition`:
+The second choice between static and non-static is one of having access to instance fields -- instance methods have this access, while static methods do not. Thus, if the following is an instance method of a class called `AlarmComposition`:
 
 ```csharp
 public class AlarmComposition
@@ -770,7 +770,7 @@ public ConfigurationUpdates ConfigurationUpdates(
 }
 ```
 
-Note that the `TracedConfigurationUpdates` is not important from the point of view of composition - it is pure infrastructure code, not a new domain rule. Because of that, it may be a good idea to hide it inside the factory method.
+Note that the `TracedConfigurationUpdates` is not important from the point of view of composition -- it is pure infrastructure code, not a new domain rule. Because of that, it may be a good idea to hide it inside the factory method.
 
 ## Summary
 
