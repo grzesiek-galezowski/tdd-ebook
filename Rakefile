@@ -9,15 +9,14 @@ task :push, [:commit_message] => [:pre_sync_cloud_drive, :push_ebook, :push_html
 end
 
 desc "Synchronizes content with cloud drive"
-task :pre_sync_cloud_drive do 
-  sync_google_drive_subdir
-end
-
-desc "Synchronizes content with cloud drive"
 task :post_sync_cloud_drive do 
   sync_google_drive_subdir
 end
 
+desc "Synchronizes content with cloud drive"
+task :pre_sync_cloud_drive do 
+  sync_google_drive_subdir
+end
 
 desc "Push ebook into source control"
 task :push_ebook, [:commit_message] => ['formats:all', 'sample:generate'] do | t, args |
