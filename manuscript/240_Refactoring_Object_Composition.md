@@ -14,13 +14,30 @@ Before I do this, however, we need to get one important question answered...
 
 By now you have to be sick and tired of how I stress the importance of composability. I do so, however, because I believe it is one of the most important aspect of well-designed classes. Also, I said that in order to reach high composability of a class, it has to be context-independent. To explain how to reach this independence, I introduced the principle of separating object use from construction, pushing the construction part away into specialized places in code. I also said that a lot can be contributed to this quality by making the interfaces and protocols abstract and having them expose as small amount of implementation details as possible.
 
-All of this has its cost, however. Striving for high context-independence takes away from us the ability to look at a single class and determine its context just by reading its code. Such class is "dumb" about the context it operates in.
+All of this has its cost, however. Striving for high context-independence takes away from us the ability to look at a single class and determine its context just by reading its code. Such class knows very little about the context it operates in. For example, few chapters back we dealt with dumping sessions and I showed you that such dump method may be implemented like this:
 
-TODO example!!
+```csharp
+public class RealSession : Session
+{
+  //...
+
+  public void DumpInto(Destination destination)
+  {
+    destination.AcceptOwner(this.owner);
+    destination.AcceptTarget(this.target);
+    destination.AcceptExpiryTime(this.expiryTime);
+    destination.Done();
+  }
+
+  //...
+}
+```
+
+Here, the session knows that whatever the destination is, `Destination` it accepts owner, target and expiry time and needs to be told when all information is passed to it. Still, reading this code, we cannot tell where the destination leads to, since `Destination` is an interface that abstracts away the details.  It is a role that can be played by a file, a network connection, a console screen or a GUI widget. Context-independence enables composability.
 
 On the other hand, as much as context-independent classes and interfaces are important, the behavior of the application as a whole is important as well. Didn't I say that the goal of composability is to be able to change the behavior of application more easily? But how can we consciously make decision about changing application behavior when we do not understand it? And no longer than a paragraph ago we came to conclusion that just reading a class after class is not enough. We have to have a view of how these classes work together as a system. So, where is the overall context that defines the behavior of the application? 
 
-The context is in the composition code - the code that connects objects together, passing a real context to each object and showing how the overall context looks like.
+The context is in the composition code - the code that connects objects together, passing a real collaborators to each object and showing the connected parts make a whole.
 
 ### Example
 
@@ -761,13 +778,6 @@ In this chapter, I tried to convey to you a vision of object composition as a la
 
 This area of object oriented design is something I am still experimenting with, trying to catch up with what authorities on this topic share. Thus, I am not as fluent in it as in other topics covered in this book. Expect this chapter to grow (maybe into several chapters) or to be clarified in the future. For now, if you feel you need more information, please take a look at the video by Steve Freeman and Nat Pryce called ["Building on SOLID foundations"](https://vimeo.com/105785565).
  
-%% ### Hide irrelevant parts of composition - few levels of composition code is enough
-%% 1.  Factory method & method composition
-%% 1.  Method chaining - expression builders build up context
-%% 1.  variable as terminator ??? Explaining variables - for sharing
-%% 1.  Explaining method (i.e. returns its argument. Use with care)
-
-
 [^fowlerdsl]: M. Fowler, Domain-Specific Languages, Addison-Wesley 2010.
 
 [^staticimports] In some languages, there is a third way: Java lets us use static imports which are part of C# as well starting with version 6.0. C++ has always supported bare functions, so it's not a topic there.
