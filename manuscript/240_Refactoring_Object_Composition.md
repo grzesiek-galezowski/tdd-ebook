@@ -659,12 +659,14 @@ In the usual case, we want to be able to invoke these methods without any qualif
 If so, where do we put such methods?
 
 There are two options[^staticimports]:
- 1.  Put the methods in the class that performs the composition.
- 1.  Put the methods in superclass.
+
+ 1. Put the methods in the class that performs the composition.
+ 1. Put the methods in superclass.
   
 Apart from that, we can choose between:
- 1.  Making the factory methods static.
- 1.  Making the factory methods non-static.
+
+ 1. Making the factory methods static.
+ 1. Making the factory methods non-static.
    
 First, let's consider the dilemma of putting in composing class vs having a superclass to inherit from. This choice is mainly determined by reuse needs. The methods that we use in one composition only and do not want to reuse are mostly better off as private methods in the composing class. On the other hand, the methods that we want to reuse (e.g. in other applications or services belonging to the same system), are better put in a superclass which we can inherit from. Also, a combination of the two approaches is possible, where superclass contains a more general method, while composing class wraps it with another method that adjusts the creation to the current context. By the way, remember that in most languages, we can inherit from a single class only -- thus, putting methods for each language in a separate superclass forces us to distribute compositiion code across several classes, each inheriting its own set of methods and returning an object or several objects. This is not bad at all -- quite the contrary, this is something we'd like to have, because it enables us to evolve a language and sentences written in this language in an isolated context.
 
@@ -780,6 +782,5 @@ This area of object oriented design is something I am still experimenting with, 
  
 [^fowlerdsl]: M. Fowler, Domain-Specific Languages, Addison-Wesley 2010.
 
-[^staticimports] In some languages, there is a third way: Java lets us use static imports which are part of C# as well starting with version 6.0. C++ has always supported bare functions, so it's not a topic there.
-.
+[^staticimports]: In some languages, there is a third way: Java lets us use static imports which are part of C# as well starting with version 6.0. C++ has always supported bare functions, so it's not a topic there.
 
