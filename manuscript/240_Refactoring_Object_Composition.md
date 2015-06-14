@@ -584,7 +584,7 @@ The second reason is because even if you can safely refactor all the code becaus
 
 ### Composition is not a single DSL, but a series of mini DSLs
 
-I already briefly noted this. While it may be tempting to invent a single DSL to describe whole application, in practice it is hardly possible, because our applications have different subdomains that often use different sets of terms. Rather, it pays off to hunt for such subdomains and create smaller languages for them. The alarm example shown above would probably be just a small part of a real composition. Not all parts would lend themselves to shape this way, at least not instantly. What starts off as a single class might become a subdomain with its own vocabulary at some point. We need to pay attention. Hence, we still want to apply some of the DSL techniques even to those parts of the composition that are not easily turned into DSLs and hunt for an occasion when we are be able to do so.
+I already briefly noted this. While it may be tempting to invent a single DSL to describe whole application, in practice it is hardly possible, because our applications have different subdomains that often use different sets of terms. Rather, it pays off to hunt for such subdomains and create smaller languages for them. The alarm example shown above would probably be just a small part of a real composition. Not all parts would lend themselves to shape this way, at least not instantly. What starts off as a single class might become a subdomain with its own vocabulary at some point. We need to pay attention. Hence, we still want to apply some of the DSL techniques even to those parts of the composition that are not easily turned into DSLs and hunt for an occasion when we are able to do so.
 
 As [Nat Pryce puts it](http://www.natpryce.com/articles/000783.html), it's all about:
 
@@ -606,7 +606,7 @@ Note that the constructs of this language make sense only in a context of creati
 
 ### Do not use an extensive amount of DSL tricks
 
-In creating internal DSLs, one can use a lot of neat tricks, some of them being very "hacky" and twisting the general-purpose language in many eays to achieve "flluent" syntax. But remember that the composition code is to be maintained by your team. Unless each and every member of your team is an expert on creating such DSLs, do not show off with too many, too sophisticated tricks. Stick with a few of the proven ones that are simple to use and work, like the ones I have used in the alarm example.
+In creating internal DSLs, one can use a lot of neat tricks, some of them being very "hacky" and twisting the general-purpose language in many ways to achieve "flluent" syntax. But remember that the composition code is to be maintained by your team. Unless each and every member of your team is an expert on creating such DSLs, do not show off with too many, too sophisticated tricks. Stick with a few of the proven ones that are simple to use and work, like the ones I have used in the alarm example.
 
 Martin Fowler[^fowlerdsl] describes a lot of tricks for creating such DSLs and at the same time warns against using too many of them in the same language. 
 
@@ -712,7 +712,7 @@ This way, I can hide it from the main composition code. This is freedom I do not
 
 #### Use implicit collections instead of explicit ones
 
-Most object-oriented languages support passing variable argument lists (e.g. in C# this is achieved with `params` keyword, while Java has `...` operator). This is valuable in composition, because we often want to be able to pass arbitrary number of objects to some places. Again, coming back to this composition:
+Most object-oriented languages support passing variable argument lists (e.g. in C# this is achieved with the `params` keyword, while Java has `...` operator). This is valuable in composition, because we often want to be able to pass arbitrary number of objects to some places. Again, coming back to this composition:
 
 ```csharp
 return ConfigurationUpdates(
