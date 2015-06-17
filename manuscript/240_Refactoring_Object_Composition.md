@@ -784,4 +784,4 @@ This area of object oriented design is something I am still experimenting with, 
 
 [^staticimports]: In some languages, there is a third way: Java lets us use static imports which are part of C# as well starting with version 6.0. C++ has always supported bare functions, so it's not a topic there.
 
-[^DDDBoundedContext] A reader noted that the ideas in this section are remarkably similar to the notion of Bounded Contexts in a book Domain-Driven Design: Tackling Complexity in the Heart of Software by Eric Evans.
+[^DDDBoundedContext] A reader noted that the ideas in this section are remarkably similar to the notion of Bounded Contexts in a book: E. Evans, Domain-Driven Design: Tackling Complexity in the Heart of Software, Prentice Hall 2003.
