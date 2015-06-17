@@ -582,7 +582,7 @@ In reality, the language is better off evolving along the composition it describ
 
 The second reason is because even if you can safely refactor all the code because you have an executable Specification protecting you from making mistakes, it's just too many decisions to handle at once (plus it takes a lot of time and your colleagues keep adding new code, don't they?). Good language grows and matures organically rather than being created in a big bang effort. Some decisions take time and a lot of thought to be made.
 
-### Composition is not a single DSL, but a series of mini DSLs
+### Composition is not a single DSL, but a series of mini DSLs[^DDDBoundedContext]
 
 I already briefly noted this. While it may be tempting to invent a single DSL to describe whole application, in practice it is hardly possible, because our applications have different subdomains that often use different sets of terms. Rather, it pays off to hunt for such subdomains and create smaller languages for them. The alarm example shown above would probably be just a small part of a real composition. Not all parts would lend themselves to shape this way, at least not instantly. What starts off as a single class might become a subdomain with its own vocabulary at some point. We need to pay attention. Hence, we still want to apply some of the DSL techniques even to those parts of the composition that are not easily turned into DSLs and hunt for an occasion when we are able to do so.
 
@@ -784,3 +784,4 @@ This area of object oriented design is something I am still experimenting with, 
 
 [^staticimports]: In some languages, there is a third way: Java lets us use static imports which are part of C# as well starting with version 6.0. C++ has always supported bare functions, so it's not a topic there.
 
+[^DDDBoundedContext] A reader noted that the ideas in this section are remarkably similar to the notion of Bounded Contexts in a book Domain-Driven Design: Tackling Complexity in the Heart of Software by Eric Evans.
