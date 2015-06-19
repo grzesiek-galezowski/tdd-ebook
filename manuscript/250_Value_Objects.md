@@ -1,21 +1,33 @@
 # Value Objects
 
-Hi, today I'm gonna tell a bit about value objects, why they're so useful and what rules apply to creating and using them. This post is inspired by some work by Kent Beck, Steve Freeman and Nat Pryce.
+I spent several chapters talking about composing objects in a web where real objects were hidden and only interfaces were exposed. These objects exchanged messages and modeled roles in our domain.
 
-## Example problem
+However, this is just a part of object-oriented design approach that I'm trying to explain. Another part of the object-oriented world, complementary to what we have been talking about, are values. They have their own set of design constraints and ideas, so most of the concepts from the previous chapters do not apply to them,or apply in a different way.
 
-Imagine you're developing a web shop for your customer. There are different kinds  of products sold and your customers have the ability to add new products.
+## What is a value? 
+
+In short, values are usually seend as immutable quantities or measurements[^addreference] that are compared by their content, not their identity. There are some examples of values in the libraries of our programming languages. For example, `String` class in Java or C# is a value, because it is immutable and each every two strings are considered equal when they contain the same data. Other examples are many types that are built-in into a programming language, like numbers or characters. 
+
+Most of the values shipped with general purpose libraries are quite primitive. There are many times, however, when we want to model a domain abstraction as a value. Some examples include: date and time (which nowadays is usually a part of standard library), money, temperature, but also things such as file paths or resource identifiers.
+
+As you may have already spotted when reading this book, I'm really bad at explaining things without examples, so here is one:
+
+## Example (TODO name this differently!)
+
+Imagine we are developing a web store for a customer. There are different kinds  of products sold and the customer wants to have the ability to add new products.
 
 Each product has at least two important attributes: name and price (actually there are others like quantity, but let's leave them alone for now).
 
-Let's say that you've decided to use *a decimal to hold the price*, and *a string to hold the name*. Note that both are generic library types, not connected to any domain. Is it a good choice to use "library types" for domain abstractions? We shall soon find out...
+Now, imagine how you would model these two things - would name be modeled by a mere string and price be a double or a decimal type?
+
+Let's say that we have indeed decided to use a `decimal` to hold a price, and a `string` to hold a name. Note that both are generic library types, not connected to any domain. Is it a good choice to use "library types" for domain abstractions? We shall soon find out...
 
 ### Time passes...
 
 Actually, it turns out that these values must be shared across few subdomains of the system. For example:
 
 1.  The website needs to display them
-2.  They are used in calculations
+2.  They are used in income calculations
 3.  They are taken into account when defining and checking promotion rules (e.g. "buy three, pay for two")
 4.  They must be supplied when printing invoices
 
@@ -23,17 +35,21 @@ etc.
 
 The code grows larger and larger and, as the concepts of product name and price are among the main concepts of the application, they tend to land everywhere. 
 
+### Change request
+
 Now, imagine that one of the following changes must make its way into the system:
 
 1.  The product name must be compared as case insensitive, since the names of the products are always printed in uppercase on the invoice. Thus, creating two products that differ only in a letter case (eg. "laptop" and "LAPTOP") would confuse the customers as both these products look the same on the invoice. Also, the only way one would create two products that differ by letter case only is by mistake and we want to avoid that.
 2.  The product name is not enough to differentiate a product. For example, a notebook manufacturers have the same models of notebooks in different configurations (e.g. different amount of RAM or different processor models inside). So each product will receive additional identifier that will have to be taken into account during comparisons.
-3.  In order to support customers from different countries, new currencies must be supported everywhere money are already used.
+3.  In order to support customers from different countries, new currencies must be supported.
 
 These changes are a horror to make. Why? It's because we're coupled in multiple places to a particular implementation of product name (string) and a particular implementation of money (decimal). This wouldn't be so bad, if not for the fact that we're coupled to implementation we cannot change!
 
-From now on, let's put the money concept aside and consider only the product name, as both of these cases are similar, so it's sufficient to consider just one of them.
+From now on, let's put the money concept aside and consider only the product name, as both name and price are similar cases with similar solutions, so it's sufficient to consider just one of them.
 
 ### What options do we have?
+
+TODO
 
 So, what choice do we have now? In order to support new requirements, we have to find all places where we use the product name and price and make the same change. Every time we need to do something like this, it means that *we've introduced redundancy*.
 
@@ -322,3 +338,4 @@ And that's it for today. I'll be happy to hear your thoughts. Until then, see ya
 TODO talk about static const value objects. const can be used only for types that have literals. Thus static readonly is used.
 
 
+[^addreference]: TODO add reference
