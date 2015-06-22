@@ -119,7 +119,7 @@ This is important, because if the name represents the sender's intention, the me
 
 ## Model interactions after the problem domain
 
-Sometimes at work, I am asked to conduct a design workshop. The example I often give to my colleagues is to design a system for order reservation (customers place orders and shop deliverers can reserve who gets to deliver which order). The thing that struck me the first few times I did this workshop was that even though the application was all about orders and their reservation, nearly none of the attendees introduced any kind of `Order` interface or class with `Reserve()` method on it. Most of the attendees assume that `Order` is a data structure and handle reservation by adding it to a "collection of reserved items" which can be imagined as the following code fragment:
+Sometimes at work, I am asked to conduct a design workshop. The example I often give to my colleagues is to design a system for order reservations (customers place orders and shop deliverers can reserve who gets to deliver which order). The thing that struck me the first few times I did this workshop was that even though the application was all about orders and their reservation, nearly none of the attendees introduced any kind of `Order` interface or class with `Reserve()` method on it. Most of the attendees assume that `Order` is a data structure and handle reservation by adding it to a "collection of reserved items" which can be imagined as the following code fragment:
 
 ```csharp
 // order is just a data structure,
@@ -143,7 +143,7 @@ Even in cases when the understanding of the domain evolves and changes rapidly, 
 
 ### Another example
 
-Let's assume that we have a code for handling alarms. When alarm is triggered, all gates are closed, sirens are turned on and message is sent to special forces with highest priority to arrive and terminate the intruder. Any error in this procedure leads to shutting down power in the building. If this workflow is coded like this:
+Let's assume that we have a code for handling alarms. When an alarm is triggered, all gates are closed, sirens are turned on and a message is sent to special forces with the highest priority to arrive and terminate the intruder. Any error in this procedure leads to shutting down power in the building. If this workflow is coded like this:
 
 ```csharp
 try
