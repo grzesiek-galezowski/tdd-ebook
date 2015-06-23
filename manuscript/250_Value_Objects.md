@@ -1,14 +1,14 @@
 # Value Objects
 
 I spent several chapters talking about composing objects in a web where real objects were hidden and only interfaces were exposed. These objects exchanged messages and modeled roles in our domain.
-
+ 
 However, this is just a part of object-oriented design approach that I'm trying to explain. Another part of the object-oriented world, complementary to what we have been talking about, are values. They have their own set of design constraints and ideas, so most of the concepts from the previous chapters do not apply to them,or apply in a different way.
 
 ## What is a value? 
 
-In short, values are usually seend as immutable quantities or measurements[^addreference] that are compared by their content, not their identity. There are some examples of values in the libraries of our programming languages. For example, `String` class in Java or C# is a value, because it is immutable and each every two strings are considered equal when they contain the same data. Other examples are many types that are built-in into a programming language, like numbers or characters. 
+In short, values are usually seend as immutable quantities or measurements[^addreference] that are compared by their content, not their identity. There are some examples of values in the libraries of our programming languages. For example, `String` class in Java or C# is a value, because it is immutable and every two strings are considered equal when they contain the same data. Other examples are the primitive types that are built-in into most programming languages, like numbers or characters. 
 
-Most of the values shipped with general purpose libraries are quite primitive. There are many times, however, when we want to model a domain abstraction as a value. Some examples include: date and time (which nowadays is usually a part of standard library), money, temperature, but also things such as file paths or resource identifiers.
+Most of the values shipped with general purpose libraries are quite primitive and general purpose. There are many times, however, when we want to model a domain abstraction as a value. Some examples include: date and time (which nowadays is usually a part of standard library, because it is usable in so many domains), money, temperature, but also things such as file paths or resource identifiers.
 
 As you may have already spotted when reading this book, I'm really bad at explaining things without examples, so here is one:
 
@@ -45,25 +45,38 @@ Now, imagine that one of the following changes must make its way into the system
 
 These changes are a horror to make. Why? It's because we're coupled in multiple places to a particular implementation of product name (string) and a particular implementation of money (decimal). This wouldn't be so bad, if not for the fact that we're coupled to implementation we cannot change!
 
-From now on, let's put the money concept aside and consider only the product name, as both name and price are similar cases with similar solutions, so it's sufficient to consider just one of them.
+From now on, let's put the money concept aside and focus only on the product name, as both name and price are similar cases with similar solutions, so it's sufficient for us to consider just one of them.
 
 ### What options do we have?
 
-TODO
+So, what choice do we have now? In order to support new requirements, we have to find all places where we use the product name and price and make the same change (and, by the way, an IDE will not help us much in this search, because we would be searching for all the occurences of type `string`). Every time we need to do something like this (i.e. we have to make the same change in multiple places an there is a non-zero possibility we'll miss at least one of those places), it means that we have introduced redundancy.
 
-So, what choice do we have now? In order to support new requirements, we have to find all places where we use the product name and price and make the same change. Every time we need to do something like this, it means that *we've introduced redundancy*.
+There are multiple ways to approach this redundancy.
 
 #### Option one - just modify the implementation in all places
 
-So let's say we want to add comparison with letter case ignored. The worst idea to have would be to find all places where we do something like this:
+This option is about leaving the redundancy where it is and making the change in all places, hoping for the best. 
+
+So let's say we want to add comparison with letter case ignored. Using this option would lead us to find all places where we do something like this:
 
 ```csharp
-if(productName == productName2))
+if(productName == productName2)
 {
 ..
 ```
 
-And change it to:
+or
+
+```csharp
+if(productName.Equals(productName2))
+{
+..
+```
+
+
+And change them to:
+
+TODO
 
 ```csharp
 if(String.Equals(productName, productName2, 
@@ -324,6 +337,11 @@ public string Identifier
 
 This will probably require changes to the rest of the code base but the change will be for different reason (i.e. that we want to display product identifiers on web page and print them on the invoice), which is OK, since they're connected to responsibilities beyond those of product name.
 
+### TODO implementing value objects
+
+factory methods, equals, why immutable, gethashcode, implicit values or explicit values, narrowing down the interface, passing multiple strings can cause the order of the arguments to be confused, treating time as integer, treating strings as paths, Title type instead of strings or utils.
+
+
 ### Summary
 
 By examining the above example, we can see the following principle emerging:
@@ -339,3 +357,5 @@ TODO talk about static const value objects. const can be used only for types tha
 
 
 [^addreference]: TODO add reference
+
+TODO shalloway's law - wasn't it already mentioned?
