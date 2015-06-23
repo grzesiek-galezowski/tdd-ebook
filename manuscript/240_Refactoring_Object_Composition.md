@@ -732,7 +732,7 @@ public ConfigurationUpdates ConfigurationUpdates(
 }
 ```
 
-Note that we could, of course, pass the array of `ConfigurationUpdate` instances  using explicit definition: `new ConfigurationUpdate[] {...}`, but that would greatly hinder readabiliyty and flow of this composition. See for yourself:
+Note that we could, of course, pass the array of `ConfigurationUpdate` instances  using explicit definition: `new ConfigurationUpdate[] {...}`, but that would greatly hinder readability and flow of this composition. See for yourself:
 
 ```csharp
 return ConfigurationUpdates(
