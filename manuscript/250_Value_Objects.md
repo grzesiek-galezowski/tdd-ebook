@@ -6,7 +6,7 @@ However, this is just a part of object-oriented design approach that I'm trying 
 
 ## What is a value? 
 
-In short, values are usually seend as immutable quantities or measurements[^addreference] that are compared by their content, not their identity. There are some examples of values in the libraries of our programming languages. For example, `String` class in Java or C# is a value, because it is immutable and every two strings are considered equal when they contain the same data. Other examples are the primitive types that are built-in into most programming languages, like numbers or characters. 
+In short, values are usually seen as immutable quantities or measurements[^addreference] that are compared by their content, not their identity. There are some examples of values in the libraries of our programming languages. For example, `String` class in Java or C# is a value, because it is immutable and every two strings are considered equal when they contain the same data. Other examples are the primitive types that are built-in into most programming languages, like numbers or characters. 
 
 Most of the values shipped with general purpose libraries are quite primitive and general purpose. There are many times, however, when we want to model a domain abstraction as a value. Some examples include: date and time (which nowadays is usually a part of standard library, because it is usable in so many domains), money, temperature, but also things such as file paths or resource identifiers.
 
@@ -76,8 +76,6 @@ if(productName.Equals(productName2))
 
 And change them to:
 
-TODO
-
 ```csharp
 if(String.Equals(productName, productName2, 
    StringComparison.OrdinalIgnoreCase))
@@ -85,16 +83,16 @@ if(String.Equals(productName, productName2,
 ..
 ```
 
-This is bad for at least three reasons:
+This deals with the case, at least for now, but in the long run, it can cause some trouble:
 
-1.  According to [Shalloway's Law](http://www.netobjectives.com/blogs/shalloway%E2%80%99s-law-and-shalloway%E2%80%99s-principle), it will be very hard to find all these places and chances are you'll miss at least one.
-2.  Everyone who adds new comparisons of product names to the code in the future, will have to remember to use `IgnoreCase` comparison (TODO). If you want to know my opinion, accidental violation of this convention is just a matter of time.
-3.  Even if this time you'll be able to find and correct all the places, every time this aspect changes (e.g. we'll have to support `InvariantIgnoreCase` option instead of OrdinalIgnoreCase for some reasons, or the case I mentioned earlier with comparison including an identifier), you'll have to do it over.
-4.  Also, there are other changes that will be tied to the concept of product name (like generating a hash code or something) and you'll need to introduce them too in all the places where the product name value is used.
+1.  According to [Shalloway's Law](http://www.netobjectives.com/blogs/shalloway%E2%80%99s-law-and-shalloway%E2%80%99s-principle), it will be very hard to find all these places and chances are you'll miss at least one. If so, a bug might creep in.
+2.  Even if this time you'll be able to find and correct all the places, every time the domain logic for product name comparisons changes (e.g. we'll have to use `InvariantIgnoreCase` option instead of `OrdinalIgnoreCase` for some reasons, or the case I mentioned earlier with comparison including an identifier), you'll have to do it over.
+3.  Everyone who adds new code that compares product names in the future, will have to remember that character case is ignored in such comparisons. Thus, they will have to remember to use `IgnoreCase` option whenever they add new comparisons. If you want to know my opinion, accidental violation of this convention in a team that has either a fair size or some staff rotation (TODO - better term) is just a matter of time.
+4.  Also, there are other changes that will be tied to the concept of product name (like generating a hash code in places such product names are stored in a hash set or are keys in a hash table) and you'll need to introduce them too in all the places where the product name value is used.
 
 #### Option two - use a helper class
 
-We can address the third issue of the above list by moving the comparison operation into a helper class. Thus, the comparison would look like this:
+We can address the issue #2 of the above list (i.e. the necessity to change multiple places when the comparison logic of product names changes) by moving the comparison operation into a helper class, say, `ProductName` as a static helper method and make it a single place that knows how to compare product names. This would make each of the comparisons scattered across the code look like this:
 
 ```csharp
 if(ProductName.Equals(productName, productName2))
@@ -102,9 +100,9 @@ if(ProductName.Equals(productName, productName2))
 ..
 ```
 
-Now, the details of the comparison are hidden inside the newly created class. Each time the comparison needs to change, we have to modify only this one class.
+Note that the details of the comparison are hidden inside the newly created method. Each time the comparison needs to change, we have to modify the method only, which gives us a single place to modify and frees us from having to search and modify all comparisons each time the comparison logic changes.
 
-However, while it protects us from the change of comparison policy, it's still not enough. The concept of product name is not encapsulated - it's still a string and all its methods are publicly available. Hence, another developer who starts working on the code may not even notice that product names are compared differently than other strings and just use the comparison methods from string type. Other deficiencies of the previous approach apply as well (as I said, except from the issue number 3).
+However, while it protects us from the change of comparison policy, it's still not enough. The concept of product name is not encapsulated - it's still a `string` and allows doing with it everything we can do on a `string`, even when it does not make sense for product names. Hence, another developer who starts working on the code may not even notice that product names are compared differently than other strings and just use the comparison methods from string type. Other deficiencies of the previous approach apply as well (as I said, except from the issue number 2).
 
 #### Option three - encapsulate the domain concept and create a "Value Object"
 
@@ -353,7 +351,7 @@ And it's a nice one to remember, especially because we often tend to model such 
 And that's it for today. I'll be happy to hear your thoughts. Until then, see ya!
 
 
-TODO talk about static const value objects. const can be used only for types that have literals. Thus static readonly is used.
+TODO talk about static const value objects. const can be used only for types that have literals. Thus static readonly is used. Todo: interfaces let us treat related objects the same, and values let us separate unrelated objects.
 
 
 [^addreference]: TODO add reference
