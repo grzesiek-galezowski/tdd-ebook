@@ -92,7 +92,7 @@ This deals with the case, at least for now, but in the long run, it can cause so
 
 #### Option two - use a helper class
 
-We can address the issue #2 of the above list (i.e. the necessity to change multiple places when the comparison logic of product names changes) by moving the comparison operation into a helper class, say, `ProductName` as a static helper method and make it a single place that knows how to compare product names. This would make each of the comparisons scattered across the code look like this:
+We can address the issues #1 and #2 of the above list (i.e. the necessity to change multiple places when the comparison logic of product names changes) by moving the comparison operation into a helper method of a helper class, say, `ProductName` and make this static method a single place that knows how to compare product names. This would make each of the comparisons scattered across the code look like this:
 
 ```csharp
 if(ProductName.Equals(productName, productName2))
@@ -100,26 +100,29 @@ if(ProductName.Equals(productName, productName2))
 ..
 ```
 
-Note that the details of the comparison are hidden inside the newly created method. Each time the comparison needs to change, we have to modify the method only, which gives us a single place to modify and frees us from having to search and modify all comparisons each time the comparison logic changes.
+Note that the details of the comparison are hidden inside the newly created `Equals()` method. This method has become the only place that has knowledge of these details and each time the comparison needs to change, we only have to modify the method. This frees us from having to search and modify all comparisons each time the comparison logic changes.
 
-However, while it protects us from the change of comparison policy, it's still not enough. The concept of product name is not encapsulated - it's still a `string` and allows doing with it everything we can do on a `string`, even when it does not make sense for product names. Hence, another developer who starts working on the code may not even notice that product names are compared differently than other strings and just use the comparison methods from string type. Other deficiencies of the previous approach apply as well (as I said, except from the issue number 2).
+However, while it protects us from the change of comparison logic indeed, it's still not enough. Why? Because the concept of a product name is still not encapsulated - it's still a `string` and it allows you to do everything with it that we can do with a `string`, even when it does not make sense for product names. Hence, another developer who starts adding some new code may not even notice that product names are compared differently than other strings and just use the default comparison of a `string` type. Other deficiencies of the previous approach apply as well (as I said, except from the issues #1 and #2).
 
 #### Option three - encapsulate the domain concept and create a "Value Object"
 
-I think it's more than clear now that product name is a not "just a string", but a domain concept and as such, it deserves its own class. Given this, the comparison snippet is now:
+I think it's more than clear now that product name is a not "just a string", but a domain concept and as such, it deserves its own class. Let us introduce such a class, then, and call it `ProductName`. Instances of this class will have `Equals()` method overridden[^csharpoperatorsoverride] with the logic specific to product names.  Given this, the comparison snippet is now:
 
 ```csharp
-//both are of class ProductName
+// productName and productName2
+// are both instances of ProductName
 if(productName.Equals(productName2))
 {
 ..
 ```
 
-How is it different from the previous approach with helper class? While previously the implementation of a product name (a string) was publicly visible and we only added external functionality that operated on this implementation (and anybody could add their own), this time the nature of the product name is completely hidden from the outside world. The only available way of working with product names is through the `ProductName`'s public interface (which exposes only those methods we want and no more). In other words, whereas before we were dealing with a general-purpose type we couldn't change, now we have a domain-specific type that's completely under our control.
+How is it different from the previous approach with helper class? While previously the implementation details of a product name were publicly visible (as a string) and we only added external functionality that operated on this implementation (and anybody could add their own without asking us for permission), this time, the nature of the product name is completely hidden from the outside world. The only available way of working with product names is through the `ProductName`'s public interface (which exposes only those methods we want and no more). In other words, whereas before we were dealing with a general-purpose type we couldn't change, now we have a domain-specific type that's completely under our control.
+
+TODO
 
 ### How value objects help dealing with change
 
-Let's see how this move makes it easier to introduce the changes I already mentioned (ignoring case, comparing by ID as well as by string name and getting uppercase version for printing on invoice).
+Let's see how this move makes it easier to introduce the changes I already mentioned (just to remind you, these were: ignoring case, comparing by ID as well as by string name and getting uppercase version for printing on invoice).
 
 #### Initial implementation
 
@@ -355,5 +358,7 @@ TODO talk about static const value objects. const can be used only for types tha
 
 
 [^addreference]: TODO add reference
+
+[^csharpoperatorsoverride]: and, for C#, overriding equality operators is probably a good idea, not to mention `GetHashCode()`
 
 TODO shalloway's law - wasn't it already mentioned?
