@@ -122,7 +122,7 @@ How is it different from the previous approach with helper class? Previously the
 
 Let's get back to the list of four possible changes I mentioned (just to remind you, these were: ignoring case, comparing by ID as well as by string name and getting uppercase version for printing on invoice) see how creating a value object makes it easier to introduce these changes.
 
-First, let's take a look at the definition of the type to see how it looks like before answering how it solves our problems. The following code is not legal C# - I omitted method bodies, putting :
+First, let's take a look at the definition of the type to see how it looks like before answering how it solves our problems. The following code is not legal C# - I omitted method bodies, putting `;` after each method declaration. I did this because it would be a lot of code to grasp and we don't necessary want to delve into code of each method. I added a comment to each section of the code and we'll explain them one by one later.
 
 ```csharp
 public class ProductName 
@@ -153,6 +153,8 @@ public class ProductName
   public static bool operator !=(ProductName a, ProductName b);
 }
 ```
+
+
 
 aaaaaaaaaaaaaa TODO
 
