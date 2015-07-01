@@ -116,17 +116,45 @@ if(productName.Equals(productName2))
 ..
 ```
 
-How is it different from the previous approach with helper class? While previously the implementation details of a product name were publicly visible (as a string) and we only added external functionality that operated on this implementation (and anybody could add their own without asking us for permission), this time, the nature of the product name is completely hidden from the outside world. The only available way of working with product names is through the `ProductName`'s public interface (which exposes only those methods we want and no more). In other words, whereas before we were dealing with a general-purpose type we couldn't change, now we have a domain-specific type that's completely under our control.
-
-TODO
+How is it different from the previous approach with helper class? Previously the data of a product name was publicly visible (as a string) and we only added external functionality that operated on this data (and anybody could add their own without asking us for permission). This time, the data of the product name is completely hidden from the outside world. The only available way to operate on this data is through the `ProductName`'s public interface (which exposes only those methods that we think make sense for product names and no more). In other words, whereas before we were dealing with a general-purpose type we couldn't change, now we have a domain-specific type that's completely under our control.
 
 ### How value objects help dealing with change
 
-Let's see how this move makes it easier to introduce the changes I already mentioned (just to remind you, these were: ignoring case, comparing by ID as well as by string name and getting uppercase version for printing on invoice).
+Let's get back to the list of four possible changes I mentioned (just to remind you, these were: ignoring case, comparing by ID as well as by string name and getting uppercase version for printing on invoice) see how creating a value object makes it easier to introduce these changes.
 
-#### Initial implementation
+First, let's take a look at the definition of the type to see how it looks like before answering how it solves our problems. The following code is not legal C# - I omitted method bodies, putting :
 
-The first implementation may look like this:
+```csharp
+public class ProductName 
+  : IEquatable<ProductName>
+{
+  // hidden data:
+  private string _value;
+
+  // constructor - hidden as well:
+  internal ProductName(string value);
+  
+  // static method for creating new instances:
+  public static ProductName For(string value);
+  
+  // standard version of ToString():
+  public void ToString();
+  
+  // non-standard version of ToString()
+  // I will explain its purpose later
+  public string ToString(Format format);
+
+  // for value types, we need to implement all the equality
+  // methods and operators, plus GetHashCode():     
+  public override bool Equals(Object other);
+  public bool Equals(ProductName other);
+  public override int GetHashCode();
+  public static bool operator ==(ProductName a, ProductName b);
+  public static bool operator !=(ProductName a, ProductName b);
+}
+```
+
+aaaaaaaaaaaaaa TODO
 
 ```csharp
 public class ProductName
