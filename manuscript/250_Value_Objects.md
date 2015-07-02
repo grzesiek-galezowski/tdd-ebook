@@ -128,23 +128,23 @@ First, let's take a look at the definition of the type to see how it looks like 
 public class ProductName 
   : IEquatable<ProductName>
 {
-  // hidden data:
+  // Hidden data:
   private string _value;
 
-  // constructor - hidden as well:
+  // Constructor - hidden as well:
   internal ProductName(string value);
   
-  // static method for creating new instances:
+  // Static method for creating new instances:
   public static ProductName For(string value);
   
-  // standard version of ToString():
+  // Standard version of ToString():
   public void ToString();
   
-  // non-standard version of ToString()
+  // Non-standard version of ToString()
   // I will explain its purpose later
   public string ToString(Format format);
 
-  // for value types, we need to implement all the equality
+  // For value types, we need to implement all the equality
   // methods and operators, plus GetHashCode():     
   public override bool Equals(Object other);
   public bool Equals(ProductName other);
@@ -154,7 +154,26 @@ public class ProductName
 }
 ```
 
+As you see, the class can be divided into six sections. Let's take them on one by one.
 
+#### Hidden data
+
+```csharp
+private string _value;
+```
+
+The actual data, as I already said, is private to hide it from illegal modification. Only the methods we publish can be used to operate on the state. This is used for three things:
+
+1. To restrict legal operations to the set that makes sense for a product name abstraction. 
+1. To achieve immutability (more on why we want the type to be immutable later). If the data was public, everyone could modify the state of `ProductName` instance by writing this:
+  ```csharp
+  productName.data = "something different"; 
+  ```
+1. Both of the thing described above help protect against creating a product name with an invalid value. When creating a product name from a string, we have to pass this string through a method that can perform the validation.
+
+#### Hidden constructor
+
+The constructor is made internal and you probably wonder why. This question can be further decomposed to two questions: "why internal and not public?", and "why internal and not private?".
 
 aaaaaaaaaaaaaa TODO
 
