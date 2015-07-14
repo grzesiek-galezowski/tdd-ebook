@@ -4,7 +4,7 @@ There are few aspects of design of value objects that I still need to talk about
 
 ## Immutability
 
-I already said that value objects are usually immutable. This is not a hard constraint, although it is based on years of engineering practice. Allow me to outline just three reasons I think immutability is key constraint for value objects.
+I already said that value objects are usually immutable. Some say immutability is the core part of something being a value (e.g. Kent Beck goes as far as to say that 1 is always 1 and will never become 2), while others don't consider it as hard constraint. One way or another, immutability makes an awful lot of sense for value objects. Allow me to outline just three reasons I think immutability is a key constraint for value objects.
 
 ### Accidental change of hash code
 
@@ -91,7 +91,44 @@ Mutable values cause issues when they are shared by threads, because such object
 
 On the other hand, when an object is immutable, there are no multithreading concerns. After all, no one is able to modify the state of an object, so there is no possibility for concurrent modifications causing data corruption. This is one of the reasons why functional languages, where data is immutable by default, gain a lot of attention in domains where running many threads is necessary.
 
-There, I hope I convinced you that immutability is a great choice for value objects and nowadays, when we talk about values, we mean immutable ones.
+### If not mutability, then what?
+
+There, I hope I convinced you that immutability is a great choice for value objects and nowadays, when we talk about values, we mean immutable ones. But one question remains unanswered: what about a situation when I really want to have:
+
+* a number that is greater by three than another number?
+* a date that is later by five days than another date?
+* a path to a file in a directory that I already have?
+
+If I cannot modify an existing value, how can I achieve such goals?
+
+The answer is simple - value objects have operations that instead of modifying the existing object, return a new one, with state we are expecting. The old value remains unmodified.
+
+Just to give you three examples, when I have an existing string and want to replace every occurence of letter `r` with letter `l`:
+
+```csharp
+string oldString = "rrrr";
+string newString = oldString.Replace('r', 'l');
+//oldString is still "rrrr", newString is "llll"
+```
+
+When I want to have a date later by five days than another date:
+
+```csharp
+string oldDate = DateTime.Now;
+string newString = oldDate + TimeSpan.FromDays(5);
+//oldDate is unchanged, newDate is later by 5 days
+```
+
+When I want to make a path to a file in a directory from a path to the directory[^atmafilesystem]:
+
+```csharp
+AbsoluteDirectoryPath oldPath 
+  = AbsoluteDirectoryPath.Value(@"C:\Directory");
+AbsoluteFilePath newPath = oldPath + FileName.Value("file.txt");
+//oldPath is "C:\Directory", newPath is "C:\Directory\file.txt"
+```
+
+So, again, any time we want to have a value based on a previous value, instead of modifying the previous object, we create a new object with desired state.
 
 ## Implicit vs. explicit handling of variability (TODO check vs with or without a dot)
 
@@ -172,3 +209,5 @@ And that's it for today. I'll be happy to hear your thoughts. Until then, see ya
 TODO talk about static const value objects. const can be used only for types that have literals. Thus static readonly is used. Todo: interfaces let us treat related objects the same, and values let us separate unrelated objects.
 
 [^wecoulduseextensionmethods]: The difference between Jva dn C# here is that C# supports operator overloading whereas Java does not. By the way, I could use extension methods to make the example even more idiomatic, but I don't want to go to far in the land of specific language idioms to leave the code readable for the wider audience.  
+
+[^atmafilesystem]: this example uses a library called Atma Filesystem: TODO hyperlink to nuget
