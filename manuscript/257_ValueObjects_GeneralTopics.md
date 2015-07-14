@@ -140,29 +140,39 @@ So, assuming the differences are important, how do we handle them? There are two
 
 ### Implicit variability
 
-This kind of variability is what can be seen in an example by Kent Beck from his famous book Test Driven Development By Example. This example was about money, where we always have a single type called `Money`, which internally can be pounds, dollars, yens etc. His example was in Java, but it will be more comfortably for me to translate it to C#[^wecoulduseextensionmethods]. Anyway, this is how we could create different amounts of money in different currencies:
+Let's imagine we want to model money using value objects[^tddbyexample]. Money can have different currencies, but we don't want to treat each currency in a special way. The only things that are impacted by currency are conversion rtates to other currencies. Other than this, we want every part of logic that works with money to work with each currency.
+
+This leads us to making the differencies between currencies implicit, i.e. we will have a single type called `Money`, which will not expose its currency at all. We only have to tell the currency when we create an instance:
 
 ```csharp
-Money tenPounds = Money.Punds(10);
+Money tenPounds = Money.Pounds(10);
 Money tenBucks = Money.Dollars(10);
 Money tenYens = Money.Yens(10);
 ```
 
-In reality, it actually was a single type, which differed in how it was created - which was hidden by the factory methods. Thanks to the different between e.g. yens and dollars being implicit, we could safely mix them, e.g. we could write:
+and when we want to know the concrete amount in a given currency:
 
 ```csharp
-Money allMySavings = 
-    Money.Pounds(10) 
-  + Money.Euros(24)
-  + Money.Dollars(13);
+decimal amountOfDollarsOnMyAccount = mySavings.AmountOfDollars();
 ```
 
-and this was a good thing, since all that Kent cared about in the end in regard to money was "do I have enough?".
+other than that, we are allowed to mix different currencies whenever and wherever we like[^wecoulduseextensionmethods]:
 
-TODO
+```csharp
+Money mySavings = 
+  Money.Dollars(100) +
+  Money.Euros(200) +
+  Money.Zlotys(1000);
+``` 
+
+And this is good, assuming all of our logic is common for all kinds of money and we do not have any special logic just for Pounds or just for Euros that we don't want to pass other currencies into by mistake.
 
 
-show you how using a value object helps us with the changes  
+Here, the variability of currency is implicit - most of the code is simply unaware of it and it is gracefully handled under the hood inside the `Money` class.
+
+### Explicit variability
+
+TODO paths
 
 
 TODO continue from here
@@ -211,3 +221,8 @@ TODO talk about static const value objects. const can be used only for types tha
 [^wecoulduseextensionmethods]: The difference between Jva dn C# here is that C# supports operator overloading whereas Java does not. By the way, I could use extension methods to make the example even more idiomatic, but I don't want to go to far in the land of specific language idioms to leave the code readable for the wider audience.  
 
 [^atmafilesystem]: this example uses a library called Atma Filesystem: TODO hyperlink to nuget
+
+[^tddbyexample]: This example is loosely based on Kent Beck's book Test Driven Development By Example. based on  TODO add reference to Kent's book
+
+TODO check whether the currencies are written uppercase in Kent's book
+
