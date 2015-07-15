@@ -167,10 +167,45 @@ Money mySavings =
 
 And this is good, assuming all of our logic is common for all kinds of money and we do not have any special logic just for Pounds or just for Euros that we don't want to pass other currencies into by mistake.
 
-
 Here, the variability of currency is implicit - most of the code is simply unaware of it and it is gracefully handled under the hood inside the `Money` class.
 
 ### Explicit variability
+
+There are times, however, when we want the variability to be explicit, i.e. modeled usnig different types. Filesystem paths are a good example. Let's imagine the following method for creating a backup archives that accepts a destination path (for now as a string) as its input parameter:
+
+```csharp
+void Backup(string destinationPath);
+```
+
+This method has one obvious drawback - its signature does not tell anything about the characteristics of the destination path - is it an absolute path, or a relative path (and if relative, then relative to what?)? Should the path contain a file name for the backup file, or should it be just a directory path and file name is given according to some pattern (e.g. given on current date)? Or maybe file name in the path is optional and if none is given, then a default name is used? A lot of questions, isn't it?
+
+We can try to work around it by changing the name of the parameter to hint the constraints, like this:
+
+```csharp
+void Backup(string absoluteFilePath);
+```
+
+but the effectiveness of that is based solely on someone reading the argument name and besides, before a path reaches this method, it is usually passed around several times and it's very hard to keep track of what actually is inside this string, so it's easy to mess things up and pass e.g. a relative path where an absolute one is expected. The compiler does not enforce any constraints. Besides that, one can pass an argument that's not even a path inside, because a string can contain any arbitrary content.
+
+Looks like this is a good situation to introduce a value object, but what kind of type or types should we introduce? Surely, we could create a single type called `Path` that would have methods like `IsAbsolute()`, `IsRelative()`, `IsFilePath()` and `IsDirectoryPath()` (i.e. it would handle the variability implicitly), which would solve (only - we'll see that shortly) one part of the problem - the signature would be:
+
+```csharp
+void Backup(Path absoluteFilePath);
+```
+
+and we would not be able to pass an arbitrary string, only an instance of a `Path`, which may expose a factory method that checks whether the string passed is a proper path:
+
+```csharp
+//the following throws exception because string is not proper path
+Path path = Path.Value(@"C:\C:\C:\C:\//\/\/");
+``` 
+
+and throws an exception in place of path creation. This is important - previously, when we did not have the value object, we could assign garbage to a string, pass it between several objects and get an exception from the `Backup()` method. Now, when we have a value object, there is a high probability thet it will be used as early as possible in the chain of calls, and if we try to create a path with wrong arguments, we will get an exception much closer to the place where the mistake was made, not at the end of the call chain.
+
+So yeah, introducing a general `Path` value object might solve some problems, but not all of them. Still, the signature of the method does not demand that the path is an absolute path to a file, so one may pass a 
+
+
+
 
 TODO paths
 
