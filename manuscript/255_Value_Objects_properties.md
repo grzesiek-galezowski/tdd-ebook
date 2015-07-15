@@ -10,6 +10,7 @@ Let's get back to the list of four possible changes I mentioned (just to remind 
 First, let's take a look at the definition of the type to see how it looks like before answering how it solves our problems. The following code is not legal C# - I omitted method bodies, putting `;` after each method declaration. I did this because it would be a lot of code to grasp and we don't necessary want to delve into code of each method. I added a comment to each section of the code and we'll explain them one by one later.
 
 ```csharp
+//We are the owners of this class!
 public class ProductName 
   : IEquatable<ProductName>
 {
@@ -321,7 +322,7 @@ In addition, equality operators, `Equals()` and `GetHashCode()` will have to be 
 
 ## Summary
 
-The two chapters talked about value objects on a specific example. The next one will delve into some more general concepts. Don't worry, it will be short ;-).
+The two chapters talked about value objects on a specific example. The next one will delve into some more general concepts. 
 
 [^addreference]: TODO add reference
 
