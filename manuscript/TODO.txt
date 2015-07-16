@@ -109,3 +109,12 @@ TODO small amount of private methods
 %% 1.  Method chaining - expression builders build up context
 %% 1.  variable as terminator ??? Explaining variables - for sharing
 %% 1.  Explaining method (i.e. returns its argument. Use with care)
+
+
+# Value objects
+
+## Value objects as dividing a domain space
+
+When talking about objects that were playing roles, sending messages and implementing interfaces, we talked a lot about making the protocols as abstract as possible and  
+
+Todo: interfaces let us treat related objects the same, and values let us separate unrelated objects.

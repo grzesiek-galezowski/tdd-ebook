@@ -134,13 +134,13 @@ So, again, any time we want to have a value based on a previous value, instead o
 
 As in ordinary objects, there can be some variability in values. For example, we can have money, which includes dollars, pounds, zlotys (Polish money), euros etc. Another example of something that can be modelled as a value are paths (you know, `C:\Directory\file.txt` or `/usr/bin/sh`) - here, we can have absolute paths, relative paths, paths to files and paths pointing to directories.
 
-Contrary to ordinary objects, however, where we solved variability by using interfaces and different implementations (e.g. we had `Alarm` interface with implementing classes like `LoudAlarm` or `SilentAlarm`), in values we do it differenly. This is because the variability of values is not behavioral. Whereas the different kinds of alarms varied in how they fulfilled the responsibility of signaling they were turned on (we said they responded to the same message with, sometimes entirely different, behaviors), the diffenrent kinds of currencies differ in what conversion rates are applied to them (e.g. "how many dollars do I get from 10 Euros and how many from 10 Punds?"), which is not a behavioral distinction. Likewise, paths differ in what kinds of operations can be applied to them (e.g. we can imagine that for paths pointing to files, we can have an operation called `GetFileName()`, which does not make sense for a path pointing to a directory).
+Contrary to ordinary objects, however, where we solved variability by using interfaces and different implementations (e.g. we had `Alarm` interface with implementing classes like `LoudAlarm` or `SilentAlarm`), in values we do it differenly. This is because the variability of values is not behavioral. Whereas the different kinds of alarms varied in how they fulfilled the responsibility of signaling they were turned on (we said they responded to the same message with, sometimes entirely different, behaviors), the diffenrent kinds of currencies differ in what exchange rates are applied to them (e.g. "how many dollars do I get from 10 Euros and how many from 10 Punds?"), which is not a behavioral distinction. Likewise, paths differ in what kinds of operations can be applied to them (e.g. we can imagine that for paths pointing to files, we can have an operation called `GetFileName()`, which does not make sense for a path pointing to a directory).
 
 So, assuming the differences are important, how do we handle them? There are two basic approaches that I like calling implicit and explicit. Both are useful in certain contexts, depending on what exactly we want to model, so both demand an explanation.
 
 ### Implicit variability
 
-Let's imagine we want to model money using value objects[^tddbyexample]. Money can have different currencies, but we don't want to treat each currency in a special way. The only things that are impacted by currency are conversion rtates to other currencies. Other than this, we want every part of logic that works with money to work with each currency.
+Let's imagine we want to model money using value objects[^tddbyexample]. Money can have different currencies, but we don't want to treat each currency in a special way. The only things that are impacted by currency are exhange rtates to other currencies. Other than this, we want every part of logic that works with money to work with each currency.
 
 This leads us to making the differencies between currencies implicit, i.e. we will have a single type called `Money`, which will not expose its currency at all. We only have to tell the currency when we create an instance:
 
@@ -238,9 +238,47 @@ Note that while in the previous example (the one with money), making the variabi
 
 If we choose the implicit path, we can treat all variations the same, since they are all of the same type. If we decide on the explicit path, we end up with several types that are usually incompatible and we allow conversions between them where such conversions make sense.
 
-## Value objects as dividing a domain space
+## Special values
 
-Todo: interfaces let us treat related objects the same, and values let us separate unrelated objects.
+Some value types has values that are so specific asto have their own name. For example, a string value consisting of `""` is called an empty string. A XXXXXXXX (TODO put a maximum 32 bit integer here) is called "maximum 32 bit integer value". 
+
+For example, in C#, we have `Int32.Max` and `Int32.Min` which are constants representing a maximum and minimum value of 32 bit integer. `string.Empty` representing an empty string.
+
+In Java, we have things like `Duration.ZERO` to represent a zero duration or `DayOfWeek.MONDAY` to represent a specific day of week.
+
+For such values, is makes a lot of sense to make them globally accessible from the value object classes, as is done in all the above examples from C# and Java library. This is because they are immutable, so the global accessibility does not cause any hurt. For example, we can imagine `string.Empty` implemented like this:
+
+```csharp
+public class string
+{
+  //...
+  public const string Empty = "";
+  //...
+}
+```
+
+The additional `const` modifier ensures no one will assign any new value to the `Empty` field. By the way, we can use `const` only for types that have literal values, like a string. For many others, we will have to use a `static readonly` (or `final static` in case of Java) modifier. To demonstrate it, let's go back to the money example from this chapter and imagine we want to have a special value called `None` to symbolize no money in any currency. As our `Money` type has no literals, we cannot use the `const` modifier, so instead we have to do this:
+
+```csharp
+public class Money
+{
+  //...
+  
+  public static readonly 
+    Money None = new Money(0, Currencies.Whatever);
+  
+  //...
+}
+```
+
+This idiom is the only exception I know from the rule I gave you several chapters ago about not using static fields at all. Anyway, now that we have this `None` value, we can use it like this:
+
+```csharp
+if(accountBalance == Money.None)
+{
+  //...
+}
+```
 
 ## Value types and Tell Don't Ask
 
@@ -250,10 +288,6 @@ TODO  It looks like the effort on creating such a wrapper around just one value 
 
 passing multiple strings can cause the order of the arguments to be confused, treating time as integer, Title type instead of strings or utils.
 
-## Special values
-
-TODO special values like none or blank
-TODO talk about static const value objects. const can be used only for types that have literals. Thus static readonly is used. 
 
 
 ## Summary
@@ -261,7 +295,7 @@ TODO talk about static const value objects. const can be used only for types tha
 
 
 
-[^wecoulduseextensionmethods]: The difference between Jva dn C# here is that C# supports operator overloading whereas Java does not. By the way, I could use extension methods to make the example even more idiomatic, but I don't want to go to far in the land of specific language idioms to leave the code readable for the wider audience.  
+[^wecoulduseextensionmethods]: I could use extension methods to make the example even more idiomatic, e.g. to be able to write `5.Dollars()`, but I don't want to go to far in the land of idioms specific to any language, because my goal is an audience wider than just C# programmers.  
 
 [^atmafilesystem]: this example uses a library called Atma Filesystem: TODO hyperlink to nuget
 
@@ -270,4 +304,6 @@ TODO talk about static const value objects. const can be used only for types tha
 [^tddbyexample]: This example is loosely based on Kent Beck's book Test Driven Development By Example. based on  TODO add reference to Kent's book
 
 TODO check whether the currencies are written uppercase in Kent's book
+
+
 
