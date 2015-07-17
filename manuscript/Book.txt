@@ -27,6 +27,6 @@
 End.md
 250_Value_Objects.md
 255_Value_Objects_properties.md
-257_ValueObjects_GeneralTopics.md
+257_Value objects_general_topics.md
 260_Dealing_with_3rd_party.md
 270_Mock_Objects.md
