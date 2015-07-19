@@ -191,6 +191,20 @@ public class NotifyingAdminComands : OrganizationalStructureAdminCommands
 
 Note that when defining the above class, we only had to implement one interface: `OrganizationalStructureAdminCommands`, and could ignore the existence of `OrganizationalStructureClientCommands`. This is because of the interface split we did before. If we had not separated interfaces for admin and client access, our `NotifyingAdminComands` class would have to implement the `ListAllEmployees` method (and others) and make it delegate to the original wrapped instance. This is not difficult, but it's unnecessary effort. Splitting the interface into two smaller ones spared us this trouble.
 
+#### Interfaces should model roles
+
+In the above example, we split the one bigger interface into two smaller, in reality exposing that the `InMemoryOrganizationalStructure` class objects can play two roles.
+
+Considering roles is another powerful way of separating interfaces. For example, in the organizational structure we mentioned above, we may have objects of class `Employee`, but that does not mean this class has to implement an interfacel called `IEmployee` or `EmployeeIfc` of enything like that. Honestly speaking, this is the situation we want to stay away from. What we would like to do instead is to look at roles. From the point of view of the structure, the employee might play a `Node` role. If it has a parent (e.g. an organization unit) it belongs to,  it might play a `ChildUnit` role from its perspective. On the other hand, if it has any children in the structure (e.g. employees he manages), he can be considered their `Parent` or `DirectSupervisor`. All of these roles should be modeled using interfaces which `Employee` class implements:
+
+```csharp
+public class Employee : Node, ChildUnit, DirectSupervisor
+{
+ //...
+```
+
+and given only the methods that are needed from the point of view of objects interacting with these roles.
+
 #### Interfaces should depend on abstractions, not implementation details
 
 It is tempting to think that every interface is an abstraction by definition. I believe otherwise -- while interfaces abstract away the concrete type of the class that implements it, they may still contain some other things not abstracted that are basically implementation details. Let's look at the following interface:
