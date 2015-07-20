@@ -48,23 +48,43 @@ Now we are ready to introduce mocks! Let's go!
 
 ## Specifying protocols
 
-I hope I succeeded in making my point that protocols are very important. Our goal is to design them so that we can reuse them in different contexts. Thus, it makes a lot of sense to specify (remember, that's the word we are using for "test") whether an object adheres to its part of the protocol. For example, our `DataDispatcher` must first open a destination, then send the data and at last, close the connection. If we rely on these calls being made in this order when we write our implementations of the `Destination` interface, we'd better specify what calls we expect and in which order, using executable Statements.
+I hope in previous chapters, I succeeded in making my point that protocols are very important. Our goal is to design them so that we can reuse them in different contexts. Thus, it makes a lot of sense to specify (remember, that's the word we are using for "test") whether an object adheres to its part of the protocol. For example, our `DataDispatcher` must first open a destination, then send the data and at last, close the connection. If we rely on these calls being made in this order when we write our implementations of the `Destination` interface, we'd better specify what calls they expect to receive from `DataDispatcher` and in which order, using executable Statements.
 
-TODO 
- 
-when we have an object that uses something implementing a `Connection` interface, it makes a lot of sense to specify that this object should first open the connection, then send data and then close it. We cannot just specify how it works in the context in which it is currently used, because we want the class of the object to be context-independent - we care about how it interacts with its context, whatever it is.
+Remember from the previous chapters then I told you that we strive for context-independence when designing objects? This is true, however, it's impossible most of the time to attain complete context-independence. In case of `DataDispatcher`, it knows very little of its context, which id a `Destination`, but nevertheless, it needs to know *something* about it. Thus, when writing a Statement, we need to pass an object of a class implementing `Destination` into `DataDispatcher`. But which context should we use? 
 
-TODO we need to choose SOME context. which context do we choose?
+In other words, we can express our problem with the following, unfinished Statement (I marked all the unknowns with a double question mark: `??`):
 
-Thus, objects of a single class can appear in our application (e.g. in composition root) many times, each time in a context of different peer objects playing the roles that it interacts with. Thus, we don't have to specify it in any particular context, because when designing the class, we did not care about what the context really was, but what services it provides to our object and what it expects from it.
+```csharp
+[Fact] public void 
+ShouldSendDataToOpenedDestinationThenCloseWhenAskedToDispatch()
+{
+  //GIVEN
+  var destination = ??;
+  var dispatcher = new DataDispatcher(destination);
+  var data = Any.Array<byte>();
+  
+  //WHEN
+  dispatcher.Dispatch(data);
+  
+  //THEN
+  ??
+}
+```
 
-If we can choose the context in which to put an object when specifying its protocols, we'd better choose a context that:
+As you see, we need to pass a `Destination` to a `DataDispatcher`, but we don't know what that destination should be. Likewise, we have no good idea of how to specify the expected calls and their orders.
 
-* does not add side effects of its own - when we are specifying a protocol of an object, we want to be sure that what we are making assertions on are the actions of this object itself, not its context. This is a requirement of trust - you want to trust your specifications that they are specifying what they say they do.
-* is easy to control - so that we can easily make it trigger different behaviors in the object we are specifying, Also, we want to be able to easily verify how the specified object interacts with its context. This is a requirement of convenience.
+From the perspective of `DataDispatcher`, it is designed to work with different destinations, so no context is more appropriate than other. This means that we can pick and choose the one we like. Ideally, we'd like to pass a context that best fulfills two requirements:
+
+1. Does not add side effects of its own - when we are specifying a protocol of an object, we want to be sure that what we are making assertions on are the actions of this object itself, not its context. This is a requirement of trust - you want to trust your specifications that they are specifying what they say they do.
+1. Is easy to control - so that we can easily make it trigger different behaviors in the object we are specifying, Also, we want to be able to easily verify how the specified object interacts with its context. This is a requirement of convenience.
 
 There is a tool that fulfills these two requirements - you guessed it - mock objects!
 
+## Using a mock destination
+
+TODO TODO TODO
+
+TODO make a remark about strict mocks and loose mocks
 
 
 ## Mocks as yet another context
