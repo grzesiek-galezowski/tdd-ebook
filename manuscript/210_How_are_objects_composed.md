@@ -231,7 +231,7 @@ So in the first example, the decision on which `Recipient` is used is made by wh
 
 #### Factories with parameters
 
-So far, all the factories we considered had creation methods with empty parameter list, but this is not required. As the factory remains the decision maker on which `Recipient` is used, it can rely on some external parameters to help it make the decision.
+So far, all the factories we considered had creation methods with empty parameter list, but this is not a requirement of any sort - I just wanted to make the examples simple, so I left out everything that was not helpful in making my point. As the factory remains the decision maker on which `Recipient` is used, it can rely on some external parameters passed to the creation method to help it make the decision.
 
 #### Not only factories
 
@@ -799,7 +799,7 @@ CreateContainerForData()
 }
 ```
 
-Of course, it makes little sense for the return type of the factory to be a library class or interface (rather, we use factories to create instances of our own classes), but you get the idea, right? 
+Of course, it makes little sense for the return type of the factory to be a library class or interface like in the above example (rather, we use factories to create instances of our own classes), but you get the idea, right? 
 
 Anyway, it is typical for a return type of a factory to be an interface or, at worst, an abstract class. This means that whoever uses the factory, it knows only that it receives an object of a class that is implementing an interface or is derived from abstract class. But it does not know exactly what *concrete* type it is. Thus, a factory may return objects of different types at different times, depending on some rules only it knows.
 
@@ -826,7 +826,7 @@ public class Version1ProtocolMessageFactory
 }
 ```
 
-Note that the factory can create many different types of messages depending on what is inside the raw data, but from the perspective of the user of the factory, this is irrelevant. All that it knows is that it gets a `Message`, thus, it (and the rest of the code operating on messages in the whole application for that matter) can be written as general-purpose logic, containing no "special cases" dependent on type of message:
+The factory can create many different types of messages depending on what is inside the raw data, but from the perspective of the user of the factory, this is irrelevant. All that it knows is that it gets a `Message`, thus, it (and the rest of the code operating on messages in the whole application for that matter) can be written as general-purpose logic, containing no "special cases" dependent on type of message:
 
 ```csharp
 var message = _messageFactory.NewInstanceFrom(rawData);
@@ -862,6 +862,8 @@ public class Version1ProtocolMessageFactory
 and the rest of the code could remain untouched.
 
 Using the factory to hide the real type of message returned makes maintaining the code easier, because there is less code to change when adding new types of messages to the system or removing existing ones (in our example -- in case when we do not need to initiate a session anymore) [^encapsulatewhatvaries] -- the factory hides that and the rest of the application is coded against the general scenario.
+
+The above example demonstrated how a factory can hide that many classes can play the same role (i.e. different messages could play the role of `Message`), but we can as well use factories to hide that the same class plays many roles. An object of the same class can be returned from different factory method, each time as a different interface and clients cannot access the methods it implements from other interfaces.
 
 #### Factories are themselves polymorphic (encapsulation of rule)
 
