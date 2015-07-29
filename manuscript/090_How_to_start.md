@@ -130,7 +130,7 @@ yourself the question: “should it really?". If this causes uncertainty,
 then it is high time to talk to a domain expert and make sure you
 understand well what you need to accomplish. If you are not a native
 English speaker, the “should" prefix will probably have a weaker
-influence on you -- that is why I don't insist on you using it. I like
+influence on you -- this is one of the reasons why I don't insist on you using it. I like
 it though.
 
 When inventing a name, It is important to put the main focus on what
