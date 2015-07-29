@@ -103,7 +103,7 @@ Note few things about the name of the Statement:
 ### My favourite convention
 
 There are many conventions for naming Statements appropriately. My
-favorite is the one developed by Dan North, which makes each Statement
+favorite is the one [developed by Dan North](http://dannorth.net/introducing-bdd/), which makes each Statement
 name begin with the word `Should`. So for example, I would name
 a Statement:
 
