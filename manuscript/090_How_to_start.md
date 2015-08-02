@@ -124,29 +124,14 @@ public class SortingOperationSpecification
 }
 ```
 
-The “should" word was introduced by Dan to weaken the statement
-following it and thus, to allow questioning what you are stating and ask
-yourself the question: “should it really?". If this causes uncertainty,
-then it is high time to talk to a domain expert and make sure you
-understand well what you need to accomplish. If you are not a native
-English speaker, the “should" prefix will probably have a weaker
-influence on you -- this is one of the reasons why I don't insist on you using it. I like
-it though.
+The "should" word was introduced by Dan to weaken the statement following it and thus, to allow questioning what you are stating and ask yourself the question: "should it really?". If this causes uncertainty, then it is high time to talk to a domain expert and make sure you understand well what you need to accomplish. If you are not a native English speaker, the “should" prefix will probably have a weaker influence on you -- this is one of the reasons why I don't insist on you using it. I like it though[^argumentsagainstshould].
 
-When inventing a name, It is important to put the main focus on what
-result or action is expected from an object. If you do not, you quickly
-find it troublesome. As an example, one of my colleagues was specifying
-a class `UserId` and wrote the following name for the Statement about
-comparison of two identifiers:
+When inventing a name, It is important to put the main focus on what result or action is expected from an object. If you do not, you quickly find it troublesome. As an example, one of my colleagues was specifying a class `UserId` and wrote the following name for the Statement about comparison of two identifiers:
 
 `EqualOperationShouldPassForTwoInstancesWithTheSameUserName()`.
 
-Note that this is not from the perspective of a single object, but
-rather from the perspective of an operation that is executed on it,
-which means that we stopped thinking in terms of object responsibilities
-and started thinking in terms of operation correctness, which is farther
-away from our assumption that we are writing a Specification consisting
-of Statements. This name should be something more like:
+Note that this is not from the perspective of a single object, but rather from the perspective of an operation that is executed on it, which means that we stopped thinking in terms of object responsibilities
+and started thinking in terms of operation correctness, which is farther away from our assumption that we are writing a Specification consisting of Statements. This name should be something more like:
 
 `ShouldReportThatItIsEqualToAnotherIdThatHasTheSameUserName()`.
 
@@ -560,3 +545,7 @@ all of these techniques work in this concept and we’ll be revisiting
 them as soon as we learn how to do TDD in fully object-oriented world
 (that is, after we introduce a concept of mock objects). For now, I’m
 trying to keep it simple.
+
+
+[^argumentsagainstshould]: There are also some arguments against using the "should" word, e.g. by Kevlin Henney (see https://vimeo.com/108007508).
+
