@@ -8,17 +8,17 @@ However, this is just one part of object-oriented design approach that I'm tryin
 
 In short, values are usually seen as immutable quantities or measurements[^addreference] that are compared by their content, not their identity. There are some examples of values in the libraries of our programming languages. For example, `String` class in Java or C# is a value, because it is immutable and every two strings are considered equal when they contain the same data. Other examples are the primitive types that are built-in into most programming languages, like numbers or characters. 
 
-Most of the values shipped with general purpose libraries are quite primitive and general purpose. There are many times, however, when we want to model a domain abstraction as a value. Some examples include: date and time (which nowadays is usually a part of standard library, because it is usable in so many domains), money, temperature, but also things such as file paths or resource identifiers.
+Most of the values that are shipped with general-purpose libraries are quite primitive or general. There are many times, however, when we want to model a domain abstraction as a value. Some examples include: date and time (which nowadays is usually a part of standard library, because it is usable in so many domains), money, temperature, but also things such as file paths or resource identifiers.
 
 As you may have already spotted when reading this book, I'm really bad at explaining things without examples, so here is one:
 
-## Example (TODO name this differently!)
+## Example: money and names
 
 Imagine we are developing a web store for a customer. There are different kinds  of products sold and the customer wants to have the ability to add new products.
 
 Each product has at least two important attributes: name and price (actually there are others like quantity, but let's leave them alone for now).
 
-Now, imagine how you would model these two things - would name be modeled by a mere string and price be a double or a decimal type?
+Now, imagine how you would model these two things - would the name be modeled as a mere `string` and price be a `double` or a `decimal` type?
 
 Let's say that we have indeed decided to use a `decimal` to hold a price, and a `string` to hold a name. Note that both are generic library types, not connected to any domain. Is it a good choice to use "library types" for domain abstractions? We shall soon find out...
 
@@ -33,7 +33,7 @@ Actually, it turns out that these values must be shared across few subdomains of
 
 etc.
 
-The code grows larger and larger and, as the concepts of product name and price are among the main concepts of the application, they tend to land everywhere. 
+The code grows larger and larger and, as the concepts of product name and price are among the main concepts of the application, they tend to land in many places. 
 
 ### Change request
 
@@ -43,19 +43,21 @@ Now, imagine that one of the following changes must make its way into the system
 2.  The product name is not enough to differentiate a product. For example, a notebook manufacturers have the same models of notebooks in different configurations (e.g. different amount of RAM or different processor models inside). So each product will receive additional identifier that will have to be taken into account during comparisons.
 3.  In order to support customers from different countries, new currencies must be supported.
 
-These changes are a horror to make. Why? It's because we're coupled in multiple places to a particular implementation of product name (string) and a particular implementation of money (decimal). This wouldn't be so bad, if not for the fact that we're coupled to implementation we cannot change!
+In current situation, these changes are a really painful to make. Why? It's because we used primitive types to represent the things that would need to change, which means we're coupled in multiple places to a particular implementation of product name (`string`) and a particular implementation of money (e.g. `decimal`). This wouldn't be so bad, if not for the fact that we're coupled to implementation we cannot change!
+
+Are we sentnced to live with issues like that in our code and cannot do anything about it? Let's find out by exploring the options we have.
 
 From now on, let's put the money concept aside and focus only on the product name, as both name and price are similar cases with similar solutions, so it's sufficient for us to consider just one of them.
 
-### What options do we have?
+### What options do we have to address product name changes?
 
-So, what choice do we have now? In order to support new requirements, we have to find all places where we use the product name and price and make the same change (and, by the way, an IDE will not help us much in this search, because we would be searching for all the occurences of type `string`). Every time we need to do something like this (i.e. we have to make the same change in multiple places an there is a non-zero possibility we'll miss at least one of those places), it means that we have introduced redundancy.
+In order to support new requirements, we have to find all places where we use the product name (by the way, an IDE will not help us much in this search, because we would be searching for all the occurences of type `string`) and make the same change. Every time we need to do something like this (i.e. we have to make the same change in multiple places an there is a non-zero possibility we'll miss at least one of those places), it means that we have introduced redundancy. Remember? We talked about redundancy when discussing factories and mentioned that redundancy is about conceptual duplication that forces us to make the same change (not literally, but conceptually) in several places.
 
-There are multiple ways to approach this redundancy.
+Thankfully, there are multiple ways to approach this redundancy. Some of them are better and some are worse[^everydecisionistradeoff]. 
 
 #### Option one - just modify the implementation in all places
 
-This option is about leaving the redundancy where it is and making the change in all places, hoping for the best. 
+This option is about leaving the redundancy where it is and just making the change in all places, hoping that this is the last time we change anything related to product name. 
 
 So let's say we want to add comparison with letter case ignored. Using this option would lead us to find all places where we do something like this:
 
@@ -68,13 +70,12 @@ if(productName == productName2)
 or
 
 ```csharp
-if(productName.Equals(productName2))
+if(String.Equals(productName, productName2))
 {
 ..
 ```
 
-
-And change them to:
+And change them to a comparisong that ignores case, e.g.:
 
 ```csharp
 if(String.Equals(productName, productName2, 
@@ -83,11 +84,13 @@ if(String.Equals(productName, productName2,
 ..
 ```
 
-This deals with the case, at least for now, but in the long run, it can cause some trouble:
+This deals with the problem, at least for now, but in the long run, it can cause some trouble:
+
+TODO finished here
 
 1.  According to [Shalloway's Law](http://www.netobjectives.com/blogs/shalloway%E2%80%99s-law-and-shalloway%E2%80%99s-principle), it will be very hard to find all these places and chances are you'll miss at least one. If so, a bug might creep in.
-2.  Even if this time you'll be able to find and correct all the places, every time the domain logic for product name comparisons changes (e.g. we'll have to use `InvariantIgnoreCase` option instead of `OrdinalIgnoreCase` for some reasons, or the case I mentioned earlier with comparison including an identifier), you'll have to do it over.
-3.  Everyone who adds new code that compares product names in the future, will have to remember that character case is ignored in such comparisons. Thus, they will have to remember to use `IgnoreCase` option whenever they add new comparisons. If you want to know my opinion, accidental violation of this convention in a team that has either a fair size or more than minimal staff turnover is just a matter of time.
+2.  Even if this time you'll be able to find and correct all the places, every time the domain logic for product name comparisons changes (e.g. we'll have to use `InvariantIgnoreCase` option instead of `OrdinalIgnoreCase` for some reasons, or handle the case I mentioned earlier with comparison including an identifier of a product), you'll have to do it over. And Shalloway's Law applies each time again.
+3.  Everyone who adds new code that compares product names in the future, will have to remember that character case is ignored in such comparisons. Thus, they will have to remember to use `OrdinalIgnoreCase` option whenever they add new comparisons somewhere in the code. If you want to know my opinion, accidental violation of this convention in a team that has either a fair size or more than minimal staff turnover rate is just a matter of time.
 4.  Also, there are other changes that will be tied to the concept of product name (like generating a hash code in places such product names are stored in a hash set or are keys in a hash table) and you'll need to introduce them too in all the places where the product name value is used.
 
 #### Option two - use a helper class
@@ -127,5 +130,7 @@ In further chapters, I will further explore this example of product name to show
 [^factorymethods]: TODO explain factory methods
 
 [^isnullorempty]: by the way, the code contains a call to `IsNullOrEmpty()`. There are several valid arguments against using this method, e.g. by Mark Seemann (TODO check surname) (TODO add link), but in this case, I put it in to make the code shorter as the validation logic itself is not that important at the moment. 
+
+[^everydecisionistradeoff]: All engineering decisions are trade offs anyway, so I should really say "some of them make better trade-offs in our context, and some make worse".
 
 TODO shalloway's law - wasn't it already mentioned?
