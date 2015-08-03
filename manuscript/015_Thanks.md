@@ -8,6 +8,7 @@ contributions:
 -   Brad Appleton
 -   Daniel Żołopa (cover image)
 -   Donghyun Lee
+-   Martin Moene
 -   Michael Whelan
 -   Reuven Yagel
 -   Rémi Goyard
