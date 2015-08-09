@@ -1,6 +1,6 @@
 -# Part 1: Just the basics
 
-This is a part where I introduce the basic TDD philosophy and practices
+In this part I introduce the basic TDD philosophy and practices
 (as well as some advanced ones) without going much into object
 orientation and how to do TDD for systems where multiple objects
 collaborate together (which is a topic of Part 2).
