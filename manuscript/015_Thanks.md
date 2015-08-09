@@ -6,6 +6,7 @@ name) for valuable feedback, suggestions, typo fixes and other
 contributions:
 
 -   Brad Appleton
+-   Daniel Dec
 -   Daniel Żołopa (cover image)
 -   Donghyun Lee
 -   Martin Moene
