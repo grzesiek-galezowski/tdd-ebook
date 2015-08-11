@@ -86,30 +86,33 @@ if(String.Equals(productName, productName2,
 
 This deals with the problem, at least for now, but in the long run, it can cause some trouble:
 
-TODO finished here
-
 1.  According to [Shalloway's Law](http://www.netobjectives.com/blogs/shalloway%E2%80%99s-law-and-shalloway%E2%80%99s-principle), it will be very hard to find all these places and chances are you'll miss at least one. If so, a bug might creep in.
-2.  Even if this time you'll be able to find and correct all the places, every time the domain logic for product name comparisons changes (e.g. we'll have to use `InvariantIgnoreCase` option instead of `OrdinalIgnoreCase` for some reasons, or handle the case I mentioned earlier with comparison including an identifier of a product), you'll have to do it over. And Shalloway's Law applies each time again.
-3.  Everyone who adds new code that compares product names in the future, will have to remember that character case is ignored in such comparisons. Thus, they will have to remember to use `OrdinalIgnoreCase` option whenever they add new comparisons somewhere in the code. If you want to know my opinion, accidental violation of this convention in a team that has either a fair size or more than minimal staff turnover rate is just a matter of time.
-4.  Also, there are other changes that will be tied to the concept of product name (like generating a hash code in places such product names are stored in a hash set or are keys in a hash table) and you'll need to introduce them too in all the places where the product name value is used.
+2.  Even if this time you'll be able to find and correct all the places, every time the domain logic for product name comparisons changes (e.g. we'll have to use `InvariantIgnoreCase` option instead of `OrdinalIgnoreCase` for some reasons, or handle the case I mentioned earlier where comparison includes an identifier of a product), you'll have to do it over. And Shalloway's Law applies the same every time. In other words, you're not making things better.
+3.  Everyone who adds new logic that needs to compare product names in the future, will have to remember that character case is ignored in such comparisons. Thus, they will need to keep in mind that they should use `OrdinalIgnoreCase` option whenever they add new comparisons somewhere in the code. If you want to know my opinion, accidental violation of this convention in a team that has either a fair size or more than minimal staff turnover rate is just a matter of time.
+4.  Also, there are other changes that will be tied to the concept of product name equality in a different way (for example, hash sets and hash tables determine equality based on hash code, not plain comparisons of data) and you'll need to find those places and make changes there as well.
+
+So, as you can see, this approach does not make things any better. In fact, it is this approach that led us to the trouble we are trying to get away in the first place.
 
 #### Option two - use a helper class
 
-We can address the issues #1 and #2 of the above list (i.e. the necessity to change multiple places when the comparison logic of product names changes) by moving the comparison operation into a helper method of a helper class, say, `ProductName` and make this static method a single place that knows how to compare product names. This would make each of the comparisons scattered across the code look like this:
+We can address the issues #1 and #2 of the above list (i.e. the necessity to change multiple places when the comparison logic of product names changes) by moving this comparison into a static helper method of a helper class, (let's simply call it `ProductNameComparison`) and make this method a single place that knows how to compare product names. This would make each of the places in the code when comparison needs to be made look like this:
 
 ```csharp
-if(ProductName.Equals(productName, productName2))
+if(ProductNameComparison
+   .AreEqual(productName, productName2))
 {
 ..
 ```
 
-Note that the details of the comparison are hidden inside the newly created `Equals()` method. This method has become the only place that has knowledge of these details and each time the comparison needs to change, we only have to modify the method. This frees us from having to search and modify all comparisons each time the comparison logic changes.
+Note that the details of what it actually means to compare two product names is now hidden inside the newly created static `AreEqual()` method. This method has become the only place that has knowledge of these details and each time the comparison needs to be changed, we have to modify this method alone. The rest of the code just calls this method without knowing what it does, so it won't need to change. This frees us from having to search and modify this code each time the comparison logic changes.
 
-However, while it protects us from the change of comparison logic indeed, it's still not enough. Why? Because the concept of a product name is still not encapsulated - it's still a `string` and it allows you to do everything with it that we can do with a `string`, even when it does not make sense for product names. Hence, another developer who starts adding some new code may not even notice that product names are compared differently than other strings and just use the default comparison of a `string` type. Other deficiencies of the previous approach apply as well (as I said, except from the issues #1 and #2).
+However, while it protects us from the change of comparison logic indeed, it's still not enough. Why? Because the concept of a product name is still not encapsulated - a product name is still a `string` and it allows us to do everything with it that we can do with any other `string`, even when it does not make sense for product names. This is because in the domain of the problem, product names are not sequences of characters (which `strings`s are), but an abstraction with a special set of rules applicable to it. By failing to model this abstraction appropriately, we can run into a situation where another developer who starts adding some new code may not even notice that product names need to be compared differently than other strings and just use the default comparison of a `string` type. 
 
-#### Option three - encapsulate the domain concept and create a "Value Object"
+Other deficiencies of the previous approach apply as well (as I said, except from the issues #1 and #2).
 
-I think it's more than clear now that product name is a not "just a string", but a domain concept and as such, it deserves its own class. Let us introduce such a class, then, and call it `ProductName`. Instances of this class will have `Equals()` method overridden[^csharpoperatorsoverride] with the logic specific to product names.  Given this, the comparison snippet is now:
+#### Option three - encapsulate the domain concept and create a "value object"
+
+I think it's more than clear now that a product name is a not "just a string", but a domain concept and as such, it deserves its own class. Let us introduce such a class then, and call it `ProductName`. Instances of this class will have `Equals()` method overridden[^csharpoperatorsoverride] with the logic specific to product names.  Given this, the comparison snippet is now:
 
 ```csharp
 // productName and productName2
@@ -119,18 +122,20 @@ if(productName.Equals(productName2))
 ..
 ```
 
-How is it different from the previous approach with helper class? Previously the data of a product name was publicly visible (as a string) and we only added external functionality that operated on this data (and anybody could add their own without asking us for permission). This time, the data of the product name is completely hidden from the outside world. The only available way to operate on this data is through the `ProductName`'s public interface (which exposes only those methods that we think make sense for product names and no more). In other words, whereas before we were dealing with a general-purpose type we couldn't change, now we have a domain-specific type that's completely under our control.
+How is it different from the previous approach where we had a helper class, called `ProductNameComparison`? Previously the data of a product name was publicly visible (as a string) and we used the helper class only to store a function operating on this data (and anybody could create their own functions somewhere else without noticing the ones we already added). This time, the data of the product name is hidden[^notcompletelyhidden] from the outside world. The only available way to operate on this data is through the `ProductName`'s public interface (which exposes only those methods that we think make sense for product names and no more). In other words, whereas before we were dealing with a general-purpose type we couldn't change, now we have a domain-specific type that's completely under our control. This means we can freely change the meaning of two names being equal and this change will not ripple throughout the code. 
 
 In further chapters, I will further explore this example of product name to show you some properties of value objects.
 
 [^addreference]: TODO add reference
 
-[^csharpoperatorsoverride]: and, for C#, overriding equality operators is probably a good idea, not to mention `GetHashCode()`
+[^csharpoperatorsoverride]: and, for C#, overriding equality operators (`==` and `!=`) is probably a good idea as well, not to mention `GetHashCode()`
 
 [^factorymethods]: TODO explain factory methods
 
 [^isnullorempty]: by the way, the code contains a call to `IsNullOrEmpty()`. There are several valid arguments against using this method, e.g. by Mark Seemann (TODO check surname) (TODO add link), but in this case, I put it in to make the code shorter as the validation logic itself is not that important at the moment. 
 
 [^everydecisionistradeoff]: All engineering decisions are trade offs anyway, so I should really say "some of them make better trade-offs in our context, and some make worse".
+
+[^notcompletelyhidden]: In reality this is only partially true. For example, we will have to override `ToString()` somewhere anyway to ensure interoperability with 3rd party libraries that don't know about our type. Also, one can always use reflection to get private data. Despite this, I hope you get the point :-).
 
 TODO shalloway's law - wasn't it already mentioned?
