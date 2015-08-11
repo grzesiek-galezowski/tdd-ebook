@@ -308,7 +308,7 @@ As such, we expect values to contain a lot of query methods (although, as I said
 
 [^atmafilesystem2]: for reference, please take a look at TODO hyperlink
 
-[^tddbyexample]: This example is loosely based on Kent Beck's book Test Driven Development By Example. based on  TODO add reference to Kent's book
+[^tddbyexample]: This example is loosely based on Kent Beck's book Test-Driven Development By Example. based on  TODO add reference to Kent's book
 
 [^csharpstructs] C# has structs, which can sometimes come in handy when implementing values, especially starting from C# 5.0 where they got a bit more powerful.
 

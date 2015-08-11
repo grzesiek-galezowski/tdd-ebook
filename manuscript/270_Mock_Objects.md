@@ -150,7 +150,7 @@ Some say that specifying object interactions in a context consisting of mocks is
 
 ## Summary
 
-Now, wasn't this a painless introduction to mock objects! In the next chapters, we will examine how mock objects help in Test Driven Development.
+Now, wasn't this a painless introduction to mock objects! In the next chapters, we will examine how mock objects help in test-driven development.
 
 [^noexception]: By the way, note that this protocol we are specifying is very naive, since we assume that sending data through destination will never throw any exception.
  

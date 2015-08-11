@@ -53,7 +53,7 @@ Act 1: The Car
 stuff you promised to teach me.
 
 **Johnny:** Not only TDD, but we are also gonna use some of the
-practices associated with a process called Acceptance Test Driven
+practices associated with a process called Acceptance Test-Driven
 Development, albeit in a simplified form.
 
 **Benjamin:** Acceptance Test-Driven Development? What is that?
