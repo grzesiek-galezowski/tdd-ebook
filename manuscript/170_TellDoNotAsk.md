@@ -353,8 +353,8 @@ and it seems a pretty powerful concept.
 A Quick Retrospective
 ---------------------
 
-In this chapter, Benjamin learned that the composability of objects (not
-to mention clarity) is reinforced when interactions between them are:
+In this chapter, Benjamin learned that the composability of an object (not
+to mention clarity) is reinforced when interactions between it and its peers are:
 abstract, logical and stable. Also, he discovered, with Johnny's help,
 that it is further strengthened by following a design style where
 objects are told what to do instead of asked to give away information to

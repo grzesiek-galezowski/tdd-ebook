@@ -1,15 +1,9 @@
-On Objects Composability
+On Object Composability
 ========================
 
-In this chapter, I will try to outline briefly why objects'
-composability is a goal worth achieving and how it can be achieved. I am
-going to start with an example of unmaintainable code and will gradually
-fix its flaws in the next chapters. For now, we are going to fix just
-one of the flaws, so the code we will end up will not be perfect by any
-means, still, it will be better by one quality.
+In this chapter, I will try to outline briefly why object composability is a goal worth achieving and how it can be achieved. I am going to start with an example of unmaintainable code and will gradually fix its flaws in the next chapters. For now, we are going to fix just one of the flaws, so the code we will end up will not be perfect by any means, still, it will be better by one quality.
 
-In the coming chapters, we will learn more valuable lessons resulting
-from changing this little piece of code.
+In the coming chapters, we will learn more valuable lessons resulting from changing this little piece of code.
 
 Another task for Johnny and Benjamin
 ------------------------------------
@@ -409,8 +403,8 @@ today.
 A Quick Retrospective
 ---------------------
 
-In this chapter, Benjamin learned to appreciate the composability of
-objects, i.e. the ability to replace object dependencies, providing
+In this chapter, Benjamin learned to appreciate composability of
+an object, i.e. the ability to replace its dependencies, providing
 different behaviors, without the need to change the code of the object
 class itself. Thus, an object, given replaced dependencies, starts using
 the new behaviors without noticing that any change occurred at all.
