@@ -3,7 +3,7 @@ Why do we need composability?
 
 It might seem stupid to ask this question here -- if you have managed to stay with me this long, then you're probably motivated enough not to need a justification? Well, anyway, it's still worth discussing it a little. Hopefully, you'll learn as much reading this back-to-basics chapter as I did writing it.
 
-Pre-object oriented approaches
+Pre-object-oriented approaches
 ------------------------------
 
 Back in the days of procedural programming[^skipfunc], when we wanted to execute a different code based on some factor, it was usually achieved using an 'if' statement. For example, if our application was in need to be able to use different kinds of alarms, like a loud alarm (that plays a loud sound) and a silent alarm (that does not play any sound, but instead silently contacts the police) interchangeably, then usually, we could achieve this using a conditional like in the following function:
@@ -62,10 +62,10 @@ So, at least conceptually, as soon as we know the alarm kind, we already know wh
 
 Unfortunately, procedural programming does not let's bind behaviors with data. As a matter of fact, the whole paradigm of procedural programming is about separating behaviors and data! Well, honestly, they had some answers to those concerns, but these answers were mostly awkward (for those of you that still remember C language: I'm talking about macros and function pointers). So, as data and behaviors are separated, we need to query the data each time we want to pick a behavior based on it. That's why we have the duplication.
 
-Object oriented programming to the rescue!
+Object-oriented programming to the rescue!
 ------------------------------------------
 
-On the other hand, object oriented programming has for a long time made available two mechanisms that enable what we didn't have in procedural languages:
+On the other hand, object-oriented programming has for a long time made available two mechanisms that enable what we didn't have in procedural languages:
 
 1.  Classes -- that allow binding behavior together with data
 2.  Polymorphism -- allows executing behavior without knowing the exact class that holds them, but knowing only a set of behaviors that it supports. This knowledge is obtained by having an abstract type (interface or an abstract class) define this set of behaviors, with no real implementation. Then we can make other classes that provide their own implementation of the behaviors that are declared to be supported by the abstract type. Finally, we can use the instances of those classes where an instance of the abstract type is expected. In case of statically-typed languages, this requires implementing an interface or inheriting from an abstract class.
@@ -323,10 +323,10 @@ This ability to change the behavior of our application just by changing the way 
 Summary -- are you still with me?
 --------------------------------
 
-We started with what seemed to be a repetition from basic object oriented programming course, using a basic example. It was necessary though to make a fluent transition to the benefits of composability we eventually introduced at the end. I hope you did not get overwhelmed and can understand now why I am putting so much stress on composability.
+We started with what seemed to be a repetition from basic object-oriented programming course, using a basic example. It was necessary though to make a fluent transition to the benefits of composability we eventually introduced at the end. I hope you did not get overwhelmed and can understand now why I am putting so much stress on composability.
 
 In the next chapter, we will take a closer look at composing objects itself.
 
-[^skipfunc]: I am simplifying the discussion on purpose, leaving out e.g. functional languages and assuming that "pre-object oriented" means procedural or structural. While this is not true in general, this is how the reality looked like for many of us. If you are good at functional programming, you already understand the benefits of composability.
+[^skipfunc]: I am simplifying the discussion on purpose, leaving out e.g. functional languages and assuming that "pre-object-oriented" means procedural or structural. While this is not true in general, this is how the reality looked like for many of us. If you are good at functional programming, you already understand the benefits of composability.
 
 [^moreonindependence]: More on context-independence and what these "special places" are, in the next chapters.

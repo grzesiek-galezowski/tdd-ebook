@@ -286,7 +286,7 @@ When talking about the web of objects metaphor, I stressed that objects should b
 
 What about values? Does that metaphor apply to them? And if so, then how? And what about Tell Don't Ask?
 
-First of all, values do not belong to the web of objects metaphor, alhough in almost all object oriented languages, values are implemented using the same mechanism as objects - a class[^csharpstructs]. Values can be passed between objects in messages, but we don't talk about values sending messages.
+First of all, values do not belong to the web of objects metaphor, alhough in almost all object-oriented languages, values are implemented using the same mechanism as objects - a class[^csharpstructs]. Values can be passed between objects in messages, but we don't talk about values sending messages.
 
 A conclusion from this is that values cannot be composed of objects. Values can be composed of values (as our `Path` type had a `string` inside), which ensures their immutability. Also, they can occasionally can objects as parameters of their methods (remember the `ProductName` class from previous chapters? I had a method `ToString()` accepting a `Format` interface), but this is more of an exception than a rule.
 

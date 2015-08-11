@@ -18,7 +18,7 @@ contributions:
 
 This book is not original at all. It presents various topics that others 
 invented and I just picked up. Thus, I would also like to thank my mentors 
-and authorities on test-driven development and object oriented design 
+and authorities on test-driven development and object-oriented design 
 that I gained all my knowledge from (listed alphabetically by name):
 
 -   Amir Kolsky

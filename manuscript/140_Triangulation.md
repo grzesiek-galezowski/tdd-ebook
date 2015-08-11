@@ -9,7 +9,7 @@ Beck’s book [Test Driven Development: By Example](http://www.pearsonhighered.c
 
 
 As one of the last topics of the core TDD techniques that do not require
-us to delve into the object oriented world, I’d like to show you
+us to delve into the object-oriented world, I’d like to show you
 triangulation.
 
 Triangulation is often described as the most conservative of three

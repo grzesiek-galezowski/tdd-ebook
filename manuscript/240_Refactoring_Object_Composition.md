@@ -778,7 +778,7 @@ Note that the `TracedConfigurationUpdates` is not important from the point of vi
 
 In this chapter, I tried to convey to you a vision of object composition as a language, with its own vocabulary, its own grammar, keywords and arguments. We can compose the words from the vocabulary in different sentences to create new behaviors on higher level of abstraction.
 
-This area of object oriented design is something I am still experimenting with, trying to catch up with what authorities on this topic share. Thus, I am not as fluent in it as in other topics covered in this book. Expect this chapter to grow (maybe into several chapters) or to be clarified in the future. For now, if you feel you need more information, please take a look at the video by Steve Freeman and Nat Pryce called ["Building on SOLID foundations"](https://vimeo.com/105785565).
+This area of object-oriented design is something I am still experimenting with, trying to catch up with what authorities on this topic share. Thus, I am not as fluent in it as in other topics covered in this book. Expect this chapter to grow (maybe into several chapters) or to be clarified in the future. For now, if you feel you need more information, please take a look at the video by Steve Freeman and Nat Pryce called ["Building on SOLID foundations"](https://vimeo.com/105785565).
  
 [^fowlerdsl]: M. Fowler, Domain-Specific Languages, Addison-Wesley 2010.
 

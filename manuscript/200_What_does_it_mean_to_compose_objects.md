@@ -12,7 +12,7 @@ So, again, what does it mean to compose objects?
 Basically it means that an object has obtained a reference to another
 object and is able to invoke methods on it. By being composed together, two
 objects form a small system that can be expanded with more objects as
-needed. Thus, a bigger object oriented system forms something similar to
+needed. Thus, a bigger object-oriented system forms something similar to
 a web:
 
 ![Web of objects -- the circles are the objects and the arrows are methods invocations
@@ -22,7 +22,7 @@ If we take the web metaphor a little bit further, we can note some
 similarities to e.g. a TCP/IP network:
 
 1.  An object can send **messages** to other objects (i.e. call methods on them -- arrows on the above diagram) via **interfaces**. Each message has a **sender** and at least one **recipient**.
-2.  In order to send a message to a recipient, a sender has to acquire an **address** of the recipient, which, in object oriented world, we call a reference (actually, in languages such as C++, references are just that -- addresses in memory).
+2.  In order to send a message to a recipient, a sender has to acquire an **address** of the recipient, which, in object-oriented world, we call a reference (actually, in languages such as C++, references are just that -- addresses in memory).
 3.  A communication between sender and recipients has to obey certain **protocol**. For example, a sender usually cannot invoke a method passing nulls as all arguments, or should expect an exception if it does so. Don't worry if you do not see the analogy now -- I'll follow up with more explanation of this topic later).
 
 ## Alarms, again!
@@ -145,5 +145,5 @@ message as **recipient**.
 
 For now, it may look unjustified to introduce this metaphor of webs, protocols, interfaces etc. but:
 
-*   This is the way [object oriented programming inventors](http://c2.com/cgi/wiki?AlanKayOnMessaging) have thought about object oriented systems
+*   This is the way [object-oriented programming inventors](http://c2.com/cgi/wiki?AlanKayOnMessaging) have thought about object-oriented systems
 *   It will prove useful as I explain making connections between objects and achieving strong composability in the next chapters

@@ -1,4 +1,4 @@
-# An object oriented approach summary
+# An object-oriented approach summary
 
 ## Where are we now?
 

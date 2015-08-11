@@ -10,7 +10,7 @@ Mock objects were made with specific goal in mind. My hope is that when
 you understand the real goal, you will probably understand the means to
 the goal far better.
 
-In this chapter, we will explore the qualities of object oriented design
+In this chapter, we will explore the qualities of object-oriented design
 which make mock objects a viable tool.
 
 Composability... again!

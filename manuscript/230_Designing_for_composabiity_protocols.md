@@ -204,7 +204,7 @@ taxExpert.PayAnnualIncomeTax(
   ourBank);
 ```
 
-This small example should not be taken literally. Social interactions are far more complicated and complex than what objects usually do. But I hope I managed to illustrate with it an important aspect of the communication style that is preferred in object oriented design: the *Tell Don't Ask* heuristic. 
+This small example should not be taken literally. Social interactions are far more complicated and complex than what objects usually do. But I hope I managed to illustrate with it an important aspect of the communication style that is preferred in object-oriented design: the *Tell Don't Ask* heuristic. 
 
 Tell Don't Ask basically means that each object, as an expert in its job, is not doing what is not its job, but instead relying on other objects that are experts in their respective jobs and provide them with all the context they need to achieve the tasks it wants them to do as parameters of the messages it sends to them.
 

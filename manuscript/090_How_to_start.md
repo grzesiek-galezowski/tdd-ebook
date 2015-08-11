@@ -45,7 +45,7 @@ and try for yourself how difficult it is to answer the following questions:
 
 ### What does a good name contain? 
 
-For the name of the Statement to be of any use, it has to describe the expected behavior. At minimum, it should describe what happens under what circumstances. let's take a look at one of the names Steve freeman and Nat Pryce came up in their great book Growing Object Oriented Software Guided By Tests:
+For the name of the Statement to be of any use, it has to describe the expected behavior. At minimum, it should describe what happens under what circumstances. let's take a look at one of the names Steve freeman and Nat Pryce came up in their great book Growing Object-Oriented Software Guided By Tests:
 
 ```java
 notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort()
@@ -538,7 +538,7 @@ These few techniques can be useful when you are stuck and do not know
 how to start. Note that the examples given are simplistic and assume
 that there is one object that takes some kind of input parameter and
 returns a well defined result. This is not how most of the
-object-oriented world is built. In object oriented world, we have a lot
+object-oriented world is built. In object-oriented world, we have a lot
 of objects communicating with other objects, sending messages, invoking
 methods on each other and often having no return values. Do not worry,
 all of these techniques work in this concept and we’ll be revisiting
