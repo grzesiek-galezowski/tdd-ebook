@@ -39,12 +39,11 @@ You need to have an account on leanpub to access epub and mobi formats, but pdf 
 
 ### Summary
 
-This ebook is an attempt to create open-source extensive tutorial on Test-Driven Development. It's work in progress and any contribution is welcome.
+This ebook is an attempt to create an open-source extensive tutorial on Test-Driven Development. It's a work in progress and any contribution is welcome.
 
 ### Book plan
 
-The following parts are planned. Current table of content is available on [Leanpub](https://leanpub.com/tdd-ebook)
-
+The following parts are planned. The current table of content is available on [Leanpub](https://leanpub.com/tdd-ebook).
 
 *  *Part 1: Just The Basics*
 *  *Part 2: Test-Driven Development in Object-Oriented World*
@@ -62,7 +61,7 @@ requests for clearer explanation etc. Also if you've got some
 questions, topic requests, would like to submit better (or new) 
 exercises or correct the existing ones, please submit an issue as well.
 
-You are welcome to fork this ebook and make customized version for the 
+You are welcome to fork this ebook and make a customized version for the 
 programming language of your choice or edit the terminology or 
 conventions if you do not like what I decided on. It's Open Source!
 
