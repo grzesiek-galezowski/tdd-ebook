@@ -143,13 +143,15 @@ private static string xmlText; //note the static keyword!
 
 What the...? Well, well, here is what happened: the author of this class coded in a small little optimization. He thought: “In this app, the configuration is only modified by members of the support staff and to do it, they have to shut down the system, so, there is no need to read the XML file every time an XmlConfiguration object is created. I can save some CPU cycles and I/O operations by reading it only once when the first object is created. Another created object will just use the same XML!". Good for him, not so good for you. Why? Because (unless your Statement is evaluated prior to being fulfilled), your custom xml string will never actually be used!
 
-### “Test-After" ends up as “Test-Never" 
+“Test-After" ends up as “Test-Never" 
+------------------------------------
 
 I will ask this question again: ever had to write a requirement or design document for something that you already implemented? Was it fun? Was it valuable? Was it creative? No, I do not think so. The same is with our executable specification. After we write the code, we have little motivation to specify what is already written -- some of the pieces of code “we can just see are correct", other pieces “we already saw working" when we copied our code over to our deployment machine and ran few sanity checks... The design is ready... Specification? Maybe next time...
 
 Another reason might be time pressure. Let's be honest -- we are all in a hurry, we are all under pressure and when this pressure is too high, it triggers heroic behaviors in us, especially when there is a risk of not making it with the sprint commitment. Such heroic behavior usually goes by the following rules: drop all the “baggage", stop learning and experimenting, revert to all of the old “safe" behaviors and “save what we can!". If Specification is written at the end, it is often sacrificed on the altar of making it with the commitment, since the code is already written, “and it will be tested anyway by real tests" (box tests, smoke tests, sanity tests etc.). It is quite the contrary when starting with a Statement, where the Statement evaluating to false is **a reason** to write any code. Thus, if we want to write code, Specification become irremovable part of your development. By the way, I bet in big corporations no one sane ever thinks they can abandon checking in the code to source control, at the same time treating Specification as “an optional addition".
 
-### Not starting from specification leads to waste of time on making objects testable
+Not starting from specification leads to waste of time on making objects testable
+---------------------------------------------------------------------------------
 
 It so happens, that I like watching and reading Uncle Bob. One day, I was listening to [his keynote at Ruby Midwest 2011, called Architecture The Lost Years](http://www.confreaks.com/videos/759-rubymidwest2011-keynote-architecture-the-lost-years). At the end, Robert made some digressions, one of them being about TDD. He said that writing unit tests after the code is not TDD. It is a waste of time.
 
