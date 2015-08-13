@@ -57,7 +57,7 @@ As I said, there are different levels you can apply this. Here is an example fo
 ```gherkin
 Given a bag of tea costs $20
 When I buy two of them
-Then I should be charged 30$ due to promotion
+Then I should be charged $30 due to promotion
 ```
 
 And here is one for unit-level (note the line starting with “And" that adds to the context):
