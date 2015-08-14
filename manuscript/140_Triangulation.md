@@ -4,7 +4,7 @@ Triangulation
 
 ### A disclaimer
 
-The first occurence of the term triangulation I know about is in Kent Beck’s book [Test-Driven Development: By Example](http://www.pearsonhighered.com/educator/product/Test-Driven-Development-By-Example/9780321146533.page).
+The first occurence of the term triangulation I know about is in Kent Beck’s book [Test-Driven Development: By Example](http://www.pearsonhighered.com/educator/product/Test-Driven-Development-By-Example/9780321146533.page). 
 
 As one of the last topics of the core TDD techniques that do not require us to delve into the object-oriented world, I’d like to show you triangulation.
 
@@ -78,8 +78,8 @@ This technique is kind of funny. I do not recall myself ever using it, but it i
 
 There are two core things that we need to pay attention when using these technique:
 
-1.  Start with the simplest implementation possible (i.e. fake it), which usually is returning a literal constant. Then gradually transform the code of both Statement and implementation using variables
-2.  When doing it, rely on your sense of duplication between Statement and (fake) implementation
+1.  Start with the simplest implementation possible (i.e. fake it), which usually is returning a literal constant. Then gradually transform the code of both Statement and implementation using variables.
+2.  When doing it, rely on your sense of duplication between Statement and (fake) implementation.
 
 Let's apply Fake It to the same addition example as before (I promise, for triangulation, I will give you better one). The Statement looks the same as before: 
 
@@ -153,7 +153,7 @@ And that’s it. I used a trivial example, since I don’t want to spend too 
 Triangulation
 -------------
 
-As I wrote, triangulation is the most conservative technique, because following it involves the tiniest possible steps to arrive at the right solution. The technique is called triangulation by analogy to [radar triangulation](http://encyclopedia2.thefreedictionary.com/radar+triangulation) where outputs from at least two radars must be used to determine the position of a unit. Also, in radar triangulation, the position is measured indirectly, by combining the following data: range (not position!) between two radars, measurement done by each radar and the positions of the radars (which we know, because we are the ones who put the radars there). From this data, we can derive a triangle, so we can use trigonometry to calculate the position of the third point of the triangle, which is the desired position of the unit (two remaining points are the positions of radars). Such measurement is indirect in nature, because we do not measure the position directly, but calculate it from other helper measurements.
+As I wrote, triangulation is the most conservative technique, because following it involves the tiniest possible steps to arrive at the right solution. The technique is called triangulation by analogy to [radar triangulation](http://encyclopedia2.thefreedictionary.com/radar+triangulation) where outputs from at least two radars must be used to determine the position of a unit. Also, in radar triangulation, the position is measured indirectly, by combining the following data: range (not position!) between two radars, measurement done by each radar and the positions of the radars (which we know, because we are the ones who put the radars there). From this data, we can derive a triangle, so we can use trigonometry to calculate the position of the third point of the triangle, which is the desired position of the unit (two remaining points are the positions of radars). Such measurement is indirect in nature, because we do not measure the position directly, but calculate it from other helper measurements. 
 
 These two characteristics: indirect measurement and using at least two sources of information are at the core of TDD triangulation. Basically, it says:
 
@@ -238,7 +238,7 @@ public class ListWithAggregateOperations
 
 We have two examples, so let's check whether we can generalize now. We could try to get rid of the two constructors now, but let's wait just a little bit longer and see if this is the right path to go (after all, I told you that we need **at least** two examples).
 
-Let’s add third example then. What would be the next more complex one? Note that the choice of next example is not random. Triangulation is about considering the axes of variability. If you carefully read the last example, you probably noticed that we already skipped one axis of variability -- the value of the element. We used `Any.Integer()` where we could use a literal value and add a second example with another value to make us turn it into variable. This time, however, I decided to **type the obvious implementation**. The second axis of variability is the number of elements. The third example will move us further along this axis -- so it will use two elements instead of one or zero. This is how it looks like:
+Let’s add third example then. What would be the next more complex one? Note that the choice of next example is not random. triangulation is about considering the axes of variability. If you carefully read the last example, you probably noticed that we already skipped one axis of variability -- the value of the element. We used `Any.Integer()` where we could use a literal value and add a second example with another value to make us turn it into variable. This time, however, I decided to **type the obvious implementation**. The second axis of variability is the number of elements. The third example will move us further along this axis -- so it will use two elements instead of one or zero. This is how it looks like:
 
 ```csharp
 [Fact] public void 

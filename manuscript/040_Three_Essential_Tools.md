@@ -138,9 +138,7 @@ For these and other reasons, automated testing tools were born. Those testing to
 To be honest, I cannot wait to show you how the test we wrote just a minute ago looks like when xUnit framework is used. However, before I do this, I would like to recap quickly what we have in our brute-force naive approach to writing automated tests:
 
 1.  The `Main()` method serves as a **Test List**
-2.  The
-    `Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()`
-    method is a **Test Method**
+2.  The `Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()` method is a **Test Method**
 3.  The `AssertTwoIntegersAreEqual()` method is **an Assertion**
 
 To our joy, those three elements are present in xUnit frameworks as well. To illustrate it, here is (finally!) the same test we wrote, but with an xUnit framework (this one is called [XUnit.Net](http://xunit.github.io/)):
@@ -166,9 +164,7 @@ As you can see, it looks like two methods that we previously had are gone now an
 2.  The **Test Method** is here and looks almost the same as the last time.
 3.  The **Assertion** took the form of a call to static `Assert.Equal()` method -- the xUnit.NET framework is bundled with a wide range of pre-made assertions for your convenience. Of course, no one stops you from writing your own custom one if you do not find what you are looking for in a default set.
 
-Phew, I hope I made the transition quite painless for you. Now the last thing to add -- as there is not `Main()` method anymore in the last example, you surely must wonder how we run those tests, right? Ok, the last big secret unveiled -- we use an external application for this (we
-will refer to it using a term **Test Runner**) -- we tell it which assemblies to run and it loads them, runs them, reports results etc. It can take various forms, e.g. it can be a console application, a GUI application or a plugin to our IDEs. Here is an example of a stand-alone
-runner for xUnit.NET framework:
+Phew, I hope I made the transition quite painless for you. Now the last thing to add -- as there is not `Main()` method anymore in the last example, you surely must wonder how we run those tests, right? Ok, the last big secret unveiled -- we use an external application for this (we will refer to it using a term **Test Runner**) -- we tell it which assemblies to run and it loads them, runs them, reports results etc. It can take various forms, e.g. it can be a console application, a GUI application or a plugin to our IDEs. Here is an example of a stand-alone runner for xUnit.NET framework:
 
 ![XUnit.NET window](images/XUnit_NET_Window.png)
 
@@ -232,53 +228,18 @@ public void ShouldInsertNewOrderToDatabase()
 }
 ```
 
-As you see, at the beginning of the test, we are opening a connection
-and cleaning all existing orders (more on that shortly!), then creating
-an order object, inserting it into a database and then querying the
-database to give us all of the held instances. At the end, we make an
-assertion that the order we tried to insert must be inside all orders in
-a database.
+As you see, at the beginning of the test, we are opening a connection and cleaning all existing orders (more on that shortly!), then creating an order object, inserting it into a database and then querying the database to give us all of the held instances. At the end, we make an assertion that the order we tried to insert must be inside all orders in a database.
 
-Why do we clean up the database? Remember a database is a persistent
-storage, so if we did not clean it up and run this test again, the
-database may have already contained the item (maybe another test already
-added it?) and would probably not allow us to add the same item again.
-Thus, the test would fail. Ouch! It hurts so bad, because we wanted our
-tests to prove something works, but looks like it can fail even when the
-logic is coded correctly. What use is such a test if it cannot reliably
-provide the information we demand from it (whether the implemented logic
-is correct or not)? Thus, we clean up before each run to make sure the
-state of the persistent storage is the same every time we run this test.
+Why do we clean up the database? Remember a database is a persistent storage, so if we did not clean it up and run this test again, the database may have already contained the item (maybe another test already added it?) and would probably not allow us to add the same item again. Thus, the test would fail. Ouch! It hurts so bad, because we wanted our tests to prove something works, but looks like it can fail even when the logic is coded correctly. What use is such a test if it cannot reliably provide the information we demand from it (whether the implemented logic is correct or not)? Thus, we clean up before each run to make sure the state of the persistent storage is the same every time we run this test.
 
-So, got what you want? Well, I did not. Personally, I would not go this
-way. There are several reasons:
+So, got what you want? Well, I did not. Personally, I would not go this way. There are several reasons:
 
-1.  The test is going to be slow. It is not uncommon to have more than
-    thousand tests in a suite and I do not want to wait half an hour for
-    results every time I run them. Do you?
-2.  Everyone running this test will have to set up a local database on
-    their machine. What if their setup is slightly different than yours?
-    What if the schema gets outdated -- will everyone manage to notice it
-    and update schema of their local databases accordingly? Will you
-    re-run your database creation script only to ensure you have got the
-    latest schema available to run your tests against?
-3.  There may not be an implementation of the database engine for the
-    operating system running on your development machine if your target
-    is an exotic or mobile platform.
-4.  Note that this test you wrote is only one out of two. You will have
-    to write another one for the scenario where inserting an order ends
-    with exception. How do you setup your database in a state where it
-    throws an exception? It is possible, but requires significant effort
-    (e.g. deleting a table and recreating it after the test for other
-    tests that might need the table to run correctly), which may lead
-    you to a conclusion that it is not worth to write such tests at all.
+1.  The test is going to be slow. It is not uncommon to have more than thousand tests in a suite and I do not want to wait half an hour for results every time I run them. Do you?
+2.  Everyone running this test will have to set up a local database on their machine. What if their setup is slightly different than yours? What if the schema gets outdated -- will everyone manage to notice it and update schema of their local databases accordingly? Will you re-run your database creation script only to ensure you have got the latest schema available to run your tests against?
+3.  There may not be an implementation of the database engine for the operating system running on your development machine if your target is an exotic or mobile platform.
+4.  Note that this test you wrote is only one out of two. You will have to write another one for the scenario where inserting an order ends with exception. How do you setup your database in a state where it throws an exception? It is possible, but requires significant effort (e.g. deleting a table and recreating it after the test for other tests that might need the table to run correctly), which may lead you to a conclusion that it is not worth to write such tests at all.
 
-Now, let's try something else. Let's assume that our database works OK
-(or will be tested by black-box tests) and the only thing we want to
-test is our implementation. In this situation, we can create fake
-object, which is an instance of another custom class that implements the
-same interface as MySqlOrderDatabase, but does not write to a database
-at all -- it only stores the inserted records in a list:
+Now, let's try something else. Let's assume that our database works OK (or will be tested by black-box tests) and the only thing we want to test is our implementation. In this situation, we can create fake object, which is an instance of another custom class that implements the same interface as MySqlOrderDatabase, but does not write to a database at all -- it only stores the inserted records in a list:
 
 ```csharp
 public class FakeOrderDatabase : OrderDatabase
@@ -297,8 +258,7 @@ public class FakeOrderDatabase : OrderDatabase
 }
 ```
 
-Now, we can substitute the real implementation of order database with
-the fake instance:
+Now, we can substitute the real implementation of order database with the fake instance:
 
 ```csharp
 [Fact] public void 
@@ -322,11 +282,7 @@ ShouldInsertNewOrderToDatabase()
   Assert.Contains(order, allOrders);
 }
 ```
-Note that we do not clean the fake database object, since we create it
-as fresh each time the test is run. Also, the test is going to be much
-quicker now. But, that is not the end! We can easily write a test for an
-exception situation. How do we do it? Just make another fake object
-implemented like this:
+Note that we do not clean the fake database object, since we create it as fresh each time the test is run. Also, the test is going to be much quicker now. But, that is not the end! We can easily write a test for an exception situation. How do we do it? Just make another fake object implemented like this:
 
 ```csharp
 public class ExplodingOrderDatabase : OrderDatabase
@@ -342,11 +298,7 @@ public class ExplodingOrderDatabase : OrderDatabase
 }
 ```
 
-Ok, so far so good, but the bad thing is that now we have got two classes of
-fake objects to maintain (and chances are we will need even more). Any
-method or argument added will need to be propagated to all these
-objects. We can spare some coding by making our mocks a little more
-generic so their behavior can be configured using lambda expressions:
+Ok, so far so good, but the bad thing is that now we have got two classes of fake objects to maintain (and chances are we will need even more). Any method or argument added will need to be propagated to all these objects. We can spare some coding by making our mocks a little more generic so their behavior can be configured using lambda expressions:
 
 ```csharp
 public class ConfigurableOrderDatabase : OrderDatabase
@@ -366,9 +318,7 @@ public class ConfigurableOrderDatabase : OrderDatabase
 }
 ```
 
-Now, we do not have to create additional classes for new scenarios, but
-our syntax gets awkward. See for yourself how we configure the fake
-order database to remember and yield the inserted order:
+Now, we do not have to create additional classes for new scenarios, but our syntax gets awkward. See for yourself how we configure the fake order database to remember and yield the inserted order:
 
 ```csharp
 var db = new ConfigurableOrderDatabase();
@@ -384,8 +334,7 @@ var db = new ConfigurableOrderDatabase();
 db.doWhenInsertCalled = o => {throw new Exception();};
 ```
 
-Thankfully, some smart programmers created libraries that provide further automation in such scenarios. One of them is called
-[**NSubstitute**](http://nsubstitute.github.io/) and provides an API in a form of extension methods (that is why it might seem a bit magical at first. Do not worry, you will get used to it).
+Thankfully, some smart programmers created libraries that provide further automation in such scenarios. One of them is called [**NSubstitute**](http://nsubstitute.github.io/) and provides an API in a form of extension methods (that is why it might seem a bit magical at first. Do not worry, you will get used to it).
 
 Using NSubstitute, our first test can be rewritten as such:
 
@@ -411,14 +360,9 @@ ShouldInsertNewOrderToDatabase()
 }
 ```
 
-Note that we do not need the `SelectAllOrders()` method. If no one
-except this test needs it, we can delete it and spare some more
-maintainability trouble. The last line of this test is actually
-a camouflaged assertion that checks whether Insert method was called
-once with order object as parameter.
+Note that we do not need the `SelectAllOrders()` method. If no one except this test needs it, we can delete it and spare some more maintainability trouble. The last line of this test is actually a camouflaged assertion that checks whether Insert method was called once with order object as parameter.
 
-I will get back to mocks, since, as I said, there is a huge philosophy
-behind them and we have only scratched the surface here.
+I will get back to mocks, since, as I said, there is a huge philosophy behind them and we have only scratched the surface here.
 
 ### Anonymous values generator
 

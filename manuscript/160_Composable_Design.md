@@ -107,9 +107,7 @@ public class CompanyPolicies : IDisposable
 Now, we need to evaluate the options we have to pick the best one. What
 options do you see, Benjamin?
 
-**Benjamin:** Well, we could certainly extract an interface from
-`SqlRepository` and introduce an if statement to the constructor like
-this:
+**Benjamin:** Well, we could certainly extract an interface from `SqlRepository` and introduce an if statement to the constructor like this:
 
 ```csharp
 public class CompanyPolicies : IDisposable
@@ -212,7 +210,7 @@ public class CompanyPolicies : IDisposable
 
 **Benjamin:** Huh? I thought this is what we were aiming at.
 
-**Johnny:** Yes, with the exception of the `Dispose()` method. Look closely at the `CompanyPolicies` class. it is changed so that it is not responsible for creating a repository for itself, but it still disposes of it. This is wrong because `CompanyPolicies` instance does not have any right to assume it is the only object that is using the repository. If so, then it cannot determine the moment when the repository becomes unnecessary and can be safely disposed of.
+**Johnny:** Yes, with the exception of the `Dispose()` method. Look closely at the `CompanyPolicies` class. it is changed so that it is not responsible for creating a repository for itself, but it still disposes of it. This is could cause problems because `CompanyPolicies` instance does not have any right to assume it is the only object that is using the repository. If so, then it cannot determine the moment when the repository becomes unnecessary and can be safely disposed of.
 
 **Benjamin:** Ok, I get the theory, but why is this bad in practice? Can you give me an example?
 
@@ -235,10 +233,7 @@ public static void Main(string[] args)
 }
 ```
 
-This way the repository is created at the start of the program and
-disposed of at the end. Thanks to this, the `CompanyPolicies` has no
-disposable fields and it itself does not have to be disposable -- we can
-just delete the `Dispose()` method:
+This way the repository is created at the start of the program and disposed of at the end. Thanks to this, the `CompanyPolicies` has no disposable fields and it itself does not have to be disposable -- we can just delete the `Dispose()` method:
 
 ```csharp
 //not implementing IDisposable anymore:
