@@ -160,8 +160,7 @@ catch(SecurityFailure failure)
 
 Then the risk of this code changing for other reasons than the change of how domain works (e.g. we do not close the gates anymore but activate laser guns instead) is small. Thus, interactions that use abstractions and methods that directly express domain rules are more stable.
 
-So, to sum up -- if a design reflects the domain, it is easier to predict how a change of domain rules will affect 
-the design. This contributes to maintainability and stability of the interactions and the design as a whole.
+So, to sum up -- if a design reflects the domain, it is easier to predict how a change of domain rules will affect  the design. This contributes to maintainability and stability of the interactions and the design as a whole.
 
 ## Message recipients should be told what to do, instead of being asked for information
 
