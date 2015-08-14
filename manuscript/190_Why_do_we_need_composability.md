@@ -50,8 +50,7 @@ void disableAlarm(Alarm* alarm)
 
 Do I have to say why this duplication is bad? Do I hear a "no"? My apologies then, but I'll tell you anyway. The duplication means that every time a new kind of alarm is introduced, a developer has to remember to update both places that contain 'if-else' -- the compiler will not force this. As you are probably aware, in the context of teams, where one developer picks up work that another left and where, from time to time, people leave to find another job, expecting someone to "remember" to update all the places where the logic is duplicated is asking for trouble.
 
-So, we see that the duplication is bad, but can we do something about it? To answer this question, let's take a look at the reason the duplication was introduced. And the reason is: We have two things we want to be able to do with
-our alarms: triggering and disabling. In other words, we have a set of questions we want to be able to ask an alarm. Each kind of alarm has a different way of answering these questions -- resulting in having a set of "answers" specific to each alarm kind:
+So, we see that the duplication is bad, but can we do something about it? To answer this question, let's take a look at the reason the duplication was introduced. And the reason is: We have two things we want to be able to do with our alarms: triggering and disabling. In other words, we have a set of questions we want to be able to ask an alarm. Each kind of alarm has a different way of answering these questions -- resulting in having a set of "answers" specific to each alarm kind:
 
 | Alarm Kind          | Triggering                 |     Disabling              |
 |---------------------|----------------------------|------------------------|
@@ -117,12 +116,9 @@ becomes just:
 alarm.Trigger();
 ```
 
-where `alarm` is either `LoudAlarm` or `SilentAlarm`, but seen
-polymorphically as `Alarm`, so there's no need for 'if-else' anymore.
+where `alarm` is either `LoudAlarm` or `SilentAlarm`, but seen polymorphically as `Alarm`, so there's no need for 'if-else' anymore.
 
-But hey, isn't this cheating? Even provided I can execute the trigger
-behavior on an alarm without knowing the actual class of the alarm, I
-still have to decide which class it is in the place where I create the actual instance:
+But hey, isn't this cheating? Even provided I can execute the trigger behavior on an alarm without knowing the actual class of the alarm, I still have to decide which class it is in the place where I create the actual instance:
 
 ```csharp
 // we must know the exact type here:
