@@ -16,7 +16,7 @@ Triangulation is often described as the most conservative of three approaches of
 
 All of these techniques are simple (triangulaion being a little more complex), so I’ll show you all of them one by one, putting more emphasis on triangulation:
 
-Type The Obvious Implementation 
+Type the obvious implementation 
 -------------------------------
 
 The first of the three techniques is just writing an obvious implementation in response to a Statetement. If the implementation is simple, this approach makes a lot of sense. Let’s take a trivial example of adding two numbers:
@@ -71,7 +71,7 @@ ShouldAddTwoNumbersTogether()
 
 Here, we don’t have any choice. The most obvious implementation that would make this Statement true is the correct implementation. We are unable to return some constant value as we previously could (but we did not), because we just don’t know what the expected result is and it is strictly dependent on the input values which we don’t know as well.
 
-Fake It (‘Til You Make It)
+Fake it (‘til you make it)
 --------------------------
 
 This technique is kind of funny. I do not recall myself ever using it, but it is so interesting I want to show it to you anyway. It is so simple you will not regret these few minutes even if just for broadening your horizons.
