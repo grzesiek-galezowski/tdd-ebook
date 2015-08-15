@@ -4,7 +4,7 @@ Triangulation
 
 ### A disclaimer
 
-The first occurence of the term triangulation I know about is in Kent Beck’s book [Test-Driven Development: By Example](http://www.pearsonhighered.com/educator/product/Test-Driven-Development-By-Example/9780321146533.page). 
+The first occurrence of the term triangulation I know about is in Kent Beck’s book [Test-Driven Development: By Example](http://www.pearsonhighered.com/educator/product/Test-Driven-Development-By-Example/9780321146533.page). 
 
 As one of the last topics of the core TDD techniques that do not require us to delve into the object-oriented world, I’d like to show you triangulation.
 
@@ -14,12 +14,12 @@ Triangulation is often described as the most conservative of three approaches of
 2.  Fake it (‘til you make it)
 3.  Triangulate
 
-All of these techniques are simple (triangulaion being a little more complex), so I’ll show you all of them one by one, putting more emphasis on triangulation:
+All of these techniques are simple (triangulation being a little more complex), so I’ll show you all of them one by one, putting more emphasis on triangulation:
 
 Type the obvious implementation 
 -------------------------------
 
-The first of the three techniques is just writing an obvious implementation in response to a Statetement. If the implementation is simple, this approach makes a lot of sense. Let’s take a trivial example of adding two numbers:
+The first of the three techniques is just writing an obvious implementation in response to a Statement. If the implementation is simple, this approach makes a lot of sense. Let’s take a trivial example of adding two numbers:
 
 ```csharp
 [Fact] public void
