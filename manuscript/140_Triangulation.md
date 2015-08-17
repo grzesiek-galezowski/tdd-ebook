@@ -4,7 +4,7 @@ Triangulation
 
 ### A disclaimer
 
-The first occurence of the term triangulation I know about is in Kent Beck’s book [Test-Driven Development: By Example](http://www.pearsonhighered.com/educator/product/Test-Driven-Development-By-Example/9780321146533.page). 
+The first occurrence of the term triangulation I know about is in Kent Beck’s book [Test-Driven Development: By Example](http://www.pearsonhighered.com/educator/product/Test-Driven-Development-By-Example/9780321146533.page). 
 
 As one of the last topics of the core TDD techniques that do not require us to delve into the object-oriented world, I’d like to show you triangulation.
 
@@ -14,12 +14,12 @@ Triangulation is often described as the most conservative of three approaches of
 2.  Fake it (‘til you make it)
 3.  Triangulate
 
-All of these techniques are simple (triangulaion being a little more complex), so I’ll show you all of them one by one, putting more emphasis on triangulation:
+All of these techniques are simple (triangulation being a little more complex), so I’ll show you all of them one by one, putting more emphasis on triangulation:
 
-Type The Obvious Implementation 
+Type the obvious implementation 
 -------------------------------
 
-The first of the three techniques is just writing an obvious implementation in response to a Statetement. If the implementation is simple, this approach makes a lot of sense. Let’s take a trivial example of adding two numbers:
+The first of the three techniques is just writing an obvious implementation in response to a Statement. If the implementation is simple, this approach makes a lot of sense. Let’s take a trivial example of adding two numbers:
 
 ```csharp
 [Fact] public void
@@ -71,7 +71,7 @@ ShouldAddTwoNumbersTogether()
 
 Here, we don’t have any choice. The most obvious implementation that would make this Statement true is the correct implementation. We are unable to return some constant value as we previously could (but we did not), because we just don’t know what the expected result is and it is strictly dependent on the input values which we don’t know as well.
 
-Fake It (‘Til You Make It)
+Fake it (‘til you make it)
 --------------------------
 
 This technique is kind of funny. I do not recall myself ever using it, but it is so interesting I want to show it to you anyway. It is so simple you will not regret these few minutes even if just for broadening your horizons.
@@ -150,8 +150,8 @@ public class Sum
 
 And that’s it. I used a trivial example, since I don’t want to spend too much time on this, but you can find more advanced ones in Kent Beck’s book if you like.
 
-Triangulation
--------------
+Triangulate
+-----------
 
 As I wrote, triangulation is the most conservative technique, because following it involves the tiniest possible steps to arrive at the right solution. The technique is called triangulation by analogy to [radar triangulation](http://encyclopedia2.thefreedictionary.com/radar+triangulation) where outputs from at least two radars must be used to determine the position of a unit. Also, in radar triangulation, the position is measured indirectly, by combining the following data: range (not position!) between two radars, measurement done by each radar and the positions of the radars (which we know, because we are the ones who put the radars there). From this data, we can derive a triangle, so we can use trigonometry to calculate the position of the third point of the triangle, which is the desired position of the unit (two remaining points are the positions of radars). Such measurement is indirect in nature, because we do not measure the position directly, but calculate it from other helper measurements. 
 
