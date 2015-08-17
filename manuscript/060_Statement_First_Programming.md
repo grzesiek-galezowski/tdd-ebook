@@ -33,8 +33,8 @@ Refactor
 
 By the way, this process is sometimes referred to as “Red-Green-Refactor". I am just mentioning it here for the record -- I am not planning to use this term further in the book.
 
-The benefit of failure
-----------------------
+"Test-First" means seeing a failure
+-----------------------------------
 
 When I showed you a drawing with a TDD process, I specifically said that you are supposed to write a Statement that you wish was true **but is not**. It means that when you write a Statement, you have to evaluate it (i.e. run it) and watch it fail its assertions before providing implementation that makes this Statement true. Why is that so important? Is it not just enough to write the Statement first? Why run it and watch it fail?
 
