@@ -7,7 +7,8 @@ For unit level, let's consider the kind of Statements that you already saw in th
 
 Let's try to answer the question by examining some TDD unit-level Statements:
 
-### Is it class scope? 
+Is it class scope? 
+------------------
 
 Let's see the first example and try to answer this question:
 
@@ -31,7 +32,8 @@ ShouldThrowValidationExceptionWithFatalErrorLevelWhenValidatedStringIsEmpty()
 
 This is an example of a well-written unit-level Statement. Ok, so let's see... how many real classes take part in this spec? Three: a string, an exception and the validation. So the class scope is not the most accurate description.
 
-### Or a method scope?
+Or a method scope?
+------------------
 
 So, maybe the scope covers a single method, meaning a Statement always exercises one method of a specified object?
 
@@ -56,7 +58,8 @@ ShouldBeFulfilledWhenEventOccursThreeTimes()
 
 Count with me: how many methods are called? Depending on how we count, it is two (`Queued()` and `IsFulfilled()`) or four (`Queued(), Queued(), Queued(), IsFulfilled()`). In any case, not one. So it is not method scope either.
 
-### It is the scope of class behavior!
+It is the scope of class behavior!
+----------------------------------
 
 The proper answer is: behavior! Each TDD Statement specifies a single behavior. I like how [Amir Kolsky and Scott Bain](http://sustainabletdd.com) phrase it, by saying that each unit-level Statement should “introduce a behavioral distinction not existing before".
 
