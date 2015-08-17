@@ -1,5 +1,5 @@
-The three most essential tools
-==============================
+The essential tools
+===================
 
 Ever watched Karate Kid, either the old version or the new one? The thing they have in common is that when the kid starts learning Karate (or Kung-Fu) from his master, he is given a basic, repetitive task (like taking off a jacket, and putting it on again), not knowing yet where it would lead him. Or look at the first Rocky film (yeah, the one starring Sylvester Stallone), where Rocky was chasing a chicken in order to train agility.
 
@@ -14,7 +14,7 @@ In this chapter, I will oversimplify some things just to get you up and running
 Test framework
 --------------
 
-The first and most essential tool we are going to use is an xUnit framework.
+The first essential tool we'll use is a test framework. A test framework allows us to specify and execute our tests.
 
 Let's assume that our application looks like this:
 
