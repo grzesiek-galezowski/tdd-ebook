@@ -150,8 +150,8 @@ I will ask this question again: ever had to write a requirement or design docum
 
 Another reason might be time pressure. Let's be honest -- we are all in a hurry, we are all under pressure and when this pressure is too high, it triggers heroic behaviors in us, especially when there is a risk of not making it with the sprint commitment. Such heroic behavior usually goes by the following rules: drop all the “baggage", stop learning and experimenting, revert to all of the old “safe" behaviors and “save what we can!". If Specification is written at the end, it is often sacrificed on the altar of making it with the commitment, since the code is already written, “and it will be tested anyway by real tests" (box tests, smoke tests, sanity tests etc.). It is quite the contrary when starting with a Statement, where the Statement evaluating to false is **a reason** to write any code. Thus, if we want to write code, Specification become irremovable part of your development. By the way, I bet in big corporations no one sane ever thinks they can abandon checking in the code to source control, at the same time treating Specification as “an optional addition".
 
-Not starting from specification leads to waste of time on making objects testable
----------------------------------------------------------------------------------
+"Test-After" leads to design rework
+-----------------------------------
 
 It so happens, that I like watching and reading Uncle Bob. One day, I was listening to [his keynote at Ruby Midwest 2011, called Architecture The Lost Years](http://www.confreaks.com/videos/759-rubymidwest2011-keynote-architecture-the-lost-years). At the end, Robert made some digressions, one of them being about TDD. He said that writing unit tests after the code is not TDD. It is a waste of time.
 
