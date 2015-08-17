@@ -1,5 +1,5 @@
-The three most essential tools
-==============================
+The essential tools
+===================
 
 Ever watched Karate Kid, either the old version or the new one? The thing they have in common is that when the kid starts learning Karate (or Kung-Fu) from his master, he is given a basic, repetitive task (like taking off a jacket, and putting it on again), not knowing yet where it would lead him. Or look at the first Rocky film (yeah, the one starring Sylvester Stallone), where Rocky was chasing a chicken in order to train agility.
 
@@ -9,16 +9,12 @@ Honestly, I could dive right into the core techniques of TDD, but this would be
 
 In other words, I will give you a brief tour of the three most essential tools we will be using throughout this book.
 
-Our shiny tools
----------------
-
-### A disclaimer 
-
 In this chapter, I will oversimplify some things just to get you up and running without getting into the philosophy of TDD yet (think: physics lessons in primary school). Do not worry about it :-), we will fix that in the coming chapters!
 
-### xUnit framework
+Test framework
+--------------
 
-The first and most essential tool we are going to use is an xUnit framework.
+The first essential tool we'll use is a test framework. A test framework allows us to specify and execute our tests.
 
 Let's assume that our application looks like this:
 
@@ -168,7 +164,8 @@ Phew, I hope I made the transition quite painless for you. Now the last thing 
 
 ![XUnit.NET window](images/XUnit_NET_Window.png)
 
-### Mocking library
+Mocking framework
+-----------------
 
 Mocking libraries automate runtime creation of objects (called “mocks") that adhere to specified interface. Aside from the creation itself, the libraries provide an API to configure our mocks on how they behave when certain methods are called on them and to let us inspect which calls they received.
 
@@ -364,7 +361,8 @@ Note that we do not need the `SelectAllOrders()` method. If no one except this t
 
 I will get back to mocks, since, as I said, there is a huge philosophy behind them and we have only scratched the surface here.
 
-### Anonymous values generator
+Anonymous values generator
+--------------------------
 
 Look at the test in the previous section. Does it not trouble you that we fill the order object with so many values that are totally irrelevant to the test logic itself? They actually hinder readability of the test. Also, they make us believe that the tested object really cares what these values are, although it does not (the database does, but we already got rid of it from the test). Let's move it to a method with a descriptive name:
 
@@ -434,6 +432,7 @@ public static class Any
 
 In the next chapters, you will see me using a lot of different methods from the `Any` type. The more you use this class, the more it grows with other methods for creating customized objects. For now, however, let's stop here.
 
-### Summary 
+Summary 
+-------
 
 In this chapter, I tried to show you the three essential tools which we will be using in this book and which, when mastered, will make your test-driven development smoother. If this chapter leaves you with insufficient justification for their use, do not worry -- we will dive into the philosophy behind them in the coming chapters. For now, I just want you to get familiar with the tools themselves and their syntax. Go on, download these tools, launch them, try to write something simple with them. You do not need to understand their full purpose yet, just go out and play :-).
