@@ -5,16 +5,16 @@
 The book binaries [are now hosted on Leanpub](https://leanpub.com/tdd-ebook), as well as [online version](https://leanpub.com/tdd-ebook/read). It is and will always be free. 
 
 <a href="https://leanpub.com/tdd-ebook">
-  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-epub.png" />Epub
+  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/manuscript/images/document-epub.png" />Epub
 </a>&nbsp;
 <a href="https://leanpub.com/tdd-ebook">
-  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-mobi.png" />Mobi
+  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/manuscript/images/document-mobi.png" />Mobi
 </a>&nbsp;
 <a href="http://samples.leanpub.com/tdd-ebook-sample.pdf">
-  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-pdf.png" />PDF
+  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/manuscript/images/document-pdf.png" />PDF
 </a>
 <a href="https://leanpub.com/tdd-ebook/read/">
-  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/document-web.png" />HTML
+  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/manuscript/images/document-web.png" />HTML
 </a>
 
 You need to have an account on leanpub to access epub and mobi formats, but pdf and html are freely accessible. The registration is well worth it - if you register on leanpub and add the book to your account, you get automatic updates when new versions come out.
@@ -23,10 +23,10 @@ You need to have an account on leanpub to access epub and mobi formats, but pdf 
 
 
 <a href="https://github.com/grzesiek-galezowski/tdd-toolkit">
-  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/tdd-toolkit.png" />C# TDD Toolkit
+  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/manuscript/images/tdd-toolkit.png" />C# TDD Toolkit
 </a>&nbsp;
 <a href="https://github.com/grzesiek-galezowski/jfixture#any-method-helpers">
-  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/tdd-toolkit.png" />Java TDD Toolkit
+  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/manuscript/images/tdd-toolkit.png" />Java TDD Toolkit
 </a>&nbsp;
 
 
@@ -34,7 +34,7 @@ You need to have an account on leanpub to access epub and mobi formats, but pdf 
   <img src="http://ssl.gstatic.com/images/icons/gplus-16.png" alt="Google+" style="border:0;width:16px;height:16px;"/> Google+ Profile
 </a>&nbsp;
 <a href="https://www.facebook.com/tddebook" rel="publisher" target="_top" style="text-decoration:none;">
-  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/FB-f-Logo__blue_29.png" alt="Facebook" style="border:0;width:16px;height:16px;"/> Facebook Profile
+  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/manuscript/images/FB-f-Logo__blue_29.png" alt="Facebook" style="border:0;width:16px;height:16px;"/> Facebook Profile
 </a>
 
 ### Summary
