@@ -169,9 +169,9 @@ Mocking framework
 
 A mocking framework lets us create objects at runtime (called “mocks") that adhere to a certain interface. That interface is specified when the mock is created. Aside from the creation, the framework provides an API to configure the mocks on how they behave when certain methods are called on them and to let us inspect which calls they received.
 
-Mocking frameworks are not as old as test frameworks and they were not present in TDD at the very beginning. Why on earth do we need something like this? Well, they where invented to support a specific approach to object-oriented design that is a very good fit to TDD as you soon will experience.
+Mocking frameworks are not as old as test frameworks and they were not present in TDD at the very beginning. Why on earth do we need something like this? Well, the idea of mocks grew out of the desire to do object-oriented design using TDD without the need to adapt our code only to make it testable.
 
-For now, I'd like to keep things simple. I'll give you a quick example of a mocking framework in action and defer the explanation for their  rationale to a later chapter.
+I'll give you a quick example of a mocking framework in action now and defer further explanation for their rationale to a later chapter.
 
 Ready? Let's go!
 
@@ -296,7 +296,7 @@ public class ExplodingOrderDatabase : OrderDatabase
 }
 ```
 
-Ok, so far so good, but now we have two classes of fake objects to create (and chances are we will need even more). Any method or argument added will need to be propagated to all these objects. We can spare some coding by making our mocks a little more generic so that their behavior can be configured using lambda expressions:
+Ok, so far so good, but now we have two classes of fake objects to create (and chances are we will need even more). Any method added to the `OrderDatabase` interface must also be added to each of these fake objects. We can spare some coding by making our mocks a little more generic so that their behavior can be configured using lambda expressions:
 
 ```csharp
 public class ConfigurableOrderDatabase : OrderDatabase
