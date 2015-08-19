@@ -1,4 +1,4 @@
-![Cover](https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/cover-small.png)
+![Cover](https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/manuscript/images/webpage/cover-small.png)
 
 ### Book Download Links
 
