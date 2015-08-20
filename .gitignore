@@ -4,5 +4,6 @@
 *.azw3
 *.htmlz
 *.svg
+~*
 /.project
 
