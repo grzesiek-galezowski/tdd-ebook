@@ -24,8 +24,8 @@
 230_Designing_for_composabiity_protocols.md
 235_Classes.md
 240_Refactoring_Object_Composition.md
-End.md
 250_Value_Objects.md
+End.md
 255_Value_Objects_properties.md
 257_Value objects_general_topics.md
 260_Object_oriented_primer_summary.md
