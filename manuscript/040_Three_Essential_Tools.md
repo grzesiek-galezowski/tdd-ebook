@@ -341,7 +341,7 @@ Using NSubstitute, our first test can be rewritten as:
 ShouldInsertNewOrderToDatabase()
 {
   //GIVEN
-  var orderDatabase = new Substitute.For<OrderDatabase>();
+  var orderDatabase = Substitute.For<OrderDatabase>();
   var orderProcessing = new OrderProcessing(orderDatabase, new FileLog());
   var order = new Order(
     name: "Grzesiek", 
@@ -372,7 +372,7 @@ Looking at the test in the previous section we see many values that suggest that
 ShouldInsertNewOrderToDatabase()
 {
   //GIVEN
-  var orderDatabase = new Substitute.For<OrderDatabase>();
+  var orderDatabase = Substitute.For<OrderDatabase>();
   var orderProcessing = new OrderProcessing(orderDatabase, new FileLog());
   var order = AnonymousOrder();
 
@@ -403,7 +403,7 @@ By the way, wouldn't it be nice if we did not have to provide the anonymous obje
 ShouldInsertNewOrderToDatabase()
 {
   //GIVEN
-  var orderDatabase = new Substitute.For<OrderDatabase>();
+  var orderDatabase = Substitute.For<OrderDatabase>();
   var orderProcessing = new OrderProcessing(orderDatabase, new FileLog());
   var order = any.Create<Order>();
 
