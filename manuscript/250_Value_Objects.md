@@ -98,8 +98,7 @@ So, as you can see, this approach does not make things any better. In fact, it i
 We can address the issues #1 and #2 of the above list (i.e. the necessity to change multiple places when the comparison logic of product names changes) by moving this comparison into a static helper method of a helper class, (let's simply call it `ProductNameComparison`) and make this method a single place that knows how to compare product names. This would make each of the places in the code when comparison needs to be made look like this:
 
 ```csharp
-if(ProductNameComparison
-   .AreEqual(productName, productName2))
+if(ProductNameComparison.AreEqual(productName, productName2))
 {
 ..
 ```
