@@ -21,7 +21,7 @@ So the tests became something else. They proved very valuable before the ‘impl
 1.  they helped us focus on what was needed to reach our goal
 2.  they brought our attention away from what was **not** needed to reach our goal
 
-That was the value of a test before learning. Note that the tests we would usually receive were not exactly what we would encounter at the time of the  exam, so we still had to guess. Yet, the role of a **test as specification of a need** was already visible.
+That was the value of a test before learning. Note that the tests we would usually receive were not exactly what we would encounter at the time of the exam, so we still had to guess. Yet, the role of a **test as specification of a need** was already visible.
 
 Taking it to software development land
 --------------------------------------
