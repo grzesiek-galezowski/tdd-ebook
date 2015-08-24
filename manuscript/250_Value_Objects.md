@@ -43,7 +43,7 @@ Now, imagine that one of the following changes must make its way into the system
 2.  The product name is not enough to differentiate a product. For example, a notebook manufacturers have the same models of notebooks in different configurations (e.g. different amount of RAM or different processor models inside). So each product will receive additional identifier that will have to be taken into account during comparisons.
 3.  In order to support customers from different countries, new currencies must be supported.
 
-In current situation, these changes are a really painful to make. Why? It's because we used primitive types to represent the things that would need to change, which means we're coupled in multiple places to a particular implementation of product name (`string`) and a particular implementation of money (e.g. `decimal`). This wouldn't be so bad, if not for the fact that we're coupled to implementation we cannot change!
+In current situation, these changes are really painful to make. Why? It's because we used primitive types to represent the things that would need to change, which means we're coupled in multiple places to a particular implementation of product name (`string`) and a particular implementation of money (e.g. `decimal`). This wouldn't be so bad, if not for the fact that we're coupled to implementation we cannot change!
 
 Are we sentnced to live with issues like that in our code and cannot do anything about it? Let's find out by exploring the options we have.
 
@@ -123,7 +123,7 @@ if(productName.Equals(productName2))
 
 How is it different from the previous approach where we had a helper class, called `ProductNameComparison`? Previously the data of a product name was publicly visible (as a string) and we used the helper class only to store a function operating on this data (and anybody could create their own functions somewhere else without noticing the ones we already added). This time, the data of the product name is hidden[^notcompletelyhidden] from the outside world. The only available way to operate on this data is through the `ProductName`'s public interface (which exposes only those methods that we think make sense for product names and no more). In other words, whereas before we were dealing with a general-purpose type we couldn't change, now we have a domain-specific type that's completely under our control. This means we can freely change the meaning of two names being equal and this change will not ripple throughout the code.
 
-In further chapters, I will further explore this example of product name to show you some properties of value objects.
+In following chapters, I will further explore this example of product name to show you some properties of value objects.
 
 [^goosvalues]: S. Freeman, N. Pryce, Growing Object-Oriented Software Guided by Tests, Addison-Wesley Professional, 2009
 
