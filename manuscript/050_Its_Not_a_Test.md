@@ -23,8 +23,8 @@ So the tests became something else. They proved very valuable before the ‘impl
 
 That was the value of a test before learning. Note that the tests we would usually receive were not exactly what we would encounter at the time of exam, so we still had to guess. Still, the role of a **test as specification of a need** was already visible.
 
-Taking it to the software development land
-------------------------------------------
+Taking it to software development land
+--------------------------------------
 
 I chose this lengthy metaphor to show you that ‘test’ is really another way of specifying a requirement or a need and that it is not something that is counter-intuitive -- it occurs in our everyday lives. This is also true in software development. Let's take the following ‘test’ and see what kind of needs it specifies: 
 
