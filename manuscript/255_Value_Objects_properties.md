@@ -284,7 +284,7 @@ Thanks to this, no change outside the `ProductName` class is necessary. Several 
 
 ### Second change - additional identifier
 
-This change is more complicated, but having a value object will help us bevertheless. In order to perform the change, we'll have to modify the creation of `ProductName` class to take an additional parameter:
+This change is more complicated, but having a value object will help us bevertheless. To perform the change, we'll have to modify the creation of `ProductName` class to take an additional parameter:
 
 ```csharp
 private ProductName(string value, string config)
