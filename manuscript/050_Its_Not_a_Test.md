@@ -70,10 +70,10 @@ Given this variety, I'd like to make a deal: to be consistent I will establish 
 
 From time to time I'll refer back to the ‘traditional’ terminology, because it is better established and because you’ve probably already heard some terms and may wonder how it should be understood in the context of thinking of tests as specification.
 
-From your experience, you may know paper or word specifications written in plain English or other spoken language. Our specification is different from these specifications in at least few ways:
+You may be familiar with requirements or design specifications that are written in plain English or other spoken language, however our Specifications differ from these in at least few ways. In particular, a Specification:
 
-1.  It is not completely written up-front (more on this in the next chapters).
-2.  It is executable -- you can run it to see whether the code adheres to the specification or not.
-3.  It is written in source code rather than in spoken language -- which is both good, as there is less room for misunderstanding and bad, as great care must be taken to keep the specification readable.
+1.  Is not completely written up-front (more on this in the next chapters).
+2.  Is executable -- you can run it to see whether the code adheres to the specification or not.
+3.  Is written in source code rather than in spoken language -- which is both good, as the structure and formality of code leave less room for misunderstanding and bad, as great care must be taken to keep the specification readable.
 
 [^opensourcebook]: besides, this book is open source, so if you don't like it, you are free to create a fork and change the terminology!
