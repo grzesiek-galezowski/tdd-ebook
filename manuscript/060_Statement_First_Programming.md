@@ -110,11 +110,11 @@ public void ShouldRecognizeTimeSlotAboveMaximumAllowedAsInvalid()
 }
 ```
 
-Note how the method `PerformForTimeSlotIn()`, which triggers the specified behavior, is accidentally called *before* the mock is actually set up and the value of `frame.GetTimeSlot_Returns` is not taken into account. Thus this erroneous value does not alter the expected end result, but we'll not notice it. It sometimes turns out like this, most often in case of various boundary values (nulls etc.).
+Note how the method `PerformForTimeSlotIn()`, which triggers the specified behavior, is accidentally called *before* the mock is actually set up and the value of `frame.GetTimeSlot_Returns` is not taken into account. Thus this erroneous value does not alter the expected end result, and may go unnoticed. It sometimes turns out like this, most often in case of various boundary values (nulls etc.).
 
 #### 3. Using static data inside production code
 
-Once in a while, you have to jump in and add some new Statements to an existing class Specification and some logic to the class itself. Let's assume that the class and its specification was written by someone else. Imagine this code is a wrapper around your product XML configuration file. You decide to write your Statements *after* applying the changes (“well", you say, “I am all protected by the Specification that is already in place, so I can make my change without risking regression, and then just test my changes and it is all good...").
+Once in a while, you have to jump in and add some new Statements to an existing Specification and some logic to the class it describes. Let's assume that the class and its specification was written by someone else. Imagine this code is a wrapper around your product XML configuration file. You decide to write your Statements *after* applying the changes (“well", you say, “I am all protected by the Specification that is already in place, so I can make my change without risking regression, and then just test my changes and it is all good...").
 
 So, you start writing the new Statement. The Specification class already contains a member field like this:
 
@@ -126,7 +126,7 @@ public class XmlConfigurationSpecification
   //...
 ```
 
-What it does is to set up an object used by every Statement. So, each Statement uses a `config` object initialized with the same `xmlConfiguration` string value. The string is already pretty large and messy, since it contains all what is required by the existing Statements. You need to write tests for a little corner case that does not need all this crap inside this string. So, you decide to start afresh and create a separate object of the `XmlConfiguration` class with your own, minimal string. Your Statement begins like this:
+What it does is to set up an object used by every Statement. So, each Statement uses a `config` object initialized with the same `xmlConfiguration` string value. The string is already pretty large and messy, since it contains all that is required by the existing Statements. You need to write tests for a little corner case that does not need all this crap inside this string. So, you decide to start afresh and create a separate object of the `XmlConfiguration` class with your own, minimal string. Your Statement begins like this:
 
 ```csharp
 string customFixture = CreateMyOwnFixtureForThisTestOnly();
@@ -145,7 +145,7 @@ What the...? Well, well, here is what happened: the author of this class applied
 “Test-After" ends up as “Test-Never" 
 ------------------------------------
 
-I will ask this question again: did you ever have to write a requirements or design document for something that you already implemented? Was it fun? Was it valuable? Was it creative? No, I do not think so. The same holds for our executable specification. After we've written the code, we have little motivation to specify what we wrote -- some of the pieces of code “we can just see are correct", other pieces “we already saw working" when we copied the code over to our development machine and ran a few sanity checks... The design is ready... Specification? Maybe next time...
+I will ask this question again: did you ever have to write a requirements or design document for something that you already implemented? Was it fun? Was it valuable? Was it creative? No, I do not think so. The same holds for our executable specification. After we've written the code, we have little motivation to specify what we wrote -- some of the pieces of code “we can just see are correct", other pieces “we already saw working" when we compiled and deployed our changes and ran a few manual checks... The design is ready... Specification? Maybe next time...
 
 Another reason might be time pressure. When pressure becomes too high, it seems to trigger heroic behaviors in us. Then all of a sudden we drop all the “baggage", stop learning and experimenting, revert to all of the old “safe" behaviors and “save what we can!". If the Specification is written at the end, it is sacrificed, since the code already has been written, “and it will be tested anyway by real tests" like box tests, smoke tests and sanity tests. However, when starting with a Statement it is quite the opposite. Here a Statement evaluating to false is **a reason** to write any code. Thus, creating the Specification is an indispensable part of writing code.
 
