@@ -164,7 +164,7 @@ Now, where's the waste? To find out, let's compare the Statement-first and code-
 And here's how it often looks like when we write the code first (extra steps marked with **strong text**):
 
 1.  Write some production code (this probably spans a few classes until we are satisfied)
-2.  **Start writing unit tests**
+2.  **Start writing a unit test**
 3.  **Notice that unit testing the whole set of classes is cumbersome and unsustainable and contains high redundancy.**
 4.  **Restructure the code to be able to isolate objects and use mocks (this step ensures that code has high testability)**
 5.  Write unit tests
