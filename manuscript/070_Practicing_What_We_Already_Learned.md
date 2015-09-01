@@ -12,12 +12,12 @@ The previous chapter was filled with a lot of theory and philosophy, don’t yo
 Let me tell you a story 
 -----------------------
 
-Meet Johnny and Benjamin, two developers from Buthig Company. Johnny is quite fluent in programming and Test-Driven Development, while Benjamin is an intern under Johnny’s mentorship and is eager to learn TDD. They are on their way to their customer, Jane, who requested their presence as she wants them to do write a small program for her. Together with them, we will see how they interact with the customer and how Benjamin tries to understand the basics of TDD. Just as you, Benjamin is a novice so his questions may reflect yours. However, if you find anything explained in not enough details, do not worry -- in the next chapters, we will be expanding on this material.
+Meet Johnny and Benjamin, two developers from Buthig Company. Johnny is quite fluent in programming and Test-Driven Development, while Benjamin is an intern under Johnny’s mentorship and is eager to learn TDD. They are on their way to their customer, Jane, who requested their presence as she wants them to write a small program for her. Along with them, we will see how they interact with the customer and how Benjamin tries to understand the basics of TDD. Like you, Benjamin is a novice so his questions may reflect yours. However, if you find anything explained in not enough details, do not worry -- in the next chapters, we will be expanding on this material.
 
 Act 1: The Car
 --------------
 
-**Johnny:** How do you feel on your first assignment?
+**Johnny:** How do you feel about your first assignment?
 
 **Benjamin:** I am pretty excited! I hope I can learn some of the TDD stuff you promised to teach me.
 
@@ -50,21 +50,21 @@ Act 2: The Customer
 
 **Johnny:** Are you aware that apart from the fancy features that you were using we will have to allocate some effort to implement the basics that all the calculators have?
 
-**Jane:** Sure, I am OK with that. I am so used to my calculator application so much that if I use something else for more than few months, I will have to pay psychotherapist instead of you guys. Apart from that, writing a calculator app seems like a simple task in my mind, so the cost isn’t going to be overwhelming, right?
+**Jane:** Sure, I am OK with that. I am so used to my calculator application that if I use something else for more than a few months, I will have to pay a psychotherapist instead of you guys. Apart from that, writing a calculator app seems like a simple task in my mind, so the cost isn’t going to be overwhelming, right?
 
-**Johnny:** I think I get it. Let's get it going then. We will be implementing the functionality incrementally, starting with the most essential ones. Which feature of the calculator would you consider the most essential?
+**Johnny:** I think I get it. Let's get it going then. We will be implementing the functionality incrementally, starting with the most essential features. Which feature of the calculator would you consider the most essential?
  
 **Jane:** That would be addition of numbers, I guess.
 
-**Johnny:** Ok, that will be our target for the first iteration. After the iteration, we will deliver this part of functionality for you to try out and give us some feedback. However, before we can even implement addition, we will have to implement displaying digits on the screen as you enter them. Is that correct?
+**Johnny:** Ok, that will be our target for the first iteration. After the iteration, we will deliver this part of the functionality for you to try out and give us some feedback. However, before we can even implement addition, we will have to implement displaying digits on the screen as you enter them. Is that correct?
 
-**Jane:** yes, I want the display stuff to work as well -- it is the most basic feature, so...
+**Jane:** Yes, I want the display stuff to work as well -- it is the most basic feature, so...
 
 **Johnny:** Ok then, this is a simple functionality, so let me suggest some user stories as I understand what you already said and you will correct me where I am wrong. Here we go:
 
 1.  **In order to** know that the calculator is turned on, **As a** tax payer **I want** to see “0" on the screen as soon as I turn it on.
 2.  **In order to** see what numbers I am currently operating on, **As a** tax payer, **I want** the calculator to display the values I enter
-3.  **In order to** calculate sum of my different incomes, **As a** tax payer **I want** the calculator to enable addition of multiple numbers
+3.  **In order to** calculate the sum of my different incomes, **As a** tax payer **I want** the calculator to enable addition of multiple numbers
 
 What do you think?
 
@@ -126,7 +126,7 @@ What do you think?
 |---------------------------|-------------------|-------------------------------|
 | 1,2,3,4,5,6,7,1,2,3,4,5,6 | 123456            | Display limited to six digits |
 
-**Johnny:** another good catch, Benjamin!
+**Johnny:** Another good catch, Benjamin!
 
 **Benjamin:** I think I am beginning to understand why you like working with examples!
 
@@ -213,7 +213,7 @@ Act 3: Test-Driven Development
 
 **Benjamin:** Boy, I do not know how to start.
 
-**Johnny:** start by writing the statement in a plain English. What should the calculator do?
+**Johnny:** Start by writing the statement in plain English. What should the calculator do?
 
 **Benjamin:** It should display “0" when I turn the application on.
 
@@ -238,7 +238,7 @@ ShouldDisplay0WhenCreated()
 
 **Benjamin:** Ah, I see now. So it is a statement of behavior, isn’t it?
 
-**Johnny:** That is right. Now, the second trick I can sell to you is that if you do not know what code to start with, start with the expected result. In our case, we are expecting that the behavior will end up as displaying “0", right? So let's just write it in form of an assertion.
+**Johnny:** That is right. Now, the second trick I can sell to you is that if you do not know what code to start with, start with the expected result. In our case, we are expecting that the behavior will end up as displaying “0", right? So let's just write it in the form of an assertion.
 
 **Benjamin:** You mean something like this?
 
@@ -259,15 +259,15 @@ ShouldDisplay0WhenCreated()
 
 **Benjamin:** But that does not even compile. What use is it?
 
-**Johnny:** the code not compiling is the feedback that you needed to proceed. While previously you did not know where to start, now you have a clear goal -- make this code compile. Firstly, where do you get the displayed value from?
+**Johnny:** The code not compiling is the feedback that you needed to proceed. While previously you did not know where to start, now you have a clear goal -- make this code compile. Firstly, where do you get the displayed value from?
 
 **Benjamin:** From the calculator display, of course!
 
-**Johnny:** Then write it down how you get the value form the display.
+**Johnny:** Then write down how you get the value form the display.
 
-**Benjamin:** like how?
+**Benjamin:** Like how?
 
-**Johnny:** like this:
+**Johnny:** Like this:
 
 ```csharp
 public class CalculatorSpecification
@@ -311,7 +311,7 @@ ShouldDisplay0WhenCreated()
 
 **Benjamin:** Now the code still does not compile, because I do not have the `Calculator` class at all...
 
-**Johnny:** sounds like a good reason to create it.
+**Johnny:** Sounds like a good reason to create it.
 
 **Benjamin:** OK.
 
@@ -381,9 +381,9 @@ public class Calculator
 2.  This feeling that this is not the final implementation points you towards writing more Statements. When there is enough Statements to make your implementation complete, it usually means that you have a complete Specification of class behaviors as well.
 3.  If you treat making every Statement true as an achievement, this practice allows you to evolve your code without losing what you already achieved. If by accident you break any of the behaviors you’ve already implemented, the Specification is going to tell you because one of the existing Statements that were previously true will then evaluate to false. You can then either fix it or undo your changes using version control and start over from the point where all existing Statements were true.
 
-**Benjamin:** looks like quite a few benefits. Still, I will have to get used to this kind of working.
+**Benjamin:** Looks like there are quite a few benefits. Still, I will have to get used to this kind of working.
 
-**Johnny:** do not worry, it is central to TDD, so you will grasp it in no time. Now, before we proceed to the next Statement, let's look at what we already achieved. First, we wrote a Statement that turned out false. Then, we wrote just enough code to make the Statement true. Time for a step called Refactoring. In this step, we will take a look at the Statement and the code and remove duplication. Can you see what is duplicated between the Statement and the code?
+**Johnny:** Do not worry, it is central to TDD, so you will grasp it in no time. Now, before we proceed to the next Statement, let's look at what we already achieved. First, we wrote a Statement that turned out false. Then, we wrote just enough code to make the Statement true. Time for a step called Refactoring. In this step, we will take a look at the Statement and the code and remove duplication. Can you see what is duplicated between the Statement and the code?
 
 **Benjamin:** both of them contain the literal “0". The Statement has it here:
 
@@ -430,7 +430,7 @@ That is right. We need to add it to our TODO list to handle this case. Can you w
 
 **Benjamin:** Sure. I will write it as “TODO: 0 should be used as an initial value."
 
-**Johnny:** Ok. We should handle it now, especially that it is part of the story we are currently implementing, but I will leave it for later just to show you the power of TODO list in TDD -- whatever is on the list, we can forget and get back to when we have nothing better to do. Our next item from the list is this:
+**Johnny:** Ok. We should handle it now, especially since it is part of the story we are currently implementing, but I will leave it for later just to show you the power of TODO list in TDD -- whatever is on the list, we can forget and get back to when we have nothing better to do. Our next item from the list is this:
 
 ### Statement 2: Calculator should display entered digits
 
@@ -457,9 +457,9 @@ ShouldDisplayEnteredDigits()
 }
 ```
 
-**Johnny:** I am glad that you got the part about naming and writing a Statement. One thing we will have to work on here though.
+**Johnny:** I am glad that you got the part about naming and writing a Statement. There is one thing we will have to work on here though.
 
-**Benjamin:** what is it?
+**Benjamin:** What is it?
 
 **Johnny:** When we talked to Jane, we used examples with real values. These real values were extremely helpful in pinning down the corner cases and uncovering missing scenarios. They were easier to imagine as well, so they were a perfect suit for conversation. If we were automating these examples on acceptance level, we would use those real values as well. When we write unit-level Statements, however, we use a different technique to get this kind of specification more abstract. First of all, let me enumerate the weaknesses of the approach you just used:
 
@@ -502,7 +502,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 
 **Benjamin:** For instance, what is this `DigitKeys` type doing here?
 
-**Johnny:** It is supposed to be an enumeration (note that it does not exist yet, we just assume that we have it) to hold all the possible digits user can enter, which are 0-9. This is to ensure that user will not write `calculator.Enter(123)`. Instead of allowing to enter any number and then detecting errors, we are giving our users a choice from among only the valid values.
+**Johnny:** It is supposed to be an enumeration (note that it does not exist yet, we just assume that we have it) to hold all the possible digits a user can enter, which are 0-9. This is to ensure that the user will not write `calculator.Enter(123)`. Instead of allowing our users to enter any number and then detecting errors, we are giving them a choice from among only the valid values.
 
 **Benjamin:** Now I get it. So how about the `Any.Besides()` and `Any.Of()`? What do they do?
 
@@ -512,7 +512,7 @@ The `Any.Of()` is simpler -- it just returns any value in an enumeration. Note t
 
 **Benjamin:** You better do, because for now, I feel a bit uneasy with generating the values -- it seems like the Statement we are writing is getting less deterministic this way. The last question -- what about those weird comments you put in the code? Given? When? Then?
 
-**Johnny:** Yes, this is a convention that I use, not only in writing, but in thinking as well. I like to think about every behavior in terms of three elements: assumptions (given), trigger (when) and expected result (then). Using the words, we can summarize the Statement we are writing in the following way: “**Given** a calculator, **when** I enter some digits first one being other than zero, **then** they should all be displayed in order they were entered". This is also something that I will tell you more about later.
+**Johnny:** Yes, this is a convention that I use, not only in writing, but in thinking as well. I like to think about every behavior in terms of three elements: assumptions (given), trigger (when) and expected result (then). Using the words, we can summarize the Statement we are writing in the following way: “**Given** a calculator, **when** I enter some digits, the first one being non-zero, **then** they should all be displayed in the order they were entered". This is also something that I will tell you more about later.
 
 **Benjamin:** Sure, for now I need just enough detail to understand what is going on -- we can talk about the principles, pros and cons later. By the way, the following sequence of casts looks a little bit ugly:
 
@@ -524,7 +524,7 @@ string.Format("{0}{1}{2}",
 )
 ```
 
-**Johnny:** We will get back to it and make it more “smarter" in a second after we make this statement true. For now, we need something obvious. Something we know works. let's evaluate this Statement. What is the result?
+**Johnny:** We will get back to it and make it “smarter" in a second after we make this statement true. For now, we need something obvious. Something we know works. let's evaluate this Statement. What is the result?
 
 **Benjamin:** Failed, expected “331", but was “0".
 
@@ -549,7 +549,7 @@ public enum DigitKeys
 
 **Johnny:** This is a specification we are writing, remember? It should say somewhere which digits we support, should it not?
 
-**Benjamin:** It is difficult to agree with, especially that I am used to write unit tests, not Statements and in unit tests, I wanted to verify what I was unsure of.
+**Benjamin:** It is difficult to agree with, especially since I am used to writing unit tests, not Statements, and, in unit tests, I wanted to verify what I was unsure of.
 
 **Johnny:** I will try to give you more arguments later. For now, just bear with me and note that adding such Statement will be almost effortless.
 
@@ -675,7 +675,7 @@ public void Enter(DigitKeys digit)
 
 **Benjamin:** Running... Ok, it is false now. Expected “243", got “0".
 
-**Johnny:** good, now we are pretty sure that it works OK. Let's uncomment the lines we just commented out and move forward.
+**Johnny:** Good, now we are pretty sure that it works OK. Let's uncomment the lines we just commented out and move forward.
 
 ### Statement 3: Calculator should display only one zero digit if it is the only entered digit even if it is entered multiple times 
 
@@ -745,4 +745,4 @@ public class Calculator
 Epilogue
 --------
 
-Time to leave Johnny and Benjamin, at least for now. I actually planned to make this chapter longer, and cover all the other operations, but I fear I would make this too long and get you bored. You should have a feel of how the TDD cycle looks like, especially that Johnny and Benjamin had a lot of conversations on many other topics in the meantime. I will be revisiting these topics later in the book. For now, so if you felt lost or unconvinced on any of the topics mentioned by Johnny, do not worry -- I do not expect you to be proficient with any of the techniques shown in this chapter just yet. Time will come for that.
+Time to leave Johnny and Benjamin, at least for now. I actually planned to make this chapter longer, and cover all the other operations, but I fear I would make this too long and bore you. You should have a feel of how the TDD cycle looks like, especially since Johnny and Benjamin had a lot of conversations on many other topics in the meantime. I will be revisiting these topics later in the book. For now, if you felt lost or unconvinced on any of the topics mentioned by Johnny, do not worry -- I do not expect you to be proficient with any of the techniques shown in this chapter just yet. The time will come for that.
