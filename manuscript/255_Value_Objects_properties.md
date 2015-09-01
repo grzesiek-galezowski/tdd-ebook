@@ -1,16 +1,14 @@
-# Properties of value objects
+# Value object anatomy
 
-TODO add some introduction
-TODO mention in previous chapter that values do not play roles
+In the previous chapter, we saw value objects in action. It showcased where and how a value object can be useful, but did little to completely describe the properties of value objects. In this chapter, we'll take the value objects from the previous chapter and study its anatomy - line by line, field by field, method after method. After doing this, you'll hopefully have a better feel of the general properties of value objects.
 
+Let's begin our examination by taking a look at the definition of the type `ProductName` type from the previous chapter (the code I will show you is not legal C# - I omitted method bodies, putting `;` after each method declaration. I did this because it would be a lot of code to grasp otherwise and I don't necessary want to delve into the code of each method). Each section of the `ProductName` class definition is marked with a comment. These comments mark the topics we'll delve into throughout the chapter.
 
-TODO remove this:
-Let's get back to the list of four possible changes I mentioned (just to remind you, these were: ignoring case, comparing by ID as well as by string name and getting uppercase version for printing on invoice) see how creating a value object makes it easier to introduce these changes.
-
-First, let's take a look at the definition of the type to see how it looks like before answering how it solves our problems. The following code is not legal C# - I omitted method bodies, putting `;` after each method declaration. I did this because it would be a lot of code to grasp and we don't necessary want to delve into code of each method. I added a comment to each section of the code and we'll explain them one by one later.
+So here is the promised definition of `ProductName`:
 
 ```csharp
-//We are the owners of this class!
+//This is the class we created and used
+//in the previous chapter
 public class ProductName 
   : IEquatable<ProductName>
 {
@@ -23,10 +21,11 @@ public class ProductName
   // Static method for creating new instances:
   public static ProductName For(string value);
   
-  // Standard version of ToString():
-  public void ToString();
+  // Overridden version of ToString()
+  // from Object class
+  public override string ToString();
   
-  // Non-standard version of ToString()
+  // Non-standard version of ToString().
   // I will explain its purpose later
   public string ToString(Format format);
 
@@ -40,26 +39,28 @@ public class ProductName
 }
 ```
 
-As you see, the class can be divided into six sections. Let's take them on one by one.
+Using the comments, I divided the class into six sections and will describe one section at a time.
 
 ## Hidden data
+
+The actual data is private:
 
 ```csharp
 private string _value;
 ```
 
-The actual data, as I already said, is private to hide it from illegal modification. Only the methods we publish can be used to operate on the state. This is used for three things:
+ Only the methods we publish can be used to operate on the state. This is useful for three things:
 
-1. To restrict legal operations to the set that makes sense for a product name abstraction. 
-1. To achieve immutability (more on why we want the type to be immutable later). If the data was public, everyone could modify the state of `ProductName` instance by writing this:
+1. To restrict allowed operations to what we think makes sense to do with a product name. Everything else (i.e. what we think does not make sense to do) is not allowed. 
+1. To achieve immutability of `ProductName` instances (more on why we want the type to be immutable later), which means that when we create an instance, we cannot modify it. If the `_value` field was public, everyone could modify the state of `ProductName` instance by writing something like:
   ```csharp
   productName.data = "something different"; 
   ```
-1. Both of the thing described above help protect against creating a product name with an invalid value. When creating a product name from a string, we have to pass this string through a method that can perform the validation.
+1. To protect against creating a product name with an invalid state. When creating a product name, we have to pass a string with containing a name through a static `For()` method that can perform the validation (more on this later). If there are no other ways we can set the name, we can rest assured that the validation will happen every time someone wants to create a `ProductName`
 
 ## Hidden constructor
 
-Note that the constructor is made private:
+Note that the constructor is made private as well:
 
 ```csharp
 private ProductName(string value)
@@ -68,19 +69,19 @@ private ProductName(string value)
 }
 ```
 
-and you probably wonder why. This question can be further decomposed to two others: 
+and you probably wonder why. I'd like to decompose the question further decomposed into two others: 
 
-1. What should we create new instances?
+1. How should we create new instances then?
 1. Why private and not public?
 
 Let's answer them one by one.
 
 ### How should we create new instances?
 
-The `ProductName` class contains special static factory method[^factorymethods], called `WithValue()`. If we look at the body of th method, we'll see that it invokes a constructor and handles all input parameter validations[^isnullorempty]:
+The `ProductName` class contains a special static factory method[^factorymethods], called `For()`. It invokes the constructor and handles all input parameter validations[^isnullorempty]. An example implementation could be:
 
 ```
-public static ProductName WithValue(string value)
+public static ProductName For(string value)
 {
   if(string.IsNullOrWhiteSpace(value))
   {
@@ -96,14 +97,14 @@ public static ProductName WithValue(string value)
 }
 ```
 
-There are several purposes of not exposing a constructor directly, but instead use this kind of method.
+There are several reasons for not exposing a constructor directly, but use a static factory method instead. Below, I briefly describe some of them. 
 
 #### Explaining intention
 
-Just like factories, static factory methods help explain intention, because, unlike constructors, they have names. One can argue that the following:
+Just like factories, static factory methods help explaining intention, because, unlike constructors, they can have names, while constructors have the constraint of being named after their class[^constructorsdynamic]. One can argue that the following:
    
  ```csharp
- ProductName.WithValue("super laptop X112")
+ ProductName.For("super laptop X112")
  ```
    
  is not that more readable than:
@@ -112,7 +113,7 @@ Just like factories, static factory methods help explain intention, because, unl
  new ProductName("super laptop X112");
  ```
    
- but note that in our example, we have a single, simple factory method. The game changes when we need to support an additional way of creating a product name. Let's assume that in above example of "super laptop X112", the "super laptop" is a model and "X112" is a specific configuration (since the same models are often sold in several different configurations, with more or less RAM, different operating systems etc.) and we find it comfortable to pass these two pieces of information as separate arguments in some places (e.g. because we obtain the from different sources) and let the `ProductName` combine them. If we used a constructor for that, we would write:
+ but note that in our example, we have a single, simple factory method. The benefit would be more visible when we would need to support an additional way of creating a product name. Let's assume that in above example of "super laptop X112", the "super laptop" is a model and "X112" is a specific configuration (since the same laptop models are often sold in several different configurations, with more or less RAM, different operating systems etc.) and we find it comfortable to pass these two pieces of information as separate arguments in some places (e.g. because we may obtain them from different sources) and let the `ProductName` combine them. If we used a constructor for that, we would write:
    
  ```csharp
  // assume model is "super laptop"
@@ -126,18 +127,38 @@ Just like factories, static factory methods help explain intention, because, unl
  ProductName.CombinedOf(model, configuration)
  ```   
    
- which reads more fluent. Or, if we like to be super explicit (which is not my favourite way of writing code, but I want to show you that we can do this), we can write:
+ which reads more fluently. Or, if we like to be super explicit:
    
  ```csharp
  ProductName.FromModelAndConfig(model, configuration)
  ```
 
-Some developers are not used to using factory methods, but the good news is that they are getting more and more mainstream. Just to give you two examples, `TimeSpan` type in C# uses them (e.g. we can write `TimeSpan.FromSeconds(12)` and `Period` type in Java (e.g. `Period.ofNanos(2222)`). 
+ which is not my favourite way of writing code, because I don't like repeating the same information in method name and argument names. I wanted to show you that we can do this if we want though.
 
-#### Ensuring initialization
+I met a lot developers that find using factory methods somehow unfamiliar, but the good news is that factory methods for value objects are getting more and more mainstream. Just to give you two examples, `TimeSpan` type in C# uses them (e.g. we can write `TimeSpan.FromSeconds(12)` and `Period` type in Java (e.g. `Period.ofNanos(2222)`). 
 
-When there is a single constructor, using static factory methods ensures it is called. When we create an instance and there is only one constructor, we have to call it. Why is this important? In languages like C#, it helps avoiding uninitialized fields problem. For example, when we have two constructors, they can delegate to each other:
+#### Ensuring consistent initialization of objects
+
+In case where we have different ways of initializing an object that share a common part (i.e. whichever way we choose, part of the initialization must always be done the same), having several constructors that delegate to one common seems like a good idea. For example, we can have two constructors, one delegating to the other, that holds a common initialization logic:
   
+```csharp
+// common initialization logic
+public ProductName(string value)
+{ 
+  _value = value;
+}
+  
+//another constructo that uses the common initialization
+public ProductName(string model, string onfiguration)
+ : this(model + " " + configuration) //delegation to "common" constructor
+{
+}
+```
+
+Thanks to this, the field `_value` is initialized in a single place and we have no duplication.
+
+The issue with this approach is this binding between constructors is not enforced - we can use it if we want, otherwise we can skip it. For example, we can as well use a totally separate set of fields in each constructor:
+
 ```csharp
 public ProductName(string value)
 { 
@@ -145,27 +166,15 @@ public ProductName(string value)
 }
   
 public ProductName(string model, string onfiguration)
- : this(model + " " + configuration) //delegation to other constructor
+ //oops, no delegation to the other constructor
 {
 }
 ```
 
-ensuring the field initialization is done in a single place, but there is literally nothing forcing us to do this. We can as well write something like this:
-  
-```csharp
-public ProductName(string value)
-{ 
-  _value = value;
-}
-  
-public ProductName(string model, string onfiguration)
- //oops, no delegation to other constructor
-{
-}
-```
-  
-and the compiler will accept it. On the other hand, if the second constructor was a static factory method, we would not be able to bypass calling the constructor inside it:
-  
+which leaves room for mistakes - we might forget to initialize all the fields all the time and allow creating objects with invalid state.
+
+I argue that using several static factory methods while leaving just a single constructor is safer in that it enforces every object creation to pass through this single constructor. This constructor can then ensure all fields of the object are properly initialized. There is no way in such case that we can bypass this constructor in any of the static factory methods, e.g.:  
+
 ```csharp
 public ProductName CombinedOf(string model, string configuration)
 {
@@ -175,16 +184,35 @@ public ProductName CombinedOf(string model, string configuration)
 }
 ```
 
-By the way, there are some validations missing here as well, but let's skip them for now. And sure, the example of product names is super-simple and we are unlikely to make such a mistake, however:
+What I wrote above might seem an unnecessary complication as the example of product names is very simple and we are unlikely to make a mistake like the one I described above, however:
 
 1. There are more complex cases when we can indeed forget to initialize some fields in multiple constructors. 
-2. It is always better to be protected by the compiler than not when the price for the protection is considerably low.
+2. It is always better to be protected by the compiler than not when the price for the protection is considerably low. At the very least, when something happens, we'll have one place less to search for bugs.
 
 #### Better place for input validation
 
-The `WithValue()` factory method contained input validation, and the constructor did not.Is it a wise decision to move the validation to such a method and leave constructor for just filling fields? The answer to this questions depends on an answer to another one: are there cases where we do not want to validate constructor arguments?
+Let's look again at the `For()` factory method:
 
-Acually, yes, there are. Consider the following case: we want to create bundles of two product names as one. For this purpose, we introduce a new method on `ProductName`, called `BundleWith()`, which takes another product name:
+```
+public static ProductName For(string value)
+{
+  if(string.IsNullOrWhiteSpace(value))
+  {
+    //validation failed
+    throw new ArgumentException(
+      "Product names must be human readable!");
+  }
+  else
+  {
+    //here we call the constructor
+    return new ProductName(value);
+  }
+}
+```
+
+and note that it contains some input validation, while the constructor did not. Is it a wise decision to move the validation to such a method and leave constructor for just assigning fields? The answer to this questions depends on the answer to another one: are there cases where we do not want to validate constructor arguments? If no, then the validation should go to the constructor, as its purpose is to ensure an object is properly initialized.
+
+Apparently, there are cases when we want to keep validations out of the constructor. Consider the following case: we want to create bundles of two product names as one. For this purpose, we introduce a new method on `ProductName`, called `BundleWith()`, which takes another product name:
 
 ```csharp
 public ProductName BundleWith(ProductName other)
@@ -194,17 +222,19 @@ public ProductName BundleWith(ProductName other)
 }
 ```
 
-Note that we are calling the constructor directly, instead of passing it through method that contains validations. We do that, because we know that:
+Note that the `BindleWith()` method doesn't contain validations but instead callsjust calls the constructor. It is safe to do so in this case, because we know that:
 
-1. the string will be neither null nor empty, since we are creating a literal string here
-2. `_value` fields of both `this` and the `other` product name components must be valid, because if they were not, thease two product names would fail to be created in the first place.
+1. The string will be neither null nor empty, since we are appending values of both product names to the constant value of `"Bundle: "`. The result of such append operation will never give us an empty string or a `null`.
+2. The `_value` fields of both `this` and the `other` product name components must be valid, because if they were not, thease the two product names that contain those values would fail to be created in the first place.
+
+TODO TODO TODO
 
 Another example is the method we already saw for combining the model and configuration into a product name. If we look at it again:
 
 ```csharp
 public ProductName CombinedOf(string model, string configuration)
 {
-  return ProductName.WithValue(model + " " + configuration);
+  return ProductName.For(model + " " + configuration);
 }
 ```
 
@@ -227,7 +257,7 @@ Well, remember the constructor of `ProductName` does not validate its input. Thi
 I already mentioned that we do not want to use polymorphism for values, as they do not play any roles that other objects can fill. Even though, we still want to reserve some degree of flexibility to be able to change our decision easily. When we have a static method like this:
 
 ```
-public static ProductName WithValue(string value)
+public static ProductName For(string value)
 {
   //validations skipped for brevity
   return new ProductName(value);
@@ -259,8 +289,8 @@ Of course, nothing forces us to call this method `ToString()` - we can use our o
 For values such as `ProductName`, we need to implement all equality operations plus `GetHashCode()`. The purpose of equality operations should be obvious - this is what gives product names value semantics and allow the following operations:
 
 ```csharp
-ProductName.WithValue("a").Equals(ProductName.WithValue("a"));
-ProductName.WithValue("a") == ProductName.WithValue("a");
+ProductName.For("a").Equals(ProductName.For("a"));
+ProductName.For("a") == ProductName.For("a");
 ```
 
 both return `true`. In Java, of course, we are not able to override equality operators - they always compare references, but Java programmers are so used to this, that it usually isn't a problem.
@@ -333,5 +363,7 @@ The two chapters talked about value objects on a specific example. The next one 
 [^isnullorempty]: by the way, the code contains a call to `IsNullOrEmpty()`. There are several valid arguments against using this method, e.g. by Mark Seemann (TODO check surname) (TODO add link), but in this case, I put it in to make the code shorter as the validation logic itself is not that important at the moment. 
 
 [^essentialskills]: TODO fill in the reference
+
+[^constructorsdynamic]: This is true for languages like Java, C# or C++. There are other languages (like Ruby), where a constructor does not need to be named after a class. However, there are other constraints on their naming.
 
 TODO shalloway's law - wasn't it already mentioned?
