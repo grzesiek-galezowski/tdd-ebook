@@ -222,14 +222,12 @@ public ProductName BundleWith(ProductName other)
 }
 ```
 
-Note that the `BindleWith()` method doesn't contain validations but instead callsjust calls the constructor. It is safe to do so in this case, because we know that:
+Note that the `BundleWith()` method doesn't contain any validations but instead just calls the constructor. It is safe to do so in this case, because we know that:
 
 1. The string will be neither null nor empty, since we are appending values of both product names to the constant value of `"Bundle: "`. The result of such append operation will never give us an empty string or a `null`.
 2. The `_value` fields of both `this` and the `other` product name components must be valid, because if they were not, thease the two product names that contain those values would fail to be created in the first place.
 
-TODO TODO TODO
-
-Another example is the method we already saw for combining the model and configuration into a product name. If we look at it again:
+This was a case where we didn't need the validation because we were sure the input was valid. There may be another case - when it is more convenient for a static factory method to provide a validation on its own. Such validation may be more detailed and helpful as it is in a factory method made for specific case and knows more about what this case is. For example, let's look at  the method we already saw for combining the model and configuration into a product name. If we look at it again (it does not contain any validations yet):
 
 ```csharp
 public ProductName CombinedOf(string model, string configuration)
@@ -238,25 +236,44 @@ public ProductName CombinedOf(string model, string configuration)
 }
 ```
 
-We will note that this method needs different validations, because probably both model and configuration need to be validated separately (by the way, maybe a good idea would be to create value objects for those as well - it depends on where we get them and how we use them).
+We may argue that this method would benefit from a specialized set of validations, because probably both model and configuration need to be validated separately (by the way, is sometimes may be a good idea would be to create value objects for model and configuration as well - it depends on where we get them and how we use them). We could then go as far as to throw a different exception for each case, e.g.:
 
-Oh, and when we want to reuse the validations, remember that one factory method is free to call another, so we can reuse them!
+```csharp
+public ProductName CombinedOf(string model, string configuration)
+{
+  if(!IsValidModel(model))
+  {
+    throw new InvalidModelException(model);
+  }
+  
+  if(!IsValidConfiguration(configuration))
+  {
+    throw new InvalidConfigurationException(configuration);
+  }
+  
+  return ProductName.For(model + " " + configuration);
+}
+```
 
-That's about it as far as factory methods go. Remember we asked three questions and I have answered just one of them. Thankfully, the remaining two are easy to answer now.
+What if we need the default validation in some cases? We can still put them in a common factory method and invoke it from other factory methods. This looks a bit like going back to the problem with multiple constructors, but I'd argue that this issue is not as serious - in my mind, the problem of validations is easier to spot than mistakenly missing a field assignment as in the case of constructors. You maye have different preferences though.
+
+Remember we asked two questions and I have answered just one of them. Thankfully, the other one - why the constructor is private not public - is much easier to answer now. 
 
 ### Why private and not public?
 
-There are two reasons: validation and separating use from construction:
+My personal reasons for it are: validation and separating use from construction.
 
-#### Validations
+#### Validation
 
-Well, remember the constructor of `ProductName` does not validate its input. This is OK when the constructor is used internally inside `ProductName` (as I just demonstrated in the previous section), because this is the code we can trust. On the other hand, for all the code we do not trust, we want it to use the "safe" methods that validate input and raise errors. After all, this is what we made those methods for, isn't it?
+Looking at the constructor of `ProductName` - we already discussed that it does not validate its input. This is OK when the constructor is used internally inside `ProductName` (as I just demonstrated in the previous section), because it can only be called by the code we, as creators of `ProductName` class, can trust. On the other hand, there probably is a lot of code that will create instances of `ProductName`. Some of this code is not even written yet, most of it we don't know, so we cannot trust it. For such code, want it to use the only the "safe" methods that validate input and raise errors, not the constructor.
 
 #### Separating use from construction[^essentialskills]
 
-I already mentioned that we do not want to use polymorphism for values, as they do not play any roles that other objects can fill. Even though, we still want to reserve some degree of flexibility to be able to change our decision easily. When we have a static method like this:
+I already mentioned that most of the time, we do not want to use polymorphism for values, as they do not play any roles that other objects can fill. Even though, I consider it wise to reserve some degree of flexibility to be able to change our decision more easily in the future, especially when the cost of the flexibility is very low. 
 
-```
+Static factory methods provide more flexibility when compared to constructors. For example, when we have a static factory method like this:
+
+```csharp
 public static ProductName For(string value)
 {
   //validations skipped for brevity
@@ -264,9 +281,11 @@ public static ProductName For(string value)
 }
 ```
 
-and all code depends on it instead of constructor, we can make the `ProductName` abstract at some point and return some subclasses depending on some factors. This change would impact just this static method, as the constructor is hidden. Again, this is something I don't recommend doing by default, unless there is a very strong reason.
+and all our code depends on it for creating product names rather than on the constructor, we are free to make the `ProductName` class abstract at some point and have the `For()` method return an instance of a subclass of `ProductName`. This change would impact just this static method, as the constructor is hidden and accessible only from inside the `ProductName` class. Again, this is something I don't recommend doing by default, unless there is a very strong reason. But if there is, the capability to do so is here.
 
 ## String conversion methods
+
+TODO is there really not much to say? ToString() may serve for interaction with third party apis.
 
 There is not much to say about `ToString()`, but the overload (the `ToString(Format format)`) method is more interesting. Its purpose is to  be able to format the product name differently for different outputs, e.g. reports and on-screen printing. True, we could introduce a special method for each of the cases (e.g. `ToStringForScreen()` and `ToStringForReport()`), but that could make the `ProductName` know too much about how it is used and each possible output would need a new method. Instead, the `ToString()` accepting a `Format` (which is an interface,  by the way) ensures flexibility.
 
