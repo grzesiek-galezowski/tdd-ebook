@@ -140,7 +140,7 @@ And it passes -- cool... not. Ok, what is wrong with this? Nothing big, unless y
 private static string xmlText; //note the static keyword!
 ```
 
-What the...? Well, well, here is what happened: the author of this class applied a small optimization. He thought: “In this app, the configuration is only modified by members of the support staff and to do it, they have to shut down the system, so, there is no need to read the XML file every time an XmlConfiguration object is created. I can save some CPU cycles and I/O operations by reading it only once when the first object is created. Later objects will just use the same XML!". Good for him, not so good for you. Why? Because your custom XML string will never actually be used! (Unless your Statement is evaluated prior to being fulfilled.)
+What the...? Well, well, here is what happened: the author of this class applied a small optimization. He thought: “In this app, the configuration is only modified by members of the support staff and to do it, they have to shut down the system, so, there is no need to read the XML file every time an XmlConfiguration object is created. I can save some CPU cycles and I/O operations by reading it only once when the first object is created. Later objects will just use the same XML!". Good for him, not so good for you. Why? Because, due to how initialization works in C#, either the original XML string will be used for all Statements or your custom one! Thus the Statements in this Specification may pass or fail for the wrong reason. Writing a Statement first that you expect to fail and see it pass might help to detect this.
 
 “Test-After" ends up as “Test-Never" 
 ------------------------------------
@@ -158,16 +158,16 @@ My initial thought was that the comment was only about missing all the benefits 
 
 Now, where's the waste? To find out, let's compare the Statement-first and code-first approaches. Here's how dealing with testability looks like in the Statement-first workflow for new (non-legacy) code:
 
-1.  Write false Statement (this step ensures that code has high testability)
-2.  Write code to make the Statement true
+1.  Write a Statement that is false to start with (during this step, detect and correct testability issues even before the tested code is written).
+2.  Write code to make the Statement true.
 
 And here's how it often looks like when we write the code first (extra steps marked with **strong text**):
 
-1.  Write some production code (this probably spans a few classes until we are satisfied)
-2.  **Start writing a unit test**
+1.  Write some production code (this probably spans a few classes until we are satisfied).
+2.  **Start writing a unit test.**
 3.  **Notice that unit testing the whole set of classes is cumbersome and unsustainable and contains high redundancy.**
-4.  **Restructure the code to be able to isolate objects and use mocks (this step ensures that code has high testability)**
-5.  Write unit tests
+4.  **Restructure the code to be able to isolate objects and use mocks (this step ensures that code has high testability).**
+5.  Write unit tests.
 
 What is the equivalent of the marked steps in the Statement-first approach? There is none! Doing these things is a waste of time! Sadly, this is a waste I encounter over and over again.
 
