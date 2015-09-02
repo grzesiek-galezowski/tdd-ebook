@@ -17,7 +17,7 @@ The book binaries [are now hosted on Leanpub](https://leanpub.com/tdd-ebook), as
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/manuscript/images/webpage/document-web.png" />HTML
 </a>
 
-You need to have an account on leanpub to access epub and mobi formats, but pdf and html are freely accessible. The registration is well worth it - if you register on leanpub and add the book to your account, you get automatic updates when new versions come out.
+You need to have an account on leanpub to access epub and mobi formats, but pdf and html are freely accessible. The registration is well worth it - if you register on leanpub and add the book to your account, you get automatic update notifications when new versions come out.
 
 ### Additional Links
 
