@@ -285,45 +285,69 @@ and all our code depends on it for creating product names rather than on the con
 
 ## String conversion methods
 
-TODO is there really not much to say? ToString() may serve for interaction with third party apis.
+The overridden version of `ToString()` usually returns the internally held value or its string representation. It can be used to interact with third party APIs or other code that does not know about our `ProductName` type. For example, if we want to save the product name inside the database, the database API has no idea about `ProductName`, but rather accepts library types such as strings, numbers etc. In such case, we can use `ToString()` to make passing the product name possible:
 
-There is not much to say about `ToString()`, but the overload (the `ToString(Format format)`) method is more interesting. Its purpose is to  be able to format the product name differently for different outputs, e.g. reports and on-screen printing. True, we could introduce a special method for each of the cases (e.g. `ToStringForScreen()` and `ToStringForReport()`), but that could make the `ProductName` know too much about how it is used and each possible output would need a new method. Instead, the `ToString()` accepting a `Format` (which is an interface,  by the way) ensures flexibility.
+```csharp
+// let's assume that we have a variable 
+// productName of type ProductName.
+
+var dataRecord = new DataRecord();
+dataRecord["Product Name"] = productName.ToString();
+
+//...
+
+database.Save(dataRecord);
+``` 
+
+Things get more complicated when a value object has multiple fields or when it wraps another type like `DateTime` or an `int` - we may have to implement other accessor methods to obtain this data. `ToString()` can then be used for diagnostic purposes to allow printing user-friendly data dump.
+
+Apart from the overridden `ToString()`, our `ProductName` type has an overload witj signature `ToString(Format format)`. This version of `ToString()` is not inherited from any other class, so it's a method we made to fit our goals. The `ToString()` name is used only out of convenience, as the name is good enough to describe what the method does and it feels familiar. Its purpose is to  be able to format the product name differently for different outputs, e.g. reports and on-screen printing. True, we could introduce a special method for each of the cases (e.g. `ToStringForScreen()` and `ToStringForReport()`), but that could make the `ProductName` know too much about how it is used - we would have to extend the type with new methods every time we wanted to print it differently. Instead, the `ToString()` accepts a `Format` (which is an interface,  by the way) which gives us a bit more flexibility.
 
 When we need to print the product name on screen, we can say:
 
 ```csharp
-var name = productName.ToString(screenFormat);
+var name = productName.ToString(new ScreenFormat());
 ```
 
 and for reports, we can say:
 
 ```csharp
-var name = productName.ToString(reportingFormat);
+var name = productName.ToString(new ReportingFormat());
 ```
 
-Of course, nothing forces us to call this method `ToString()` - we can use our own name if we want to.
+Nothing forces us to call this method `ToString()` - we can use another name if we want to.
 
 ## Equality members
 
-For values such as `ProductName`, we need to implement all equality operations plus `GetHashCode()`. The purpose of equality operations should be obvious - this is what gives product names value semantics and allow the following operations:
+For values such as `ProductName`, we need to implement all equality operations plus `GetHashCode()`. The purpose of equality operations to give product names value semantics and allow the following expressions:
 
 ```csharp
 ProductName.For("a").Equals(ProductName.For("a"));
 ProductName.For("a") == ProductName.For("a");
 ```
 
-both return `true`. In Java, of course, we are not able to override equality operators - they always compare references, but Java programmers are so used to this, that it usually isn't a problem.
+to return `true`, since the state of the compared objects is the same despite them being separate instances in terms of references. In Java, of course, we can only override `equals()` method - we are unable to override equality operators as their behavior is fixed to comparing references (with the exception of primitive types), but Java programmers are so used to this, that it's rarely a problem.
 
-One thing to note about the implementation of `ProductName` is that it implements `IEquatable<ProductName>` interface, which in C# is considered a good practice. I won't go into the details here, but you can always look it up in the documentation.
+One thing to note about the implementation of `ProductName` is that it implements `IEquatable<ProductName>` interface. In C#, overriding this interface when we want to have value semantics is considered a good practice. The `IEquatable<T>` interface is what forces us to create a strongly typed `Equals()` method:
 
-`GetHashCode()` needs to be overridden as well. In short, all objects that are considered equal should return the same hash code and all objects considered not equal should return different hash codes. This is because hash codes are used to determine equality in hash tables or hash sets - these data structures won't work properly with values if `GetHashCode()` is not properly implemented. That would be too bad, because values are often used as keys in various hash-based dictionaries.
+```csharp
+public bool Equals(ProductName other);
+```
 
-## How product names are better against the changes?
+while the one inherited from `object` accepts an `object` as a parameter. The use and existence of `IEquatable<T>` interface is mostly C#-specific, so I won't go into the details here, but you can always look it up in the documentation[^msdnequatable].
 
-There are some more aspects of values that are not visible on the `ProductName` example, but before I delve into them, I would like to remind you that I introduced a value object to limit impact of some changes that could occur to codebase dealing with product names. As it's been a long time, let me remind you the changes we wanted to have the most limited impact:
+When we override `Equals()`, the `GetHashCode()` method needs to be overridden as well. In short, all objects that are considered equal should return the same hash code and all objects considered not equal should return different hash codes. The reason is that hash codes are used to intentify objects in hash tables or hash sets - these data structures won't work properly with values if `GetHashCode()` is not properly implemented. That would be too bad, because values are often used as keys in various hash-based dictionaries.
 
-1. We wanted to change the comparison of product names to case-insensitive
-2. We wanted the comparison to take into account not only a product name, but also a configuration.
+## What do we get back for all of this code?
+
+TODO TODO TODO
+
+There are some more aspects of values that are not visible on the `ProductName` example, but before I delve into them in the next chapter, I would like to get back to our original problem with product names and remind you that I introduced a value object to limit the impact of some changes that could occur to codebase dealing with product names. As it's been a long time, let me remind you what were the changes we wanted to have the most limited impact on our code:
+
+1. Changing the comparison of product names to case-insensitive
+2. Changing the comparison to take into account not only a product name, but also a configuration in which a product is sold.
+
+TODO add some introductory comment.
 
 ### First change - case-insensitivity
 
@@ -384,5 +408,7 @@ The two chapters talked about value objects on a specific example. The next one 
 [^essentialskills]: TODO fill in the reference
 
 [^constructorsdynamic]: This is true for languages like Java, C# or C++. There are other languages (like Ruby), where a constructor does not need to be named after a class. However, there are other constraints on their naming.
+
+[^msdnequatable]: TODO TODO add MSDN documentation for eqwuatable
 
 TODO shalloway's law - wasn't it already mentioned?
