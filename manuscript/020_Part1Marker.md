@@ -4,4 +4,4 @@ In this part I introduce the basic TDD philosophy and practices (as well as som
 
 So, for the most chapters of this part, I will be giving you examples where a single object (plus some small ones like strings etc.) is exercised to slowly introduce some concepts in an easy to grasp manner.
 
-After reading part 1, you will be able to quite effectively develop classes that have no dependencies on other classes (and on operating system resources).
+After reading part 1, you will be able to quite effectively develop classes that have no dependencies on other classes (and on operating system resources) using TDD.
