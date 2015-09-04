@@ -16,7 +16,7 @@ As you may have already spotted when reading this book, I'm really bad at explai
 
 Imagine we are developing a web store for a customer. There are different kinds  of products sold and the customer wants to have the ability to add new products.
 
-Each product has at least two important attributes: name and price (actually there are others like quantity, but let's leave them alone for now).
+Each product has at least two important attributes: name and price (there are others like quantity, but let's leave them alone for now).
 
 Now, imagine how you would model these two things - would the name be modeled as a mere `string` and price be a `double` or a `decimal` type?
 
@@ -24,7 +24,7 @@ Let's say that we have indeed decided to use a `decimal` to hold a price, and a 
 
 ### Time passes...
 
-Actually, it turns out that these values must be shared across few subdomains of the system. For example:
+It turns out that these values must be shared across a few subdomains of the system. For example:
 
 1.  The website needs to display them
 2.  They are used in income calculations
@@ -103,7 +103,7 @@ if(ProductNameComparison.AreEqual(productName, productName2))
 ..
 ```
 
-Note that the details of what it actually means to compare two product names is now hidden inside the newly created static `AreEqual()` method. This method has become the only place that has knowledge of these details and each time the comparison needs to be changed, we have to modify this method alone. The rest of the code just calls this method without knowing what it does, so it won't need to change. This frees us from having to search and modify this code each time the comparison logic changes.
+Note that the details of what it means to compare two product names is now hidden inside the newly created static `AreEqual()` method. This method has become the only place that has knowledge of these details and each time the comparison needs to be changed, we have to modify this method alone. The rest of the code just calls this method without knowing what it does, so it won't need to change. This frees us from having to search and modify this code each time the comparison logic changes.
 
 However, while it protects us from the change of comparison logic indeed, it's still not enough. Why? Because the concept of a product name is still not encapsulated - a product name is still a `string` and it allows us to do everything with it that we can do with any other `string`, even when it does not make sense for product names. This is because in the domain of the problem, product names are not sequences of characters (which `strings`s are), but an abstraction with a special set of rules applicable to it. By failing to model this abstraction appropriately, we can run into a situation where another developer who starts adding some new code may not even notice that product names need to be compared differently than other strings and just use the default comparison of a `string` type.
 

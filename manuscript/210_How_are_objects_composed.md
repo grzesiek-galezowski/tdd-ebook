@@ -158,7 +158,7 @@ public void DoSomethingWithHelpOf(Recipient recipient)
 
 #### Where to apply
 
-Contrary to the constructor approach, where a `Sender` could hide from its user the fact that it needs `Recipient`, in this case the user of `Sender` is explicitly responsible for supplying a `Recipient`. It may look like the coupling of user to `Recipient` is a disadvantage, but there are scenarios where it is actually **required** for a code using `Sender` to be able to provide its own `Recipient` -- it lets us use the same sender with different recipients at different times (most often from different parts of the code):
+Contrary to the constructor approach, where a `Sender` could hide from its user the fact that it needs `Recipient`, in this case the user of `Sender` is explicitly responsible for supplying a `Recipient`. It may look like the coupling of user to `Recipient` is a disadvantage, but there are scenarios where it is actually **required** for code using `Sender` to be able to provide its own `Recipient` -- it lets us use the same sender with different recipients at different times (most often from different parts of the code):
 
 ```csharp
 //in one place
@@ -930,7 +930,7 @@ var messageProcessing = new MessageProcessing(messageFactory);
 
 The above code composes a `MessageProcessing` instance with either a `Version1ProtocolMessageFactory` or a `Version2ProtocolMessageFactory`, depending on the configuration. 
 
-This example shows something I like calling "encapsulation of rule". The logic inside the factory is actually a rule on how, when and which objects to create. Thus, if we make our factory implement an interface and have other objects depend on this interface, we will be able to switch the rules of object creation without having to modify these objects.
+This example shows something I like calling "encapsulation of rule". The logic inside the factory is a rule on how, when and which objects to create. Thus, if we make our factory implement an interface and have other objects depend on this interface, we will be able to switch the rules of object creation without having to modify these objects.
 
 #### Factories can hide some of the created object dependencies (encapsulation of global context)
 
@@ -1169,7 +1169,7 @@ Putting it all together, factories allow giving names to some specific object co
 
 #### Factories help eliminate redundancy
 
-Redundancy in code means that at least two things need to change for the same reason in the same way[^essentialskills]. Usually it is understood as code duplication, but actually, "conceptual duplication" is a better term. For example, the following two methods are not redundant, even though the code seems duplicated (by the way, the following is not an example of good code, just a simple illustration):
+Redundancy in code means that at least two things need to change for the same reason in the same way[^essentialskills]. Usually it is understood as code duplication, but "conceptual duplication" is a better term. For example, the following two methods are not redundant, even though the code seems duplicated (by the way, the following is not an example of good code, just a simple illustration):
 
 ```csharp
 public int MetersToCentimeters(int value)
@@ -1220,6 +1220,6 @@ The rules outlined here apply to the overwhelming part of the objects in our app
 
 [^collectionsremark]: If you never used collections before and you are not a copy-editor, then you are probably reading the wrong book :-)
 
-[^nullobject]: Actually, this pattern has a name and the name is... Null Object (surprise!). You can read more on this pattern at http://www.cs.oberlin.edu/~jwalker/nullObjPattern/ and http://www.cs.oberlin.edu/~jwalker/refs/woolf.ps (a little older document)
+[^nullobject]: This pattern has a name and the name is... Null Object (surprise!). You can read more on this pattern at http://www.cs.oberlin.edu/~jwalker/nullObjPattern/ and http://www.cs.oberlin.edu/~jwalker/refs/woolf.ps (a little older document)
 
 [^simplerbutnotflexible]: There are simple ways, yet none is as flexible as using factories.

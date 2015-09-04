@@ -15,7 +15,7 @@ Thus, for TDD to be about analysis, it has to fulfill two conditions:
 
 In the story about Johnny, Benjamin and Jane, I included a part where they analyze requirements using concrete examples. Johnny explained that this is a part of a technique called Acceptance Test-Driven Development. The process followed by the three characters fulfilled both mentioned conditions for a process to be analytical. But what about TDD itself?
 
-Actually, I used parts of ATDD process in the story to make the analysis part more obvious, but similar things happen at pure technical levels. For example, when starting development with a failing application-wide Statement (we will talk about levels of granularity of Statements later. For now the only thing you need to know is that the so called “unit tests level" is not the only level of granularity we write Statements on), we may encounter a situation where we need to call a web method and assert its result. This makes us think: what should this method be called? What are the scenarios supported? What do I need to get out of it? How should its user be notified about errors? Many times, this leads us to either a conversation (if there is another stakeholder that needs to be involved in the decision) or rethinking our assumptions. This is how we gain a better understanding of the topic we are analyzing, which makes TDD fulfill the first of the two requirements for it to be an analysis method.
+I used parts of ATDD process in the story to make the analysis part more obvious, but similar things happen at pure technical levels. For example, when starting development with a failing application-wide Statement (we will talk about levels of granularity of Statements later. For now the only thing you need to know is that the so called “unit tests level" is not the only level of granularity we write Statements on), we may encounter a situation where we need to call a web method and assert its result. This makes us think: what should this method be called? What are the scenarios supported? What do I need to get out of it? How should its user be notified about errors? Many times, this leads us to either a conversation (if there is another stakeholder that needs to be involved in the decision) or rethinking our assumptions. This is how we gain a better understanding of the topic we are analyzing, which makes TDD fulfill the first of the two requirements for it to be an analysis method.
 
 But what about the first requirement? What about breaking a complex logic into smaller parts?
 
@@ -42,7 +42,7 @@ Gherkin
 
 Hungry? Too bad, because the Gkerkin I am gonna talk about is not edible. It is a notation and a way of thinking about behaviors of the specified piece of code. It can be applied on different levels of granularity -- any behavior, whether of a whole system or a single class, may be described using it.
 
-We actually talked about Gherkin before in this book, just did not name it. It is the GIVEN-WHEN-THEN structure that you can see everywhere, even in code samples as comments. This time, we are stamping a name on it and analyzing it further.
+We talked about Gherkin before in this book, just did not name it. It is the GIVEN-WHEN-THEN structure that you can see everywhere, even in code samples as comments. This time, we are stamping a name on it and analyzing it further.
 
 In Gherkin, a behavior description consists of three parts:
 
@@ -109,7 +109,7 @@ TODO list... again!
 
 As we said previously, a TODO list is a repository for anything that comes to our mind when writing or thinking about a Statement, but is not a part o the current Statement we are writing. We do not want to forget it, neither do we want it to haunt us and distract us from our current task, so we write it down as soon as possible and continue with our current task.
 
-Suppose you are writing a piece of small logic that allows user access when he is an employee of a zoo, but denies access if he is a guest of the zoo. Then, after starting writing a Statement it gets to you that actually any employee can be a guest as well -- for example, he might choose to visit the zoo with his family during his vacation. Still, the two previous rules hold, so not to allow this case to distract you, you quickly add an item to the TODO list (like “TODO: what if someone is an employee, but comes to the zoo as a guest?") and finish the current Statement. When you are finished, you can always come back to the list and pick item to do next.
+Suppose you are writing a piece of small logic that allows user access when he is an employee of a zoo, but denies access if he is a guest of the zoo. Then, after starting writing a Statement it gets to you that any employee can be a guest as well -- for example, he might choose to visit the zoo with his family during his vacation. Still, the two previous rules hold, so not to allow this case to distract you, you quickly add an item to the TODO list (like “TODO: what if someone is an employee, but comes to the zoo as a guest?") and finish the current Statement. When you are finished, you can always come back to the list and pick item to do next.
 
 There are two important questions related to TODO lists: “what exactly should we add as a TODO list item?" and “How to efficiently manage the TODO list?". We will take care of these two questions now.
 

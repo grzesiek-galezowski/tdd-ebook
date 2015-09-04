@@ -34,7 +34,7 @@ ShouldCreateBackupFileNameContainingPassedHostName()
 }
 ```
 
-Although the relationship can be guessed quite easily, remember it is just an example. Also, seeing code like that makes me ask questions like: is the “backup\_" prefix always applied? What if I actually pass “backup\_" instead of “MY\_HOST\_NAME"? Will the name be "backup\_backup\_.zip", or "backup\_.zip"? Also, is this object responsible for any validation of passed string?
+Although the relationship can be guessed quite easily, remember it is just an example. Also, seeing code like that makes me ask questions like: is the “backup\_" prefix always applied? What if I pass “backup\_" instead of “MY\_HOST\_NAME"? Will the name be "backup\_backup\_.zip", or "backup\_.zip"? Also, is this object responsible for any validation of passed string?
 
 This makes me invent a first technique to provide my Statements with better support for the principle I believe in.
 

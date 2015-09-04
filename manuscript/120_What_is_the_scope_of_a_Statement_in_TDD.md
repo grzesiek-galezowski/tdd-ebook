@@ -3,7 +3,7 @@ What is the scope of a unit-level Statement in TDD?
 
 Ha, now I have to admit that I deferred for a long time an answer to a pretty fundamental question: what should be the scope of a single Statement? If I put the whole system together, can I write a Statement for its behavior? Or maybe the other way round -- there should be a Statement for each method of each class, including the private ones? Well, first thing I want to explain is that there are multiple levels we can write our Statements on. This varies depending on the TDD authority, but in this book, we will cover two of such levels -- unit level and acceptance level. For now, let's stick to the unit level, which is what we have done so far anyway. The time will come for the rest.
 
-For unit level, let's consider the kind of Statements that you already saw in this book -- where we take one object, invoke a method on it and assert on the result. This is actually a special case of unit-level Statement and we will cover more in the coming chapters. This is, however, a good moment to stop and consider the “scope" of a single unit-level Statement in TDD. Is it method scope? Class scope? Feature scope?
+For unit level, let's consider the kind of Statements that you already saw in this book -- where we take one object, invoke a method on it and assert on the result. This is actually a special case of a unit-level Statement and we will cover more in the coming chapters. This is, however, a good moment to stop and consider the “scope" of a single unit-level Statement in TDD. Is it method scope? Class scope? Feature scope?
 
 Let's try to answer the question by examining some TDD unit-level Statements:
 
@@ -63,7 +63,7 @@ It is the scope of class behavior!
 
 The proper answer is: behavior! Each TDD Statement specifies a single behavior. I like how [Amir Kolsky and Scott Bain](http://sustainabletdd.com) phrase it, by saying that each unit-level Statement should “introduce a behavioral distinction not existing before".
 
-It may look that “behavior" scope is actually broader than method or class levels, since such Statement can span multiple classes and multiple methods. This is only partially true. That is because e.g. Statements with method scope can span multiple behaviors (which, by the way, is a sign of poorly written Statement). Let's take a look at an example:
+It may look that “behavior" scope is broader than method or class level scope, since such Statement can span multiple classes and multiple methods. This is only partially true. That is because e.g. Statements with method scope can span multiple behaviors (which, by the way, is a sign of poorly written Statement). Let's take a look at an example:
 
 ```csharp
 [Fact] public void 
