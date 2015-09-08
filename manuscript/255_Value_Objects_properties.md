@@ -1,8 +1,8 @@
 # Value object anatomy
 
-In the previous chapter, we saw value objects in action. It showcased where and how a value object can be useful, but did little to completely describe the properties of value objects. In this chapter, we'll take the value objects from the previous chapter and study its anatomy - line by line, field by field, method after method. After doing this, you'll hopefully have a better feel of the general properties of value objects.
+In the previous chapter, we saw a value object - `ProductName` in action. In this chapter, we'll  study its anatomy - line by line, field by field, method after method. After doing this, you'll hopefully have a better feel of some of the more general properties of value objects.
 
-Let's begin our examination by taking a look at the definition of the type `ProductName` type from the previous chapter (the code I will show you is not legal C# - I omitted method bodies, putting `;` after each method declaration. I did this because it would be a lot of code to grasp otherwise and I don't necessary want to delve into the code of each method). Each section of the `ProductName` class definition is marked with a comment. These comments mark the topics we'll delve into throughout the chapter.
+Let's begin our examination by taking a look at the definition of the type `ProductName` from the previous chapter (the code I will show you is not legal C# - I omitted method bodies, putting `;` after each method declaration. I did this because it would be a lot of code to grasp otherwise and I don't necessary want to delve into the code of each method). Each section of the `ProductName` class definition is marked with a comment. These comments mark the topics we'll be discussing throughout this chapter.
 
 So here is the promised definition of `ProductName`:
 
@@ -338,22 +338,24 @@ while the one inherited from `object` accepts an `object` as a parameter. The us
 
 When we override `Equals()`, the `GetHashCode()` method needs to be overridden as well. In short, all objects that are considered equal should return the same hash code and all objects considered not equal should return different hash codes. The reason is that hash codes are used to intentify objects in hash tables or hash sets - these data structures won't work properly with values if `GetHashCode()` is not properly implemented. That would be too bad, because values are often used as keys in various hash-based dictionaries.
 
-## What do we get back for all of this code?
+## The return of investment
 
-TODO TODO TODO
+There are some more aspects of values that are not visible on the `ProductName` example, but before I explain them in the next chapter, I'd like to consider one more thing.
 
-There are some more aspects of values that are not visible on the `ProductName` example, but before I delve into them in the next chapter, I would like to get back to our original problem with product names and remind you that I introduced a value object to limit the impact of some changes that could occur to codebase dealing with product names. As it's been a long time, let me remind you what were the changes we wanted to have the most limited impact on our code:
+Looking into the `ProductName` anatomy, it may seem like it's a lot of code just to wrap a single string. Is it worth it? Where is the return of investment?
+
+To answer that, I'd like to get back to our original problem with product names and remind you that I introduced a value object to limit the impact of some changes that could occur to the codebase where product names are used. As it's been a long time, here are the changes that we wanted to impact our code as little as possible:
 
 1. Changing the comparison of product names to case-insensitive
 2. Changing the comparison to take into account not only a product name, but also a configuration in which a product is sold.
 
-TODO add some introductory comment.
+Let's find out whether introducing a value object would pay off in these cases.
 
 ### First change - case-insensitivity
 
-This is actually very easy to perform - we just have to modify the equality operators, `Equals()` and `GetHashCode()` operations, so that they return true for an additional case when product names are the same, just printed in different letter case. I won't go over the code now as it's not too interesting, I hope you imagine how that implementation would look like.
+This one is very easy to perform - we just have to modify the equality operators, `Equals()` (and `GetHashCode()` operations), so that they treat names with the same content in different letter case equal. I won't go over the code now as it's not too interesting, I hope you imagine how that implementation would look like. We would neet to change all comparisons between strings to use an option to ignore case, e.g. `OrdinalIgnoreCase`. This would need to happen only inside the `ProductName` class as it's the only one that knows how what it means for two product names to be equal. This means that the encapsulation we've introduced with out `ProductName` class has paid off and brought us benefit.
 
-Thanks to this, no change outside the `ProductName` class is necessary. Several methods need to be modified, but in just one place, which means that the encapsulation we've introduced works out pretty well.
+TODO TODO TODO TODO
 
 ### Second change - additional identifier
 
