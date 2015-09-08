@@ -353,13 +353,11 @@ Let's find out whether introducing a value object would pay off in these cases.
 
 ### First change - case-insensitivity
 
-This one is very easy to perform - we just have to modify the equality operators, `Equals()` (and `GetHashCode()` operations), so that they treat names with the same content in different letter case equal. I won't go over the code now as it's not too interesting, I hope you imagine how that implementation would look like. We would neet to change all comparisons between strings to use an option to ignore case, e.g. `OrdinalIgnoreCase`. This would need to happen only inside the `ProductName` class as it's the only one that knows how what it means for two product names to be equal. This means that the encapsulation we've introduced with out `ProductName` class has paid off and brought us benefit.
-
-TODO TODO TODO TODO
+This one is very easy to perform - we just have to modify the equality operators, `Equals()` (and `GetHashCode()` operations), so that they treat names with the same content in different letter case equal. I won't go over the code now as it's not too interesting, I hope you imagine how that implementation would look like. We would neet to change all comparisons between strings to use an option to ignore case, e.g. `OrdinalIgnoreCase`. This would need to happen only inside the `ProductName` class as it's the only one that knows how what it means for two product names to be equal. This means that the encapsulation we've introduced with out `ProductName` class has paid off.
 
 ### Second change - additional identifier
 
-This change is more complicated, but having a value object will help us bevertheless. To perform the change, we'll have to modify the creation of `ProductName` class to take an additional parameter:
+This change is more complex, but having a value object in place makes it much easier anyway over the raw string approach. To make this change, we need to modify the creation of `ProductName` class to take an additional parameter, called `config`:
 
 ```csharp
 private ProductName(string value, string config)
@@ -369,7 +367,9 @@ private ProductName(string value, string config)
 }
 ```
 
-Then, we have to add additional validations to the factory method:
+Note that this is an example we mentioned earlier. There is one difference, however. While earlier we assumed that we don't need to hold value and configuration separately inside a `ProductName` instance and concatenated them into a single string when creating an object, this time we assume that we will need this separation between name and configuration later.
+
+After modifying the constructor, the next thing is to to add additional validations to the factory method:
 
 ```csharp
 public static ProductName CombinedOf(string value, string config)
@@ -391,9 +391,11 @@ public static ProductName CombinedOf(string value, string config)
 }
 ```
 
-Note that this modification requires changes all over the code base (because additional argument is needed to create an object), however, this is not the kind of change that we're afraid of. That's because the compiler will create a nice little TODO list (i.e. compile errors) for us and won't let us go further without addressing it first, so there's no chance the Shalloway's Law (TODO did I write about it?) might come to effect. Thus, we're pretty much safe. By the way, if the requirements change in the future so that we will have to support product names without an ID, this is the only place we'll need to change.
+Note that this modification requires changes all over the code base (because additional argument is needed to create an object), however, this is not the kind of change that we're afraid of too much. That's because changing the signature of the method will trigger compiler errors. Each of these errors will need to be fixed before the compilation can pass (we can say that the compiler creates a nice TODO list for us and makes sure we address each and every item on that list). This means that we don't fall into the risk of forgetting to make one of the places where we need to make a change. This greatly reduces the risk of violating the Shalloway's Law. 
 
-In addition, equality operators, `Equals()` and `GetHashCode()` will have to be changed again, to compare instances not only by name, but also by configuration. And again, I will leave the code of those methods as an exercise to you.  Note that this modification won't require any changes to the code outside `ProductName` class.
+The last part of this change is to modify equality operators, `Equals()` and `GetHashCode()`, to compare instances not only by name, but also by configuration. And again, I will leave the code of those methods as an exercise to the reader. I'll just briefly note that this modification won't require any changes to the code outside `ProductName` class.
+
+TODO TODO TODO
 
 ## Summary
 
