@@ -1,9 +1,7 @@
 What is the scope of a unit-level Statement in TDD?
 ===================================================
 
-Ha, now I have to admit that I deferred for a long time an answer to a pretty fundamental question: what should be the scope of a single Statement? If I put the whole system together, can I write a Statement for its behavior? Or maybe the other way round -- there should be a Statement for each method of each class, including the private ones? Well, first thing I want to explain is that there are multiple levels we can write our Statements on. This varies depending on the TDD authority, but in this book, we will cover two of such levels -- unit level and acceptance level. For now, let's stick to the unit level, which is what we have done so far anyway. The time will come for the rest.
-
-For unit level, let's consider the kind of Statements that you already saw in this book -- where we take one object, invoke a method on it and assert on the result. This is actually a special case of a unit-level Statement and we will cover more in the coming chapters. This is, however, a good moment to stop and consider the “scope" of a single unit-level Statement in TDD. Is it method scope? Class scope? Feature scope?
+Ha, now I have to admit that I deferred for a long time to answer a pretty fundamental question: what should be the scope of a single Statement? If I put the whole system together, can I write a Statement for its behavior? Or maybe the other way round -- there should be a Statement for each method of each class, including the private ones? Well, first thing I want to explain is that there are multiple levels we can write our Statements on. This varies depending on the TDD authority, but in this book, we will cover two of such levels -- unit level and acceptance level. For now, let's stick to the unit level, which is what we have done so far anyway. The time will come for the rest. This is, however, a good moment to stop and consider the “scope" of a single unit-level Statement in TDD. Is it method scope? Class scope? Feature scope?
 
 Let's try to answer the question by examining some TDD unit-level Statements:
 
