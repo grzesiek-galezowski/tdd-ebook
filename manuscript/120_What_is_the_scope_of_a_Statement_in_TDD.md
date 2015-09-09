@@ -61,7 +61,7 @@ It is the scope of class behavior!
 
 The proper answer is: behavior! Each TDD Statement specifies a single behavior. I like how [Amir Kolsky and Scott Bain](http://sustainabletdd.com) phrase it, by saying that each unit-level Statement should “introduce a behavioral distinction not existing before".
 
-It may look that “behavior" scope is broader than method or class level scope, since such Statement can span multiple classes and multiple methods. This is only partially true. That is because e.g. Statements with method scope can span multiple behaviors (which, by the way, is a sign of poorly written Statement). Let's take a look at an example:
+It may look that “behavior" scope is broader than method or class-level scope, since such Statement can span multiple classes and multiple methods. This is only partially true. That is because e.g. Statements with method scope can span multiple behaviors (which, by the way, is a sign of poorly written Statement). Let's take a look at an example:
 
 ```csharp
 [Fact] public void 
