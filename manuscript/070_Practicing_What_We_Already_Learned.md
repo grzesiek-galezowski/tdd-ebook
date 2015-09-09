@@ -92,7 +92,7 @@ What do you think?
 
 **Benjamin:** That makes me wonder... what should happen when I press "0" again at this stage?
 
-**Johnny:** Good catch, that is what these examples are for -- they make our thinking concrete. As Ken Pugh says: “Often the complete understanding of a concept does not occur until someone tries to use the concept". We would normally put it on a TODO list, because it is part of a different story, but we are done with this one, so let's move straight to the story about displaying entered digits. How about it, Jane?
+**Johnny:** Good catch, that is what these examples are for -- they make our thinking concrete. As Ken Pugh says: “Often the complete understanding of a concept does not occur until someone tries to use the concept". We would normally put it on a TODO list, because it is part of a different story, but as we are done with this one, let's move straight to the story about displaying entered digits. How about it, Jane?
 
 **Jane:** Agree.
 
