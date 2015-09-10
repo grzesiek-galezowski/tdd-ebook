@@ -18,8 +18,6 @@ task :validate_whitespaces do
       next
     end
 
-    
-
     if not File.file?(rooted_filename)
       puts "skipping #{rooted_filename} - not a file"
       next
@@ -30,7 +28,7 @@ task :validate_whitespaces do
     File.open(rooted_filename) do |f|
       f.each_line do |line|
         if line.include?("\u00A0")
-          raise "File #{rooted_filename} constains an unbreakable space. This will not render correctly on PDF. Line: #{line}" 
+          raise "File #{rooted_filename} constains an unbreakable space. This will not render correctly on PDF. Line: #{line.gsub("\u00A0", "<!!!!!!!!>")}" 
         end
       end
     end
