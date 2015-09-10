@@ -137,7 +137,7 @@ It is important to understand why we are not using methods like `Any.IntegerGrea
 
 The second thing to note is the usage of literal constant 0 in the above example. In one of the previous chapter, I showed you a technique called **Constant Specification**, where we write an explicit Statement about the value of the named constant and use the named constant everywhere else instead of its literal. So why did i not use this technique?
 
-The only reason is that this might have looked a little bit silly with such extremely trivial example as calculating absolute value. In reality, I should have used the named constant in both Statements and it would show the boundary length even more clearly. Actually, let's perform this exercise now and see what happens.
+The only reason is that this might have looked a little bit silly with such extremely trivial example as calculating absolute value. In reality, I should have used the named constant in both Statements and it would show the boundary length even more clearly. Let's perform this exercise now and see what happens.
 
 First, let's document the named constant with the following Statement:
 

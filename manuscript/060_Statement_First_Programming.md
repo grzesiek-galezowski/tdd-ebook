@@ -110,7 +110,7 @@ public void ShouldRecognizeTimeSlotAboveMaximumAllowedAsInvalid()
 }
 ```
 
-Note how the method `PerformForTimeSlotIn()`, which triggers the specified behavior, is accidentally called *before* the mock is actually set up and the value of `frame.GetTimeSlot_Returns` is not taken into account. Thus this erroneous value does not alter the expected end result, and may go unnoticed. It sometimes turns out like this, most often in case of various boundary values (nulls etc.).
+Note how the method `PerformForTimeSlotIn()`, which triggers the specified behavior, is accidentally called *before* the mock is set up and the value of `frame.GetTimeSlot_Returns` is not taken into account. Thus this erroneous value does not alter the expected end result, and may go unnoticed. It sometimes turns out like this, most often in case of various boundary values (nulls etc.).
 
 #### 3. Using static data inside production code
 

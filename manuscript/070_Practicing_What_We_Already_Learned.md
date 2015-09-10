@@ -92,7 +92,7 @@ What do you think?
 
 **Benjamin:** That makes me wonder... what should happen when I press "0" again at this stage?
 
-**Johnny:** Good catch, that is what these examples are for -- they make our thinking concrete. As Ken Pugh says: “Often the complete understanding of a concept does not occur until someone tries to use the concept". We would normally put it on a TODO list, because it is part of a different story, but we are actually done with this one, so let's move straight to the story about displaying entered digits. How about it, Jane?
+**Johnny:** Good catch, that is what these examples are for -- they make our thinking concrete. As Ken Pugh says: “Often the complete understanding of a concept does not occur until someone tries to use the concept". We would normally put it on a TODO list, because it is part of a different story, but as we are done with this one, let's move straight to the story about displaying entered digits. How about it, Jane?
 
 **Jane:** Agree.
 
@@ -736,7 +736,7 @@ public class Calculator
 
 **Benjamin:** Wow, looks like a lot of code just to make the Statement false! Is it worth the hassle? We will undo this whole modification in a second anyway
 
-**Johnny:** Depends on how confident you want to feel. I would say that it is usually worth it -- at least you know that you got everything right. It might seem like a lot of work, but it actually took me about a minute to add this code and imagine you got it wrong and had to debug it on a production environment. \_That\_ would be a waste of time.
+**Johnny:** Depends on how confident you want to feel. I would say that it is usually worth it -- at least you know that you got everything right. It might seem like a lot of work, but it only took me about a minute to add this code and imagine you got it wrong and had to debug it on a production environment. \_That\_ would be a waste of time.
 
 **Benjamin:** Ok, I think I get it. Since we saw this Statement turn false, I will undo this modification to make it true again.
 

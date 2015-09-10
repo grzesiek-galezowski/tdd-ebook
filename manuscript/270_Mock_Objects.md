@@ -118,7 +118,7 @@ Received.InOrder(() =>
 };
 ```
 
-What it actually does is checking whether the `Destination` got the messages (remember? Objects send messages to each other) in the right order. If we changed the implementation of the `ApplyTo()` method from this one:
+What it does is checking whether the `Destination` got the messages (remember? Objects send messages to each other) in the right order. If we changed the implementation of the `ApplyTo()` method from this one:
 
 ```csharp
 public void Dispatch(byte[] data)

@@ -185,7 +185,7 @@ We can try to work around it by changing the name of the parameter to hint the c
 void Backup(string absoluteFilePath);
 ```
 
-but the effectiveness of that is based solely on someone reading the argument name and besides, before a path reaches this method, it is usually passed around several times and it's very hard to keep track of what actually is inside this string, so it's easy to mess things up and pass e.g. a relative path where an absolute one is expected. The compiler does not enforce any constraints. Besides that, one can pass an argument that's not even a path inside, because a string can contain any arbitrary content.
+but the effectiveness of that is based solely on someone reading the argument name and besides, before a path reaches this method, it is usually passed around several times and it's very hard to keep track of what is inside this string, so it's easy to mess things up and pass e.g. a relative path where an absolute one is expected. The compiler does not enforce any constraints. Besides that, one can pass an argument that's not even a path inside, because a string can contain any arbitrary content.
 
 Looks like this is a good situation to introduce a value object, but what kind of type or types should we introduce? Surely, we could create a single type called `Path` that would have methods like `IsAbsolute()`, `IsRelative()`, `IsFilePath()` and `IsDirectoryPath()` (i.e. it would handle the variability implicitly), which would solve (only - we'll see that shortly) one part of the problem - the signature would be:
 

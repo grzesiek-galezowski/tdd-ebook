@@ -20,7 +20,7 @@ Should the `Recipient` be a class or an interface?
 
 If we assume that `Recipient` is a class, we can get the composability we want by deriving another class from it and implementing abstract methods or overriding virtual ones. However, depending on a class as a base type for a recipient has the following disadvantages:
 
-1.  The recipient class may have some real dependencies. For example, if our `Recipient` depends on Windows Communication Foundation (WCF) stack, then all classes depending directly on `Recipient` will indirectly depend on WCF, including our `Sender`. The more damaging version of this problem is where such a `Recipient` class actually does something like opening a network connection in a constructor -- the subclasses are unable to prevent it, no matter if they like it or not, because a subclass has to call a superclass' constructor.
+1.  The recipient class may have some real dependencies. For example, if our `Recipient` depends on Windows Communication Foundation (WCF) stack, then all classes depending directly on `Recipient` will indirectly depend on WCF, including our `Sender`. The more damaging version of this problem is where such a `Recipient` class does something like opening a network connection in a constructor -- the subclasses are unable to prevent it, no matter if they like it or not, because a subclass has to call a superclass' constructor.
 2.  `Recipient`'s constructor must be invoked by any class deriving from it, which may be smaller or bigger trouble, depending on what kind of parameters the constructor accepts and what it does.
 3.  In languages that support single inheritance only, deriving from `Recipient` class uses up the only inheritance slot, constraining our design.
 4.  We must make sure to mark all the methods of `Recipient` class as `virtual` to enable overriding them by subclasses. otherwise, we won't have full composability. Subclasses will not be able to redefine all of the `Recipient` behaviors, so they will be very constrained in what they can do.
@@ -84,7 +84,7 @@ One of the other things we need to consider is the size of interfaces. Let's sta
 
 **All other things equal, smaller interfaces (i.e. with less methods) are easier to implement than bigger interfaces.**
 
-The obvious conclusion from this is that if we want to have really strong composability, our "slots", i.e. interfaces, have to be as small as possible (but not smaller -- see previous section on interfaces vs events/callbacks). Of course, we cannot achieve this by blindly removing methods from interfaces, because this would break classes that actually use these methods e.g. when someone is using an interface implementation like this:
+The obvious conclusion from this is that if we want to have really strong composability, our "slots", i.e. interfaces, have to be as small as possible (but not smaller -- see previous section on interfaces vs events/callbacks). Of course, we cannot achieve this by blindly removing methods from interfaces, because this would break classes that use these methods e.g. when someone is using an interface implementation like this:
 
 ```csharp
 public void Process(Recipient recipient)
