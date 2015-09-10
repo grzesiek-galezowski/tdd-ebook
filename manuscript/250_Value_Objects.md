@@ -24,7 +24,7 @@ Let's say that we have indeed decided to use a `decimal` to hold a price, and a 
 
 ### Time passes...
 
-It turns out that these values must be shared across a few subdomains of the system. For example:
+One day, it turns out that these values must be shared across a few subdomains of the system. For example:
 
 1.  The website needs to display them
 2.  They are used in income calculations
