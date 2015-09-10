@@ -1,6 +1,6 @@
 $LOAD_PATH.unshift File.dirname(__FILE__)
 
-task :default => :validate_whitespaces, :validate_encoding do
+task :default => [:validate_whitespaces, :validate_encoding] do
 end
 
 task :validate_whitespaces do
