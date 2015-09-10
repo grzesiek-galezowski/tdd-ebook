@@ -1,10 +1,23 @@
 $LOAD_PATH.unshift File.dirname(__FILE__)
 
+require 'pathname'
+require 'shellwords'
+
+$ROOT = Pathname.pwd
+$MANUSCRIPT_DIR = $ROOT + "manuscript"
+
 task :default => [:validate_whitespaces, :validate_encoding] do
 end
 
 task :validate_whitespaces do
-	puts "lol1"
+  Dir.foreach($MANUSCRIPT_DIR) do |item|
+    next if item == '.' or item == '..'
+	
+	if File.read(filename).include?("\u00A0")
+      raise "File #{item} constains an unbreakable space. This will not render correctly on PDF"
+	end 
+	  
+  end
 end
 
 task :validate_encoding do
