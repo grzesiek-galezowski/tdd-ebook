@@ -14,7 +14,7 @@ Basically it means that an object has obtained a reference to another object and
 If we take the web metaphor a little bit further, we can note some similarities to e.g. a TCP/IP network:
 
 1.  An object can send **messages** to other objects (i.e. call methods on them -- arrows on the above diagram) via **interfaces**. Each message has a **sender** and at least one **recipient**.
-2.  To send a message to a recipient, a sender has to acquire an **address** of the recipient, which, in object-oriented world, we call a reference (in languages such as C++, references are just that -- addresses in memory).
+2.  To send a message to a recipient, a sender has to acquire an **address** of the recipient, which, in object-oriented world, we call a reference (and in languages such as C++, references are just that -- addresses in memory).
 3.  A communication between sender and recipients has to obey certain **protocol**. For example, a sender usually cannot invoke a method passing nulls as all arguments, or should expect an exception if it does so. Don't worry if you do not see the analogy now -- I'll follow up with more explanation of this topic later).
 
 ## Alarms, again!
