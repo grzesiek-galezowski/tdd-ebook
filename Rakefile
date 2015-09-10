@@ -40,3 +40,9 @@ task :validate_encoding do
 	puts "lol2"
 end
 
+#TODO
+#1. aggregate errors
+#2. refactor
+#3. check files encoding
+#4. check whether images are up to date
+#5. check whether sample.txt is up to date
