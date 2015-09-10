@@ -10,11 +10,11 @@ task :default => [:validate_whitespaces, :validate_encoding] do
 end
 
 task :validate_whitespaces do
-  Dir.foreach($MANUSCRIPT_DIR) do |item|
-    next if item == '.' or item == '..'
+  Dir.foreach($MANUSCRIPT_DIR) do |filename|
+    next if filename == '.' or filename == '..'
 	
 	if File.read(filename).include?("\u00A0")
-      raise "File #{item} constains an unbreakable space. This will not render correctly on PDF"
+      raise "File #{filename} constains an unbreakable space. This will not render correctly on PDF"
 	end 
 	  
   end
