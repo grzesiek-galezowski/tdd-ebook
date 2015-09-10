@@ -27,10 +27,14 @@ task :validate_whitespaces do
     
     puts "Processing #{rooted_filename}"
 	
-	  if File.read(rooted_filename).include?("\u00A0")
-      raise "File #{rooted_filename} constains an unbreakable space. This will not render correctly on PDF"
-	  end 
-	  
+    File.open(rooted_filename) do |f|
+      f.each_line do |line|
+        if line.include?("\u00A0")
+          raise "File #{rooted_filename} constains an unbreakable space. This will not render correctly on PDF. Line: #{line}" 
+        end
+      end
+    end
+  
   end
 end
 
