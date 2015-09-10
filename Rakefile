@@ -11,11 +11,21 @@ end
 
 task :validate_whitespaces do
   Dir.foreach($MANUSCRIPT_DIR) do |filename|
-    next if filename == '.' or filename == '..'
+    if filename == '.' or filename == '..'
+      puts "skipping #{filename} - one of . or .."
+      next
+    end
+
+    if not File.file?(filename)
+      puts "skipping #{filename} - not a file"
+      next
+    end
+    
+    puts "Processing #{filename}"
 	
-	if File.read(filename).include?("\u00A0")
+	  if File.read(filename).include?("\u00A0")
       raise "File #{filename} constains an unbreakable space. This will not render correctly on PDF"
-	end 
+	  end 
 	  
   end
 end
