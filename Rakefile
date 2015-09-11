@@ -28,15 +28,11 @@ class DetectedErrors
   end
 end
 
-def error_message(rooted_filename, line)
-  "File #{rooted_filename} constains an unbreakable space. This will not render correctly on PDF. Line: #{line.gsub("\u00A0", "<!!!!!!!!>")}"
+task :default => [:validate_encoding] do
 end
 
-task :default => [:validate_whitespaces, :validate_encoding] do
-end
-
-task :validate_whitespaces do
-  errors = DetectedErrors.new
+task :validate_encoding do
+	  errors = DetectedErrors.new
   
   Dir.foreach($MANUSCRIPT_DIR) do |filename|
     rooted_filename = $MANUSCRIPT_DIR + filename
@@ -54,32 +50,18 @@ task :validate_whitespaces do
     puts "Processing #{rooted_filename}"
 	  encoding = CharDet.detect(File.read(rooted_filename, :encoding => 'utf-8'))["encoding"]
   
-    if encoding != "utf-8"
-      errors.add "file #{rooted_filename} has encoding #{encoding}"
+    unless ["UTF-8", "ascii", "utf-8"].include? encoding
+      errors.add "file #{rooted_filename} has encoding <#{encoding}>"
     end  
   
-    #
-    #File.open(rooted_filename, :encoding => 'utf-8') do |f|
-      
-      #f.each_line do |line|
-        #if line.include?("\u00A0")
-        #  errors.add error_message(rooted_filename, line)
-        #end
-      #end
-    #end
   end
   errors.assert_none
-end
 
-task :validate_encoding do
-	puts "lol2"
 end
 
 
 
 #TODO
-#1. aggregate errors
 #2. refactor
-#3. check files encoding
 #4. check whether images are up to date
 #5. check whether sample.txt is up to date

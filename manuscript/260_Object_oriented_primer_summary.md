@@ -1,4 +1,4 @@
-# An object-oriented approach summary
+﻿# An object-oriented approach summary
 
 ## Where are we now?
 
@@ -24,7 +24,7 @@ This is the world we are going to fit mock objects and other TDD practices into.
 
 I hope you're not mad at me because we put aside TDD for such a long time. Believe me that understanding the concepts from all the chapters from part 2 up to now is crucial to getting mocks right.
 
-Mock objects are not a new tool, however, there is still a lot of misunderstanding of what their nature is and where and how they fit best into the TDD approach. Some opinions went as far as to say that there are two styles of TDD: one that uses mocks (called "mockist TDD" or "London style TDD") and another without them (called "cassic TDD" or "Chicago style TDD"). Me personally, I don't support this division. I like very much what Nat Pryce said about it[^differenttddtools]:
+Mock objects are not a new tool, however, there is still a lot of misunderstanding of what their nature is and where and how they fit best into the TDD approach. Some opinions went as far as to say that there are two styles of TDD: one that uses mocks (called "mockist TDD" or "London style TDD") and another without them (called "cassic TDD" or "Chicago style TDD"). Personally, I don't support this division. I like very much what Nat Pryce said about it[^differenttddtools]:
 
 > (...) I argue that there are not different kinds of TDD. There are different design conventions, and you pick the testing techniques and tools most appropriate for the conventions you’re working in.
 
@@ -32,3 +32,4 @@ I hope now you understand why i put you through so many pages talking about a sp
 
 
 [^differenttddtools]: TODO add reference and change it into a url instead of footnote. 
+ 
