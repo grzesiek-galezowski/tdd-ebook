@@ -78,7 +78,7 @@ Let's answer them one by one.
 
 ### How should we create new instances?
 
-The `ProductName` class contains a special static factory method[^factorymethods], called `For()`. It invokes the constructor and handles all input parameter validations[^isnullorempty]. An example implementation could be:
+The `ProductName` class contains a special static factory method, called `For()`. It invokes the constructor and handles all input parameter validations[^isnullorempty]. An example implementation could be:
 
 ```
 public static ProductName For(string value)
@@ -393,26 +393,17 @@ public static ProductName CombinedOf(string value, string config)
 
 Note that this modification requires changes all over the code base (because additional argument is needed to create an object), however, this is not the kind of change that we're afraid of too much. That's because changing the signature of the method will trigger compiler errors. Each of these errors will need to be fixed before the compilation can pass (we can say that the compiler creates a nice TODO list for us and makes sure we address each and every item on that list). This means that we don't fall into the risk of forgetting to make one of the places where we need to make a change. This greatly reduces the risk of violating the Shalloway's Law. 
 
-The last part of this change is to modify equality operators, `Equals()` and `GetHashCode()`, to compare instances not only by name, but also by configuration. And again, I will leave the code of those methods as an exercise to the reader. I'll just briefly note that this modification won't require any changes to the code outside `ProductName` class.
-
-TODO TODO TODO
+The last part of this change is to modify equality operators, `Equals()` and `GetHashCode()`, to compare instances not only by name, but also by configuration. And again, I will leave the code of those methods as an exercise to the reader. I'll just briefly note that this modification won't require any changes outside the `ProductName` class.
 
 ## Summary
 
-The two chapters talked about value objects on a specific example. The next one will delve into some more general concepts. 
+So far, we have talked about value objects using a specific example of product names. I hope you now have a feel of how such objects can be useful. The next chapter will complement the description of value objects by explaining some of their general properties.   
 
-[^addreference]: TODO add reference
+[^isnullorempty]: By the way, the code contains a call to `IsNullOrEmpty()`. There are several valid arguments against using this method, e.g. by Mark Seemann (TODO check surname) (TODO add link), but in this case, I put it in to make the code shorter as the validation logic itself is not that important at the moment. 
 
-[^csharpoperatorsoverride]: and, for C#, overriding equality operators is probably a good idea, not to mention `GetHashCode()`
+[^essentialskills]: A. Shalloway et al., Essential Skills For The Agile Developer.
 
-[^factorymethods]: TODO explain factory methods
+[^constructorsdynamic]: This is literally true for languages like Java, C# or C++. There are other languages (like Ruby), with different rules regarding object construction. Still, the original argument - that the naming of methods responsible for object creation is constrained - holds.
 
-[^isnullorempty]: by the way, the code contains a call to `IsNullOrEmpty()`. There are several valid arguments against using this method, e.g. by Mark Seemann (TODO check surname) (TODO add link), but in this case, I put it in to make the code shorter as the validation logic itself is not that important at the moment. 
+[^msdnequatable]: https://msdn.microsoft.com/en-us/library/vstudio/ms131187%28v=vs.100%29.aspx
 
-[^essentialskills]: TODO fill in the reference
-
-[^constructorsdynamic]: This is true for languages like Java, C# or C++. There are other languages (like Ruby), where a constructor does not need to be named after a class. However, there are other constraints on their naming.
-
-[^msdnequatable]: TODO TODO add MSDN documentation for eqwuatable
-
-TODO shalloway's law - wasn't it already mentioned?

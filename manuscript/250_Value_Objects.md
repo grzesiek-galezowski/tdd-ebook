@@ -53,6 +53,16 @@ From now on, let's put the money concept aside and focus only on the product nam
 
 To support new requirements, we have to find all places where we use the product name (by the way, an IDE will not help us much in this search, because we would be searching for all the occurences of type `string`) and make the same change. Every time we need to do something like this (i.e. we have to make the same change in multiple places an there is a non-zero possibility we'll miss at least one of those places), it means that we have introduced redundancy. Remember? We talked about redundancy when discussing factories and mentioned that redundancy is about conceptual duplication that forces us to make the same change (not literally, but conceptually) in several places.
 
+Al Shalloway coined a humouristic "law" regarding redundancy, called *The Shalloway's Law*, which says:
+
+> Whenever the same change needs to be applied in N places and N > 1, Shalloway will find at most N-1 such places.
+
+An example of an application of this law would be:
+
+> Whenever the same change needs to be applied in 4 places, Shalloway will find at most 3 such places.
+
+While making fun of himself, Al described something that I see common of myself and some other programmers - that conceptual duplication makes us vulnerable and when dealing with it, we have no advanced tools to help us - just our memory and patience.
+
 Thankfully, there are multiple ways to approach this redundancy. Some of them are better and some are worse[^everydecisionistradeoff].
 
 #### Option one - just modify the implementation in all places
