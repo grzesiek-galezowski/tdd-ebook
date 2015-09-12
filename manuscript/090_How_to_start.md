@@ -30,7 +30,7 @@ and try for yourself how difficult it is to answer the following questions:
 6.  How do you know whether you will not introduce a duplicate Statement for a behavior when adding to a Specification that was originally created by another team member?
 7.  How do you estimate, by looking at the runner tool report, whether the fix for a failing Statement will be easy or not?
 8.  What do you answer new developers in your team when they ask you “what is this Statement for?"
-9.  How can you keep track of the Statements already made about the specified class and those still to make?
+9.  How do you know when your Specification is complete if you can't tell from the Statement names what behaviors you already have covered and what not?
 
 ### What does a good name contain? 
 
@@ -99,7 +99,7 @@ When I find myself having trouble with naming like this, I suspect one of the fo
 3.  The behavior is too complicated and hence I need to change my design (more on this later).
 4.  I am naming the behavior of an abstraction that is too low-level, putting too many details in the name. I usually only come to this conclusion when all the previous points fail me.
 
-### But can't the name become too long?
+### Can the name really not become too long?
 
 A few paragraphs ago, I mentioned you shouldn't worry about the length of Statement names, but I have to admit that the name does become too long occasionally. A rule I try to follow is that the name of a Statement should be easier to read than its content. Thus, if it takes me less time to understand the point of a Statement by reading its body than by reading its name, then the name is too long. If this is the case, I try to apply the heuristics described above to find and fix the root cause of the problem. 
 
@@ -286,7 +286,7 @@ ShouldAllowAccessToReportingWhenAskedForEitherAdministratorOrAuditor()
 }
 ```
 
-We still need to give this Statement a name, but given what we already know this is an easy task.
+Using what we learned by formulating the Statement, it was easy to give it a name.
 
 Start by invoking a method if you have one
 ------------------------------------------
@@ -328,7 +328,7 @@ public class TrialVersionMessages : Messages
 {
  public string HoldOnASecondWhileWeImportYourDatabase(string userName)
  {
-   throw new NotImplementedException();
+   return null;
  }
 }
 ```
