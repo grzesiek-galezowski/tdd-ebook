@@ -153,7 +153,7 @@ Then it should appear equal to this other user
 and its translation into the code:
 
 ```csharp 
-Assert.True(areUsersEqual);
+Assert.True(usersAreEqual);
 ```
 
 Ok, so now we have made the translation, let's summarize it and see what is missing to make this code compile:
@@ -169,7 +169,7 @@ ShouldAppearEqualToAnotherUserWithTheSameName()
   user.Equals(anotherUserWithTheSameName);
 
   //THEN
-  Assert.True(areUsersEqual);
+  Assert.True(usersAreEqual);
 }
 ```
 
@@ -177,7 +177,7 @@ As we expected, this will not compile. Notably, our compiler might point us towa
 
 1.  Variable `anyName` is not declared.
 2.  Object `anotherUserWithTheSameName` is not declared.
-3.  Variable `areUsersEqual` is both not declared and it does not hold the comparison result.
+3.  Variable `usersAreEqual` is both not declared and it does not hold the comparison result.
 4.  If this is our first Statement, we might not even have the `User` class defined at all.
 
 The compiler created a kind of a small TODO list for us, which is nice. Note that while we do not have compiling code, filling the gaps boils down to making a few trivial declarations and assignments:
@@ -190,9 +190,9 @@ The compiler created a kind of a small TODO list for us, which is nice. Note tha
 
     `var anotherUserWithTheSameName = new User(anyName);`
 
-3.  `areUsersEqual` can be defined as follows:
+3.  `usersAreEqual` can be defined as follows:
 
-    `var areUsersEqual = user.Equals(anotherUserWithTheSameName);`
+    `var usersAreEqual = user.Equals(anotherUserWithTheSameName);`
 
 4.  If class `User` does not yet exist, we can add it by simply stating:
 
@@ -210,10 +210,10 @@ ShouldAppearEqualToAnotherUserWithTheSameName()
   var anotherUserWithTheSameName = new User(anyName);
 
   //WHEN
-  var areUsersEqual = user.Equals(anotherUserWithTheSameName);
+  var usersAreEqual = user.Equals(anotherUserWithTheSameName);
 
   //THEN
-  Assert.True(areUsersEqual);
+  Assert.True(usersAreEqual);
 }
 ```
 
@@ -240,13 +240,13 @@ Ok, that part was easy, but did we make any progress with that? Of course we did
 ```csharp
 //WHEN
 var accessGranted 
- = authorization.IsAccessToReportingGrantedTo(
+ = authorization.AccessToReportingIsGrantedTo(
   roleAllowedToUseReporting);
 ```
 
 Resist the urge to define a class or variable as soon as it seems needed, as that will only throw you off the track and steal your focus from what is important. The key to doing TDD successfully is to learn to use something that does not exist yet as if it existed.
 
-Note that we do not know what `roleAllowedToUseReporting` is, neither do we know what `authorization` is, but that did not stop us from writing this line. Also, the `IsAccessToReportingGrantedTo()` method is just taken off the top of our head. It is not defined anywhere, it just made sense to write it like this, because it is the most direct translation of what we had in mind.
+Note that we do not know what `roleAllowedToUseReporting` is, neither do we know what `authorization` is, but that did not stop us from writing this line. Also, the `AccessToReportingIsGrantedTo()` method is just taken off the top of our head. It is not defined anywhere, it just made sense to write it like this, because it is the most direct translation of what we had in mind.
 
 Anyway, this new line answers the question about where we take the `accessGranted` from, but it also makes us ask further questions:
 
@@ -279,7 +279,7 @@ ShouldAllowAccessToReportingWhenAskedForEitherAdministratorOrAuditor()
 
  //WHEN
  var accessGranted = authorization
-  .IsAccessToReportingGrantedTo(roleAllowedToUseReporting);
+  .AccessToReportingIsGrantedTo(roleAllowedToUseReporting);
 
  //THEN
  Assert.True(accessGranted);
