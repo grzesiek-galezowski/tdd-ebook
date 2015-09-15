@@ -21,14 +21,12 @@ You need to have an account on leanpub to access epub and mobi formats, but pdf 
 
 ### Additional Links
 
-
 <a href="https://github.com/grzesiek-galezowski/tdd-toolkit">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/manuscript/images/webpage/tdd-toolkit.png" />C# TDD Toolkit
 </a>&nbsp;
 <a href="https://github.com/grzesiek-galezowski/jfixture#any-method-helpers">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/manuscript/images/webpage/tdd-toolkit.png" />Java TDD Toolkit
 </a>&nbsp;
-
 
 <a href="http://plus.google.com/113457358555307974994?prsrc=3" rel="publisher" target="_top" style="text-decoration:none;">
   <img src="http://ssl.gstatic.com/images/icons/gplus-16.png" alt="Google+" style="border:0;width:16px;height:16px;"/> Google+ Profile
@@ -64,6 +62,10 @@ exercises or correct the existing ones, please submit an issue as well.
 You are welcome to fork this ebook and make a customized version for the 
 programming language of your choice or edit the terminology or 
 conventions if you do not like what I decided on. It's Open Source!
+
+### Sanity checks
+
+[![Sanity Checks](https://travis-ci.org/grzesiek-galezowski/tdd-ebook.svg?branch=master)](https://travis-ci.org/grzesiek-galezowski/tdd-ebook)
 
 ### Credits
 
