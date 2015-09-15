@@ -52,6 +52,8 @@ task :validate_encoding do
   
     unless ["UTF-8", "ascii", "utf-8"].include? encoding
       errors.add "file #{rooted_filename} has encoding <#{encoding}>"
+    else
+      puts "Encoding: #{encoding} - OK"
     end  
   
   end
