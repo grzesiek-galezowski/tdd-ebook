@@ -28,11 +28,14 @@ class DetectedErrors
   end
 end
 
-task :default => [:validate_encoding] do
+task :default => [:validate_encoding, :validate_sample] do
 end
 
 task :validate_encoding do
-	  errors = DetectedErrors.new
+  puts "Validating files encoding"
+  puts "========================="
+
+  errors = DetectedErrors.new
   
   Dir.foreach($MANUSCRIPT_DIR) do |filename|
     rooted_filename = $MANUSCRIPT_DIR + filename
@@ -59,6 +62,22 @@ task :validate_encoding do
   end
   errors.assert_none
 
+end
+
+task :validate_sample do
+  puts "Validating sample file"
+  puts "======================"
+
+  book_path = $MANUSCRIPT_DIR + "Book.txt"
+  sample_path = $MANUSCRIPT_DIR + "Sample.txt"
+  errors = DetectedErrors.new
+  
+  unless FileUtils.compare_file(book_path, sample_path)
+    errors.add "#{book_path} and #{sample_path} files are not the same..."
+  end 
+  
+  errors.assert_none
+  
 end
 
 
