@@ -399,7 +399,7 @@ The last part of this change is to modify equality operators, `Equals()` and `Ge
 
 So far, we have talked about value objects using a specific example of product names. I hope you now have a feel of how such objects can be useful. The next chapter will complement the description of value objects by explaining some of their general properties.   
 
-[^isnullorempty]: By the way, the code contains a call to `IsNullOrEmpty()`. There are several valid arguments against using this method, e.g. by Mark Seemann (TODO check surname) (TODO add link), but in this case, I put it in to make the code shorter as the validation logic itself is not that important at the moment. 
+[^isnullorempty]: By the way, the code contains a call to `IsNullOrEmpty()`. There are several valid arguments against using this method, e.g. by Mark Seemann (http://blog.ploeh.dk/2014/11/18/the-isnullorwhitespace-trap/), but in this case, I put it in to make the code shorter as the validation logic itself is not that important at the moment. 
 
 [^essentialskills]: A. Shalloway et al., Essential Skills For The Agile Developer.
 
