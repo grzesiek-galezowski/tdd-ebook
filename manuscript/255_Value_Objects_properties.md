@@ -39,7 +39,7 @@ public class ProductName
 }
 ```
 
-Using the comments, I divided the class into six sections and will describe one section at a time.
+Using the comments, I divided the class into sections and will describe them in order.
 
 ## Hidden data
 
