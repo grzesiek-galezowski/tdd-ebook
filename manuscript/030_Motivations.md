@@ -28,7 +28,7 @@ TDD is like Tekken. You probably heard the mantra “red-green-refactor" or the 
 
 Some people I talk to about TDD sum up what I say to them as: “This is really demotivating -- there are so many things I have to watch out for, that it makes me never want to start!". Easy, don’t panic -- remember the first time you tried to ride a bike -- you might have been really far back then from knowing traffic regulations and following road signs, but that didn't really keep you away, did it? 
 
-I find TDD very exciting and it makes me excited about writing code as well. Some guys of my age already think they know all about coding, are bored with it and cannot wait until they move to management or requirements or business analysis, but hey! I have a new technique that makes my coding career challenging again! And it is a skill that I can apply to many different technologies and languages, making me a better developer overall! Isn't that something worth aiming for?
+I find TDD very exciting and it makes me excited about writing code as well. Some guys of my age already think they know all about coding, are bored with it and cannot wait until they move to management or requirements or business analysis, but hey! I have a new set of techniques that makes my coding career challenging again! And it is a skill that I can apply to many different technologies and languages, making me a better developer overall! Isn't that something worth aiming for?
 
 ## Let's get it started!
 
