@@ -399,5 +399,5 @@ Summary
 When you are stuck and do not know how to start, the techniques from this chapter may help to get you on your way. Note that the examples given are simplistic and assume that there is only one object that takes some kind of input parameter and returns a well defined result. However, this is not how most of the object-oriented world is built. There we have many objects that communicate with other objects, send messages, invoke methods on each other and that often do not return a value. Don't worry, all of these techniques also work there and we’ll revisit them as soon as we learn how to do TDD in the larger object-oriented world (after the introduction of the concept of mock objects). Here, I’ve tried to keep it simple.
 
 
-[^argumentsagainstshould]: There are also some arguments against using the word "should", e.g. by Kevlin Henney (see https://vimeo.com/108007508).
+[^argumentsagainstshould]: There are also some arguments against using the word "should", e.g. by Kevlin Henney (see http://www.infoq.com/presentations/testing-communication).
 
