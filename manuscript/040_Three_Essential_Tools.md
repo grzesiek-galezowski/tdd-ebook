@@ -1,22 +1,22 @@
 The essential tools
 ===================
 
-Ever watched Karate Kid, either the old version or the new one? The thing they have in common is that when the kid starts learning Karate (or Kung-Fu) from his master, he is given a basic, repetitive task (like taking off a jacket, and putting it on again), not knowing yet where it would lead him. Or look at the first Rocky film (yeah, the one starring Sylvester Stallone), where Rocky was chasing a chicken in order to train agility.
+Ever watched Karate Kid, either the old version or the new one? The thing they have in common is that when the kid starts learning Karate (or Kung-Fu) from his master, he is given a basic, repetitive task (like taking off a jacket, and putting it on again), not knowing yet where it would lead him. Or look at the first Rocky film (yeah, the one starring Sylvester Stallone), where Rocky chases a chicken in order to train agility.
 
 When I first tried to learn how to play guitar, I found two pieces of advice on the web: the first was to start by mastering a single, difficult song. The second was to play with a single string, learn how to make it sound in different ways and try to play some melodies by ear just with this one string. Do I have to tell you that the second advice worked better?
 
-Honestly, I could dive right into the core techniques of TDD, but this would be like putting you on a ring with a demanding opponent -- you would most probably be discouraged before gaining the necessary skills. So, instead of explaining how to win a race, in this chapter we will take a look at what shiny cars we will be driving.
+Honestly, I could dive right into the core techniques of TDD, but I feel this would be like putting you on a ring with a demanding opponent -- you would most probably be discouraged before gaining the necessary skills. So, instead of explaining how to win a race, in this chapter we will take a look at what shiny cars we will be driving.
 
 In other words, I will give you a brief tour of the three tools we will use throughout this book.
 
-In this chapter, I will oversimplify some things just to get you up and running without getting into the philosophy of TDD yet (think: physics lessons in primary school). Do not worry about it :-), we will fix that in the coming chapters!
+In this chapter, I will oversimplify some things just to get you up and running without getting into the philosophy of TDD yet (think: physics lessons in primary school). Don't worry about it :-), I will make up for it in the coming chapters!
 
 Test framework
 --------------
 
 The first tool we'll use is a test framework. A test framework allows us to specify and execute our tests.
 
-Let's assume that our application looks like this:
+Let's assume for the sake of this introduction that we have an application that accepts two numbers from commandline, multiplies them and prints the result on the console. The code is pretty straightforward:
 
 ```csharp
 public static void Main(string[] args) 
@@ -38,7 +38,7 @@ public static void Main(string[] args)
 }
 ```
 
-Now, let's assume we want to check whether it produces correct results. The most obvious way would be to invoke the application from the command line with some exemplary arguments, check the output to the console and compare it with what we expect to see. Such a session could look like this:
+Now, let's assume we want to check whether this application produces correct results. The most obvious way would be to invoke it from the command line manually with some exemplary arguments, then check the output to the console and compare it with what we expected to see. Such session could look like this:
 
 ```text
 C:\MultiplicationApp\MultiplicationApp.exe 3 7
@@ -46,9 +46,9 @@ C:\MultiplicationApp\MultiplicationApp.exe 3 7
 C:\MultiplicationApp\
 ```
 
-As you can see, the application produces a result of 21 for the multiplication of 7 by 3. This is correct, so we assume the test has passed. But what if the application also performs addition, subtraction, division, calculus etc.? How many times would we have to invoke the application to make sure every operation works correctly?
+As you can see, our application produces a result of 21 for the multiplication of 3 by 7. This is correct, so we assume the test has passed. 
 
-But wait, we are programmers, right? So we can write programs to do this for us! We will create a second application that also uses the Multiplication class, but in a slightly different way:
+Now, what if the application also performed addition, subtraction, division, calculus etc.? How many times would we have to invoke the application to make sure every operation works correctly? Wouldn't that be time-consuming? But wait, we are programmers, right? So we can write programs to do this for us! For example, here is the source code of a program that uses the Multiplication class, but in a slightly different way then the original application:
 
 ```csharp
 public static void Main(string[] args) 
@@ -64,7 +64,7 @@ public static void Main(string[] args)
 }
 ```
 
-Sounds easy, right? Let's take another step and extract the check of the result into something more reusable -- after all, we will be adding division in a second, remember? So here goes:
+Looks easy, right? Let's use this as a basis to build a very primitive test framework, just to show the pieces that such frameworks consist of. As a step in that direction, we can extract the check of the result into something more reusable -- after all, we will be adding division in a second, remember? So here goes:
 
 ```csharp
 public static void Main(string[] args) 
@@ -76,6 +76,7 @@ public static void Main(string[] args)
   AssertTwoIntegersAreEqual(expected: 21, actual: result);
 }
 
+//extracted code:
 public static void AssertTwoIntegersAreEqual(
   int expected, int actual)
 {
@@ -88,7 +89,7 @@ public static void AssertTwoIntegersAreEqual(
 }
 ```
 
-Note that I started the name of the method with “Assert" -- we will get back to the naming soon, for now just assume that this is a good name for the method. Let's take one last round and put the test into its own method:
+Note that I started the name of this extracted method with “Assert" -- we will get back to the naming soon, for now just assume that this is a good name for a method that verifies that a result matches our expectation. Let's take one last round and put the test into its own method:
 
 ```csharp
 public static void Main(string[] args) 
@@ -120,17 +121,19 @@ public static void AssertTwoIntegersAreEqual(
 }
 ```
 
-And we are finished. Now if we need another test, e.g. for division, we can just add a new method call to the `Main()` method and implement it. In it, we can reuse the `AssertTwoIntegersAreEqual()` method, since the check for division would be analogous. 
+And we're done. Now if we need another test, e.g. for division, we can just add a new method call to the `Main()` method and implement it. Inside it, we can reuse the `AssertTwoIntegersAreEqual()` method, since the check for division would be analogous. 
 
-As you see, we can easily write automated checks like this. However, this approach has some disadvantages:
+As you see, we can easily write automated checks like this, using our primitive methods. However, this approach has some disadvantages:
 
 1.  Every time we add new test, we have to update the `Main()` method, adding a call to the new test. If you forget to add such a call, the test will never be run. At first it isn’t a big deal, but as soon as we have dozens of tests, an omission will become hard to notice. 
 2.  Imagine your system consists of more than one application -- you would have some problems trying to gather summary results for all of the applications that your system consists of. 
-3.  Soon you'll need to write a lot of other methods like  `AssertTwoIntegersAreEqual()` -- this one compares two integers for equality, but what if you wanted to check a different condition, e.g. that one integer is greater than another? What if you wanted to check equality not for integers, but for characters, strings, floats etc.? What if you wanted to check some conditions on collections, e.g. that a collection is sorted or that all items in the collection are unique?
+3.  Soon you'll need to write a lot of other methods similar to  `AssertTwoIntegersAreEqual()` -- the one we already have compares two integers for equality, but what if we wanted to check a different condition, e.g. that one integer is greater than another? What if we wanted to check equality not for integers, but for characters, strings, floats etc.? What if we wanted to check some conditions on collections, e.g. that a collection is sorted or that all items in the collection are unique?
 4.  Given that a test fails, it would be hard to navigate from the commandline output to the corresponding line of the source in your IDE. Wouldn't it be easier if you could click on the error message to take you immediately to the code where the failure occurred?
 
-For these and other reasons, automated testing tools were created such as CppUnit (for C++), JUnit (for Java) and NUnit (C#). These frameworks derive their structure and functionality from Smalltalk's SUnit and are collectively referred to as **xUnit family** of test frameworks.  
+For these and other reasons, advanced automated test frameworks were created such as CppUnit (for C++), JUnit (for Java) and NUnit (C#). Such frameworks are in principle based on the idea that I sketched above, plus they make up for the deficiencies of our primitive approach. They derive their structure and functionality from Smalltalk's SUnit and are collectively referred to as **xUnit family** of test frameworks.  
 
+
+TODO introduce some terminology
 To be honest, I cannot wait to show you how the test we just wrote looks like when a test framework is used. But first let's recap what we have got in our straightforward approach to writing automated tests:
 
 1.  The `Main()` method serves as a **Test List**
