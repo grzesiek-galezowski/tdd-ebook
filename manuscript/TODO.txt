@@ -99,7 +99,6 @@ TODO give open connection instead of opening it in constructor
 TODO validation - put in factories, except nulls - an object requires valid peers.
 http://misko.hevery.com/code-reviewers-guide/flaw-constructor-does-real-work/
 
-
 TODO small amount of private methods
 
 # DSL chapter
