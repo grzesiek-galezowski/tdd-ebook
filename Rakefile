@@ -9,6 +9,7 @@ require "net/http"
 require 'colorize'
 require "open-uri"
 require 'openssl'
+require 'differ'
 require 'custom_commands_2'
 
 task :default => [:validate_encoding, :validate_sample, :detect_dead_links] do
@@ -41,7 +42,8 @@ task :validate_sample do
   errors = DetectedErrors.new
   
   unless FileUtils.compare_file(book_path, sample_path)
-    errors.add "#{book_path} and #{sample_path} files are not the same..."
+    diff = Differ.diff_by_line File.read(book_path), File.read(sample_path)
+    errors.add "#{book_path} and #{sample_path} files are not the same...\n #{diff}"
   end
   errors.assert_none 
 end
