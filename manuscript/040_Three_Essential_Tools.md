@@ -130,15 +130,13 @@ As you see, we can easily write automated checks like this, using our primitive 
 3.  Soon you'll need to write a lot of other methods similar to  `AssertTwoIntegersAreEqual()` -- the one we already have compares two integers for equality, but what if we wanted to check a different condition, e.g. that one integer is greater than another? What if we wanted to check equality not for integers, but for characters, strings, floats etc.? What if we wanted to check some conditions on collections, e.g. that a collection is sorted or that all items in the collection are unique?
 4.  Given that a test fails, it would be hard to navigate from the commandline output to the corresponding line of the source in your IDE. Wouldn't it be easier if you could click on the error message to take you immediately to the code where the failure occurred?
 
-For these and other reasons, advanced automated test frameworks were created such as CppUnit (for C++), JUnit (for Java) and NUnit (C#). Such frameworks are in principle based on the idea that I sketched above, plus they make up for the deficiencies of our primitive approach. They derive their structure and functionality from Smalltalk's SUnit and are collectively referred to as **xUnit family** of test frameworks.  
+For these and other reasons, advanced automated test frameworks were created such as CppUnit (for C++), JUnit (for Java) or NUnit (C#). Such frameworks are in principle based on the very idea that I sketched above, plus they make up for the deficiencies of our primitive approach. They derive their structure and functionality from Smalltalk's SUnit and are collectively referred to as **xUnit family** of test frameworks.  
 
+To be honest, I can't wait to show you how the test we just wrote looks like when a test framework is used. But first let's recap what we've got in our straightforward approach to writing automated tests and introduce some terminology that will help us understand how automated test frameworks solve our issues:
 
-TODO introduce some terminology
-To be honest, I cannot wait to show you how the test we just wrote looks like when a test framework is used. But first let's recap what we have got in our straightforward approach to writing automated tests:
-
-1.  The `Main()` method serves as a **Test List**
-2.  The `Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()` method is a **Test Method**
-3.  The `AssertTwoIntegersAreEqual()` method is an **Assertion**
+1.  The `Main()` method serves as a **Test List** - a place where it is decided which tests to run.
+2.  The `Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()` method is a **Test Method**.
+3.  The `AssertTwoIntegersAreEqual()` method is an **Assertion** - a condition that, when not met, ends a test with failure.
 
 To our joy, those three elements are present as well when we use a test framework. To illustrate this, here is (finally!) the same test we wrote above, now using the [xUnit.Net](http://xunit.github.io/) test framework:
 
@@ -157,28 +155,29 @@ Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
 }
 ```
 
-It looks like two methods that we previously had are gone now and that the test is the only thing that's left. Well, to tell you the truth, they are not gone -- it's just that the framework handles these for us. Let's reiterate the three elements of the previous version of the test that I promised would be there after the transition to the test framework:
+It looks like two methods (the test list and assertion) that we previously had are gone now and that the test is the only thing that's left. Well, to tell you the truth, they are not gone -- it's just that the framework handles these issues for us. Let's reiterate the three elements of the previous version of the test that I promised would be there after the transition to the test framework:
 
-1.  The **Test List** is now created automatically by the framework from all methods marked with a [Fact] attribute. There's no need anymore to maintain one or more central lists and the `Main()` method has gone.
+1.  The **Test List** is now created automatically by the framework from all methods marked with a [Fact] attribute. There's no need anymore to maintain one or more central lists so the `Main()` method is no more.
 2.  The **Test Method** is present and looks almost the same as before.
-3.  The **Assertion** takes the form of a call to the static `Assert.Equal()` method -- the xUnit.NET framework is bundled with a wide range of assertion methods. Of course, no one stops you from writing your own if the provided assertion methods do not offer what you are looking for.
+3.  The **Assertion** takes the form of a call to the static `Assert.Equal()` method -- the xUnit.NET framework is bundled with a wide range of assertion methods. Of course, no one stops you from writing your own if the provided assertion methods don't offer what you are looking for.
 
-Phew, I hope I made the transition quite painless for you. Now the last thing to add -- as there is no `Main()` method anymore in the last example, you surely must wonder how we run those tests, right? Ok, the last big secret unveiled -- we use an external application for this (we will refer to it using the term **Test Runner**) -- we tell it which assemblies to run and it loads them, runs them, reports results etc. It can take various forms, e.g. it can be a console application, a GUI application or a plugin for an IDE. Here is an example of a stand-alone runner for the xUnit.NET framework:
+Phew, I hope I made the transition quite painless for you. Now the last thing to add -- as there is no `Main()` method anymore in the last example, you surely must wonder how we run those tests, right? Ok, the last big secret unveiled -- we use an external application for this (we will refer to it using the term **Test Runner**) -- we tell it which assemblies to run and then it loads them, runs them, reports the results etc. A Test Runner can take various forms, e.g. it can be a console application, a GUI application or a plugin for an IDE. Here is an example of a stand-alone runner for the xUnit.NET framework:
 
 ![xUnit.NET window](images/XUnit_NET_Window.png)
+TODO check whether this screenshot is up to date with XUnit 2.0
+TODO check whether this screenshot is up to date with XUnit 2.0
+TODO check whether this screenshot is up to date with XUnit 2.0
 
 Mocking framework
 -----------------
 
-A mocking framework lets us create objects at runtime (called “mocks") that adhere to a certain interface. That interface is specified when the mock is created. Aside from the creation, the framework provides an API to configure the mocks on how they behave when certain methods are called on them and to let us inspect which calls they received.
+When we want to test a class that depends on certain interfaces, we don't have to implement these interfaces in our code in order to write and execute tests for this class. We can rely on tools to generate an implementation of a given interface for us and let us this generated implementation in place of a real object. This happens in a different way, depending on a language. Sometimes, the interface implementations can be generated at runtime (like in Java or C#), sometimes we have to rely more on compile-time generation (e.g. in C++). 
 
-Mocking frameworks are not as old as test frameworks and they were not present in TDD at the very beginning. Why on earth do we need something like this? Well, the idea of mocks grew out of the desire to do object-oriented design using TDD without the need to adapt our code only to make it testable.
+Narrowing it down to C# - a mocking framework is just that - a mechanism that allows us to create objects (called "mock objects" or just "mocks") that adhere to a certain interface at runtime. The type of interface is usually passed to a special method which returns a mock object based on that interface (we'll se an example in few seconds). Aside from the creation, the framework provides an API to configure the mocks on how they behave when certain methods are called on them and to let us inspect which calls they received. This is a very powerful feature, because we can simulate or verify conditions that would be hard to achieve using only production code.
 
-I'll give you a quick example of a mocking framework in action now and defer further explanation for their rationale to a later chapter.
+Mocking frameworks are not as old as test frameworks so they were not used in TDD at the very beginning. I'll give you a quick example of a mocking framework in action now and defer further explanation for their rationale to a later chapters, as the full explanation of mocks and their place in TDD is not that easily conveyed.
 
-Ready? Let's go!
-
-Let's pretend that we have the following code to add a set of orders for products to a database and handle exceptions (by writing a message to a log) when it fails:
+Let's pretend that we have a class that allows placing orders and then puts these orders into a database. In addition, it handles any exceptions that may occur by writing them into a log. This class does not do any important stuff, but let's try to imagine really hard that this is some serious domain logic. Here's the code for this class:
 
 ```csharp
 public class OrderProcessing
@@ -201,7 +200,7 @@ public class OrderProcessing
 }
 ```
 
-Now, imagine we need to test it -- how do we do that? I can already see you shake your head and say: “Let's just create this database, invoke this method and see if the record is added properly". Then, the first test would look like this:
+Now, imagine we need to test it -- how do we do that? I can already see you shake your head and say: "Let's just create this database, invoke this method and see if the record is added properly". Then, the first test would look like this:
 
 ```csharp
 [Fact]
@@ -230,16 +229,16 @@ public void ShouldInsertNewOrderToDatabase()
 
 At the beginning of the test we open a connection to the database and clean all existing orders in it (more on that shortly), then create an order object, insert it into the database and query the database for all orders it contains. At the end, we make an assertion that the order we tried to insert is among all orders in the database.
 
-Why do we clean up the database? Remember that a database provides persistent storage. If we do not clean it up and run this test again, the database already contains the item if the insertion in the previous test succeeded. The database might not allow us to add the same item again and the test would fail. Ouch! It hurts so bad, because we wanted our tests to prove something works, but it looks like it can fail even when the logic is coded correctly. Of what use is such a test if it cannot reliably answer our question whether the implemented logic is correct or not? So, to make sure that the state of the persistent storage is the same every time we run this test, we clean up the database before each run.
+Why do we clean up the database? Remember that a database provides persistent storage. If we do not clean it up and run this test again, the database already contains the item if the insertion in the previous test succeeded. The database might not allow us to add the same item again and the test would fail. Ouch! It hurts so bad, because we wanted our tests to prove something works, but it looks like it can fail even when the logic is coded correctly. Of what use would be such a test if it couldn't reliably tell us whether the implemented logic is correct or not? So, to make sure that the state of the persistent storage is the same every time we run this test, we clean up the database before each run.
 
-Now, did you get what you wanted? Well, I did not. There are several reasons for that:
+Now that the test is ready, did we get what we wanted from it? I would be hesitant to answer "yes". There are several reasons for that:
 
 1.  The test is going to be slow. It is not uncommon to have more than a thousand tests in a suite and I do not want to wait half an hour for results every time I run them. Do you?
 2.  Everyone who wants to run this test will have to set up a local database on their machine. What if their setup is slightly different from yours? What if the schema gets outdated -- will everyone manage to notice it and update the schema of their local databases accordingly? Will you re-run your database creation script only to ensure you have got the latest schema available to run your tests against?
 3.  There may not be an implementation of the database engine for the operating system running on your development machine if your target is an exotic or mobile platform.
 4.  Note that the test you wrote is only one out of two. You will have to write another one for the scenario where inserting an order ends with an exception. How do you setup your database in a state where it throws an exception? It is possible, but requires significant effort (e.g. deleting a table and recreating it after the test, for use by other tests that might need it to run correctly), which may lead you to the conclusion that it is not worth writing such tests at all.
 
-Now, let's try something else. Let's assume that our database works OK (or will be tested by black-box tests) and that the only thing we want to test is our own code. In this situation we can create a fake object that does not write to a database at all -- it only stores the inserted records in a list: 
+Now, let's try something else. Let's assume that our database works fine (or will be tested by other tests, like black-box tests) and that the only thing we want to test is our own code (remember, we're trying to imagine really hard that it's a serious domain logic). In this situation we can substitute the database connection for a fake object that acts as if it was a connection to a database but does not write to a real database at all -- it only stores the inserted records in a list in memory: 
 
 ```csharp
 public class FakeOrderDatabase : OrderDatabase
