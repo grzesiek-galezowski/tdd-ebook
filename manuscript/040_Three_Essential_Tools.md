@@ -203,8 +203,8 @@ public class OrderProcessing
 Now, imagine we need to test it -- how do we do that? I can already see you shake your head and say: "Let's just create this database, invoke this method and see if the record is added properly". Then, the first test would look like this:
 
 ```csharp
-[Fact]
-public void ShouldInsertNewOrderToDatabase()
+[Fact] public void 
+ShouldInsertNewOrderToDatabaseWhenOrderisPlaced()
 {
   //GIVEN
   var orderDatabase = new MySqlOrderDatabase();
@@ -238,7 +238,7 @@ Now that the test is ready, did we get what we wanted from it? I would be hesita
 3.  There may not be an implementation of the database engine for the operating system running on your development machine if your target is an exotic or mobile platform.
 4.  Note that the test you wrote is only one out of two. You will have to write another one for the scenario where inserting an order ends with an exception. How do you setup your database in a state where it throws an exception? It is possible, but requires significant effort (e.g. deleting a table and recreating it after the test, for use by other tests that might need it to run correctly), which may lead you to the conclusion that it is not worth writing such tests at all.
 
-Now, let's try something else. Let's assume that our database works fine (or will be tested by other tests, like black-box tests) and that the only thing we want to test is our own code (remember, we're trying to imagine really hard that it's a serious domain logic). In this situation we can substitute the database connection for a fake object that acts as if it was a connection to a database but does not write to a real database at all -- it only stores the inserted records in a list in memory: 
+Now, let's try something else. Let's assume that the database itself works fine (or will be tested by other tests, like black-box tests) and that the only thing we want to test is our own code (remember, we're trying to imagine really hard that it's a serious domain logic). In this situation we can substitute the database connection for a fake object that acts as if it was a connection to a database but does not write to a real database at all -- it only stores the inserted records in a list in memory: 
 
 ```csharp
 public class FakeOrderDatabase : OrderDatabase
@@ -256,13 +256,13 @@ public class FakeOrderDatabase : OrderDatabase
   }
 }
 ```
-Note that the fake order database is an instance of a custom class that implements the same interface as `MySqlOrderDatabase`.
+Note that the fake order database is an instance of a custom class that implements the same interface as `MySqlOrderDatabase`. 
 
-Now, we can substitute the real implementation of the order database with the fake instance:
+Now, we can replace the real implementation of the order database by the fake instance:
 
 ```csharp
 [Fact] public void 
-ShouldInsertNewOrderToDatabase()
+ShouldInsertNewOrderToDatabaseWhenOrderIsPlaced()
 {
   //GIVEN
   var orderDatabase = new FakeOrderDatabase();
@@ -282,7 +282,8 @@ ShouldInsertNewOrderToDatabase()
   Assert.Contains(order, allOrders);
 }
 ```
-Note that we do not clean the fake database object, since we create a fresh one each time the test is run. The test will also be much quicker now. What's more, we can now easily write a test for an exception situation. How? Just make another fake object, implemented like this:
+
+Note that we do not clean the fake database object, since we create a fresh one each time the test is run. The test will also be much quicker now. What's more, we can now easily write a test for the error case. How? Just make another fake object, implemented like this:
 
 ```csharp
 public class ExplodingOrderDatabase : OrderDatabase
@@ -298,7 +299,7 @@ public class ExplodingOrderDatabase : OrderDatabase
 }
 ```
 
-Ok, so far so good, but now we have two classes of fake objects to create (and chances are we will need even more). Any method added to the `OrderDatabase` interface must also be added to each of these fake objects. We can spare some coding by making our mocks a little more generic so that their behavior can be configured using lambda expressions:
+Ok, so far so good, but now we have two classes of fake objects to create (and chances are we will need even more). Any method added to the `OrderDatabase` interface must also be added to each of these fake classes. We can spare some coding by making our mocks a little more generic so that their behavior can be configured using lambda expressions:
 
 ```csharp
 public class ConfigurableOrderDatabase : OrderDatabase
@@ -334,13 +335,13 @@ var db = new ConfigurableOrderDatabase();
 db.doWhenInsertCalled = o => {throw new Exception();};
 ```
 
-Thankfully, some smart programmers created libraries that provide further automation in such scenarios. One such a library is [**NSubstitute**](http://nsubstitute.github.io/). It provides an API in the form of extension methods, which is why it might seem a bit magical at first. Don't worry, you'll get used to it.
+Thankfully, some smart programmers created libraries that provide further automation in such scenarios. One such a library is [**NSubstitute**](http://nsubstitute.github.io/). It provides an API in a form of C# extension methods, which is why it might seem a bit magical at first, especially if you're not familiar with C#. Don't worry, you'll get used to it.
 
 Using NSubstitute, our first test can be rewritten as:
 
 ```csharp
 [Fact] public void 
-ShouldInsertNewOrderToDatabase()
+ShouldInsertNewOrderToDatabaseWhenOrderisPlaced()
 {
   //GIVEN
   var orderDatabase = Substitute.For<OrderDatabase>();
@@ -360,14 +361,42 @@ ShouldInsertNewOrderToDatabase()
 }
 ```
 
-Note that we do not need the `SelectAllOrders()` method. If no other test needs it, we can delete the method and spare us some more maintenance trouble. The last line of this test is actually a camouflaged assertion that checks whether the `Insert()` method was called once with the order object as parameter.
+Note that we don't need the `SelectAllOrders()` method on the database connection interface anymore. It was there only to make writing the test easier. If no other test needs it, we can delete the method and get rid of some more maintenance trouble. Instead of the call to `SelectAllOrders()`, mocks created by NSubstitute record all calls received and allow us to use a special method called `Received()` on them (see the last line of this test), which is actually a camouflaged assertion that checks whether the `Insert()` method was called once with the order object as parameter.
 
-We'll get back to mocks later as we've only scratched the surface here.
+This explanation of mock objects is very shallow and its purpose is only to get you up and running. We'll get back to mocks later as we've only scratched the surface here.
+
 
 Anonymous values generator
 --------------------------
 
-Looking at the test in the previous section we see many values that suggest that they have importance to the tested object. Well, they do not. They do have importance to the database, but we already got rid of that. Doesn't it trouble you that we fill the order object with so many values that are irrelevant to the test logic itself and that mask the structure of the test? To remove the clutter let's introduce a method with a descriptive name to create the order:
+Looking at the test in the previous section we see many values written literally, e.g. in the following code:
+
+```csharp
+  var order = new Order(
+    name: "Grzesiek", 
+    surname: "Galezowski", 
+    product: "Agile Acceptance Testing", 
+    date: DateTime.Now,
+    quantity: 1);
+```
+
+the name, surname, product, date and quantity are very specific. This might suggest that the exact values are important from the perspective of the behavior we are testing. On the other hand, when we look at the code again:
+
+```csharp
+public void Place(Order order)
+{
+  try
+  {
+    this.orderDatabase.Insert(order);
+  }
+  catch(Exception e)
+  {
+    this.log.Write("Could not insert an order. Reason: " + e);
+  }
+}
+```
+
+we can spot that these values are not used anywhere - the tested class does not use or check them in any way. These values are important from the database point of view, but we already took the real database out of the picture. Doesn't it trouble you that we fill the order object with so many values that are irrelevant to the test logic itself and that clutter the structure of the test with needless details? To remove this clutter let's introduce a method with a descriptive name to create the order and hide the details we don't need from the reader of the test:
 
 ```csharp
 [Fact] public void 
@@ -396,11 +425,15 @@ public Order AnonymousOrder()
 }
 ```
 
-Now that is better. Not only did we make the test shorter, we also provided a hint to the reader that the actual values used to create an order do not matter from the perspective of tested order-processing logic. Hence the name `AnonymousOrder()`.
+Now that is better. Not only did we make the test shorter, we also provided a hint to the reader that the actual values used to create an order don't matter from the perspective of tested order-processing logic. Hence the name `AnonymousOrder()`.
 
-By the way, wouldn't it be nice if we did not have to provide the anonymous objects ourselves, but could rely on another library to generate these for us? Susprise, surprise, there is one! It is called [**Autofixture**](https://github.com/AutoFixture/AutoFixture). It is an example of an anonymous values generator (although its creator likes to say that it is an implementation of Test Data Builder pattern, but let's skip this discussion here). After changing our test to use AutoFixture, we arrive at the following:
+By the way, wouldn't it be nice if we did not have to provide the anonymous objects ourselves, but could rely on another library to generate these for us? Susprise, surprise, there is one! It is called [**Autofixture**](https://github.com/AutoFixture/AutoFixture). It is an example of an anonymous values generator (although its creator likes to say that it is also an implementation of Test Data Builder pattern, but let's skip this discussion here). 
+
+After changing our test to use AutoFixture, we arrive at the following:
 
 ```csharp
+private Fixture any = new Fixture();
+
 [Fact] public void 
 ShouldInsertNewOrderToDatabase()
 {
@@ -415,27 +448,27 @@ ShouldInsertNewOrderToDatabase()
   //THEN
   orderDatabase.Received(1).Insert(order);
 }
-
-private Fixture any = new Fixture();
 ```
 
-Nice, huh? AutoFixture has a lot of advanced features, but to keep things simple I like to hide its use behind a static class called `Any`:
+In this test, we use an instance of a `Fixture` class (which is a part of AutoFixture) to create anonymous values for us via a method called `Create()`. This allows us to remove the `AnonymousOrder()` method, thus making our test setup shorter.
+
+Nice, huh? AutoFixture has a lot of advanced features, but to keep things simple I like to hide its use behind a static class called `Any`. The simplest implementation of such class would look like this:
 
 ```csharp
 public static class Any
 {
   private static any = new Fixture();
   
-  public static T ValueOf<T>()
+  public static T Instance<T>()
   {
     return any.Create<T>();
   }
 }
 ```
 
-In the next chapters, we'll see many different methods from the `Any` type. The more you use this class, the more it grows with other methods for creating customized objects. For now, let's leave it by this.
+In the next chapters, we'll see many different methods from the `Any` type, plus the full explanation of the philosophy behin it. The more you use this class, the more it grows with other methods for creating customized objects.
 
 Summary 
 -------
 
-This chapter introduced the three tools we'll use in this book that, when mastered, will make your test-driven development smoother. If this chapter leaves you with insufficient justification for their use, don't worry -- we will dive into the philosophy behind them in the coming chapters. For now, I just want you to get familiar with the tools themselves and their syntax. Go on, download these tools, launch them, try to write something simple with them. You do not need to understand their full purpose yet, just go out and play :-).
+This chapter introduced the three tools we'll use in this book that, when mastered, will make your test-driven development flow smoother. If this chapter leaves you with insufficient justification for their use, don't worry -- we will dive into the philosophy behind them in the coming chapters. For now, I just want you to get familiar with the tools themselves and their syntax. Go on, download these tools, launch them, try to write something simple with them. You don't need to understand their full purpose yet, just go out and play :-).
