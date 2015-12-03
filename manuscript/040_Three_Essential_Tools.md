@@ -163,10 +163,7 @@ It looks like two methods (the test list and assertion) that we previously had a
 
 Phew, I hope I made the transition quite painless for you. Now the last thing to add -- as there is no `Main()` method anymore in the last example, you surely must wonder how we run those tests, right? Ok, the last big secret unveiled -- we use an external application for this (we will refer to it using the term **Test Runner**) -- we tell it which assemblies to run and then it loads them, runs them, reports the results etc. A Test Runner can take various forms, e.g. it can be a console application, a GUI application or a plugin for an IDE. Here is an example of a stand-alone runner for the xUnit.NET framework:
 
-![xUnit.NET window](images/XUnit_NET_Window.png)
-TODO check whether this screenshot is up to date with XUnit 2.0
-TODO check whether this screenshot is up to date with XUnit 2.0
-TODO check whether this screenshot is up to date with XUnit 2.0
+![Resharper test runner plugin docked as a window in Visual Studio 2015 IDE](images/Resharper_Test_Runner.PNG)
 
 Mocking framework
 -----------------
