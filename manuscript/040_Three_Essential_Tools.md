@@ -1,7 +1,7 @@
 The essential tools
 ===================
 
-Ever watched Karate Kid, either the old version or the new one? The thing they have in common is that when the kid starts learning Karate (or Kung-Fu) from his master, he is given a basic, repetitive task (like taking off a jacket, and putting it on again), not knowing yet where it would lead him. Or look at the first Rocky film (yeah, the one starring Sylvester Stallone), where Rocky chases a chicken in order to train agility.
+Ever watched Karate Kid, either the old version or the new one? The thing they have in common is that when the "kid" starts learning karate (or kung-fu) from his master, he is given a basic, repetitive task (like taking off a jacket, and putting it on again), not knowing yet where it would lead him. Or look at the first Rocky film (yeah, the one starring Sylvester Stallone), where Rocky chases a chicken in order to train agility.
 
 When I first tried to learn how to play guitar, I found two pieces of advice on the web: the first was to start by mastering a single, difficult song. The second was to play with a single string, learn how to make it sound in different ways and try to play some melodies by ear just with this one string. Do I have to tell you that the second advice worked better?
 
@@ -38,7 +38,7 @@ public static void Main(string[] args)
 }
 ```
 
-Now, let's assume we want to check whether this application produces correct results. The most obvious way would be to invoke it from the command line manually with some exemplary arguments, then check the output to the console and compare it with what we expected to see. Such session could look like this:
+Now, let's assume we want to check whether this application produces correct results. The most obvious way would be to invoke it from the command line manually with some exemplary arguments, then check the output to the console and compare it with what we expected to see. Such testing session could look like this:
 
 ```text
 C:\MultiplicationApp\MultiplicationApp.exe 3 7
@@ -46,9 +46,9 @@ C:\MultiplicationApp\MultiplicationApp.exe 3 7
 C:\MultiplicationApp\
 ```
 
-As you can see, our application produces a result of 21 for the multiplication of 3 by 7. This is correct, so we assume the test has passed. 
+As you can see, our application produces a result of 21 for the multiplication of 3 by 7. This is correct, so we assume the application has passed the test. 
 
-Now, what if the application also performed addition, subtraction, division, calculus etc.? How many times would we have to invoke the application to make sure every operation works correctly? Wouldn't that be time-consuming? But wait, we are programmers, right? So we can write programs to do this for us! For example, here is the source code of a program that uses the Multiplication class, but in a slightly different way then the original application:
+Now, what if the application also performed addition, subtraction, division, calculus etc.? How many times would we have to invoke the application manually to make sure every operation works correctly? Wouldn't that be time-consuming? But wait, we are programmers, right? So we can write programs to do the testing for us! For example, here is a source code of a program that uses the Multiplication class, but in a slightly different way then the original application:
 
 ```csharp
 public static void Main(string[] args) 
@@ -64,7 +64,7 @@ public static void Main(string[] args)
 }
 ```
 
-Looks easy, right? Let's use this as a basis to build a very primitive test framework, just to show the pieces that such frameworks consist of. As a step in that direction, we can extract the check of the result into something more reusable -- after all, we will be adding division in a second, remember? So here goes:
+Looks simple, right? Now, let's use this code as a basis to build a very primitive test framework, just to show the pieces that such frameworks consist of. As a step in that direction, we can extract the verification of the `result` into a reusable method -- after all, we will be adding division in a second, remember? So here goes:
 
 ```csharp
 public static void Main(string[] args) 
@@ -89,7 +89,7 @@ public static void AssertTwoIntegersAreEqual(
 }
 ```
 
-Note that I started the name of this extracted method with “Assert" -- we will get back to the naming soon, for now just assume that this is a good name for a method that verifies that a result matches our expectation. Let's take one last round and put the test into its own method:
+Note that I started the name of this extracted method with "Assert" -- we will get back to the naming soon, for now just assume that this is a good name for a method that verifies that a result matches our expectation. Let's take one last round and extract the test itself so that its code is in a separate method. This method can be given a name that describes what the test is about:
 
 ```csharp
 public static void Main(string[] args) 
@@ -121,14 +121,14 @@ public static void AssertTwoIntegersAreEqual(
 }
 ```
 
-And we're done. Now if we need another test, e.g. for division, we can just add a new method call to the `Main()` method and implement it. Inside it, we can reuse the `AssertTwoIntegersAreEqual()` method, since the check for division would be analogous. 
+And we're done. Now if we need another test, e.g. for division, we can just add a new method call to the `Main()` method and implement it. Inside this new test, we can reuse the `AssertTwoIntegersAreEqual()` method, since the check for division would also be about comparing two integer values. 
 
 As you see, we can easily write automated checks like this, using our primitive methods. However, this approach has some disadvantages:
 
-1.  Every time we add new test, we have to update the `Main()` method, adding a call to the new test. If you forget to add such a call, the test will never be run. At first it isn’t a big deal, but as soon as we have dozens of tests, an omission will become hard to notice. 
+1.  Every time we add a new test, we have to update the `Main()` method with a call to the new test. If we forget to add such a call, the test will never be run. At first it isn’t a big deal, but as soon as we have dozens of tests, an omission will become hard to notice. 
 2.  Imagine your system consists of more than one application -- you would have some problems trying to gather summary results for all of the applications that your system consists of. 
-3.  Soon you'll need to write a lot of other methods similar to  `AssertTwoIntegersAreEqual()` -- the one we already have compares two integers for equality, but what if we wanted to check a different condition, e.g. that one integer is greater than another? What if we wanted to check equality not for integers, but for characters, strings, floats etc.? What if we wanted to check some conditions on collections, e.g. that a collection is sorted or that all items in the collection are unique?
-4.  Given that a test fails, it would be hard to navigate from the commandline output to the corresponding line of the source in your IDE. Wouldn't it be easier if you could click on the error message to take you immediately to the code where the failure occurred?
+3.  Soon you'll need to write a lot of other methods similar to `AssertTwoIntegersAreEqual()` -- the one we already have compares two integers for equality, but what if we wanted to check a different condition, e.g. that one integer is greater than another? What if we wanted to check equality not for integers, but for characters, strings, floats etc.? What if we wanted to check some conditions on collections, e.g. that a collection is sorted or that all items in the collection are unique?
+4.  Given a test fails, it would be hard to navigate from the commandline output to the corresponding line of the source in your IDE. Wouldn't it be easier if you could click on the error message to take you immediately to the code where the failure occurred?
 
 For these and other reasons, advanced automated test frameworks were created such as CppUnit (for C++), JUnit (for Java) or NUnit (C#). Such frameworks are in principle based on the very idea that I sketched above, plus they make up for the deficiencies of our primitive approach. They derive their structure and functionality from Smalltalk's SUnit and are collectively referred to as **xUnit family** of test frameworks.  
 
@@ -138,7 +138,7 @@ To be honest, I can't wait to show you how the test we just wrote looks like wh
 2.  The `Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()` method is a **Test Method**.
 3.  The `AssertTwoIntegersAreEqual()` method is an **Assertion** - a condition that, when not met, ends a test with failure.
 
-To our joy, those three elements are present as well when we use a test framework. To illustrate this, here is (finally!) the same test we wrote above, now using the [xUnit.Net](http://xunit.github.io/) test framework:
+To our joy, those three elements are present as well when we use a test framework. Moreover, they are far more advanced than what we have. To illustrate this, here is (finally!) the same test we wrote above, now using the [xUnit.Net](http://xunit.github.io/) test framework:
 
 ```csharp
 [Fact] public void 
@@ -155,15 +155,17 @@ Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
 }
 ```
 
-It looks like two methods (the test list and assertion) that we previously had are gone now and that the test is the only thing that's left. Well, to tell you the truth, they are not gone -- it's just that the framework handles these issues for us. Let's reiterate the three elements of the previous version of the test that I promised would be there after the transition to the test framework:
+Looking at the example, we can see that the that the test method itself is the only thing that's left - the two methods (the test list and assertion) that we previously had are gone now. Well, to tell you the truth, they are not literally gone -- it's just that the test framework offers replacements that are far better, so we used them instead. Let's reiterate the three elements of the previous version of the test that I promised would be present after the transition to the test framework:
 
-1.  The **Test List** is now created automatically by the framework from all methods marked with a [Fact] attribute. There's no need anymore to maintain one or more central lists so the `Main()` method is no more.
+1.  The **Test List** is now created automatically by the framework from all methods marked with a `[Fact]` attribute. There's no need to maintain one or more central lists anymore, so the `Main()` method is no more.
 2.  The **Test Method** is present and looks almost the same as before.
-3.  The **Assertion** takes the form of a call to the static `Assert.Equal()` method -- the xUnit.NET framework is bundled with a wide range of assertion methods. Of course, no one stops you from writing your own if the provided assertion methods don't offer what you are looking for.
+3.  The **Assertion** takes the form of a call to the static `Assert.Equal()` method -- the xUnit.NET framework is bundled with a wide range of assertion methods, so I used one of them. Of course, no one stops you from writing your own custom assertion if the built-in assertion methods don't offer what you are looking for.
 
-Phew, I hope I made the transition quite painless for you. Now the last thing to add -- as there is no `Main()` method anymore in the last example, you surely must wonder how we run those tests, right? Ok, the last big secret unveiled -- we use an external application for this (we will refer to it using the term **Test Runner**) -- we tell it which assemblies to run and then it loads them, runs them, reports the results etc. A Test Runner can take various forms, e.g. it can be a console application, a GUI application or a plugin for an IDE. Here is an example of a stand-alone runner for the xUnit.NET framework:
+Phew, I hope I made the transition quite painless for you. Now the last thing to add -- as there is no `Main()` method anymore in the last example, you surely must wonder how we run those tests, right? Ok, the last big secret unveiled -- we use an external application for this (we will refer to it using the term **Test Runner**) -- we tell it which assemblies to run and then it loads them, runs them, reports the results etc. A Test Runner can take various forms, e.g. it can be a console application, a GUI application or a plugin for an IDE. Here is an example of a test runner provided by a plugin for Visual Studio IDE called Resharper:
 
-![Resharper test runner plugin docked as a window in Visual Studio 2015 IDE](images/Resharper_Test_Runner.PNG)
+![Resharper test runner docked as a window in Visual Studio 2015 IDE](images/Resharper_Test_Runner.PNG)
+
+TODO start over from here
 
 Mocking framework
 -----------------
