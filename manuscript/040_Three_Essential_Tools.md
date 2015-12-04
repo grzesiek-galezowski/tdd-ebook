@@ -165,18 +165,18 @@ Phew, I hope I made the transition quite painless for you. Now the last thing 
 
 ![Resharper test runner docked as a window in Visual Studio 2015 IDE](images/Resharper_Test_Runner.PNG)
 
-TODO start over from here
-
 Mocking framework
 -----------------
 
-When we want to test a class that depends on certain interfaces, we don't have to implement these interfaces in our code in order to write and execute tests for this class. We can rely on tools to generate an implementation of a given interface for us and let us this generated implementation in place of a real object. This happens in a different way, depending on a language. Sometimes, the interface implementations can be generated at runtime (like in Java or C#), sometimes we have to rely more on compile-time generation (e.g. in C++). 
+When we want to test a class that depends on other classes, we may think it's a good idea to include those classes in the test as well. This, however, does not allow us to test a single object or a small cluster of objects in isolation, where we would be able to verify that just a small part of the application works correctly. Thankfully, if we make our classes depend on interfaces rather than other classes, we can easily implement those interfaces with special "fake" classes that can be crafted in a way that makes our testing easier. For example, objects of such classes may contain pre-programmed return values for some methods. They can also record the methods that are invoked on them and allow the test to verify whether the communication between our object under test and its dependencies is correct. 
 
-Narrowing it down to C# - a mocking framework is just that - a mechanism that allows us to create objects (called "mock objects" or just "mocks") that adhere to a certain interface at runtime. The type of interface is usually passed to a special method which returns a mock object based on that interface (we'll se an example in few seconds). Aside from the creation, the framework provides an API to configure the mocks on how they behave when certain methods are called on them and to let us inspect which calls they received. This is a very powerful feature, because we can simulate or verify conditions that would be hard to achieve using only production code.
+Nowadays, we can rely on tools to generate such a "fake" implementation of a given interface for us and let us this generated implementation in place of a real object. This happens in a different way, depending on a language. Sometimes, the interface implementations can be generated at runtime (like in Java or C#), sometimes we have to rely more on compile-time generation (e.g. in C++). 
 
-Mocking frameworks are not as old as test frameworks so they were not used in TDD at the very beginning. I'll give you a quick example of a mocking framework in action now and defer further explanation for their rationale to a later chapters, as the full explanation of mocks and their place in TDD is not that easily conveyed.
+Narrowing it down to C# - a mocking framework is just that - a mechanism that allows us to create objects (called "mock objects" or just "mocks"), that adhere to a certain interface, at runtime. The type of the interface we want to have implemented is usually passed to a special method which returns a mock object based on that interface (we'll se an example in a few seconds). Aside from the creation of mock objects, such framework provides an API to configure the mocks on how they behave when certain methods are called on them and allows us to inspect which calls they received. This is a very powerful feature, because we can simulate or verify conditions that would be hard to achieve or observe using only production code.
 
-Let's pretend that we have a class that allows placing orders and then puts these orders into a database. In addition, it handles any exceptions that may occur by writing them into a log. This class does not do any important stuff, but let's try to imagine really hard that this is some serious domain logic. Here's the code for this class:
+Mocking frameworks are not as old as test frameworks so they were not used in TDD at the very beginning. I'll give you a quick example of a mocking framework in action now and defer further explanation of their purpose to a later chapters, as the full description of mocks and their place in TDD is not that easily conveyed.
+
+Let's pretend that we have a class that allows placing orders and then puts these orders into a database. In addition, it handles any exception that may occur, by writing it into a log. This class does not do any important stuff, but let's try to imagine really hard that this is some serious domain logic. Here's the code for this class:
 
 ```csharp
 public class OrderProcessing
@@ -228,16 +228,16 @@ ShouldInsertNewOrderToDatabaseWhenOrderisPlaced()
 
 At the beginning of the test we open a connection to the database and clean all existing orders in it (more on that shortly), then create an order object, insert it into the database and query the database for all orders it contains. At the end, we make an assertion that the order we tried to insert is among all orders in the database.
 
-Why do we clean up the database? Remember that a database provides persistent storage. If we do not clean it up and run this test again, the database already contains the item if the insertion in the previous test succeeded. The database might not allow us to add the same item again and the test would fail. Ouch! It hurts so bad, because we wanted our tests to prove something works, but it looks like it can fail even when the logic is coded correctly. Of what use would be such a test if it couldn't reliably tell us whether the implemented logic is correct or not? So, to make sure that the state of the persistent storage is the same every time we run this test, we clean up the database before each run.
+Why do we clean up the database at the beginning of the test? Remember that a database provides persistent storage. If we don't clean it up before executing the logic of this test, the database may already contain the item we are trying to add, e.g. from previous executions of this test. The database might not allow us to add the same item again and the test would fail. Ouch! It hurts so bad, because we wanted our tests to prove something works, but it looks like it can fail even when the logic is coded correctly. Of what use would be such a test if it couldn't reliably tell us whether the implemented logic is correct or not? So, to make sure that the state of the persistent storage is the same every time we run this test, we clean up the database before each run.
 
 Now that the test is ready, did we get what we wanted from it? I would be hesitant to answer "yes". There are several reasons for that:
 
-1.  The test is going to be slow. It is not uncommon to have more than a thousand tests in a suite and I do not want to wait half an hour for results every time I run them. Do you?
-2.  Everyone who wants to run this test will have to set up a local database on their machine. What if their setup is slightly different from yours? What if the schema gets outdated -- will everyone manage to notice it and update the schema of their local databases accordingly? Will you re-run your database creation script only to ensure you have got the latest schema available to run your tests against?
-3.  There may not be an implementation of the database engine for the operating system running on your development machine if your target is an exotic or mobile platform.
-4.  Note that the test you wrote is only one out of two. You will have to write another one for the scenario where inserting an order ends with an exception. How do you setup your database in a state where it throws an exception? It is possible, but requires significant effort (e.g. deleting a table and recreating it after the test, for use by other tests that might need it to run correctly), which may lead you to the conclusion that it is not worth writing such tests at all.
+1.  The test will most probably be slow, because accessing database is relatively slow. It is not uncommon to have more than a thousand tests in a suite and I don't want to wait half an hour for results every time I run them. Do you?
+2.  Everyone who wants to run this test will have to set up a special environment, e.g. a local database on their machine. What if their setup is slightly different from ours? What if the schema gets outdated -- will everyone manage to notice it and update the schema of their local databases accordingly? Should we re-run our database creation script only to ensure we have got the latest schema available to run your tests against?
+3.  There may be no implementation of the database engine for the operating system running on our development machine if our target is an exotic or mobile platform.
+4.  Note that the test we wrote is only one out of two. We still have to write another one for the scenario where inserting an order ends with an exception. How do we setup the database in a state where it throws an exception? It is possible, but requires significant effort (e.g. deleting a table and recreating it after the test, for use by other tests that might need it to run correctly), which may lead some to the conclusion that it is not worth writing such tests at all.
 
-Now, let's try something else. Let's assume that the database itself works fine (or will be tested by other tests, like black-box tests) and that the only thing we want to test is our own code (remember, we're trying to imagine really hard that it's a serious domain logic). In this situation we can substitute the database connection for a fake object that acts as if it was a connection to a database but does not write to a real database at all -- it only stores the inserted records in a list in memory: 
+Now, let's try to approach this problem in a different way. Let's assume that the database itself works fine (or will be tested by other tests, like black-box tests) and that the only thing we want to test is our own code (remember, we're trying to imagine really hard that there is some serious domain logic coded here). In this situation we can substitute the database connection for a fake object that acts as if it was a connection to a database but does not write to a real database at all -- it only stores the inserted records in a list in memory. The code for such a fake connection could look like this: 
 
 ```csharp
 public class FakeOrderDatabase : OrderDatabase
@@ -255,9 +255,10 @@ public class FakeOrderDatabase : OrderDatabase
   }
 }
 ```
-Note that the fake order database is an instance of a custom class that implements the same interface as `MySqlOrderDatabase`. 
 
-Now, we can replace the real implementation of the order database by the fake instance:
+Note that the fake order database is an instance of a custom class that implements the same interface as `MySqlOrderDatabase`. Thus, if we try, we can make the tested code use our fake without knowing. 
+
+Let's replace the real implementation of the order database by the fake instance in the test:
 
 ```csharp
 [Fact] public void 
@@ -282,7 +283,7 @@ ShouldInsertNewOrderToDatabaseWhenOrderIsPlaced()
 }
 ```
 
-Note that we do not clean the fake database object, since we create a fresh one each time the test is run. The test will also be much quicker now. What's more, we can now easily write a test for the error case. How? Just make another fake object, implemented like this:
+Note that we do not clean the fake database object like we did with the real database, since we create a fresh object each time the test is run and the results are stored in a moemory location different for each instance. The test will also be much quicker now, because we are not accessing the database anymore. What's more, we can now easily write a test for the error case. How? Just make another fake class, implemented like this:
 
 ```csharp
 public class ExplodingOrderDatabase : OrderDatabase
@@ -298,7 +299,7 @@ public class ExplodingOrderDatabase : OrderDatabase
 }
 ```
 
-Ok, so far so good, but now we have two classes of fake objects to create (and chances are we will need even more). Any method added to the `OrderDatabase` interface must also be added to each of these fake classes. We can spare some coding by making our mocks a little more generic so that their behavior can be configured using lambda expressions:
+Ok, so far so good, but now we have two classes of fake objects to maintain (and chances are we will need even more). Any method added to the `OrderDatabase` interface must also be added to each of these fake classes. We can spare some coding by making our mocks a bit more generic so that their behavior can be configured using lambda expressions:
 
 ```csharp
 public class ConfigurableOrderDatabase : OrderDatabase
@@ -318,7 +319,7 @@ public class ConfigurableOrderDatabase : OrderDatabase
 }
 ```
 
-Now, we do not have to create additional classes for new scenarios, but our syntax becomes awkward. Here's how we configure the fake order database to remember and yield the inserted order:
+Now, we don't have to create additional classes for new scenarios, but our syntax becomes awkward. Here's how we configure the fake order database to remember and yield the inserted order:
 
 ```csharp
 var db = new ConfigurableOrderDatabase();
@@ -360,10 +361,11 @@ ShouldInsertNewOrderToDatabaseWhenOrderisPlaced()
 }
 ```
 
-Note that we don't need the `SelectAllOrders()` method on the database connection interface anymore. It was there only to make writing the test easier. If no other test needs it, we can delete the method and get rid of some more maintenance trouble. Instead of the call to `SelectAllOrders()`, mocks created by NSubstitute record all calls received and allow us to use a special method called `Received()` on them (see the last line of this test), which is actually a camouflaged assertion that checks whether the `Insert()` method was called once with the order object as parameter.
+Note that we don't need the `SelectAllOrders()` method on the database connection interface anymore. It was there only to make writing the test easier - no production code used it. We can delete the method and get rid of some more maintenance trouble. Instead of the call to `SelectAllOrders()`, mocks created by NSubstitute record all calls received and allow us to use a special method called `Received()` on them (see the last line of this test), which is actually a camouflaged assertion that checks whether the `Insert()` method was called with the order object as parameter.
 
 This explanation of mock objects is very shallow and its purpose is only to get you up and running. We'll get back to mocks later as we've only scratched the surface here.
 
+TODO
 
 Anonymous values generator
 --------------------------
