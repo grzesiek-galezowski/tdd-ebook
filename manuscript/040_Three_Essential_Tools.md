@@ -134,9 +134,9 @@ For these and other reasons, advanced automated test frameworks were created suc
 
 To be honest, I can't wait to show you how the test we just wrote looks like when a test framework is used. But first let's recap what we've got in our straightforward approach to writing automated tests and introduce some terminology that will help us understand how automated test frameworks solve our issues:
 
-1.  The `Main()` method serves as a **Test List** - a place where it is decided which tests to run.
+1.  The `Main()` method serves as a **Test List** -- a place where it is decided which tests to run.
 2.  The `Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()` method is a **Test Method**.
-3.  The `AssertTwoIntegersAreEqual()` method is an **Assertion** - a condition that, when not met, ends a test with failure.
+3.  The `AssertTwoIntegersAreEqual()` method is an **Assertion** -- a condition that, when not met, ends a test with failure.
 
 To our joy, those three elements are present as well when we use a test framework. Moreover, they are far more advanced than what we have. To illustrate this, here is (finally!) the same test we wrote above, now using the [xUnit.Net](http://xunit.github.io/) test framework:
 
@@ -155,7 +155,7 @@ Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()
 }
 ```
 
-Looking at the example, we can see that the that the test method itself is the only thing that's left - the two methods (the test list and assertion) that we previously had are gone now. Well, to tell you the truth, they are not literally gone -- it's just that the test framework offers replacements that are far better, so we used them instead. Let's reiterate the three elements of the previous version of the test that I promised would be present after the transition to the test framework:
+Looking at the example, we can see that the that the test method itself is the only thing that's left -- the two methods (the test list and assertion) that we previously had are gone now. Well, to tell you the truth, they are not literally gone -- it's just that the test framework offers replacements that are far better, so we used them instead. Let's reiterate the three elements of the previous version of the test that I promised would be present after the transition to the test framework:
 
 1.  The **Test List** is now created automatically by the framework from all methods marked with a `[Fact]` attribute. There's no need to maintain one or more central lists anymore, so the `Main()` method is no more.
 2.  The **Test Method** is present and looks almost the same as before.
@@ -172,7 +172,7 @@ When we want to test a class that depends on other classes, we may think it's a 
 
 Nowadays, we can rely on tools to generate such a "fake" implementation of a given interface for us and let us this generated implementation in place of a real object. This happens in a different way, depending on a language. Sometimes, the interface implementations can be generated at runtime (like in Java or C#), sometimes we have to rely more on compile-time generation (e.g. in C++). 
 
-Narrowing it down to C# - a mocking framework is just that - a mechanism that allows us to create objects (called "mock objects" or just "mocks"), that adhere to a certain interface, at runtime. The type of the interface we want to have implemented is usually passed to a special method which returns a mock object based on that interface (we'll se an example in a few seconds). Aside from the creation of mock objects, such framework provides an API to configure the mocks on how they behave when certain methods are called on them and allows us to inspect which calls they received. This is a very powerful feature, because we can simulate or verify conditions that would be hard to achieve or observe using only production code.
+Narrowing it down to C# -- a mocking framework is just that -- a mechanism that allows us to create objects (called "mock objects" or just "mocks"), that adhere to a certain interface, at runtime. The type of the interface we want to have implemented is usually passed to a special method which returns a mock object based on that interface (we'll se an example in a few seconds). Aside from the creation of mock objects, such framework provides an API to configure the mocks on how they behave when certain methods are called on them and allows us to inspect which calls they received. This is a very powerful feature, because we can simulate or verify conditions that would be hard to achieve or observe using only production code.
 
 Mocking frameworks are not as old as test frameworks so they were not used in TDD at the very beginning. I'll give you a quick example of a mocking framework in action now and defer further explanation of their purpose to a later chapters, as the full description of mocks and their place in TDD is not that easily conveyed.
 
@@ -361,27 +361,25 @@ ShouldInsertNewOrderToDatabaseWhenOrderisPlaced()
 }
 ```
 
-Note that we don't need the `SelectAllOrders()` method on the database connection interface anymore. It was there only to make writing the test easier - no production code used it. We can delete the method and get rid of some more maintenance trouble. Instead of the call to `SelectAllOrders()`, mocks created by NSubstitute record all calls received and allow us to use a special method called `Received()` on them (see the last line of this test), which is actually a camouflaged assertion that checks whether the `Insert()` method was called with the order object as parameter.
+Note that we don't need the `SelectAllOrders()` method on the database connection interface anymore. It was there only to make writing the test easier -- no production code used it. We can delete the method and get rid of some more maintenance trouble. Instead of the call to `SelectAllOrders()`, mocks created by NSubstitute record all calls received and allow us to use a special method called `Received()` on them (see the last line of this test), which is actually a camouflaged assertion that checks whether the `Insert()` method was called with the order object as parameter.
 
 This explanation of mock objects is very shallow and its purpose is only to get you up and running. We'll get back to mocks later as we've only scratched the surface here.
-
-TODO
 
 Anonymous values generator
 --------------------------
 
-Looking at the test in the previous section we see many values written literally, e.g. in the following code:
+Looking at the test data in the previous section we see that many values are specified literally, e.g. in the following code:
 
 ```csharp
-  var order = new Order(
-    name: "Grzesiek", 
-    surname: "Galezowski", 
-    product: "Agile Acceptance Testing", 
-    date: DateTime.Now,
-    quantity: 1);
+var order = new Order(
+  name: "Grzesiek", 
+  surname: "Galezowski", 
+  product: "Agile Acceptance Testing", 
+  date: DateTime.Now,
+  quantity: 1);
 ```
 
-the name, surname, product, date and quantity are very specific. This might suggest that the exact values are important from the perspective of the behavior we are testing. On the other hand, when we look at the code again:
+the name, surname, product, date and quantity are very specific. This might suggest that the exact values are important from the perspective of the behavior we are testing. On the other hand, when we look at the tested code again:
 
 ```csharp
 public void Place(Order order)
@@ -397,7 +395,7 @@ public void Place(Order order)
 }
 ```
 
-we can spot that these values are not used anywhere - the tested class does not use or check them in any way. These values are important from the database point of view, but we already took the real database out of the picture. Doesn't it trouble you that we fill the order object with so many values that are irrelevant to the test logic itself and that clutter the structure of the test with needless details? To remove this clutter let's introduce a method with a descriptive name to create the order and hide the details we don't need from the reader of the test:
+we can spot that these values are not used anywhere -- the tested class does not use or check them in any way. These values are important from the database point of view, but we already took the real database out of the picture. Doesn't it trouble you that we fill the order object with so many values that are irrelevant to the test logic itself and that clutter the structure of the test with needless details? To remove this clutter let's introduce a method with a descriptive name to create the order and hide the details we don't need from the reader of the test:
 
 ```csharp
 [Fact] public void 
@@ -426,9 +424,9 @@ public Order AnonymousOrder()
 }
 ```
 
-Now that is better. Not only did we make the test shorter, we also provided a hint to the reader that the actual values used to create an order don't matter from the perspective of tested order-processing logic. Hence the name `AnonymousOrder()`.
+Now, that's better. Not only did we make the test shorter, we also provided a hint to the reader that the actual values used to create an order don't matter from the perspective of tested order-processing logic. Hence the name `AnonymousOrder()`.
 
-By the way, wouldn't it be nice if we did not have to provide the anonymous objects ourselves, but could rely on another library to generate these for us? Susprise, surprise, there is one! It is called [**Autofixture**](https://github.com/AutoFixture/AutoFixture). It is an example of an anonymous values generator (although its creator likes to say that it is also an implementation of Test Data Builder pattern, but let's skip this discussion here). 
+By the way, wouldn't it be nice if we didn't have to provide the anonymous objects ourselves, but could rely on another library to generate these for us? Susprise, surprise, there is one! It's called [**Autofixture**](https://github.com/AutoFixture/AutoFixture). It is an example of so-called anonymous values generator (although its creator likes to say that it is also an implementation of Test Data Builder pattern, but let's skip this discussion here). 
 
 After changing our test to use AutoFixture, we arrive at the following:
 
@@ -467,7 +465,7 @@ public static class Any
 }
 ```
 
-In the next chapters, we'll see many different methods from the `Any` type, plus the full explanation of the philosophy behin it. The more you use this class, the more it grows with other methods for creating customized objects.
+In the next chapters, we'll see many different methods from the `Any` type, plus the full explanation of the philosophy behind it. The more you use this class, the more it grows with other methods for creating customized objects.
 
 Summary 
 -------
