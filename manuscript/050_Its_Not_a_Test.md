@@ -1,7 +1,7 @@
-It is not a test
+It's not a test
 ================
 
-Up to now, I was cheating on you. I told you that the little executable snippets of code are ‘tests’ and that they’re here to ‘check’ or ‘verify’ something. Now it is time to reveal the truth.
+Up to now, I was cheating on you. I told you that the little executable snippets of code are "tests" and that they’re here to "check" or "verify" something. Now it is time to reveal the truth.
 
 When a test becomes something else 
 ----------------------------------
