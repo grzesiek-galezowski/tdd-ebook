@@ -1,5 +1,9 @@
 # Further Reading {#FurtherReading}
 
+## The Essential Tools
+
+  - Gerard Meszaros has written a long book about using the XUnit family of test frameworks, called [XUnit Test Patterns](http://xunitpatterns.com/). This book also explains a lot of philosophy behind these tools. 
+ 
 ## Value Objects 
 
   - Ken Pugh has a chapter devoted to value objects in his book *Prefactoring* (the name of the chapter is *Abstract Data Types*).
