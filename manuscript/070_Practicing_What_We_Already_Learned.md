@@ -448,7 +448,7 @@ ShouldDisplayEnteredDigits()
 {
   var calculator = new Calculator();
   
-  calculator.Enter(1);
+  calculator.Enter(1); 
   calculator.Enter(2);
   calculator.Enter(3);
   var displayedValue = calculator.Display();
@@ -667,10 +667,10 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 
 ```csharp
 public void Enter(DigitKeys digit)
- {
-  //_result *= 10;
-  //_result += (int)digit; 
- }
+{
+ //_result *= 10;
+ //_result += (int)digit; 
+}
 ```
 
 **Benjamin:** Running... Ok, it is false now. Expected “243", got “0".
@@ -711,7 +711,7 @@ ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipl
 public class Calculator
 {
  int _result = 0;
- string fakeResult = "0"; //+
+ string _fakeResult = "0"; //+
 	  
  public void Enter(DigitKeys digit)
  {
@@ -719,7 +719,7 @@ public class Calculator
   _result += (int)digit; 
   if(digit == DigitKeys.Zero) //+
   {  //+
-   fakeResult += "0";  //+
+   _fakeResult += "0";  //+
   } //+
  }
 
@@ -727,7 +727,7 @@ public class Calculator
  {
   if(_result == 0)  //+
   {  //+
-   return fakeResult;  //+
+   return _fakeResult;  //+
   }  //+
   return _result.ToString();
  }
