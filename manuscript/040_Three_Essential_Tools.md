@@ -283,7 +283,7 @@ ShouldInsertNewOrderToDatabaseWhenOrderIsPlaced()
 }
 ```
 
-Note that we do not clean the fake database object like we did with the real database, since we create a fresh object each time the test is run and the results are stored in a moemory location different for each instance. The test will also be much quicker now, because we are not accessing the database anymore. What's more, we can now easily write a test for the error case. How? Just make another fake class, implemented like this:
+Note that we do not clean the fake database object like we did with the real database, since we create a fresh object each time the test is run and the results are stored in a memory location different for each instance. The test will also be much quicker now, because we are not accessing the database anymore. What's more, we can now easily write a test for the error case. How? Just make another fake class, implemented like this:
 
 ```csharp
 public class ExplodingOrderDatabase : OrderDatabase
