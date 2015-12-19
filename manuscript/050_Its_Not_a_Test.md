@@ -1,34 +1,34 @@
 It's not (only) a test
 ================
 
-Is the role of a test only to "verify" or "check" whether a piece of software works? Surely, this is a significant part of its runtime value. However, when we limit our perspective on tests only to this, it could lead us to a conclusion that the only thing that is valuable about having a test is to be able to execute it. Is this really true?
+Is the role of a test only to "verify" or "check" whether a piece of software works? Surely, this is a significant part of its runtime value, i.e. the value that we get when we execute the test. However, when we limit our perspective on tests only to this, it could lead us to a conclusion that the only thing that is valuable about having a test is to be able to execute it. Such acts as designing a test, implementing a test or reading a test would only have the value of producing something we can run. Is this really true?
 
-In this chapter, I argue that the acts of writing a test, compiling a test and reading a test value are all very valuable activities. And they let us treat tests as something more. 
+In this chapter, I argue that the acts of designing, implementing, compiling and reading a test are all very valuable activities. And they let us treat tests as something more than just "automated checks".
 
 When a test becomes something more 
 ----------------------------------
 
 I studied in Łódź, a large city in the center of Poland. As probably all other students in all other countries, we have had lectures, exercises and exams. The exams were pretty difficult. As my computer science group was on the faculty of electronic and electric engineering, we had to grasp a lot of classes that didn't have anything to do with programming. For instance: electrotechnics, solid-state physics and electronic and electrical metrology.
 
-Knowing that exams were difficult and that it was hard to learn everything during preparation, the lecturers would give us exemplary exams from previous years. The questions were different from the actual exams that we were to take, but the structure and kinds of questions asked (practice vs. theory etc.) were similar. We would usually get these exemplary questions before we started learning really hard (which was usually at the end of a semester). Guess what happened then? As you might suspect, we did not use the tests we received just to "verify" or "check" our knowledge after we finished learning. Quite the contrary -- those tests were the first thing we would go to to before even starting to learn. Why was that so? What use were the tests when we knew we wouldn't know most of the answers?
+Knowing that exams were difficult and that it was hard to learn everything during preparation, the lecturers would give us exemplary exams from previous years. The questions were different from the actual exams that we were to take, but the structure and kinds of questions asked (practice vs. theory etc.) were similar. We would usually get these exemplary questions before we started learning really hard (which was usually at the end of a semester). Guess what happened then? As you might suspect, we did not use the tests we received just to "verify" or "check" our knowledge after we finished learning. Quite the contrary -- examining those tests was the very first step of our preparation. Why was that so? What use were the tests when we knew we wouldn't know most of the answers?
 
-I guess my lecturers would disagree with me, but I find it quite amusing that what we were really doing back then was similar to "lean". Lean is a philosophy where, among other things, there is a rigorous emphasis on eliminating waste. Every feature or product that is produced while it is not needed by anyone is considered a waste. That is because if something is not needed, there is no reason to assume it will ever be needed. In that case the entire feature or product is a waste -- it adds no value. Even if it *will* ever be needed, it very likely will require rework to fit the customer's needs at that time. In such case, the work that went into the parts of the original solution that had to be reworked is a waste -- it had a cost, but brought no benefit (I am not talking about such things as customer demos, but finished, polished features or products).
+I guess my lecturers would disagree with me, but I find it quite amusing that what we were really doing back then was similar to "lean". Lean is a philosophy where, among other things, there is a rigorous emphasis on eliminating waste. Every feature or product that is produced but is not needed by anyone is considered a waste. That is because if something is not needed, there is no reason to assume it will ever be needed. In that case the entire feature or product is a waste -- it adds no value. Even if it *will* ever be needed, it very likely will require rework to fit the customer's needs at that time. In such case, the work that went into the parts of the original solution that had to be reworked is a waste -- it had a cost, but brought no benefit (I am not talking about such things as customer demos, but finished, polished features or products).
 
-So, to eliminate waste, you should “pull features from demand" instead of “pushing them" into the product. In other words, every feature is there to satisfy a concrete need. If not, the effort is considered wasted and the money drown.
+So, to eliminate waste, we usually try to "pull features from demand" instead of “pushing them" into the product in hope they can become useful one day. In other words, every feature is there to satisfy a concrete need. If not, the effort is considered wasted and the money drown.
 
 Going back to the exams, why can the approach of first looking through the exemplary tests be considered "lean"? That is because, when we treat passing an exam as our goal, then everything that does not put us closer to this goal is considered a waste. Let's suppose the exam concerns theory only -- why then practice the exercises? It would probably pay off a lot more to study the theoretical side of the topics. Such knowledge could be obtained from those exemplary tests. So, the tests were a kind of specification of what was needed to pass the exam. It allowed us to pull the value (i.e. our knowledge) from the demand (information obtained from realistic tests) rather that push it from the implementation (i.e. learning everything in a course book chapter after chapter).
 
-So the tests became something else. They proved very valuable before the "implementation" (i.e. learning for the exam) because:
+So the tests became something more. They proved very valuable before the "implementation" (i.e. learning for the exam) because:
 
 1.  they helped us focus on what was needed to reach our goal
 2.  they brought our attention away from what was **not** needed to reach our goal
 
-That was the value of a test before learning. Note that the tests we would usually receive were not exactly what we would encounter at the time of the exam, so we still had to guess. Yet, the role of a **test as specification of a need** was already visible.
+That was the value of a test before learning. Note that the tests we would usually receive were not exactly what we would encounter at the time of the exam, so we still had to guess. Yet, the role of a **test as a specification of a need** was already visible.
 
 Taking it to the software development land
 --------------------------------------
 
-I chose this lengthy metaphor to show you that a writing a "test" is really another way of specifying a requirement or a need and that it's not something counter-intuitive to think about it this way -- it occurs in our everyday lives. This is also true in software development. Let's take the following "test" and see what kind of needs it specifies: 
+I chose this lengthy metaphor to show you that a writing a "test" is really another way of specifying a requirement or a need and that it's not counter-intuitive to think about it this way -- it occurs in our everyday lives. This is also true in software development. Let's take the following "test" and see what kind of needs it specifies: 
 
 ```csharp
 var reporting = new ReportingFeature();
@@ -45,12 +45,22 @@ Let's look at those (only!) three lines of code and imagine that the production 
 3.  We need to support a concept of power user, who is either an administrator or an auditor.
 4.  Power users need to be allowed to use the reporting feature (note that it does not specify which other users should or should not be able to use this feature -- we would need a separate "test" for that).
 
-Also, we are already after the phase of designing an API that will fulfill the need. Don’t you think this is already quite some information about the application from just three lines of code?
+Also, we are already after the phase of designing an API (because the test is already using it) that will fulfill the need. Don’t you think this is already quite some information about the application functionality from just three lines of code?
 
 A Specification instead of a Test Suite
 ---------------------------------------
 
-I hope that you can now see that what we called "a test" can also be seen as a kind of specification. This is also the answer to the question I raised at the beginning of this chapter. If writing a test is a kind of specification, then running it is merely verifying that the production code matches this specification. Thus, the name "test" seems like narrowing down what we are doing here too much - maybe a different name would be better?
+I hope that you can now see that what we called "a test" can also be seen as a kind of specification. This is also the answer to the question I raised at the beginning of this chapter. In reality, the role of a test, if written before production code, can be broken down even further:
+
+TODO
+designing a scenario - is when we specify our requiremnts by giving concrete examples of behaviors we expect
+writing - is when we specify an API by which we use the code that we are testing
+compiling - is when we get feedback on whether the production code has the classes and methods required by the specification we wrote 
+execution - is where we get feedback on whether the production code exhibits the behaviors that the specification describes
+reading - is where we use the already written specification to obtain knowledge on the production code.
+TODO
+ 
+Thus, the name "test" seems like narrowing down what we are doing here too much - maybe a different name would be better?
 
  The rediscovery of tests as a specification is quite recent and there is no uniform terminology for it yet. Some like to call the process of using tests as specifications *Specification By Example* to say that the tests are examples that help specify and clarify the behavior of the functionality being developed. Some use the term BDD (*Behavior-Driven Development*). Also, you might encounter different names for some particular elements of this approach, for example, a ‘test’ can be referred to as a ‘spec’, or an ‘example’, or a ‘behavior description’, or a ‘specification statement’ or a ‘fact about the system’ (the xUnit.NET framework marks each ‘test’ with a `[Fact]` attribute, suggesting that by writing it, we are stating a single fact about the developed code. By the way, xUnit.NET also allows us to state ‘theories’ about our code, but let's leave it for now).
 
