@@ -176,22 +176,34 @@ Narrowing it down to C# -- a mocking framework is just that -- a mechanism that 
 
 Mocking frameworks are not as old as test frameworks so they were not used in TDD at the very beginning. I'll give you a quick example of a mocking framework in action now and defer further explanation of their purpose to a later chapters, as the full description of mocks and their place in TDD is not that easily conveyed.
 
-Let's pretend that we have a class that allows placing orders and then puts these orders into a database. In addition, it handles any exception that may occur, by writing it into a log. This class does not do any important stuff, but let's try to imagine really hard that this is some serious domain logic. Here's the code for this class:
+Let's pretend that we have a class that allows placing orders and then puts these orders into a database (using an implementation of an interface called `OrderDatabase`). In addition, it handles any exception that may occur, by writing it into a log. This class does not do any important stuff, but let's try to imagine really hard that this is some serious domain logic. Here's the code for this class:
 
 ```csharp
 public class OrderProcessing
 {
+  OrderDatabase _orderDatabase; //OrderDatabase is an interface
+  Log _log;
+
+  //we get the database object  from outside the class:
+  public OrderProcessing(
+    OrderDatabase database,
+    Log log)
+  {
+    _orderDatabase = database;
+    _log = log;
+  }
+
   //other code...
 
   public void Place(Order order)
   {
     try
     {
-      this.orderDatabase.Insert(order);
+      _orderDatabase.Insert(order);
     }
     catch(Exception e)
     {
-      this.log.Write("Could not insert an order. Reason: " + e);
+      _log.Write("Could not insert an order. Reason: " + e);
     }
   }
 
@@ -206,7 +218,7 @@ Now, imagine we need to test it -- how do we do that? I can already see you sha
 ShouldInsertNewOrderToDatabaseWhenOrderisPlaced()
 {
   //GIVEN
-  var orderDatabase = new MySqlOrderDatabase();
+  var orderDatabase = new MySqlOrderDatabase(); //uses real database
   orderDatabase.Connect();
   orderDatabase.Clean();
   var orderProcessing = new OrderProcessing(orderDatabase, new FileLog());
@@ -237,7 +249,7 @@ Now that the test is ready, did we get what we wanted from it? I would be hesita
 3.  There may be no implementation of the database engine for the operating system running on our development machine if our target is an exotic or mobile platform.
 4.  Note that the test we wrote is only one out of two. We still have to write another one for the scenario where inserting an order ends with an exception. How do we setup the database in a state where it throws an exception? It is possible, but requires significant effort (e.g. deleting a table and recreating it after the test, for use by other tests that might need it to run correctly), which may lead some to the conclusion that it is not worth writing such tests at all.
 
-Now, let's try to approach this problem in a different way. Let's assume that the database itself works fine (or will be tested by other tests, like black-box tests) and that the only thing we want to test is our own code (remember, we're trying to imagine really hard that there is some serious domain logic coded here). In this situation we can substitute the database connection for a fake object that acts as if it was a connection to a database but does not write to a real database at all -- it only stores the inserted records in a list in memory. The code for such a fake connection could look like this: 
+Now, let's try to approach this problem in a different way. Let's assume that the `MySqlOrderDatabase` that accesses a real database query is already tested (this is because I don't want to get into a discussion on testing database queries just yet - we'll get to it in later chapters) and that the only thing we need to test is the `OrderProcessing` class (remember, we're trying to imagine really hard that there is some serious domain logic coded here). In this situation we can substitute the database connection for a fake object that acts as if it was a connection to a database but does not write to a real database at all -- it only stores the inserted records in a list in memory. The code for such a fake connection could look like this: 
 
 ```csharp
 public class FakeOrderDatabase : OrderDatabase
