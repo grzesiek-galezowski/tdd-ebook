@@ -52,19 +52,17 @@ A Specification instead of a Test Suite
 
 I hope that you can now see that what we called "a test" can also be seen as a kind of specification. This is also the answer to the question I raised at the beginning of this chapter. In reality, the role of a test, if written before production code, can be broken down even further:
 
-TODO
-designing a scenario - is when we specify our requiremnts by giving concrete examples of behaviors we expect
-writing - is when we specify an API by which we use the code that we are testing
-compiling - is when we get feedback on whether the production code has the classes and methods required by the specification we wrote 
-execution - is where we get feedback on whether the production code exhibits the behaviors that the specification describes
-reading - is where we use the already written specification to obtain knowledge on the production code.
-TODO
+* designing a scenario - is when we specify our requiremnts by giving concrete examples of behaviors we expect
+* writing the test code - is when we specify an API through which we want to use the code that we are testing
+* compiling - is when we get feedback on whether the production code has the classes and methods required by the specification we wrote 
+* execution - is where we get feedback on whether the production code exhibits the behaviors that the specification describes
+* reading - is where we use the already written specification to obtain knowledge on the production code.
  
 Thus, the name "test" seems like narrowing down what we are doing here too much - maybe a different name would be better?
 
- The rediscovery of tests as a specification is quite recent and there is no uniform terminology for it yet. Some like to call the process of using tests as specifications *Specification By Example* to say that the tests are examples that help specify and clarify the behavior of the functionality being developed. Some use the term BDD (*Behavior-Driven Development*). Also, you might encounter different names for some particular elements of this approach, for example, a ‘test’ can be referred to as a ‘spec’, or an ‘example’, or a ‘behavior description’, or a ‘specification statement’ or a ‘fact about the system’ (the xUnit.NET framework marks each ‘test’ with a `[Fact]` attribute, suggesting that by writing it, we are stating a single fact about the developed code. By the way, xUnit.NET also allows us to state ‘theories’ about our code, but let's leave it for now).
+The discovery of tests' role as a specification is quite recent and there is no uniform terminology connected to it yet. Some like to call the process of using tests as specifications *Specification By Example* to say that the tests are examples that help specify and clarify the functionality being developed. Some use the term BDD (*Behavior-Driven Development*) to emphasize that writing tests is really about analysing and describing behaviors. Also, you might encounter different names for some particular elements of this approach, for example, a ‘test’ can be referred to as a "spec", or an "example", or a "behavior description", or a "specification statement" or "a fact about the system" (as you already saw in the chapter on tools, the xUnit.NET framework marks each "test" with a `[Fact]` attribute, suggesting that by writing it, we are stating a single fact about the developed code. By the way, xUnit.NET also allows us to state ‘theories’ about our code, but let's leave this topic for another time).
 
-Given this variety, I'd like to make a deal: to be consistent I will establish a naming convention for this book, but leave you with the freedom to follow your own if you so desire. The reason for this naming convention is pedagogical -- I am not trying to create a movement to change established terms or to invent a new methodology or anything -- my hope is that by using this terminology throughout the book, you'll look at some things differently[^opensourcebook]. So, let's agree that for the sake of this book: 
+Given this variety in terminology, I'd like to make a deal: to be consistent I will establish a naming convention for this book, but leave you with the freedom to follow your own if you so desire. The reason for this naming convention is pedagogical -- I am not trying to create a movement to change established terms or to invent a new methodology or anything -- my hope is that by using this terminology throughout the book, you'll look at some things differently[^opensourcebook]. So, let's agree that for the sake of this book: 
 
 **Specification Statement** (or simply **Statement**, with a capital 'S')
 
@@ -82,15 +80,15 @@ Given this variety, I'd like to make a deal: to be consistent I will establish 
 
 :   will be used instead of "passing test"
 
-From time to time I'll refer back to the "traditional" terminology, because it is better established and because you may have already heard some other established terms and may wonder how they should be understood in the context of thinking of tests as a specification.
+From time to time I'll refer back to the "traditional" terminology, because it is better established and because you may have already heard some other established terms and wonder how they should be understood in the context of thinking of tests as a specification.
 
 The differences between executable and "traditional" specifications
 ---------------------------------------
 
-You may be familiar with requirements specifications or design specifications that are written in plain English or other spoken language, however our Specifications differ from these in at least few ways. In particular, this kind of  Specification:
+You may be familiar with requirements specifications or design specifications that are written in plain English or other spoken language, however our Specifications differ from these in at least few ways. In particular, the kind of Specification that we create by writing tests:
 
-1.  Is not completely written up-front (more on this in the next chapters).
-2.  Is executable -- you can run it to see whether the code adheres to the specification or not.
-3.  Is written in source code rather than in spoken language -- which is both good, as the structure and formality of code leave less room for misunderstanding and challenging, as great care must be taken to keep the specification readable.
+1.  Is not *completely* written up-front as many of such specs have been written (which doesn't mean it's written after the code is done - more on this in the next chapters).
+2.  Is executable -- you can run it to see whether the code adheres to the specification or not. This lowers the risk of inaccuracies in the Specification and it falling our of sync with the production code.
+3.  Is written in source code rather than in spoken language -- which is both good, as the structure and formality of code leave less room for misunderstanding, and challenging, as great care must be taken to keep the specification readable.
 
-[^opensourcebook]: besides, this book is open source, so if you don't like it, you are free to create a fork and change the terminology!
+[^opensourcebook]: besides, this book is open source, so if you don't like the terminology, you are free to create a fork and change it to your liking!
