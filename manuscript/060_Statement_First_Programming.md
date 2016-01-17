@@ -35,25 +35,30 @@ Refactor
 
 By the way, this process is sometimes referred to as "Red-Green-Refactor", because of the colors that xUnit tools display for failing and passing test. I am just mentioning it here for the record -- I will not be using this term further in the book.
 
-TODO refactor the below piece significantly!!!
-
-
 "Test-First" means seeing a failure
 -----------------------------------
 
-Explaining the illustration with the TDD process above, I pointed out that you are supposed to write a Statement that you wish were true **but is not**. It means that when you write a Statement, you have to evaluate it (i.e. run it) and watch it fail its assertions before you provide an implementation that makes this Statement true. Why is that so important? Is it not just enough to write the Statement first? Why run it and watch it fail?
+Explaining the illustration with the TDD process above, I pointed out that you are supposed to write a Statement that you wish was true **but is not**. It means that not only you have to write a Statement before you provide implementation that makes it true, you also have to evaluate it (i.e. run it) and watch it fail its assertions before you provide the implementation. 
 
-There are several reasons and I will try to outline a few of them briefly.
+Why is that so important? Is it not just enough to write the Statement first? Why run it and watch it fail? There are several reasons and I will try to outline several of them briefly.
 
-### You do not know whether the Statement can ever be false until you see it evaluate as false
+### We can't be sure whether the Statement can ever be false until you see it evaluate as false
 
-Every accurate Statement fails when it isn’t fulfilled and passes when it is. That is one of the main reasons why we write it -- to receive this feedback. Also, after being fulfilled, the Statement becomes a part of the executable specification and starts failing as soon as the code stops fulfilling it, for example as the result of a mistake made during code rework. If you run a Statement for the first time only after the behavior it describes has been implemented and it evaluates to true, how do you know whether it really describes a need accurately? You did not ever watch it fail, so how do you know it ever will?
+Every accurate Statement fails when it isn’t fulfilled and passes when it is. That's one of the main reasons why we write it -- to see this transition from *red* to *green*, which means that what previously was not implemented (and we had a proof for that) is now working (and we have a proof). Seeing the transition tells us that we made progress. 
 
-The first time I encountered this argument was before I started thinking of unit tests as executable specification). “Seriously?" -- I thought -- “I know what I'm writing. If I make my unit tests small enough, it is self-evident that I am describing the correct behavior. This is paranoid". However, life quickly verified my claims and I was forced to withdraw my arguments. Let me describe three ways I experienced of how one can write a Statement that always evaluates to true, regardless if the code is correct or not. There are more ways, I just forgot the rest :-D). Avoid the following situations where Statements cheat you into thinking they are fulfilled even when they are not: 
+Another thing to note is that, after being fulfilled, the Statement becomes a part of the executable specification and starts failing as soon as the code stops fulfilling it, for example as the result of a mistake made during code refactoring. 
 
-#### 1. Accidental omission of adding a Statement to the Specification
+Seeing a Statement evaluated as false gives us valuable feedback. If you run a Statement only *after* the behavior it describes has been implemented and it is evaluated as true, how do you know whether it really describes a need accurately? You did not ever watch it fail, so how do you know it ever will?
 
-However funny it may sound, this happened to me a few times. The example uses C#, but most xUnit frameworks have some kind of mechanism to mark methods as Statements, whether by using attributes (C#) or annotations (Java), or by using macros (C and C++) or by inheriting from a common class, or by using just a naming convention.
+The first time I encountered this argument was before I started thinking of tests as executable specification. “Seriously?" -- I thought -- “I know what I'm writing. If I make my unit tests small enough, it is self-evident that I am describing the correct behavior. This is paranoid". However, life quickly verified my claims and I was forced to withdraw my arguments. Let me describe three ways I experienced of how one can write a Statement that is always evaluated as true, whether the code is correct or not. There are more ways, however, I think giving you three should be an illustration enough. 
+
+Test-first allowed me to avoid the following situations where Statements cheated me into thinking they were fulfilled even when they were not: 
+
+#### 1. Accidental omission of including a Statement in a Specification
+
+It's usually insufficient to just write the code of a Statement - we also have to let the test runner know that a method we wrote is really a Statement (not e.g. just a helper method) and it needs to be evaluated, i.e. run by the runner. 
+
+Most xUnit frameworks have some kind of mechanism to mark methods as Statements, whether by using attributes (C#) or annotations (Java), or by using macros (C and C++) or by inheriting from a common class, or by using a naming convention. 
 
 Let's take xUnit.Net as an example. To turn a method into a Statement in xUnit.Net, you mark it with the `[Fact]` attribute in the following way: 
 
@@ -68,14 +73,16 @@ public class CalculatorSpecification
 }
 ```
 
-Now, imagine that you are writing this Statement post-factum as a unit test in an environment that has, let's say, more than thirty Statements. You have written the code and now you are just creating test after test to ensure the code works. Code, test -- pass, test -- pass, test -- pass. Usually you evaluate your code against the whole Specification, since it is easier than selecting what to evaluate each time. Besides you get more confidence this way that you don't make a mistake and break something that is already working. So, this is really: Code, Test -- all pass, test -- all pass, test -- all pass... Hopefully, you use some kind of snippets mechanism for creating new Statements, otherwise you might write something like this once in a while:
+There is a chance that we may forget to decorate a method with the `[Fact]` attribute - in such case, it's never executed by the test runner. However funny it may sound, this is exactly what happened to me several times. Let's take the above Statement as an example and imagine that we are writing this Statement post-factum as a unit test in an environment that has, let's say, more than thirty Statements already written and passing. We have written the code and now we are just creating test after test to ensure the code works. Test -- pass, test -- pass, test -- pass. When I execute tests, I almost always run more than one at a time, since it's easier for me  than selecting what to evaluate each time. Besides, I get more confidence this way that I don't make a mistake and break something that is already working. Let's imagine we are doing the same here. Then the workflow is really: Test -- all pass, test -- all pass, test -- all pass... 
+
+Over the time, I have learned to use code snippets mechanism of my IDE to generate a template body for my Statements. Still, in the early days, I have occasionally written something like this:
 
 ```csharp
 public class CalculatorSpecification
 {
   //... some Statements here
 
-  //oops... forgot to copy-paste the attribute!
+  //oops... forgot to insert the attribute!
   public void ShouldDisplayZeroWhenResetIsPerformed()
   {
     //... 
@@ -83,9 +90,13 @@ public class CalculatorSpecification
 }
 ```
 
-You will not even notice that the new Statement is not evaluated with the rest of the Specification, because that already contains so many Statements that it is unattractive to search for each new Statement in the list and make sure it's there. Also, note that the absence of the `[Fact]` attribute does not disturb your work flow: test -- all pass, test -- all pass, test -- all pass... In other words, your process does not give you any feedback that you made a mistake. So, what you end up with is a Statement that not only will never be false -- **it will never be evaluated**.
+As you can see, the `[Fact]` attribute is missing, which means this Statement will not be executed. This has happened not only because of not using code generators -- sometimes -- to create a new Statement -- it made sense to copy-paste an existing Statement, change the name and few lines of code. I didn't always remember to include the `[Fact]` attribute in the copied source code. The compiler was not complaining as well.
 
-How does treating tests as Statements and evaluating them before making them true help here? Because then, a Statement that starts off being evaluated as true is what **does** disturb your work flow. In TDD, the work flow is: Statement -- unfulfilled -- fulfilled (and refactor, but that doesn't matter much for this discussion), Statement -- unfulfilled -- fulfilled, Statement -- unfulfilled -- fulfilled... So every time you miss the “unfulfilled" stage, you get feedback from your process that something suspicious is happening. This lets you investigate and fix the situation if necessary.
+The reason I didn't see my mistake was because I was running more than once at a time - when I got a green bar (i.e. all Statements evaluated as true), I assumed that the Statement I just wrote works as well. It was unattractive for me to search for each new Statement in the list and make sure it's there. The more important reason, however, was that the absence of the `[Fact]` attribute did not disturb my work flow: test -- all pass, test -- all pass, test -- all pass... In other words, my process did not give me any feedback that I made a mistake. So, in such case, what we end up with is a Statement that not only will never be evaluated as false -- **it will not evaluated at all**.
+
+How does treating tests as Statements and evaluating them before making them true help here? The fundamental difference is that the workflow of TDD is: test -- fail -- pass, test -- fail -- pass, test -- fail -- pass... In other words, we expect each Statement to be evaluated as false at least once. So every time we miss the “fail" stage, we get feedback from our process that something suspicious is happening. This allows us to investigate and fix the problem if necessary.
+
+TODO maybe change it to misplaced test setup without mocks?
 
 #### 2. Misplacing mock setup
 
