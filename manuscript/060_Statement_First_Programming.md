@@ -98,41 +98,45 @@ How does treating tests as Statements and evaluating them before making them tru
 
 TODO maybe change it to misplaced test setup without mocks?
 
-#### 2. Misplacing mock setup
+#### 2. Misplacing test setup
 
-Ok, this may sound even funnier, but it also happened to me a couple of times, so it makes sense to mention it. This example uses manual mocks, but it can happen with dynamic mocks as well, especially if you are in a hurry.
+Ok, this may sound even funnier, but it also happened to me a couple of times, so it makes sense to mention it, so I assume it may happen to you one day, especially if you are in a hurry.
 
-Let's take a look at the following Statement which states that setting a value higher than allowed to a field of a `frame` should produce a `result` that indicates the error:
+Consider this toy example: imagine we want to validate a simple data structure like this:
+
+```csharp
+public class Frame
+{
+  public int timeSlot; 
+}
+```
+
+and we need to write a Statement for a `Validation` class that accepts a `Frame` as an argument and checks whether the time slot is above a value specified in a constant called `TimeSlot.MaxAllowed` (so it's a constant inside a `TimeSlot` class). If it is, then the validation returns `false`, if it's not, then it returns `true`.
+
+Let's take a look at the following Statement which states that setting a value higher than allowed to a field of a `frame` should make the validation fail:
 
 ```csharp
 [Fact]
 public void ShouldRecognizeTimeSlotAboveMaximumAllowedAsInvalid()
 {
-  //GIVEN
-  var frame = new FrameMock(); //manual mock
+  var frame = new Frame();
   var validation = new Validation();
   var timeSlotAboveMaximumAllowed = TimeSlot.MaxAllowed + 1;
-
-  //WHEN
   var result = validation.PerformForTimeSlotIn(frame);
-  frame.GetTimeSlot_Returns 
-    = timeSlotAboveMaximumAllowed;
-
-  //THEN
-  Assert.False(result.Passed);
-  Assert.Equal(
-    ValidationFailureReasons.AboveAcceptableLimit, 
-    result.Reason);
+  frame.timeSlot = timeSlotAboveMaximumAllowed;
+  Assert.False(result);
 }
 ```
 
-Note how the method `PerformForTimeSlotIn()`, which triggers the specified behavior, is accidentally called *before* the mock is set up and the value of `frame.GetTimeSlot_Returns` is not taken into account. Thus this erroneous value does not alter the expected end result, and may go unnoticed. It sometimes turns out like this, most often in case of various boundary values (nulls etc.).
+Note how the method `PerformForTimeSlotIn()`, which triggers the specified behavior, is accidentally called *before* a value of `timeSlotAboveMaximumAllowed` is set up and thus, this value is not taken into account at the moment when the validation is executed. If, for example, we make a mistake in the implementation of the `Validation` class so that it returns `false` for values below the maximum and not above, such mistake may go unnoticed, because the Statement will always be true.
+
+Again, this is a toy example - I just used it as an illustration fo something that can happen when dealing with more complex cases. 
 
 #### 3. Using static data inside production code
 
-Once in a while, you have to jump in and add some new Statements to an existing Specification and some logic to the class it describes. Let's assume that the class and its specification was written by someone else. Imagine this code is a wrapper around your product XML configuration file. You decide to write your Statements *after* applying the changes (“well", you say, “I am all protected by the Specification that is already in place, so I can make my change without risking regression, and then just test my changes and it is all good...").
+Once in a while, we have to jump in and add some new Statements to an existing Specification and some logic to the class it describes. Let's assume that the class and its Specification were written by someone else than us. Imagine the code we are talking about is a wrapper around our product XML configuration file. We decide to write our Statements *after* applying the changes ("well", we may say, "we're all protected by the Specification that is already in place, so we can make our change without the risk of accidentally breaking existing functionality, and then just test our changes and it's all good...").
 
-So, you start writing the new Statement. The Specification class already contains a member field like this:
+We start coding... done. Now we start writing this new Statement that describes the functionality we just added. After examining the Specification class, we can see that it has a member field like this:
 
 ```csharp
 public class XmlConfigurationSpecification
@@ -142,7 +146,28 @@ public class XmlConfigurationSpecification
   //...
 ```
 
-What it does is to set up an object used by every Statement. So, each Statement uses a `config` object initialized with the same `xmlConfiguration` string value. The string is already pretty large and messy, since it contains all that is required by the existing Statements. You need to write tests for a little corner case that does not need all this crap inside this string. So, you decide to start afresh and create a separate object of the `XmlConfiguration` class with your own, minimal string. Your Statement begins like this:
+What it does is it sets up an object used by every Statement. So, each Statement uses a `config` object initialized with the same `xmlConfiguration` string value. Another quick examination leads us to discovering the following content of the `xmlFixtureString`:
+
+
+```xml
+<config>
+  <section name="General Settings">
+    <subsection name="Network Related">
+      <parameter name="IP">192.168.3.2</parameter>
+      <parameter name="Port">9000</parameter>
+      <parameter name="Protocol">AHJ-112</parameter>
+    </subsection>
+      <subsection name="User Related">
+      <parameter name="login">Johnny</parameter>
+      <parameter name="Role">Admin</parameter>
+      <parameter name="Password Expiry (days)">30</parameter>
+    /subsection>
+    <!-- and so on and on and on...-->
+  </section>
+</config>
+```
+
+ The string is already pretty large and messy, since it contains all information that is required by the existing Statements. Let's assume we need to write tests for a little corner case that does not need all this crap inside this string. So, we decide to start afresh and create a separate object of the `XmlConfiguration` class with your own, minimal string. Our Statement begins like this:
 
 ```csharp
 string customFixture = CreateMyOwnFixtureForThisTestOnly();
@@ -150,7 +175,7 @@ var configuration = new XmlConfiguration(customFixture);
 ...
 ```
 
-And it passes -- cool... not. Ok, what is wrong with this? Nothing big, unless you read the source code of XmlConfiguration class carefully. Inside, you can see, how the XML string is stored:
+And goes on with the scenario. When we execute it, it passes -- cool... not. Ok, what's wrong with this? At the first sight, everything's OK, until we read the source code of XmlConfiguration class carefully. Inside, we can see, how the XML string is stored:
 
 ```csharp
 private static string xmlText; //note the static keyword!
