@@ -7,7 +7,7 @@ Practicing what we have already learned
 
 The above quote took place just before a fighting scene in which a nameless warrior jumped at Sub-Zero only to be frozen and broken into multiple pieces upon hitting the wall. The scene was not spectacular in terms of fighting technique or length. Also, the nameless guy did not even try hard -- the only thing he did was to jump only to be hit by a freezing ball, which, by the way, he actually saw coming. It looked a lot like the fight was set up only to showcase Sub-Zero’s freezing ability. Guess what? In this chapter, we are gonna do roughly the same thing -- set up a fake, easy scenario just to showcase some of the basic TDD elements!
 
-The previous chapter was filled with a lot of theory and philosophy, don’t you think? I really hope you did not fall asleep while reading it. To tell you the truth, we need to grasp much more theory until we are really able to write real-world applications using TDD. To compensate for this somehow, I propose we make a side trip from the trail and try what we already learned on a quick and easy example. As we go through the example, you might wonder how on earth could you possibly write real applications the way we will write our simple program. Do not worry, I will not show you all the tricks yet, so treat it as a “taste of things to come". In other words, the example will be as close to real world problems as the fight between Sub-Zero and nameless ninja was to real martial arts fight, but will show you some of the elements of TDD process.
+The previous chapter was filled with a lot of theory and philosophy, don’t you think? I really hope you did not fall asleep while reading it. To tell you the truth, we need to grasp much more theory until we are really able to write real-world applications using TDD. To compensate for this somehow, I propose we make a side trip from the trail and try what we already learned on a quick and easy example. As we go through the example, you might wonder how on earth could you possibly write real applications the way we will write our simple program. Do not worry, I will not show you all the tricks yet, so treat it as a "taste of things to come". In other words, the example will be as close to real world problems as the fight between Sub-Zero and nameless ninja was to real martial arts fight, but will show you some of the elements of TDD process.
 
 Let me tell you a story 
 -----------------------
@@ -62,7 +62,7 @@ Act 2: The Customer
 
 **Johnny:** Ok then, this is a simple functionality, so let me suggest some user stories as I understand what you already said and you will correct me where I am wrong. Here we go:
 
-1.  **In order to** know that the calculator is turned on, **As a** tax payer **I want** to see “0" on the screen as soon as I turn it on.
+1.  **In order to** know that the calculator is turned on, **As a** tax payer **I want** to see "0" on the screen as soon as I turn it on.
 2.  **In order to** see what numbers I am currently operating on, **As a** tax payer, **I want** the calculator to display the values I enter
 3.  **In order to** calculate the sum of my different incomes, **As a** tax payer **I want** the calculator to enable addition of multiple numbers
 
@@ -74,15 +74,15 @@ What do you think?
 
 **Benjamin:** Johnny, don’t you think it is obvious enough to proceed with implementation straight away?
 
-**Johnny:** Trust me, Benjamin, if there is one word I fear most in communication, it is “obvious". Miscommunication happens most often around things that people consider obvious, simply because other people do not.
+**Johnny:** Trust me, Benjamin, if there is one word I fear most in communication, it is "obvious". Miscommunication happens most often around things that people consider obvious, simply because other people do not.
 
 **Jane:** Ok, I am in. What do I do?
 
 **Johnny:** Let's go through stories one by one and see if we can find some key examples of how the features work. The first story is...
 
-### **In order to** know that the calculator is turned on, **As a** tax payer **I want** to see “0" on the screen as soon as I turn it on.
+### **In order to** know that the calculator is turned on, **As a** tax payer **I want** to see "0" on the screen as soon as I turn it on.
 
-**Jane:** I do not think there is much to talk about. If you display “0", I will be happy. That is all.
+**Jane:** I do not think there is much to talk about. If you display "0", I will be happy. That is all.
 
 **Johnny:** Let's write down this example:
 
@@ -92,15 +92,15 @@ What do you think?
 
 **Benjamin:** That makes me wonder... what should happen when I press "0" again at this stage?
 
-**Johnny:** Good catch, that is what these examples are for -- they make our thinking concrete. As Ken Pugh says: “Often the complete understanding of a concept does not occur until someone tries to use the concept". We would normally put it on a TODO list, because it is part of a different story, but as we are done with this one, let's move straight to the story about displaying entered digits. How about it, Jane?
+**Johnny:** Good catch, that is what these examples are for -- they make our thinking concrete. As Ken Pugh says: "Often the complete understanding of a concept does not occur until someone tries to use the concept". We would normally put it on a TODO list, because it is part of a different story, but as we are done with this one, let's move straight to the story about displaying entered digits. How about it, Jane?
 
 **Jane:** Agree.
 
 ### **In order to** see what numbers I am currently operating on, **As a** tax payer, **I want** the calculator to display the values I enter
 
-**Johnny:** Let's begin with the case raised by Benjamin. What should happen when I input “0" multiple times after I have only “0" on the display?
+**Johnny:** Let's begin with the case raised by Benjamin. What should happen when I input "0" multiple times after I have only "0" on the display?
 
-**Jane:** Just one “0" should be displayed
+**Jane:** Just one "0" should be displayed
 
 **Johnny:** Do you mean this?
 
@@ -142,7 +142,7 @@ What do you think?
 |--------------|------------------|----------------------------|
 | 2,+,3,+,4,=  | 9                | Simple addition of numbers |
 
-**Jane:** This scenario is correct, however, there is also a case when I start with “+" without inputting any number before. This should be treated as adding to zero:
+**Jane:** This scenario is correct, however, there is also a case when I start with "+" without inputting any number before. This should be treated as adding to zero:
 
 | key sequence | Displayed output | Notes                              |
 |--------------|------------------|------------------------------------|
@@ -156,15 +156,15 @@ What do you think?
 
 **Jane:** Sure, I do not mind. I do not add such big numbers anyway.
 
-**Johnny:** There is still one question we missed. Let's say that I input a number, then press “+" and then another number without asking for result with “=". What should I see?
+**Johnny:** There is still one question we missed. Let's say that I input a number, then press "+" and then another number without asking for result with "=". What should I see?
 
-**Jane:** Every time you press “+", the calculator should consider entering current number finished and overwrite it as soon as you press any other digit:
+**Jane:** Every time you press "+", the calculator should consider entering current number finished and overwrite it as soon as you press any other digit:
 
 | key sequence | Displayed output | Notes                                                                                             |
 |--------------|------------------|---------------------------------------------------------------------------------------------------|
 | 2,+,3        | 3                | Digits entered after + operator are treated as digits of a new number, the previous one is stored |
 
-**Jane:** Oh, and just asking for result after the calculator is turned on should result in “0".
+**Jane:** Oh, and just asking for result after the calculator is turned on should result in "0".
 
 | key sequence | Displayed output | Notes                             |
 |--------------|------------------|-----------------------------------|
@@ -188,7 +188,7 @@ What do you think?
 
 **Jane:** Fine with me. Looks like a lot of work. Nice that we discovered it up-front. For me, the limiting capability seemed so obvious that I did not even think it would be worth mentioning.
 
-**Johnny:** See? That is why I do not like the word “obvious". Jane, we will get back to you if any more questions arise. For now, I think we know enough to implement these three stories for you.
+**Johnny:** See? That is why I do not like the word "obvious". Jane, we will get back to you if any more questions arise. For now, I think we know enough to implement these three stories for you.
 
 **Jane:** good luck!
 
@@ -215,9 +215,9 @@ Act 3: Test-Driven Development
 
 **Johnny:** Start by writing the statement in plain English. What should the calculator do?
 
-**Benjamin:** It should display “0" when I turn the application on.
+**Benjamin:** It should display "0" when I turn the application on.
 
-**Johnny:** In our case, “turning on" is creating a calculator. Let's write it down as a method name:
+**Johnny:** In our case, "turning on" is creating a calculator. Let's write it down as a method name:
 
 ```csharp
 public class CalculatorSpecification
@@ -234,11 +234,11 @@ ShouldDisplay0WhenCreated()
 
 **Benjamin:** Why is the name of the class `CalculatorSpecification` and the name of the method `ShouldDisplay0WhenCreated`?
 
-**Johnny:** It is a naming convention. There are many others, but this is the one that I like. The rule is that when you take the name of the class without the `Specification` part followed by the name of the method, it should form a legit sentence. For instance, if I apply it to what we wrote, it would make a sentence: “Calculator should display 0 when created".
+**Johnny:** It is a naming convention. There are many others, but this is the one that I like. The rule is that when you take the name of the class without the `Specification` part followed by the name of the method, it should form a legit sentence. For instance, if I apply it to what we wrote, it would make a sentence: "Calculator should display 0 when created".
 
 **Benjamin:** Ah, I see now. So it is a statement of behavior, isn’t it?
 
-**Johnny:** That is right. Now, the second trick I can sell to you is that if you do not know what code to start with, start with the expected result. In our case, we are expecting that the behavior will end up as displaying “0", right? So let's just write it in the form of an assertion.
+**Johnny:** That is right. Now, the second trick I can sell to you is that if you do not know what code to start with, start with the expected result. In our case, we are expecting that the behavior will end up as displaying "0", right? So let's just write it in the form of an assertion.
 
 **Benjamin:** You mean something like this?
 
@@ -349,13 +349,13 @@ public class Calculator
 }
 ```
 
-**Johnny:** Look, now we can run the Specification and watch that Statement evaluate to false, because it expects “0", but gets “Once upon a time in Africa...".
+**Johnny:** Look, now we can run the Specification and watch that Statement evaluate to false, because it expects "0", but gets "Once upon a time in Africa...".
 
 **Benjamin:** Running... Ok, it is false. By the way, do you always use such silly values to make Statements false?
 
 **Johnny:** Hahaha, no, I just did it to emphasize the point. Normally, I would write `return "";` or something similarly simple. Now we can evaluate the Statement and see it evaluate to false. Now we are sure that we have not yet implemented what is required for the Statement to be true.
 
-**Benjamin:** I think I get it. For now, the Statement shows that we do not have something we need and gives us a reason to add this “thing". When we do so, this Statement will show that we do have what we need. So what do we do now?
+**Benjamin:** I think I get it. For now, the Statement shows that we do not have something we need and gives us a reason to add this "thing". When we do so, this Statement will show that we do have what we need. So what do we do now?
 
 **Johnny:** Write the simplest thing that makes this Statement true.
 
@@ -385,7 +385,7 @@ public class Calculator
 
 **Johnny:** Do not worry, it is central to TDD, so you will grasp it in no time. Now, before we proceed to the next Statement, let's look at what we already achieved. First, we wrote a Statement that turned out false. Then, we wrote just enough code to make the Statement true. Time for a step called Refactoring. In this step, we will take a look at the Statement and the code and remove duplication. Can you see what is duplicated between the Statement and the code?
 
-**Benjamin:** both of them contain the literal “0". The Statement has it here:
+**Benjamin:** both of them contain the literal "0". The Statement has it here:
 
 ```csharp
 Assert.Equal("0", displayedResult);
@@ -424,11 +424,11 @@ public class Calculator
 }
 ```
 
-**Benjamin:** The code looks better and having the constant in one place will make it more maintainable, but I think the Statement in its current form is weaker than before. We could change the `InitialValue` to anything and the Statement would still be true, since it does not force this constant to be “0".
+**Benjamin:** The code looks better and having the constant in one place will make it more maintainable, but I think the Statement in its current form is weaker than before. We could change the `InitialValue` to anything and the Statement would still be true, since it does not force this constant to be "0".
 
 That is right. We need to add it to our TODO list to handle this case. Can you write it down?
 
-**Benjamin:** Sure. I will write it as “TODO: 0 should be used as an initial value."
+**Benjamin:** Sure. I will write it as "TODO: 0 should be used as an initial value."
 
 **Johnny:** Ok. We should handle it now, especially since it is part of the story we are currently implementing, but I will leave it for later just to show you the power of TODO list in TDD -- whatever is on the list, we can forget and get back to when we have nothing better to do. Our next item from the list is this:
 
@@ -465,7 +465,7 @@ ShouldDisplayEnteredDigits()
 
 1.  Making a method `Enter()` accept an integer value suggests that one can enter more than one digit at once, e.g. `calculator.Enter(123)`, which is not what we want. We could detect such cases and throw exceptions if the value is outside the 0-9 range, but there are better ways when we know we will only be supporting ten digits (0,1,2,3,4,5,6,7,8,9).
 2.  The Statement does not clearly show the relationship between input and output. Of course, in this simple case it is pretty self-evident that the sum is a concatenation of entered digits, we do not want anyone who will be reading this Specification in the future to have to guess.
-3.  The Statement suggests that what you wrote is sufficient for any value, which isn’t true, since the behavior for “0" is different (no matter how many times we enter “0", the result is just “0")
+3.  The Statement suggests that what you wrote is sufficient for any value, which isn’t true, since the behavior for "0" is different (no matter how many times we enter "0", the result is just "0")
 
 Hence, I propose the following:
 
@@ -506,13 +506,13 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 
 **Benjamin:** Now I get it. So how about the `Any.Besides()` and `Any.Of()`? What do they do?
 
-**Johnny:** They are methods from a small utility library I am using when writing unit-level Specifications. `Any.Besides()` returns any value from enumeration besides the one supplied as an argument. Hence, the call `Any.Besides(DigitKeys.Zero)` means “any of the values contained in DigitKeys enumeration, but not DigitKeys.Zero".
+**Johnny:** They are methods from a small utility library I am using when writing unit-level Specifications. `Any.Besides()` returns any value from enumeration besides the one supplied as an argument. Hence, the call `Any.Besides(DigitKeys.Zero)` means "any of the values contained in DigitKeys enumeration, but not DigitKeys.Zero".
 
 The `Any.Of()` is simpler -- it just returns any value in an enumeration. Note that when I create the values this way, I state explicitly that this behavior occurs when first digit is non-zero. This technique of using generated values instead of literals has its own principles, but let's leave it for later. I promise to give you a detailed lecture on it. Agree?
 
 **Benjamin:** You better do, because for now, I feel a bit uneasy with generating the values -- it seems like the Statement we are writing is getting less deterministic this way. The last question -- what about those weird comments you put in the code? Given? When? Then?
 
-**Johnny:** Yes, this is a convention that I use, not only in writing, but in thinking as well. I like to think about every behavior in terms of three elements: assumptions (given), trigger (when) and expected result (then). Using the words, we can summarize the Statement we are writing in the following way: “**Given** a calculator, **when** I enter some digits, the first one being non-zero, **then** they should all be displayed in the order they were entered". This is also something that I will tell you more about later.
+**Johnny:** Yes, this is a convention that I use, not only in writing, but in thinking as well. I like to think about every behavior in terms of three elements: assumptions (given), trigger (when) and expected result (then). Using the words, we can summarize the Statement we are writing in the following way: "**Given** a calculator, **when** I enter some digits, the first one being non-zero, **then** they should all be displayed in the order they were entered". This is also something that I will tell you more about later.
 
 **Benjamin:** Sure, for now I need just enough detail to understand what is going on -- we can talk about the principles, pros and cons later. By the way, the following sequence of casts looks a little bit ugly:
 
@@ -524,9 +524,9 @@ string.Format("{0}{1}{2}",
 )
 ```
 
-**Johnny:** We will get back to it and make it “smarter" in a second after we make this statement true. For now, we need something obvious. Something we know works. let's evaluate this Statement. What is the result?
+**Johnny:** We will get back to it and make it "smarter" in a second after we make this statement true. For now, we need something obvious. Something we know works. let's evaluate this Statement. What is the result?
 
-**Benjamin:** Failed, expected “331", but was “0".
+**Benjamin:** Failed, expected "331", but was "0".
 
 **Johnny:** Good, now let's write some code to make this Statement true. First, we're going to introduce an enumeration of digits:
 
@@ -673,7 +673,7 @@ public void Enter(DigitKeys digit)
 }
 ```
 
-**Benjamin:** Running... Ok, it is false now. Expected “243", got “0".
+**Benjamin:** Running... Ok, it is false now. Expected "243", got "0".
 
 **Johnny:** Good, now we are pretty sure that it works OK. Let's uncomment the lines we just commented out and move forward.
 

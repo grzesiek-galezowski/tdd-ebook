@@ -26,7 +26,7 @@ ShouldCalculateTheSumOfTwoNumbers()
 }
 ```
 
-In this case, the integer numbers can really be “any" -- the described relationship between input and output is independent of the actual values we use. As indicated in one of the previous chapters, this is the canonical case where Constrained Non-Determinism applies.
+In this case, the integer numbers can really be "any" -- the described relationship between input and output is independent of the actual values we use. As indicated in one of the previous chapters, this is the canonical case where Constrained Non-Determinism applies.
 
 Sometimes, however, objects exhibit different behaviors based on what is passed to their constructor and to their methods (OK, we also have static methods and singletons. Longer discussion on those will be included in one of the next chapters -- for now we can safely ignore them). For example, in our application we may have a licensing policy where a feature is allowed to use only if the license is valid, and denied after it has expired. Another example would be that some shops are open from 10:00 to 18:00, so if we had a query in our application whether the shop is currently open, we would expect it to be answered differently based on what the current time is.
 
@@ -35,7 +35,7 @@ In such cases, Scott and Amir offer us other guidelines for choosing input value
 Exceptions to the rule
 ----------------------
 
-There are times, when a Statement is true for every value except one (or more) explicitly specified. For example, in Poland, high school students are graded for exams between “mediocre" and “very good". Every grade means the exam is passed except for “mediocre" grade which means the exam is failed. If we imagine we have to specify an object that decides whether the exam is passed based on rating, we would have to write two Statements: one for the mediocre rating and other for all the others.
+There are times, when a Statement is true for every value except one (or more) explicitly specified. For example, in Poland, high school students are graded for exams between "mediocre" and "very good". Every grade means the exam is passed except for "mediocre" grade which means the exam is failed. If we imagine we have to specify an object that decides whether the exam is passed based on rating, we would have to write two Statements: one for the mediocre rating and other for all the others.
 
 Here is the Statement for mediocre grade (let's imagine that all grades are members of an enum):
 
@@ -86,7 +86,7 @@ Sometimes, a behavior varies around a numerical boundary. the simplest example
 1.  for any X less than 0, the result is -X (e.g. absolute value of -1.5 is 1.5)
 2.  for any X greater or equal to 0, the result is X (e.g. absolute value of 3 is 3).
 
-As you can see, there is a boundary between the two behaviors and the right edge of the boundary is 0. Why do I say “right edge"? That is because the boundary always has two edges and there’s a length between them. If we assume we are talking about the mentioned absolute value calculation and that our numerical domain is that of integer numbers, we can as well use -1 as edge value and say that:
+As you can see, there is a boundary between the two behaviors and the right edge of the boundary is 0. Why do I say "right edge"? That is because the boundary always has two edges and there’s a length between them. If we assume we are talking about the mentioned absolute value calculation and that our numerical domain is that of integer numbers, we can as well use -1 as edge value and say that:
 
 1.  for any X less or equal to -1, the result is -X (e.g. absolute value of -1.5 is 1.5)
 2.  for any X greater than -1, the result is X (e.g. absolute value of 3 is 3).

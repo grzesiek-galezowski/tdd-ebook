@@ -1,14 +1,14 @@
 How to start?
 =============
 
-Whenever I sat down with someone who was about to write code in a Statement-first manner for the first time, the person would stare at the screen, then at me, then would say: “what now?". It is easy to say: “You know how to write code, you know how to write a unit test for it, just this time start with the latter rather than the first", but for many people, this is something that blocks them completely. If you are one of them, do not worry -- you are not alone. I decided to dedicate this chapter solely to techniques for kicking off a Statement when there is no code.
+Whenever I sat down with someone who was about to write code in a Statement-first manner for the first time, the person would stare at the screen, then at me, then would say: "what now?". It is easy to say: "You know how to write code, you know how to write a unit test for it, just this time start with the latter rather than the first", but for many people, this is something that blocks them completely. If you are one of them, do not worry -- you are not alone. I decided to dedicate this chapter solely to techniques for kicking off a Statement when there is no code.
 
 Start with a good name
 ----------------------
 
 It may sound obvious, but some people are having serious trouble describing the behavior they expect from their code. If you can name the behavior, it is a great starting point.
 
-I know not everybody pays attention to naming their Statements, mainly because the Statements are considered second-level citizens -- as long as they run and “prove the code does not contain defects", they are considered sufficient. We will take a look at some examples of bad names and then I'll go into some rules of good naming.
+I know not everybody pays attention to naming their Statements, mainly because the Statements are considered second-level citizens -- as long as they run and "prove the code does not contain defects", they are considered sufficient. We will take a look at some examples of bad names and then I'll go into some rules of good naming.
 
 ### Consequences of bad naming
 
@@ -29,7 +29,7 @@ and try for yourself how difficult it is to answer the following questions:
 5.  If your changes in production code make a Statement evaluate to false, how do you know whether the Statement is no longer correct or the production code is wrong?
 6.  How do you know whether you will not introduce a duplicate Statement for a behavior when adding to a Specification that was originally created by another team member?
 7.  How do you estimate, by looking at the runner tool report, whether the fix for a failing Statement will be easy or not?
-8.  What do you answer new developers in your team when they ask you “what is this Statement for?"
+8.  What do you answer new developers in your team when they ask you "what is this Statement for?"
 9.  How do you know when your Specification is complete if you can't tell from the Statement names what behaviors you already have covered and what not?
 
 ### What does a good name contain? 
@@ -42,7 +42,7 @@ notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort()
 
 Note a few things about the name of the Statement:
 
-1.  It describes a behavior of an instance of a specific class. Note that it does not contain the name of the method that triggers the behavior, because what is specified is not a single method, but the behavior itself. The Statement name simply tells what an instance does (“notifies listeners that server is unavailable") under certain circumstances (“when cannot connect to its monitoring port"). It is important because you can derive such a description from thinking about the responsibilities of a class without the need to know any of its method signature or the code that is inside the class. Hence, this is something you can come up with before implementing -- you just need to know why you created this class and build on this knowledge.
+1.  It describes a behavior of an instance of a specific class. Note that it does not contain the name of the method that triggers the behavior, because what is specified is not a single method, but the behavior itself. The Statement name simply tells what an instance does ("notifies listeners that server is unavailable") under certain circumstances ("when cannot connect to its monitoring port"). It is important because you can derive such a description from thinking about the responsibilities of a class without the need to know any of its method signature or the code that is inside the class. Hence, this is something you can come up with before implementing -- you just need to know why you created this class and build on this knowledge.
 2.  The name is relatively long. Really, really, **really** do not worry about it. As long as you are describing a single behavior, it's fine. I know people usually are hesitant to give long names to Statements, because they try to apply the same rules to those names as to method names in production code (and in production code a long method name can be a sign that the method has too many responsibilities). Let me make it clear -- these two cases are different. In case of Statements, the methods are not invoked by anyone besides the automatic test runner, so they will not obfuscate any code that would need to call them with their long names. Sure, we could put all the information in a comment instead of the Statement name and leave the name short, like this:
 
     ```csharp
@@ -70,7 +70,7 @@ There are many conventions for naming Statements appropriately. My favorite is t
 
 `ShouldReportAllErrorsSortedAlphabeticallyWhenErrorsOccurDuringSearch()`
 
-The name of the Specification (i.e. class name) answers the question “who should do it?", i.e. when I have a class named `SortingOperation` and want to say that it “should sort all items in ascending order when performed", I say it like this:
+The name of the Specification (i.e. class name) answers the question "who should do it?", i.e. when I have a class named `SortingOperation` and want to say that it "should sort all items in ascending order when performed", I say it like this:
 
 ```csharp
 public class SortingOperationSpecification
@@ -82,7 +82,7 @@ public class SortingOperationSpecification
 }
 ```
 
-The word "should" was introduced by Dan to weaken the statement following it and thus to allow questioning what you are stating and ask yourself the question: "should it really?". If this causes uncertainty, then it is high time to talk to a domain expert and make sure you understand well what you need to accomplish. If you are not a native English speaker, the “should" prefix will probably have a weaker influence on you -- this is one of the reasons why I don't insist on you using it. I like it though[^argumentsagainstshould].
+The word "should" was introduced by Dan to weaken the statement following it and thus to allow questioning what you are stating and ask yourself the question: "should it really?". If this causes uncertainty, then it is high time to talk to a domain expert and make sure you understand well what you need to accomplish. If you are not a native English speaker, the "should" prefix will probably have a weaker influence on you -- this is one of the reasons why I don't insist on you using it. I like it though[^argumentsagainstshould].
 
 When devising a name, it is important to put the main focus on what result or action is expected from an object. If you do not do that, it'll quickly become troublesome. As an example, one of my colleagues was specifying a class `UserId` and wrote the following name for the Statement about the comparison of two identifiers:
 
@@ -295,7 +295,7 @@ Sometimes, we have to add a new class that must implement an existing interface.
 
 ### Example
 
-Suppose we have an application that, among other things, handles importing an existing database from another instance of the application. Given that the database is large and importing it can be a lengthy process, a message box is displayed each time a user performs the import. Assuming the user's name is Johnny, the message box displays the message “Johnny, please sit down and enjoy your coffee for a few minutes as we take time to import your database." The class that implements this looks like:
+Suppose we have an application that, among other things, handles importing an existing database from another instance of the application. Given that the database is large and importing it can be a lengthy process, a message box is displayed each time a user performs the import. Assuming the user's name is Johnny, the message box displays the message "Johnny, please sit down and enjoy your coffee for a few minutes as we take time to import your database." The class that implements this looks like:
 
 ```csharp
 public class FriendlyMessages

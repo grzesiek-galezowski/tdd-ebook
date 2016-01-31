@@ -50,7 +50,7 @@ public class Sum
 
 and this is it.
 
-Note that I didn’t use Constrained Non-Determinism here, because its use enforces using “Just write obvious implementation" technique. In fact, most (if not all) Statements we wrote so far in previous chapters, uses this approach because of this fact. Let’s take a look at how the above Statement would look if we used Constrained Non-Determinism:
+Note that I didn’t use Constrained Non-Determinism here, because its use enforces using "Just write obvious implementation" technique. In fact, most (if not all) Statements we wrote so far in previous chapters, uses this approach because of this fact. Let’s take a look at how the above Statement would look if we used Constrained Non-Determinism:
 
 ```csharp
 [Fact] public void
@@ -158,7 +158,7 @@ As I wrote, triangulation is the most conservative technique, because following
 These two characteristics: indirect measurement and using at least two sources of information are at the core of TDD triangulation. Basically, it says:
 
 1.  **Indirect measurement**: derive the design from few known examples of its desired external behavior by looking at what varies in these examples and making this variability into something more general
-2.  **Using at least two sources of information**: start with the simplest possible implementation and make it more general **only** when you have two or more different examples (i.e. Statements that describe the desired functionality for specific inputs). Then new examples can be added and generalization can be done again. This process is repeated until we reach the desired implementation. Robert C. Martin developed a maxim on this, saying that “As the tests get more specific, the code gets more generic.
+2.  **Using at least two sources of information**: start with the simplest possible implementation and make it more general **only** when you have two or more different examples (i.e. Statements that describe the desired functionality for specific inputs). Then new examples can be added and generalization can be done again. This process is repeated until we reach the desired implementation. Robert C. Martin developed a maxim on this, saying that "As the tests get more specific, the code gets more generic.
 
 Usually, when TDD is showcased on simple examples, triangulation is the primary technique used, so many novices mistakenly believe TDD is all about triangulation. This isn’t true, although triangulation is important.
 
@@ -316,7 +316,7 @@ public class ListWithAggregateOperations
 }
 ```
 
-While the first Statement (“no elements") seems like a special case, the remaining two -- for one and two elements -- seem to be just two variations of the same behavior (“some elements"). Thus, it is a good idea to make a more general Statement that describes this logic to replace the two examples. After all, we don’t want more than one failure for the same reason. So as the next step, I will write a Statement to replace these examples (I leave them in though, until I get this one to evaluate to true).
+While the first Statement ("no elements") seems like a special case, the remaining two -- for one and two elements -- seem to be just two variations of the same behavior ("some elements"). Thus, it is a good idea to make a more general Statement that describes this logic to replace the two examples. After all, we don’t want more than one failure for the same reason. So as the next step, I will write a Statement to replace these examples (I leave them in though, until I get this one to evaluate to true).
 
 ```csharp
 [Fact]
@@ -363,11 +363,11 @@ public int SumOfElements()
 }
 ```
 
-When we do this, we can see our last Statement evaluate to false with a message like “expected 21, got 22". We can now undo this one little change and go back to correct implementation.
+When we do this, we can see our last Statement evaluate to false with a message like "expected 21, got 22". We can now undo this one little change and go back to correct implementation.
 
-The examples (“zero elements", “one element" and “two elements") still evaluate to true, but it’s now safe to remove the last two, leaving only the Statement about a behavior we expect when we calculate sum of no elements and the Statement about N elements we just wrote.
+The examples ("zero elements", "one element" and "two elements") still evaluate to true, but it’s now safe to remove the last two, leaving only the Statement about a behavior we expect when we calculate sum of no elements and the Statement about N elements we just wrote.
 
-And voilà! We have arrived at the final, generic solution. Note that the steps we took were tiny -- so you might get the impression that the effort was not worth it. Indeed, this example was only to show the mechanics of triangulation -- in real life, if we encountered such simple situation we’d know straight away what the design would be and we’d start with the general Statement straight away and just type in the obvious implementation. Triangulation shows its power in more complex problems with multiple design axes and where taking tiny steps helps avoid “analysis paralysis".
+And voilà! We have arrived at the final, generic solution. Note that the steps we took were tiny -- so you might get the impression that the effort was not worth it. Indeed, this example was only to show the mechanics of triangulation -- in real life, if we encountered such simple situation we’d know straight away what the design would be and we’d start with the general Statement straight away and just type in the obvious implementation. Triangulation shows its power in more complex problems with multiple design axes and where taking tiny steps helps avoid "analysis paralysis".
 
 Summary
 -------

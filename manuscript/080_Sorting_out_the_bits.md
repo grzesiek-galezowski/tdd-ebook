@@ -5,7 +5,7 @@ In the previous chapter, there has been a lively conversation between Johnny an
 
 -   How to name a Statement?
 -   How to start writing a Statement?
--   How is TDD about analysis and what does this “GIVEN-WHEN-THEN" mean?
+-   How is TDD about analysis and what does this "GIVEN-WHEN-THEN" mean?
 -   What exactly is the scope of a Statement? A class, a method, or something else?
 -   What is the role of TODO list in TDD?
 -   Why use anonymous generated values instead of literals as input of a specified behavior?

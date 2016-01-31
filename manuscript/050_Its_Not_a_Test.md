@@ -14,7 +14,7 @@ Knowing that exams were difficult and that it was hard to learn everything durin
 
 I guess my lecturers would disagree with me, but I find it quite amusing that what we were really doing back then was similar to "lean". Lean is a philosophy where, among other things, there is a rigorous emphasis on eliminating waste. Every feature or product that is produced but is not needed by anyone is considered a waste. That is because if something is not needed, there is no reason to assume it will ever be needed. In that case the entire feature or product is a waste -- it adds no value. Even if it *will* ever be needed, it very likely will require rework to fit the customer's needs at that time. In such case, the work that went into the parts of the original solution that had to be reworked is a waste -- it had a cost, but brought no benefit (I am not talking about such things as customer demos, but finished, polished features or products).
 
-So, to eliminate waste, we usually try to "pull features from demand" instead of “pushing them" into the product in hope they can become useful one day. In other words, every feature is there to satisfy a concrete need. If not, the effort is considered wasted and the money drown.
+So, to eliminate waste, we usually try to "pull features from demand" instead of "pushing them" into the product in hope they can become useful one day. In other words, every feature is there to satisfy a concrete need. If not, the effort is considered wasted and the money drown.
 
 Going back to the exams, why can the approach of first looking through the exemplary tests be considered "lean"? That is because, when we treat passing an exam as our goal, then everything that does not put us closer to this goal is considered a waste. Let's suppose the exam concerns theory only -- why then practice the exercises? It would probably pay off a lot more to study the theoretical side of the topics. Such knowledge could be obtained from those exemplary tests. So, the tests were a kind of specification of what was needed to pass the exam. It allowed us to pull the value (i.e. our knowledge) from the demand (information obtained from realistic tests) rather that push it from the implementation (i.e. learning everything in a course book chapter after chapter).
 
@@ -36,7 +36,7 @@ var anyPowerUser = Any.Of(Users.Admin, Users.Auditor);
 Assert.True(reporting.CanBePerformedBy(anyPowerUser));
 ```
 
-(In this example, we used `Any.Of()` method that returns any enumeration value from the specified list. Here, we say “give me a value that is either `Users.Admin` or `Users.Auditor`“.)
+(In this example, we used `Any.Of()` method that returns any enumeration value from the specified list. Here, we say "give me a value that is either `Users.Admin` or `Users.Auditor`".)
 
 Let's look at those (only!) three lines of code and imagine that the production code that makes this "test" pass does not exist yet. What can we learn from these three lines about what this production code needs to supply? Count with me: 
 

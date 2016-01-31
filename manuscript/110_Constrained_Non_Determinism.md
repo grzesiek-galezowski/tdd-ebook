@@ -10,7 +10,7 @@ A style?
 
 Yep. Why am I wasting your time writing about style instead of giving you the hardcore technical details? The answer is simple. Before I started writing this tutorial, I read four or five books solely on TDD and maybe two others that contain chapters on TDD. All of this sums up to about two or three thousands of paper pages, plus numerous posts on many blogs. And you know what I noticed? No two authors use exactly the same sets of techniques for test-driving their code! I mean, sometimes, when you look at the techniques they are suggesting, two authorities contradict each other. As each authority has their followers, it is not uncommon to observe and take part in discussions about whether this or that technique is better than a competing one or which one leads to trouble in the long run.
 
-I did this, too. I also tried to understand how come people praise techniques I KNEW were wrong and led to disaster. Then, Finally, I got it. I understood that it is not a “technique A vs. technique B" debate. There are certain sets of techniques that work together and choosing one technique leaves us with issues we have to resolve by adopting other techniques. This is how a style is created.
+I did this, too. I also tried to understand how come people praise techniques I KNEW were wrong and led to disaster. Then, Finally, I got it. I understood that it is not a "technique A vs. technique B" debate. There are certain sets of techniques that work together and choosing one technique leaves us with issues we have to resolve by adopting other techniques. This is how a style is created.
 
 Developing a style starts with a set of problems to solve and an underlying set of principles we consider important. These principles lead us to adopt our first technique, which makes us adopt another one and, ultimately, a coherent style emerges. Using Constrained Non-Determinism as an example, I will try to show you how part of a style gets derived from a technique that is derived from a principle.
 
@@ -34,14 +34,14 @@ ShouldCreateBackupFileNameContainingPassedHostName()
 }
 ```
 
-Although the relationship can be guessed quite easily, remember it is just an example. Also, seeing code like that makes me ask questions like: is the “backup\_" prefix always applied? What if I pass the prefix itself instead of “MY\_HOST\_NAME"? Will the name be "backup\_backup\_.zip", or just "backup\_.zip"? Also, is this object responsible for any validation of passed string?
+Although the relationship can be guessed quite easily, remember it is just an example. Also, seeing code like that makes me ask questions like: is the "backup\_" prefix always applied? What if I pass the prefix itself instead of "MY\_HOST\_NAME"? Will the name be "backup\_backup\_.zip", or just "backup\_.zip"? Also, is this object responsible for any validation of passed string?
 
 This makes me invent a first technique to provide my Statements with better support for the principle I believe in.
 
 First technique: Anonymous Input
 --------------------------------
 
-I can wrap the actual value “MY\_HOST\_NAME" with a method and give it a name that better documents the constraints imposed on it by the specified functionality. In our case, we can pass whatever string we want (the object is not responsible for input validation), so we will name our method `AnyString()`:
+I can wrap the actual value "MY\_HOST\_NAME" with a method and give it a name that better documents the constraints imposed on it by the specified functionality. In our case, we can pass whatever string we want (the object is not responsible for input validation), so we will name our method `AnyString()`:
 
 ```csharp
 [Fact] public void 
@@ -64,9 +64,9 @@ public string AnyString()
 }
 ```
 
-By using **anonymous input**, we provide a better documentation of the input value. Here, I wrote `AnyString()`, but of course, there can be a situation where I use more constrained data, e.g. `AnyAlphaNumericString()` when I need a string that does not contain any characters other than letters and digits. Note that this technique **is applicable only when the particular value of the variable is not important, but rather its “trait"**. Taking authorization as an example, when a certain behavior occurs only when the input value is `Users.Admin`, there is **no sense** making it anonymous. On the other hand, for a behavior that occurs for all values other than `Users.Admin`, it makes sense to use a method like `AnyUserOtherThan(Users.Admin)` or even `AnyNonAdminUser()`.
+By using **anonymous input**, we provide a better documentation of the input value. Here, I wrote `AnyString()`, but of course, there can be a situation where I use more constrained data, e.g. `AnyAlphaNumericString()` when I need a string that does not contain any characters other than letters and digits. Note that this technique **is applicable only when the particular value of the variable is not important, but rather its "trait"**. Taking authorization as an example, when a certain behavior occurs only when the input value is `Users.Admin`, there is **no sense** making it anonymous. On the other hand, for a behavior that occurs for all values other than `Users.Admin`, it makes sense to use a method like `AnyUserOtherThan(Users.Admin)` or even `AnyNonAdminUser()`.
 
-Now that the Statement itself is freed from the knowledge of the concrete value of `hostName` variable, the concrete value of “backup\_MY\_HOST\_NAME.zip" looks kind of weird. There is no clear indication of the kind of relationship between input and output and whether there is any at all (one may reason whether the output is always the same string or maybe it depends on the string length). It is unclear which part is added by the production code and which part depends on the input we pass to the method. This leads us to another technique.
+Now that the Statement itself is freed from the knowledge of the concrete value of `hostName` variable, the concrete value of "backup\_MY\_HOST\_NAME.zip" looks kind of weird. There is no clear indication of the kind of relationship between input and output and whether there is any at all (one may reason whether the output is always the same string or maybe it depends on the string length). It is unclear which part is added by the production code and which part depends on the input we pass to the method. This leads us to another technique.
 
 Second technique: Derived Values
 --------------------------------
@@ -95,14 +95,14 @@ public string AnyString()
 }
 ```
 
-This looks more like a part of specification, because we are documenting the format of the backup file name and show which part of the format is variable and which part is fixed. This is something you would probably find documented in a paper specification for the application you are writing -- it would probably contain a sentence saying: “The format of a backup file should be **backup\_H.zip**, where **H** is the current local host name".
+This looks more like a part of specification, because we are documenting the format of the backup file name and show which part of the format is variable and which part is fixed. This is something you would probably find documented in a paper specification for the application you are writing -- it would probably contain a sentence saying: "The format of a backup file should be **backup\_H.zip**, where **H** is the current local host name".
 
-**Derived values** are about defining expected output in terms of the input that was passed to provide a clear indication on what is the “transformation" of the input required of the specified production code.
+**Derived values** are about defining expected output in terms of the input that was passed to provide a clear indication on what is the "transformation" of the input required of the specified production code.
 
 Third technique: Distinct Generated Values
 ------------------------------------------
 
-Let's assume that some time after our initial version is shipped, we are asked to make the backup feature applied locally per user only for this user’s data. As the customer does not want to confuse files from different users, we are asked to add name of the user doing backup to the backup file name. Thus, the new format is “backup\_H\_U.zip", where H is still the host name and U is the user name. Our Statement for the pattern must change as well to include this information. Of course, we are trying to use the anonymous input again as a proven technique and we end up with:
+Let's assume that some time after our initial version is shipped, we are asked to make the backup feature applied locally per user only for this user’s data. As the customer does not want to confuse files from different users, we are asked to add name of the user doing backup to the backup file name. Thus, the new format is "backup\_H\_U.zip", where H is still the host name and U is the user name. Our Statement for the pattern must change as well to include this information. Of course, we are trying to use the anonymous input again as a proven technique and we end up with:
 
 ```csharp
 [Fact] public void 
@@ -185,7 +185,7 @@ public string AnyString()
 }
 ```
 
-This time, we are not returning an understandable string, but rather a guid, which gives us the fairly strong guarantee of generating distinct value each time. The string not being understandable (contrary to something like “MY\_HOST\_NAME") may leave you worried that maybe we are losing something, but hey, didn’t we say **Any**String()?
+This time, we are not returning an understandable string, but rather a guid, which gives us the fairly strong guarantee of generating distinct value each time. The string not being understandable (contrary to something like "MY\_HOST\_NAME") may leave you worried that maybe we are losing something, but hey, didn’t we say **Any**String()?
 
 **Distinct generated values** means that each time we need a value of a particular type, we get something different (if possible) than the last time and each value is generated automatically using some kind of heuristics.
 
@@ -240,7 +240,7 @@ Summary of the example
 In this example, I tried to show you how a style can evolve from the principles you value when doing TDD. I did so for two reasons:
 
 1.  To introduce to you a set of techniques I personally use and recommend and to do it in a fluent and logical way.
-2.  To help you better communicate with people that are using different styles. Instead of just throwing “you are doing it wrong" at them, try to understand their principles and how their techniques of choice support those principles.
+2.  To help you better communicate with people that are using different styles. Instead of just throwing "you are doing it wrong" at them, try to understand their principles and how their techniques of choice support those principles.
 
 Now, let's take a quick summary of all the techniques introduced in example:
 
@@ -263,7 +263,7 @@ When we combine anonymous input together with distinct generated values, we get 
 
 1.  Values are anonymous i.e. we do not know the actual value we are using
 2.  The values are generated in as distinct as possible sequence (which means that, whenever possible, no two values generated one after another hold the same value)
-3.  The non-determinism in generation of the values is constrained, which means that the algorithms for generating values are carefully picked in order to provide values that are not special in any way (e.g. when generating integers, we do not allow generating ‘0’ as it is usually a special-case-value)) and that are not “evil" (e.g. for integers, we generate small positive values first and go with bigger numbers only when we run out of those small ones).
+3.  The non-determinism in generation of the values is constrained, which means that the algorithms for generating values are carefully picked in order to provide values that are not special in any way (e.g. when generating integers, we do not allow generating ‘0’ as it is usually a special-case-value)) and that are not "evil" (e.g. for integers, we generate small positive values first and go with bigger numbers only when we run out of those small ones).
 
 There are multiple ways to implement constrained non-determinism. Mark Seemann himself has invented the AutoFixture library for C\# that is [freely available to download](https://github.com/AutoFixture/AutoFixture). Here is a shortest possible snippet to generate an anonymous integer using AutoFixture:
 
