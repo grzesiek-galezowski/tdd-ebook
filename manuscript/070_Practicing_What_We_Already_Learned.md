@@ -349,7 +349,7 @@ public class Calculator
 }
 ```
 
-**Johnny:** Look, now we can run the Specification and watch that Statement evaluate to false, because it expects "0", but gets "Once upon a time in Africa...".
+**Johnny:** Look, now we can run the Specification and watch that Statement evaluate to false, because it expects "0", but gets "Once upon a time in Africa".
 
 **Benjamin:** Running... Ok, it is false. By the way, do you always use such silly values to make Statements false?
 
