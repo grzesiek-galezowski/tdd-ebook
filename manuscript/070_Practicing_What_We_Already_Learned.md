@@ -736,7 +736,7 @@ public class Calculator
 
 **Benjamin:** Wow, looks like a lot of code just to make the Statement false! Is it worth the hassle? We will undo this whole modification in a second anyway
 
-**Johnny:** Depends on how confident you want to feel. I would say that it is usually worth it -- at least you know that you got everything right. It might seem like a lot of work, but it only took me about a minute to add this code and imagine you got it wrong and had to debug it on a production environment. \_That\_ would be a waste of time.
+**Johnny:** Depends on how confident you want to feel. I would say that it is usually worth it -- at least you know that you got everything right. It might seem like a lot of work, but it only took me about a minute to add this code and imagine you got it wrong and had to debug it on a production environment. That would be a waste of time.
 
 **Benjamin:** Ok, I think I get it. Since we saw this Statement turn false, I will undo this modification to make it true again.
 
