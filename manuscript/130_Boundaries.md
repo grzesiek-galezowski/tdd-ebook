@@ -95,7 +95,7 @@ So a boundary is not a single number -- it always has a length -- the length 
 
 Now, imagine that we are not talking about integer values anymore, but about floating point values. Then the right edge value would still be 0. But what about left edge? It would not be possible for it to stay -1, because the rule applies to e.g. -0.9 as well. So what is the correct right edge value and the correct length of the boundary? Would the length be 0.1? Or 0.001? Or maybe 0.00000001? This is harder to answer and depends heavily on the context, but it is something that must be answered for each particular case -- this way we know what kind of precision is expected of us. In our Specification, we have to document the boundary length somehow.
 
-So the next topic is: how to describe the boundary length with Statements? To illustrate this, I want to show you two Statements assuming we’re implementing the mentioned absolute value calculation for integers. The first Statement is for values smaller than 0 and we want to use the left edge value here ilke this:
+So the next topic is: how to describe the boundary length with Statements? To illustrate this, I want to show you two Statements assuming we’re implementing the mentioned absolute value calculation for integers. The first Statement is for values smaller than 0 and we want to use the left edge value here like this:
 
 ```csharp
 [Fact] public void
