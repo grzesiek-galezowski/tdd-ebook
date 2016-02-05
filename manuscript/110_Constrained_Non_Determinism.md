@@ -263,7 +263,7 @@ When we combine anonymous input together with distinct generated values, we get 
 
 1.  Values are anonymous i.e. we do not know the actual value we are using
 2.  The values are generated in as distinct as possible sequence (which means that, whenever possible, no two values generated one after another hold the same value)
-3.  The non-determinism in generation of the values is constrained, which means that the algorithms for generating values are carefully picked in order to provide values that are not special in any way (e.g. when generating integers, we do not allow generating ‘0’ as it is usually a special-case-value)) and that are not "evil" (e.g. for integers, we generate small positive values first and go with bigger numbers only when we run out of those small ones).
+3.  The non-determinism in generation of the values is constrained, which means that the algorithms for generating values are carefully picked in order to provide values that are not special in any way (e.g. when generating integers, we do not allow generating ‘0’ as it is usually a special-case-value) and that are not "evil" (e.g. for integers, we generate small positive values first and go with bigger numbers only when we run out of those small ones).
 
 There are multiple ways to implement constrained non-determinism. Mark Seemann himself has invented the AutoFixture library for C\# that is [freely available to download](https://github.com/AutoFixture/AutoFixture). Here is a shortest possible snippet to generate an anonymous integer using AutoFixture:
 
