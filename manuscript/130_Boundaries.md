@@ -81,7 +81,7 @@ The example shown above assumes there is only one exception to the rule (the med
 Rules valid within boundaries
 -----------------------------
 
-Sometimes, a behavior varies around a numerical boundary. the simplest example would be a set of rules on how to calculate an absolute value of a number:
+Sometimes, a behavior varies around a numerical boundary. The simplest example would be a set of rules on how to calculate an absolute value of a number:
 
 1.  for any X less than 0, the result is -X (e.g. absolute value of -1.5 is 1.5)
 2.  for any X greater or equal to 0, the result is X (e.g. absolute value of 3 is 3).
