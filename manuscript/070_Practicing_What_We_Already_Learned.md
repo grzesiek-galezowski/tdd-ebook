@@ -705,7 +705,7 @@ ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipl
 
 **Benjamin:** It seems that our current code already fulfills the Statement. Should I try to comment some code to make sure this Statement can fail just like you did in the previous Statement?
 
-**Johnny:** That would be wise thing to do. When a Statement is true without requiring you to change any production code, it is always suspicious. Just like you said, we have to modify production code for a second to force this Statement to be false, then undo this modification to make it true again. This isn’t as obvious as previously, so let me do it. I will mark all the added lines with `//+` comment so that you can see them easily:
+**Johnny:** That would be wise thing to do. When a Statement is true without requiring you to change any production code, it is always suspicious. Just like you said, we have to change production code for a second to force this Statement to be false, then undo this modification to make it true again. This isn’t as obvious as previously, so let me do it. I will mark all the added lines with `//+` comment so that you can see them easily:
 
 ```csharp
 public class Calculator
@@ -734,11 +734,11 @@ public class Calculator
 }
 ```
 
-**Benjamin:** Wow, looks like a lot of code just to make the Statement false! Is it worth the hassle? We will undo this whole modification in a second anyway
+**Benjamin:** Wow, looks like a lot of code just to make the Statement false! Is it worth the hassle? We will undo this whole change in a second anyway...
 
-**Johnny:** Depends on how confident you want to feel. I would say that it is usually worth it -- at least you know that you got everything right. It might seem like a lot of work, but it only took me about a minute to add this code and imagine you got it wrong and had to debug it on a production environment. That would be a waste of time.
+**Johnny:** Depends on how confident you want to feel. I would say that it is usually worth it -- at least you know that you got everything right. It might seem like a lot of work, but it only took me about a minute to add this code and imagine you got it wrong and had to debug it on a production environment. Now *that* would be a waste of time.
 
-**Benjamin:** Ok, I think I get it. Since we saw this Statement turn false, I will undo this modification to make it true again.
+**Benjamin:** Ok, I think I get it. Since we saw this Statement turn false, I will undo this change to make it true again.
 
 **Johnny:** Sure.
 
