@@ -263,7 +263,7 @@ public class FakeOrderDatabase : OrderDatabase
 
   public List<Order> SelectAllOrders()
   {
-    return new List<Order>() { _receivedOrder; };
+    return new List<Order>() { _receivedOrder };
   }
 }
 ```
