@@ -543,7 +543,7 @@ public enum DigitKeys
 
 **Benjamin:** What is with all those bogus values? Should we not just enter all the digits we support?
 
-**Johnny:** Nope, not yet. We still do not have a Statement which would say what digits are supported and thus make us add them, right?.
+**Johnny:** Nope, not yet. We still do not have a Statement which would say what digits are supported and thus make us add them, right?
 
 **Benjamin:** You say you need a Statement for an element to be in an enum??
 
