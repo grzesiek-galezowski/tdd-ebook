@@ -215,7 +215,7 @@ Now, imagine we need to test it -- how do we do that? I can already see you sha
 
 ```csharp
 [Fact] public void 
-ShouldInsertNewOrderToDatabaseWhenOrderisPlaced()
+ShouldInsertNewOrderToDatabaseWhenOrderIsPlaced()
 {
   //GIVEN
   var orderDatabase = new MySqlOrderDatabase(); //uses real database
