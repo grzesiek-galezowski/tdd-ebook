@@ -43,7 +43,7 @@ void disableAlarm(Alarm* alarm)
   }
   else if(alarm->kind == SILENT_ALARM)
   {
-    stopNotfyingPolice(alarm);
+    stopNotifyingPolice(alarm);
   }
 }
 ```
@@ -55,7 +55,7 @@ So, we see that the duplication is bad, but can we do something about it? To ans
 | Alarm Kind          | Triggering                 |     Disabling              |
 |---------------------|----------------------------|------------------------|
 | Loud Alarm          | `playLoudSound()`     | `stopLoudSound()` |
-| Silent Alarm          | `notifyPolice()`     | `stopNotfyingPolice()` | 
+| Silent Alarm          | `notifyPolice()`     | `stopNotifyingPolice()` | 
 
 So, at least conceptually, as soon as we know the alarm kind, we already know which set of behaviors (represented as a row in the above table) it needs. We could just decide the alarm kind once and associate the right set of behaviors with the data structure. Then, we would not have to query the alarm kind in few places as we did, but instead, we could say: "execute triggering behavior from the set of behaviors associated with this alarm, whatever it is".
 
