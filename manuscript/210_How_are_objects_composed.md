@@ -85,7 +85,7 @@ public Sender(Recipient recipient)
 Starting from this point, the `Sender` may send messages to `Recipient` at will:
 
 ```csharp
-public DoSomething()
+public void DoSomething()
 {
   //... other code
   
@@ -190,7 +190,7 @@ public class Sender
 {
   //...
 
-  public DoSomething() 
+  public void DoSomething() 
   {
     //ask the factory for a recipient:
     var recipient = _recipientFactory.CreateRecipient();
@@ -209,7 +209,7 @@ To be more clear, let's compare the two approaches. Passing recipient inside a m
 
 ```csharp
 //Sender gets a Recipient from the "outside":
-public DoSomething(Recipient recipient) 
+public void DoSomething(Recipient recipient) 
 {
   recipient.DoSomethingElse();
 }
@@ -220,7 +220,7 @@ and obtaining from factory:
 ```csharp
 //a factory is used "inside" Sender
 //to obtain a recipient
-public DoSomething() 
+public void DoSomething() 
 {
   var recipient = _factory.CreateRecipient();
   recipient.DoSomethingElse();
