@@ -1024,7 +1024,7 @@ The last thing that needs to be said is that not all dependencies can be hidden 
 
 #### Factories can help increase readability and reveal intention (encapsulation of terminology)
 
-Let's assume we are writing an action-RPG game which consists of many game levels (not to be mistaken with experience levels) . Players can start a new game or continue a saved game. When they choose to start a new game, they are immediately taken to the first level with empty inventory and no skills. Otherwise, when they choose to continue an old game, they have to select a file with a saved state (then the game level, skills and inventory are loaded from the file). Thus, we have two separate workflows in our game that end up with two different methods being invoked: `OnNewGame()` for new game mode and `OnContinue()` for resuming a saved game:
+Let's assume we are writing an action-RPG game which consists of many game levels (not to be mistaken with experience levels). Players can start a new game or continue a saved game. When they choose to start a new game, they are immediately taken to the first level with empty inventory and no skills. Otherwise, when they choose to continue an old game, they have to select a file with a saved state (then the game level, skills and inventory are loaded from the file). Thus, we have two separate workflows in our game that end up with two different methods being invoked: `OnNewGame()` for new game mode and `OnContinue()` for resuming a saved game:
 
 ```csharp
 public void OnNewGame()
