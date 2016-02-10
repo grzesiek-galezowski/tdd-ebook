@@ -43,7 +43,7 @@ void disableAlarm(Alarm* alarm)
   }
   else if(alarm->kind == SILENT_ALARM)
   {
-    stopNotfyingPolice(alarm);
+    stopNotifyingPolice(alarm);
   }
 }
 ```
@@ -55,7 +55,7 @@ So, we see that the duplication is bad, but can we do something about it? To ans
 | Alarm Kind          | Triggering                 |     Disabling              |
 |---------------------|----------------------------|------------------------|
 | Loud Alarm          | `playLoudSound()`     | `stopLoudSound()` |
-| Silent Alarm          | `notifyPolice()`     | `stopNotfyingPolice()` | 
+| Silent Alarm          | `notifyPolice()`     | `stopNotifyingPolice()` | 
 
 So, at least conceptually, as soon as we know the alarm kind, we already know which set of behaviors (represented as a row in the above table) it needs. We could just decide the alarm kind once and associate the right set of behaviors with the data structure. Then, we would not have to query the alarm kind in few places as we did, but instead, we could say: "execute triggering behavior from the set of behaviors associated with this alarm, whatever it is".
 
@@ -66,7 +66,7 @@ Object-oriented programming to the rescue!
 
 On the other hand, object-oriented programming has for a long time made available two mechanisms that enable what we didn't have in procedural languages:
 
-1.  Classes -- that allow binding behavior together with data
+1.  Classes -- that allow binding behavior together with data.
 2.  Polymorphism -- allows executing behavior without knowing the exact class that holds them, but knowing only a set of behaviors that it supports. This knowledge is obtained by having an abstract type (interface or an abstract class) define this set of behaviors, with no real implementation. Then we can make other classes that provide their own implementation of the behaviors that are declared to be supported by the abstract type. Finally, we can use the instances of those classes where an instance of the abstract type is expected. In case of statically-typed languages, this requires implementing an interface or inheriting from an abstract class.
 
 So, in case of our alarms, we could make an interface with the following
