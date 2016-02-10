@@ -1,7 +1,7 @@
 Motivation -- the first step to learning TDD
 ===========================================
 
-I'm writing this book because I'm a TDD enthusiast. I believe TDD is a huge improvement over other software development methodologies I have used to deliver quality software. I believe this is true not only for me, but for many other software developers. Which makes me question, why don't more people learn as use TDD as their software delivery methodology of choice? In my professional life, I haven't seen the adoption rate to be big enough to justify the claim that TDD is currently in the mainstream.
+I'm writing this book because I'm a TDD enthusiast. I believe TDD is a huge improvement over other software development methodologies I have used to deliver quality software. I believe this is true not only for me, but for many other software developers. Which makes me question, why don't more people learn and use TDD as their software delivery methodology of choice? In my professional life, I haven't seen the adoption rate to be big enough to justify the claim that TDD is currently in the mainstream.
 
 You already have my respect for deciding to pick up a book, rather than building your understanding of TDD on the foundation of urban legends and your own imagination. I am honored and happy you chose this one, no matter if this is your first book on TDD or one of many you may have read. As much as I really hope you will read this book from cover to cover, I am aware it doesn't always happen. That makes me want to ask you an important question that may help you determine whether you really want to read on: why do you want to learn TDD?
 
