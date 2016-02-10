@@ -100,13 +100,13 @@ public DoSomething()
 Composing using constructors has one significant advantage. By separating object use from construction, we end up with the code that creates a `Sender` being in a totally different place than the code that uses it. And, as `Recipient` is passed to `Sender` during its creation, it is the only place external to the `Sender` that needs to know that `Sender` uses `Recipient`. The part of code that uses `Sender` is not aware at all that `Sender` stores a reference to `Recipient` inside it. This basically means that when `Sender` is used, e.g. like this:
 
 ```csharp
-sender.DoSomething()
+sender.DoSomething();
 ```
 
 the `Sender` may then react by sending message to `Recipient`, but the code invoking the `DoSomething()` method is completely unaware of that -- it is hidden. This is good, because "what you hide, you can change"[^kolskybain] -- e.g. if we decide that the `Sender` needs not use the `Recipient` to do its duty, the code that uses `Sender` does not need to change at all -- it still looks the same as before:
 
 ```csharp
-sender.DoSomething()
+sender.DoSomething();
 ```
 
 All we have to change is the composition code to remove the `Recipient`:
