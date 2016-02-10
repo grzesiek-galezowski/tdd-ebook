@@ -169,7 +169,7 @@ GetYearsOfService();
 They just expose too much information specific to the regular employees. It would be impossible to use different implementations when these are around. These setters don't help much:
 
 ```csharp
-SetSalary(newSalary)
+SetSalary(newSalary);
 SetBonusForYear(year, amount);
 ```
 
