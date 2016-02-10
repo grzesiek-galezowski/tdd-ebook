@@ -585,7 +585,7 @@ The answer is "no", for two reasons:
  1. There is no further place we can defer the creation. Sure, we could move the creation of the `Game` object and its dependencies into a separate object responsible only for the creation (we call such object **a factory**, as you already know), but it's a dead end, because it would leave us with the question: where do we create the factory?
  2. The whole point of the principle we are trying to apply is decoupling, i.e. giving ourselves the ability to change one thing without having to change another. When we think of it, there is no point of decoupling the entry point of the application from the application itself, since this is the most application-specific and non-reusable part of the application we can imagine.
 
-What is important is that we reached a place where the web of objects is created using constructor approach and we have no place left to defer the the creation of the web (in other words, it is as close as possible to application entry point). Such a place is called [**a composition root**](http://blog.ploeh.dk/2011/07/28/CompositionRoot/).
+What is important is that we reached a place where the web of objects is created using constructor approach and we have no place left to defer the creation of the web (in other words, it is as close as possible to application entry point). Such a place is called [**a composition root**](http://blog.ploeh.dk/2011/07/28/CompositionRoot/).
 
 We say that composition root is "as close as possible" to application entry point, because there may be different frameworks in control of your application and you will not always have the `Main()` method at your service[^seemanndi].
 
