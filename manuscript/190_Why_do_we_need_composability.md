@@ -150,8 +150,8 @@ new SqlRepository(
 We can do the same with our alarms. Let's say that we have a secure area that has three buildings with different alarm policies:
 
 -   Office building -- the alarm should silently notify guards during the day (to keep office staff from panicking) and loud during the night, when guards are on patrol.
--   Storage building -- as it is quite far and the workers are few, we want to trigger loud and silent alarms at the same time
--   Guards building -- as the guards are there, no need to notify them. However, a silent alarm should call police for help instead, and a loud alarm is desired as well
+-   Storage building -- as it is quite far and the workers are few, we want to trigger loud and silent alarms at the same time.
+-   Guards building -- as the guards are there, no need to notify them. However, a silent alarm should call police for help instead, and a loud alarm is desired as well.
 
 Note that besides just triggering loud or silent alarm, we have a requirement for a combination ("loud and silent alarms at the same time") and a conditional ("silent during the day and loud during the night"). we could just hardcode some `for`s and `if-else`s in our code, but instead, let's factor out these two operations (combination and choice) into separate classes implementing the alarm interface.
 
