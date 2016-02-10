@@ -129,7 +129,7 @@ public class CompanyPolicies : IDisposable
 
 **Johnny:** True, but this option has few deficiencies. First of all, remember we're trying to follow the boy scout rule and by using this option we introduce more complexity to the CommonPolicies class. Also, let's say tomorrow someone writes another class for, say, reporting and this class will also need to access the repository -- they will need to make the same decision on repositories in their code as we do in ours. This effectively means duplicating code. Thus, I'd rather evaluate further options and check if we can come up with something better. What's our next option?
 
-**Benjamin:** Another option would be to change the SqlRepository itself to be just a wrapper around the actual database access, like this:
+**Benjamin:** Another option would be to change the `SqlRepository` itself to be just a wrapper around the actual database access, like this:
 
 ```csharp
 public class SqlRepository : IDisposable
