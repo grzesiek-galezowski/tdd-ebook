@@ -168,17 +168,17 @@ Phew, I hope I made the transition quite painless for you. Now the last thing 
 Mocking framework
 -----------------
 
-W> This introduction is written for those who are not proficient with using mocks. Even though, I accept the fact that the concept may be too difficult to grasp. If, while reading this section, you find youreslf lost, please skip it. We won't be dealing with mock objects until part 2, where I offer a richer and more accurate description of the concept.
+W> This introduction is written for those who are not proficient with using mocks. Even though, I accept the fact that the concept may be too difficult for you to grasp. If, while reading this section, you find youreslf lost, please skip it. We won't be dealing with mock objects until part 2, where I offer a richer and more accurate description of the concept.
 
 When we want to test a class that depends on other classes, we may think it's a good idea to include those classes in the test as well. This, however, does not allow us to test a single object or a small cluster of objects in isolation, where we would be able to verify that just a small part of the application works correctly. Thankfully, if we make our classes depend on interfaces rather than other classes, we can easily implement those interfaces with special "fake" classes that can be crafted in a way that makes our testing easier. For example, objects of such classes may contain pre-programmed return values for some methods. They can also record the methods that are invoked on them and allow the test to verify whether the communication between our object under test and its dependencies is correct.
 
-Nowadays, we can rely on tools to generate such a "fake" implementation of a given interface for us and let us this generated implementation in place of a real object. This happens in a different way, depending on a language. Sometimes, the interface implementations can be generated at runtime (like in Java or C#), sometimes we have to rely more on compile-time generation (e.g. in C++). 
+Nowadays, we can rely on tools to generate such a "fake" implementation of a given interface for us and let us use this generated implementation in place of a real object in tests. This happens in a different way, depending on a language. Sometimes, the interface implementations can be generated at runtime (like in Java or C#), sometimes we have to rely more on compile-time generation (e.g. in C++). 
 
-Narrowing it down to C# -- a mocking framework is just that -- a mechanism that allows us to create objects (called "mock objects" or just "mocks"), that adhere to a certain interface, at runtime. The type of the interface we want to have implemented is usually passed to a special method which returns a mock object based on that interface (we'll see an example in a few seconds). Aside from the creation of mock objects, such framework provides an API to configure the mocks on how they behave when certain methods are called on them and allows us to inspect which calls they received. This is a very powerful feature, because we can simulate or verify conditions that would be hard to achieve or observe using only production code.
+Narrowing it down to C# -- a mocking framework is just that -- a mechanism that allows us to create objects (called "mock objects" or just "mocks"), that adhere to a certain interface, at runtime. It works like this: the type of the interface we want to have implemented is usually passed to a special method which returns a mock object based on that interface (we'll see an example in a few seconds). Aside from the creation of mock objects, such framework provides an API to configure the mocks on how they behave when certain methods are called on them and allows us to inspect which calls they received. This is a very powerful feature, because we can simulate or verify conditions that would be difficult to achieve or observe using only production code. Mocking frameworks are not as old as test frameworks so they haven't been used in TDD since the very beginning.
 
-Mocking frameworks are not as old as test frameworks so they were not used in TDD at the very beginning. I'll give you a quick example of a mocking framework in action now and defer further explanation of their purpose to a later chapters, as the full description of mocks and their place in TDD is not that easily conveyed.
+I'll give you a quick example of a mocking framework in action now and defer further explanation of their purpose to later chapters, as the full description of mocks and their place in TDD is not so easy to convey.
 
-Let's pretend that we have a class that allows placing orders and then puts these orders into a database (using an implementation of an interface called `OrderDatabase`). In addition, it handles any exception that may occur, by writing it into a log. This class does not do any important stuff, but let's try to imagine really hard that this is some serious domain logic. Here's the code for this class:
+Let's pretend that we have a class that allows placing orders and then puts these orders into a database (using an implementation of an interface called `OrderDatabase`). In addition, it handles any exception that may occur, by writing it into a log. The class itself does not do any important stuff, but let's try to imagine really hard that this is some serious domain logic. Here's the code for this class:
 
 ```csharp
 public class OrderProcessing
@@ -213,7 +213,7 @@ public class OrderProcessing
 }
 ```
 
-Now, imagine we need to test it -- how do we do that? I can already see you shake your head and say: "Let's just create this database, invoke this method and see if the record is added properly". Then, the first test would look like this:
+Now, imagine we need to test it -- how do we do that? I can already see you shake your head and say: "Let's just create a database connection, invoke the `Place()` method and see if the record is added properly into the database". If we did that, the first test would look like this:
 
 ```csharp
 [Fact] public void 
@@ -222,7 +222,7 @@ ShouldInsertNewOrderToDatabaseWhenOrderIsPlaced()
   //GIVEN
   var orderDatabase = new MySqlOrderDatabase(); //uses real database
   orderDatabase.Connect();
-  orderDatabase.Clean();
+  orderDatabase.Clean(); //clean up after potential previous tests
   var orderProcessing = new OrderProcessing(orderDatabase, new FileLog());
   var order = new Order(
     name: "Grzesiek", 
