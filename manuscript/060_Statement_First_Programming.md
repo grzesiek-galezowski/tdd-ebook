@@ -48,32 +48,32 @@ Every accurate Statement fails when it isn’t fulfilled and passes when it is. 
 
 Another thing to note is that, after being fulfilled, the Statement becomes a part of the executable specification and starts failing as soon as the code stops fulfilling it, for example as a result of a mistake made during code refactoring. 
 
-Seeing a Statement evaluated as false gives us valuable feedback. If we run a Statement only *after* the behavior it describes has been implemented and it is evaluated as true, how do we know whether it really describes a need accurately? We didn't ever watch it fail, so what proof do we have that it ever will?
+Seeing a Statement proven as false gives us valuable feedback. If we run a Statement only *after* the behavior it describes has been implemented and it is evaluated as true, how do we know whether it really accurately describes a need? We never saw it failing, so what proof do we have that it ever will?
 
-The first time I encountered this argument was before I started thinking of tests as executable specification. "Seriously?" -- I thought -- "I know what I'm writing. If I make my unit tests small enough, it is self-evident that I am describing the correct behavior. This is paranoid". However, life quickly verified my claims and I was forced to withdraw my arguments. Let me describe three ways I experienced of how one can write a Statement that is always evaluated as true, whether the code is correct or not. There are more ways, however, I think giving you three should be an illustration enough. 
+The first time I encountered this argument was before I started thinking of tests as executable specification. "Seriously?" -- I thought -- "I know what I'm writing. If I make my tests small enough, it is self-evident that I am describing the correct behavior. This is paranoid". However, life quickly verified my claims and I was forced to withdraw my arguments. Let me describe three of the ways I experienced of how one can write a Statement that is always true, whether the code is correct or not. There are more ways, however I think giving you three should be an illustration enough. 
 
-Test-first allowed me to avoid the following situations where Statements cheated me into thinking they were fulfilled even when they were not:
+Test-first allowed me to avoid the following situations where Statements cheated me into thinking they were fulfilled even when they shouldn't be:
 
 #### 1. Accidental omission of including a Statement in a Specification
 
-It's usually insufficient to just write the code of a Statement - we also have to let the test runner know that a method we wrote is really a Statement (not e.g. just a helper method) and it needs to be evaluated, i.e. run by the runner. 
+It's usually insufficient to just write the code of a Statement - we also have to let the test runner know that a method we wrote is really a Statement (not e.g. just a helper method) and it needs to be evaluated, i.e. ran by the runner. 
 
-Most xUnit frameworks have some kind of mechanism to mark methods as Statements, whether by using attributes (C#) or annotations (Java), or by using macros (C and C++) or by inheriting from a common class, or by using a naming convention. 
+Most xUnit frameworks have some kind of mechanism to mark methods as Statements, whether by using attributes (C#, e.g. `[Fact]`) or annotations (Java, e.g `@Test`), or by using macros (C and C++), or by using a naming convention. We have to use such a mechanism to let the runner know that it should execute such methods.
 
-Let's take xUnit.Net as an example. To turn a method into a Statement in xUnit.Net, you mark it with the `[Fact]` attribute in the following way: 
+Let's take xUnit.Net as an example. To turn a method into a Statement in xUnit.Net, we have to mark it with the `[Fact]` attribute like this:
 
 ```csharp
 public class CalculatorSpecification
 {
   [Fact]
-  public void ShouldDisplayAdditionResultAsSumOfArguments() 
+  public void ShouldDisplayAdditionResultAsSumOfArguments()
   {
-    //... 
+    //...
   }
 }
 ```
 
-There is a chance that we may forget to decorate a method with the `[Fact]` attribute - in such case, it's never executed by the test runner. However funny it may sound, this is exactly what happened to me several times. Let's take the above Statement as an example and imagine that we are writing this Statement post-factum as a unit test in an environment that has, let's say, more than thirty Statements already written and passing. We have written the code and now we are just creating test after test to ensure the code works. Test -- pass, test -- pass, test -- pass. When I execute tests, I almost always run more than one at a time, since it's easier for me  than selecting what to evaluate each time. Besides, I get more confidence this way that I don't make a mistake and break something that is already working. Let's imagine we are doing the same here. Then the workflow is really: Test -- all pass, test -- all pass, test -- all pass... 
+There is a chance that we forget to decorate a method with the `[Fact]` attribute - in such case, this method is never executed by the test runner. However funny it may sound, this is exactly what happened to me several times. Let's take the above Statement as an example and imagine that we are writing this Statement post-factum as a unit test in an environment that has, let's say, more than thirty Statements already written and passing. We have written the code and now we are just creating test after test to ensure the code works. Test -- pass, test -- pass, test -- pass. When I execute tests, I almost always run more than one at a time, since it's easier for me  than selecting what to evaluate each time. Besides, I get more confidence this way that I don't make a mistake and break something that is already working. Let's imagine we are doing the same here. Then the workflow is really: Test -- all pass, test -- all pass, test -- all pass... 
 
 Over the time, I have learned to use code snippets mechanism of my IDE to generate a template body for my Statements. Still, in the early days, I have occasionally written something like this:
 
@@ -85,22 +85,22 @@ public class CalculatorSpecification
   //oops... forgot to insert the attribute!
   public void ShouldDisplayZeroWhenResetIsPerformed()
   {
-    //... 
+    //...
   }
 }
 ```
 
-As you can see, the `[Fact]` attribute is missing, which means this Statement will not be executed. This has happened not only because of not using code generators -- sometimes -- to create a new Statement -- it made sense to copy-paste an existing Statement, change the name and few lines of code. I didn't always remember to include the `[Fact]` attribute in the copied source code. The compiler was not complaining as well.
+As you can see, the `[Fact]` attribute is missing, which means this Statement will not be executed. This has happened not only because of not using code generators -- sometimes -- to create a new Statement -- it made sense to copy-paste an existing Statement, change the name and few lines of code[^copypaste]. I didn't always remember to include the `[Fact]` attribute in the copied source code. The compiler was not complaining as well.
 
-The reason I didn't see my mistake was because I was running more than once at a time - when I got a green bar (i.e. all Statements evaluated as true), I assumed that the Statement I just wrote works as well. It was unattractive for me to search for each new Statement in the list and make sure it's there. The more important reason, however, was that the absence of the `[Fact]` attribute did not disturb my work flow: test -- all pass, test -- all pass, test -- all pass... In other words, my process did not give me any feedback that I made a mistake. So, in such case, what we end up with is a Statement that not only will never be evaluated as false -- **it will not evaluated at all**.
+The reason I didn't see my mistake was because I was running more than once at a time - when I got a green bar (i.e. all Statements proven true), I assumed that the Statement I just wrote works as well. It was unattractive for me to search for each new Statement in the list and make sure it's there. The more important reason, however, was that the absence of the `[Fact]` attribute did not disturb my work flow: test -- all pass, test -- all pass, test -- all pass... In other words, my process did not give me any feedback that I made a mistake. So, in such case, what I end up with is a Statement that not only will never be proven false -- **it won't be evaluated at all**.
 
-How does treating tests as Statements and evaluating them before making them true help here? The fundamental difference is that the workflow of TDD is: test -- fail -- pass, test -- fail -- pass, test -- fail -- pass... In other words, we expect each Statement to be evaluated as false at least once. So every time we miss the "fail" stage, we get feedback from our process that something suspicious is happening. This allows us to investigate and fix the problem if necessary.
+How does treating tests as Statements and evaluating them before making them true help here? The fundamental difference is that the workflow of TDD is: test -- fail -- pass, test -- fail -- pass, test -- fail -- pass... In other words, we expect each Statement to be proven false at least once. So every time we miss the "fail" stage, we get feedback from our process that something suspicious is happening. This allows us to investigate and fix the problem if necessary.
 
 #### 2. Misplacing test setup
 
-Ok, this may sound even funnier, but it happened to me a couple of times, so I assume it may happen to you one day, especially if you are in a hurry.
+Ok, this may sound even funnier, but it happened to me a couple of times as well, so I assume it may happen to you one day, especially if you are in a hurry.
 
-Consider the following toy example: we want to validate a simple data structure that models a frame of data that can arrive via network. The structure looks like this:
+Consider the following toy example: we want to validate a simple data structure that models a frame of data that can arrive from network. The structure looks like this:
 
 ```csharp
 public class Frame
@@ -211,3 +211,6 @@ And here's how it often looks like when we write the code first (extra steps mar
 What is the equivalent of the marked steps in the Statement-first approach? There is none! Doing these things is a waste of time! Sadly, this is a waste I encounter a lot.
 
 Surely, nobody likes wasting their time.
+
+[^copypaste]: I know copy-pasting code is considered harmful and we shouldn't be doing that. When writing unit-level Statements, I make some exceptions from that rule. This will be explained in the cmoing chapters.
+
