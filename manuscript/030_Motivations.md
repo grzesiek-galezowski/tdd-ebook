@@ -13,7 +13,7 @@ Another source of motivation may be imagining TDD as something it really is not.
 
 Is learning TDD a high priority for you? Are you determined to try it out and really learn it? If you're not, hey, I heard the new series of Game Of Thrones is on TV, why don’t you check it out instead? Ok, I’m just teasing, however, as some say, TDD is "easy to learn, hard to master"[^easytolearn], so without some guts to move on, it will be hard. Especially since my plan is to introduce the content slowly and gradually, so that you can get better explanation of some of the practices and techniques.
 
-How TDD feels like
+What TDD feels like
 ------------------
 
 My brother and I liked to play video games in our childhood -- one of the most memorable being Tekken 3 -- a Japanese tournament beat’em up for Sony Playstation. Beating the game with all the warriors and unlocking all hidden bonuses, mini-games etc. took about a day. Some could say the game had nothing to offer since then. Why is it then that we spent more than a year on it?
