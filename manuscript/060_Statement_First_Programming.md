@@ -100,7 +100,7 @@ How does treating tests as Statements and evaluating them before making them tru
 
 Ok, this may sound even funnier, but it happened to me a couple of times as well, so I assume it may happen to you one day, especially if you are in a hurry.
 
-Consider the following toy example: we want to validate a simple data structure that models a frame of data that can arrive from network. The structure looks like this:
+Consider the following toy example: we want to validate a simple data structure that models a frame of data that can arrive via network. The structure looks like this:
 
 ```csharp
 public class Frame
@@ -109,9 +109,9 @@ public class Frame
 }
 ```
 
-and we need to write a Statement for a `Validation` class that accepts a `Frame` as an argument and checks whether the time slot is above a value specified in a constant called `TimeSlot.MaxAllowed` (so it's a constant inside a `TimeSlot` class). If it is, then the validation returns `false`, if it's not, then it returns `true`.
+and we need to write a Specification for a `Validation` class that accepts a `Frame` as an argument and checks whether the time slot (whatever it is) is above a value specified in a constant called `TimeSlot.MaxAllowed` (so it's a constant defined in a `TimeSlot` class). If it is, then the validation returns `false`, if it's not, then it returns `true`.
 
-Let's take a look at the following Statement which states that setting a value higher than allowed to a field of a `frame` should make the validation fail:
+Let's take a look at the following Statement which specifies that setting a value higher than allowed to a field of a `frame` should make the validation fail:
 
 ```csharp
 [Fact]
@@ -179,11 +179,13 @@ And goes on with the scenario. When we execute it, it passes -- cool... not. Ok,
 private static string xmlText; //note the static keyword!
 ```
 
-It's a tstatic field, which means that it's What the...? Well, well, here's what happened: the author of this class applied a small optimization. He thought: "In this app, the configuration is only modified by members of the support staff and to do it, they have to shut down the system, so, there is no need to read the XML file every time an XmlConfiguration object is created. I can save some CPU cycles and I/O operations by reading it only once when the first object is created. Later objects will just use the same XML!". Good for him, not so good for you. Why? Because, due to how initialization works in C#, either the original XML string will be used for all Statements or your custom one! Thus the Statements in this Specification may pass or fail for the wrong reason. Writing a Statement first that you expect to fail and see it pass might help to detect this.
+It's a static field, which means that its value is retained between instances. What the...? Well, well, here's what happened: the author of this class applied a small optimization. He thought: "In this app, the configuration is only modified by members of the support staff and to do it, they have to shut down the system, so, there is no need to read the XML file every time an XmlConfiguration object is created. I can save some CPU cycles and I/O operations by reading it only once when the first object is created. Later objects will just use the same XML!". Good for him, not so good for us. Why? Because, depending on the order in which the Statements are evaluated, either the original XML string will be used for all Statements or your custom one! Thus the Statements in this Specification may pass or fail for the wrong reason - because they accidentally use the wrong XML. 
 
-### "Test-After" often ends up as "Test-Never" 
+Starting development from a Statement that we expect to fail may help when such a Statement passes despite the fact that the behavior it describes is not implemented yet.
 
-Consider again the question I already asked in this chapter: did you ever have to write a requirements or design document for something that you already implemented? Was it fun? Was it valuable? Was it creative? As for me, my answer to these questions is no. I observed that the same answer applied to my executable Specification. By observing myself and other developers, I came to a conclusion that after we've written the code, we have little motivation to specify what we wrote -- some of the pieces of code "we can just see are correct", other pieces "we already saw working" when we compiled and deployed our changes and ran a few manual checks... The design is ready... Specification? Maybe next time... Thus, the Specification may never be written and if it is written, I often find that it covers most of the the main flow of the program, but lacks some Statements saying what should happen in case of errors etc.
+### "Test-After" often ends up as "Test-Never"
+
+Consider again the question I already asked in this chapter: did you ever have to write a requirements or design document for something that you already implemented? Was it fun? Was it valuable? Was it creative? As for me, my answer to these questions is *no*. I observed that the same answer applied to writing my executable Specification. By observing myself and other developers, I came to a conclusion that after we've written the code, we have little motivation to specify what we wrote -- some of the pieces of code "we can just see are correct", other pieces "we already saw working" when we compiled and deployed our changes and ran a few manual checks... The design is ready... Specification? Maybe next time... Thus, the Specification may never get to be written at all and if it is written, I often find that it covers most of the the main flow of the program, but lacks some Statements saying what should happen in case of errors etc.
 
 Another reason for ending up not writing the Specification might be time pressure, especially in teams that are not yet mature or not have very strong professioanl ethics. Many times, I have seen people reacting to pressure by dropping everything besides writing the code that directly implements a feature. Among the things that get dropped are design, requirements and tests. And learning as well. I have seen many times teams that, when under pressure, stopped experimenting and learning and reverted to old "safe" behaviors in a mindset of "saving a sinking ship" and "hoping for the best". As in such situations I've seen pressure raise as the project approached its deadline or milestone, leaving Specification until the end means that its's very likely to get dropped, especially in case when the changes are (to a degree) tested manually later.
 
