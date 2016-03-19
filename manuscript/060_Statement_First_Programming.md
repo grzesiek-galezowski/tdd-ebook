@@ -1,7 +1,7 @@
 Statement-first programming
 ===========================
 
-What's the point of writing a specification after the fact? 
+What's the point of writing a specification after the fact?
 --------------------------------------------------------------
 
 One of the best known thing about TDD is that a failing test for a behavior of a piece of code is written before this behavior is implemented. This concept is often called "test-first development" and seems controversial to many.
@@ -187,32 +187,35 @@ Starting development from a Statement that we expect to fail may help when such 
 
 Consider again the question I already asked in this chapter: did you ever have to write a requirements or design document for something that you already implemented? Was it fun? Was it valuable? Was it creative? As for me, my answer to these questions is *no*. I observed that the same answer applied to writing my executable Specification. By observing myself and other developers, I came to a conclusion that after we've written the code, we have little motivation to specify what we wrote -- some of the pieces of code "we can just see are correct", other pieces "we already saw working" when we compiled and deployed our changes and ran a few manual checks... The design is ready... Specification? Maybe next time... Thus, the Specification may never get to be written at all and if it is written, I often find that it covers most of the the main flow of the program, but lacks some Statements saying what should happen in case of errors etc.
 
-Another reason for ending up not writing the Specification might be time pressure, especially in teams that are not yet mature or not have very strong professioanl ethics. Many times, I have seen people reacting to pressure by dropping everything besides writing the code that directly implements a feature. Among the things that get dropped are design, requirements and tests. And learning as well. I have seen many times teams that, when under pressure, stopped experimenting and learning and reverted to old "safe" behaviors in a mindset of "saving a sinking ship" and "hoping for the best". As in such situations I've seen pressure raise as the project approached its deadline or milestone, leaving Specification until the end means that its's very likely to get dropped, especially in case when the changes are (to a degree) tested manually later.
+Another reason for ending up not writing the Specification might be time pressure, especially in teams that are not yet mature or not have very strong professional ethics. Many times, I have seen people reacting to pressure by dropping everything besides writing the code that directly implements a feature. Among the things that get dropped are design, requirements and tests. And learning as well. I have seen many times teams that, when under pressure, stopped experimenting and learning and reverted to old "safe" behaviors in a mindset of "saving a sinking ship" and "hoping for the best". As in such situations I've seen pressure raise as the project approached its deadline or milestone, leaving Specification until the end means that its's very likely to get dropped, especially in case when the changes are (to a degree) tested manually later anyway.
 
-On the other hand, when doing TDD (as we will see in the coming chapters) our Specification grows together with the production code, so there is much less temptation drop it entirely. Moreover, In TDD, a written Specification Statement is not an addition to the code, but rather *a reason* to write code. Creating an executable Specification becomes indispensable part of writing code.
+On the other hand, when doing TDD (as we will see in the coming chapters) our Specification grows together with the production code, so there is much less temptation to drop it entirely. Moreover, In TDD, a written Specification Statement is not an addition to the code, but rather *a reason* to write the code. Creating an executable Specification becomes indispensable part of implementing a feature.
 
 ### "Test-After" often leads to design rework
 
-I like reading and watching Uncle Bob. One day I was listening to [his keynote at Ruby Midwest 2011, called Architecture The Lost Years](http://www.confreaks.com/videos/759-rubymidwest2011-keynote-architecture-the-lost-years). At the end, Robert made some digressions, one of them about TDD. He says that writing unit tests after the code is not TDD. It is a waste of time.
+I like reading and watching Uncle Bob (Robert C. Martin). One day I was listening to [his keynote at Ruby Midwest 2011, called Architecture The Lost Years](http://www.confreaks.com/videos/759-rubymidwest2011-keynote-architecture-the-lost-years). At the end, Robert made some digressions, one of them about TDD. He said that writing tests after the code is not TDD and instead called it "a waste of time".
 
-My initial thought was that the comment was maybe a bit too exaggerated and only about missing all the benefits that starting with a false Statement brings to me: the ability to see the Statement fail, the ability to do a clean-sheet analysis etc. However, now I feel that there's much more to it, thanks to something I learned from Amir Kolsky and Scott Bain -- in order to be able to write a maintainable Specification for a piece of code, the code must have a high level of **testability**. We will talk about this quality later on, but for now let's assume that the easier it is to write a Statement for the behavior of a class, the higher testability it has.
+My initial thought was that the comment was maybe a bit too exaggerated and only about missing all the benefits that starting with a false Statement brings me: the ability to see the Statement fail, the ability to do a clean-sheet analysis etc. However, now I feel that there's much more to it, thanks to something I learned from Amir Kolsky and Scott Bain -- in order to be able to write a maintainable Specification for a piece of code, the code must have a high level of **testability**. We will talk about this quality in part 2 of this book, but for now let's assume the following simplified definition: the higher testability of a piece of code (e.g. a class), the easier it is to write a Statement for its behavior.
 
-Now, where's the waste? To find out, let's compare the Statement-first and code-first approaches. Here's how dealing with testability looks like in the Statement-first workflow for new (non-legacy) code:
+Now, where's the waste in writing the Specification after the code is written? To find out, let's compare the Statement-first and code-first approaches. In the Statement-first workflow for new (non-legacy) code, my workflow and approach to testability usually look like this: 
 
-1. Write a Statement that is false to start with (during this step, detect and correct testability issues even before the tested code is written).
+1. Write a Statement that is false to start with (during this step, detect and correct testability issues even before the production code is written).
 2. Write code to make the Statement true.
 
-And here's how it often looks like when we write the code first (extra steps marked with **strong text**):
+And here's what I often see programmers do when they write the code first (extra steps marked with **strong text**):
 
-1. Write some production code (this probably spans a few classes until we are satisfied).
-2. **Start writing a unit test** (this might not seem like an extra step, since we are doing the same in the previous approach, but once you reach the step 5, you'll know what I mean). 
-3. **Notice that unit testing the whole set of classes is cumbersome and unsustainable and contains high redundancy.**
-4. **Restructure the code to be able to isolate objects and use mocks (this step ensures that code has high testability).**
-5. Write unit tests.
+1. Write some production code without considering how it will be tested (after this step, the testability is often suboptimal as it's usually not being considered at this point).
+2. **Start writing a unit test** (this might not seem like an extra step, since it's also present in the previous approach, but once you reach the step 5, you'll know what I mean). 
+3. **Notice that unit testing the code we wrote is cumbersome and unsustainable and the tests become looking messy as they try to work around the testability issues.**
+4. **Decide to improve testability by restructuring the code, e.g. to be able to isolate objects and use techniques such as mock objects.**
+5. Write unit tests (this time it should be easier as the testability of the tested is better).
 
 What is the equivalent of the marked steps in the Statement-first approach? There is none! Doing these things is a waste of time! Sadly, this is a waste I encounter a lot.
 
-Surely, nobody likes wasting their time.
+Summary
+--------------------------------------------------------------
 
-[^copypaste]: I know copy-pasting code is considered harmful and we shouldn't be doing that. When writing unit-level Statements, I make some exceptions from that rule. This will be explained in the cmoing chapters.
+In this chapter, I tried to show you that the choice of *when* we write our Specification often makes a huge difference  and that there are numerous benefits of starting with a Statement. When we consider the Specification as what it really is - not only as a suite of tests that check runtime correctness - then Statement-first approach becomes less awkward and less counter-intuitive.
+
+[^copypaste]: I know copy-pasting code is considered harmful and we shouldn't be doing that. When writing unit-level Statements, I make some exceptions from that rule. This will be explained in part 2.
 
