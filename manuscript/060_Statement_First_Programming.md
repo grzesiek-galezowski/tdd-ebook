@@ -42,7 +42,7 @@ Explaining the illustration with the TDD process above, I pointed out that we ar
 
 Why is it so important? Isn't it enough to write the Statement first? Why run it and watch it fail? There are several reasons and I will try to outline some of them briefly.
 
-### I can't be sure whether the Statement can ever be false until I see a proof
+The main reason for writing a Statement and watching it fail is that otherwise, I don't have any proof that the Statement can ever fail.
 
 Every accurate Statement fails when it isn’t fulfilled and passes when it is. That's one of the main reasons why we write it -- to see this transition from *red* to *green*, which means that what previously was not implemented (and we had a proof for that) is now working (and we have a proof). Observing the transition proves that we made progress. 
 
@@ -54,7 +54,7 @@ The first time I encountered this argument was before I started thinking of te
 
 Test-first allowed me to avoid the following situations where Statements cheated me into thinking they were fulfilled even when they shouldn't be:
 
-#### 1. Accidental omission of including a Statement in a Specification
+### 1. Accidental omission of including a Statement in a Specification
 
 It's usually insufficient to just write the code of a Statement - we also have to let the test runner know that a method we wrote is really a Statement (not e.g. just a helper method) and it needs to be evaluated, i.e. ran by the runner. 
 
@@ -96,7 +96,7 @@ The reason I didn't see my mistake was because I was running more than once at a
 
 How does treating tests as Statements and evaluating them before making them true help here? The fundamental difference is that the workflow of TDD is: test -- fail -- pass, test -- fail -- pass, test -- fail -- pass... In other words, we expect each Statement to be proven false at least once. So every time we miss the "fail" stage, we get feedback from our process that something suspicious is happening. This allows us to investigate and fix the problem if necessary.
 
-#### 2. Misplacing test setup
+### 2. Misplacing test setup
 
 Ok, this may sound even funnier, but it happened to me a couple of times as well, so I assume it may happen to you one day, especially if you are in a hurry.
 
@@ -130,7 +130,7 @@ Note how the method `PerformForTimeSlotIn()`, which triggers the specified behav
 
 Again, this is a toy example - I just used it as an illustration fo something that can happen when dealing with more complex cases.
 
-#### 3. Using static data inside production code
+### 3. Using static data inside production code
 
 Once in a while, we have to jump in and add some new Statements to an existing Specification and some logic to the class it describes. Let's assume that the class and its Specification were written by someone else than us. Imagine the code we are talking about is a wrapper around our product XML configuration file. We decide to write our Statements *after* applying the changes ("well", we may say, "we're all protected by the Specification that is already in place, so we can make our change without the risk of accidentally breaking existing functionality, and then just test our changes and it's all good...").
 
@@ -183,7 +183,7 @@ It's a static field, which means that its value is retained between instances. W
 
 Starting development from a Statement that we expect to fail may help when such a Statement passes despite the fact that the behavior it describes is not implemented yet.
 
-### "Test-After" often ends up as "Test-Never"
+## "Test-After" often ends up as "Test-Never"
 
 Consider again the question I already asked in this chapter: did you ever have to write a requirements or design document for something that you already implemented? Was it fun? Was it valuable? Was it creative? As for me, my answer to these questions is *no*. I observed that the same answer applied to writing my executable Specification. By observing myself and other developers, I came to a conclusion that after we've written the code, we have little motivation to specify what we wrote -- some of the pieces of code "we can just see are correct", other pieces "we already saw working" when we compiled and deployed our changes and ran a few manual checks... The design is ready... Specification? Maybe next time... Thus, the Specification may never get to be written at all and if it is written, I often find that it covers most of the the main flow of the program, but lacks some Statements saying what should happen in case of errors etc.
 
@@ -191,7 +191,7 @@ Another reason for ending up not writing the Specification might be time pressur
 
 On the other hand, when doing TDD (as we will see in the coming chapters) our Specification grows together with the production code, so there is much less temptation to drop it entirely. Moreover, In TDD, a written Specification Statement is not an addition to the code, but rather *a reason* to write the code. Creating an executable Specification becomes indispensable part of implementing a feature.
 
-### "Test-After" often leads to design rework
+## "Test-After" often leads to design rework
 
 I like reading and watching Uncle Bob (Robert C. Martin). One day I was listening to [his keynote at Ruby Midwest 2011, called Architecture The Lost Years](http://www.confreaks.com/videos/759-rubymidwest2011-keynote-architecture-the-lost-years). At the end, Robert made some digressions, one of them about TDD. He said that writing tests after the code is not TDD and instead called it "a waste of time".
 
