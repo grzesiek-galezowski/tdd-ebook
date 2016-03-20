@@ -255,4 +255,4 @@ public interface Employee
 
 So the general rule is: make interfaces real abstractions by abstracting away the implementation details from them. Only then are you free to create different implementations of the interface that are not constrained by dependencies they do not want or need.
 
-[^interfacesegregation]: http://www.objectmentor.com/resources/articles/isp.pdf
+[^interfacesegregation]: http://docs.google.com/a/cleancoder.com/viewer?a=v&pid=explorer&chrome=true&srcid=0BwhCYaYDn8EgOTViYjJhYzMtMzYxMC00MzFjLWJjMzYtOGJiMDc5N2JkYmJi&hl=en
