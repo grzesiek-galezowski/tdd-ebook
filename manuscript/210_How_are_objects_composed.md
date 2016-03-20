@@ -175,7 +175,7 @@ If this ability is not required, the constructor approach is better as it remove
 
 ### Receive in response to a message (i.e. as method return value)
 
-This method of composing objects relies on an intermediary object -- often an implementation of a [factory pattern](http://www.netobjectivestest.com/PatternRepository/index.php?title=TheAbstractFactoryPattern) -- to supply recipients on request. To simplify things, I will use factories in examples presented in this section, although what I tell you is true for some other [creational patterns](http://en.wikipedia.org/wiki/Creational_pattern) as well (also, later in this chapter, I'll cover some aspects of factory pattern in depth). 
+This method of composing objects relies on an intermediary object -- often an implementation of a [factory pattern](http://www.netobjectives.com/PatternRepository/index.php?title=TheAbstractFactoryPattern) -- to supply recipients on request. To simplify things, I will use factories in examples presented in this section, although what I tell you is true for some other [creational patterns](http://en.wikipedia.org/wiki/Creational_pattern) as well (also, later in this chapter, I'll cover some aspects of factory pattern in depth). 
 
 To be able to ask a factory for recipients, the sender needs to obtain a reference to it first. Typically, a factory is composed with a sender through constructor (an approach we already discussed). For example:
 
