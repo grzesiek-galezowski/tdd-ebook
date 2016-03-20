@@ -128,7 +128,7 @@ public void ShouldRecognizeTimeSlotAboveMaximumAllowedAsInvalid()
 
 Note how the method `PerformForTimeSlotIn()`, which triggers the specified behavior, is accidentally called *before* a value of `timeSlotAboveMaximumAllowed` is set up and thus, this value is not taken into account at the moment when the validation is executed. If, for example, we make a mistake in the implementation of the `Validation` class so that it returns `false` for values below the maximum and not above, such mistake may go unnoticed, because the Statement will always be true.
 
-Again, this is a toy example - I just used it as an illustration fo something that can happen when dealing with more complex cases.
+Again, this is a toy example - I just used it as an illustration of something that can happen when dealing with more complex cases.
 
 ### 3. Using static data inside production code
 
