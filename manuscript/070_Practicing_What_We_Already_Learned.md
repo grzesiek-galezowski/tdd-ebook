@@ -426,7 +426,7 @@ public class Calculator
 
 **Benjamin:** The code looks better and having the constant in one place will make it more maintainable, but I think the Statement in its current form is weaker than before. We could change the `InitialValue` to anything and the Statement would still be true, since it does not force this constant to be "0".
 
-That is right. We need to add it to our TODO list to handle this case. Can you write it down?
+**Johnny:** That's right. We need to add it to our TODO list to handle this case. Can you write it down?
 
 **Benjamin:** Sure. I will write it as "TODO: 0 should be used as an initial value."
 
