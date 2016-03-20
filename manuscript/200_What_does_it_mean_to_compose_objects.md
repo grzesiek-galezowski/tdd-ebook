@@ -2,7 +2,7 @@
 Web, messages and protocols
 ===========================
 
-In the last chapter, we talked a little bit about why composability is valuable, now let's flesh a little bit of terminology to get more precise understanding.
+In the previous chapter, we talked a little bit about why composability is valuable, now let's flesh a little bit of terminology to get more precise understanding.
 
 So, again, what does it mean to compose objects?
 ------------------------------------------------
