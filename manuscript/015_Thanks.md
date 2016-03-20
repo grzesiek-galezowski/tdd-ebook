@@ -8,6 +8,7 @@ I would like to thank the following people (listed alphabetically by name) for v
 -   Daniel Dec
 -   Daniel Żołopa (cover image)
 -   Donghyun Lee
+-   Marek Radecki
 -   Martin Moene
 -   Michael Whelan
 -   Rafał Bigaj
