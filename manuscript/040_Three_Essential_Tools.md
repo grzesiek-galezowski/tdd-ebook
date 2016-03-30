@@ -386,9 +386,9 @@ Looking at the test data in the previous section we see that many values are spe
 
 ```csharp
 var order = new Order(
-  name: "Grzesiek", 
-  surname: "Galezowski", 
-  product: "Agile Acceptance Testing", 
+  name: "Grzesiek",
+  surname: "Galezowski",
+  product: "Agile Acceptance Testing",
   date: DateTime.Now,
   quantity: 1);
 ```
