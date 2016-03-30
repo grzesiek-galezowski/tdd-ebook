@@ -33,7 +33,7 @@ public static void Main(string[] args)
   }
   catch(Exception e)
   {
-    Console.WriteLine("Addition failed because of: " + e);
+    Console.WriteLine("Multiplication failed because of: " + e);
   } 
 }
 ```
