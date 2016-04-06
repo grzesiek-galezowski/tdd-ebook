@@ -25,40 +25,48 @@ Act 1: The Car
 
 **Benjamin:** Acceptance Test-Driven Development? What is that?
 
-**Johnny:** While TDD is usually referred to as a development technique, ATDD is something more of a collaboration method. Both ATDD and TDD have a bit of analysis in them and work very well together as both use the same underlying principles, just on different levels. We will need only a small subset of what ATDD has to offer, so do not get over-excited.
+**Johnny:** While TDD is usually referred to as a development technique, Acceptance Test-Driven Development (ATDD) is something more of a collaboration method. Both ATDD and TDD have a bit of analysis in them and work very well together as both use the same underlying principles, just on different levels. We will need only a small subset of what ATDD has to offer, so don't get over-excited.
 
-**Benjamin:** Sure.
+**Benjamin:** Sure. Who's our customer?
 
-Act 2: The Customer
+**Johhnny:** Her name's Jane. She runs a small shop nearby and wants us to write an application for her new mobile. You'll get the chance to meet her in a minute as we're almost there.
+
+Act 2: The Customer's Site
 -------------------
 
 **Johnny:** Hi, Jane, how are you?
 
-**Jane:** Thanks, I am fine, how about you?
+**Jane:** Thanks, I'm fine, how about you?
 
-**Johnny:** Same here, thanks. So, can you tell us a bit about the software you need us to write?
+**Johnny:** Me too, thanks. Benjamin, this is Jane, our customer. Jane, this is Benjamin, we'll work together on the task you have for us. 
 
-**Jane:** Sure. Recently, I bought a new smartphone as a replacement for my old one. The thing is, I am really used to the calculator application that was running on the previous phone and I cannot find it for my current device.
+**Benjamin:** Hi, nice to meet you.
 
-**Benjamin:** Can't you just use another calculator app? There are plenty of them available to download from the web.
+**Jane:** Hello, nice to meet you too.
 
-**Jane:** That is right. I checked them all and none has exactly the same behavior as the one I was using for my tax calculations. You know, the program was like right hand to me and it had some really nice shortcuts that made my life easier.
+**Johnny:** So, can you tell us a bit about the software you need us to write?
+
+**Jane:** Sure. Recently, I bought a new smartphone as a replacement for my old one. The thing is, I am really used to the calculator application that ran on my previous phone and I cannot find a counterpart for my current device.
+
+**Benjamin:** Can't you just use another calculator app? There are probably plenty of them available to download from the web.
+
+**Jane:** That's right. I checked them all and none has exactly the same behavior as the one I have used for my tax calculations. You see, this app was like a right hand to me and it had some really nice shortcuts that made my life easier.
 
 **Johnny:** So you want us to reproduce the application to run on your new device?
 
-**Jane:** Yes.
+**Jane:** Exactly.
 
 **Johnny:** Are you aware that apart from the fancy features that you were using we will have to allocate some effort to implement the basics that all the calculators have?
 
-**Jane:** Sure, I am OK with that. I am so used to my calculator application that if I use something else for more than a few months, I will have to pay a psychotherapist instead of you guys. Apart from that, writing a calculator app seems like a simple task in my mind, so the cost isn’t going to be overwhelming, right?
+**Jane:** Sure, I am OK with that. I got used to my calculator application so much that if I use something else for more than a few months, I will have to pay a psychotherapist instead of you guys. Apart from that, writing a calculator app seems like an easy task in my mind, so the cost isn't going to be overwhelming, right?
 
 **Johnny:** I think I get it. Let's get it going then. We will be implementing the functionality incrementally, starting with the most essential features. Which feature of the calculator would you consider the most essential?
  
 **Jane:** That would be addition of numbers, I guess.
 
-**Johnny:** Ok, that will be our target for the first iteration. After the iteration, we will deliver this part of the functionality for you to try out and give us some feedback. However, before we can even implement addition, we will have to implement displaying digits on the screen as you enter them. Is that correct?
+**Johnny:** Ok, that will be our target for the first iteration. After the iteration, we will deliver this part of the functionality for you to try out and give us some feedback. However, before we can even deliver the addition feature, we will have to implement displaying digits on the screen as you enter them. Is that correct?
 
-**Jane:** Yes, I want the display stuff to work as well -- it is the most basic feature, so...
+**Jane:** Yes, I need the display stuff to work as well -- it's a prerequisite for other features, so...
 
 **Johnny:** Ok then, this is a simple functionality, so let me suggest some user stories as I understand what you already said and you will correct me where I am wrong. Here we go:
 
@@ -68,9 +76,9 @@ Act 2: The Customer
 
 What do you think?
 
-**Jane**: The stories pretty much reflect what I want for the first iteration. I do not think I have any corrections to make.
+**Jane**: The stories pretty much reflect what I want for the first iteration. I don't think I have any corrections to make.
 
-**Johnny:** Now we will take each story and collect some examples of how it should work.
+**Johnny:** Now we'll take each story and collect some examples of how it should work.
 
 **Benjamin:** Johnny, don’t you think it is obvious enough to proceed with implementation straight away?
 
