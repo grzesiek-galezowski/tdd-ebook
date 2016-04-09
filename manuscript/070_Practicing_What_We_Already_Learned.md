@@ -84,15 +84,15 @@ What do you think?
 
 **Johnny:** Trust me, Benjamin, if there is one word I fear most in communication, it is "obvious". Miscommunication happens most often around things that people consider obvious, simply because other people do not.
 
-**Jane:** Ok, I am in. What do I do?
+**Jane:** Ok, I'm in. What do I do?
 
-**Johnny:** Let's go through stories one by one and see if we can find some key examples of how the features work. The first story is...
+**Johnny:** Let's go through the stories one by one and see if we can find some key examples of how the features should work. The first story is...
 
 ### **In order to** know that the calculator is turned on, **As a** tax payer **I want** to see "0" on the screen as soon as I turn it on.
 
-**Jane:** I do not think there is much to talk about. If you display "0", I will be happy. That is all.
+**Jane:** I don't think there's much to talk about. If you display "0", I will be happy. That's all.
 
-**Johnny:** Let's write down this example:
+**Johnny:** Let's write this example down using a table:
 
 | key sequence | Displayed output | Notes                   |
 |--------------|------------------|-------------------------|
@@ -100,15 +100,19 @@ What do you think?
 
 **Benjamin:** That makes me wonder... what should happen when I press "0" again at this stage?
 
-**Johnny:** Good catch, that is what these examples are for -- they make our thinking concrete. As Ken Pugh says: "Often the complete understanding of a concept does not occur until someone tries to use the concept". We would normally put it on a TODO list, because it is part of a different story, but as we are done with this one, let's move straight to the story about displaying entered digits. How about it, Jane?
+**Johnny:** Good catch, that's what these examples are for -- they make our thinking concrete. As Ken Pugh says[^prefactoring]: "Often the complete understanding of a concept does not occur until someone tries to use the concept". Normally, we would put the "pressing zero multiple times" example on a TODO list and leave it for later, because it's a part of a different story. However, it looks like we're done with the current story, so let's move straight ahead. The next story is about displaying entered digits. How about it, Jane?
 
 **Jane:** Agree.
 
+**Johnny:** Benjamin?
+
+**Benjamin:** Yes, go ahead.
+
 ### **In order to** see what numbers I am currently operating on, **As a** tax payer, **I want** the calculator to display the values I enter
 
-**Johnny:** Let's begin with the case raised by Benjamin. What should happen when I input "0" multiple times after I have only "0" on the display?
+**Johnny:** Let's begin with the case raised by Benjamin. What should happen when I input "0" multiple times after I only have "0" on the display?
 
-**Jane:** Just one "0" should be displayed
+**Jane:** A single "0" should be displayed, no matter how many times I press "0".
 
 **Johnny:** Do you mean this?
 
@@ -116,7 +120,7 @@ What do you think?
 |--------------|------------------|----------------------------------------------------|
 | 0,0,0        | 0                | Zero is a special case – it is displayed only once |
 
-**Jane:** That is right. Other than this, the digits should just show on the screen, like this:
+**Jane:** That's right. Other than this, the digits should just show on the screen, like this:
 
 | key sequence | Displayed output | Notes                        |
 |--------------|------------------|------------------------------|
@@ -136,15 +140,15 @@ What do you think?
 
 **Johnny:** Another good catch, Benjamin!
 
-**Benjamin:** I think I am beginning to understand why you like working with examples!
+**Benjamin:** I think I'm beginning to understand why you like working with examples!
 
 **Johnny:** Good. Is there anything else, Jane?
 
-**Jane:** No, that is pretty much it. Let's start working on another story.
+**Jane:** No, that's pretty much it. Let's start working on another story.
 
 ### **In order to** calculate sum of my different incomes, **As a** tax payer **I want** the calculator to enable addition of multiple numbers
 
-**Johnny:** Is the following all we have to support?
+**Johnny:** Is the following scenario the only one we have to support?
 
 | key sequence | Displayed output | Notes                      |
 |--------------|------------------|----------------------------|
@@ -162,7 +166,7 @@ What do you think?
 |-----------------------------|------------------|-------------------------------------------|
 | 9,9,9,9,9,9,+,9,9,9,9,9,9,= | 199999           | Our display is limited to six digits only |
 
-**Jane:** Sure, I do not mind. I do not add such big numbers anyway.
+**Jane:** Sure, I don't mind. I don't add such big numbers anyway.
 
 **Johnny:** There is still one question we missed. Let's say that I input a number, then press "+" and then another number without asking for result with "=". What should I see?
 
@@ -172,7 +176,7 @@ What do you think?
 |--------------|------------------|---------------------------------------------------------------------------------------------------|
 | 2,+,3        | 3                | Digits entered after + operator are treated as digits of a new number, the previous one is stored |
 
-**Jane:** Oh, and just asking for result after the calculator is turned on should result in "0".
+**Jane:** Oh, and just asking for result just after the calculator is turned on should result in "0".
 
 | key sequence | Displayed output | Notes                             |
 |--------------|------------------|-----------------------------------|
@@ -182,21 +186,21 @@ What do you think?
 
 | key sequence                | Displayed output | Notes    |
 |-----------------------------|------------------|---------------------------------------------------------------------------------------------------|
-| N/A                         | 0                | Initial displayed value |
-| 1,2,3                       | 123              | Entered digits are displayed |
-| 0,0,0                       | 0                | Zero is a special case – it is displayed only once |
-| 1,2,3,4,5,6,7               | 123456           | Our display is limited to six digits only |
+| N/A                         | 0                | Initial displayed value                                                                           |
+| 1,2,3                       | 123              | Entered digits are displayed                                                                      |
+| 0,0,0                       | 0                | Zero is a special case – it is displayed only once                                                |
+| 1,2,3,4,5,6,7               | 123456           | Our display is limited to six digits only                                                         |
 | 2,+,3                       | 3                | Digits entered after + operator are treated as digits of a new number, the previous one is stored |
-| =                           | 0                | Result key in itself does nothing |
-| +,1,=                       | 1                | Addition shortcut – treated as 0+1 |
-| 2,+,3,+,4,=                 | 9                | Simple addition of numbers |
-| 9,9,9,9,9,9,+,9,9,9,9,9,9,= | 199999           | Our display is limited to six digits only |
+| =                           | 0                | Result key in itself does nothing                                                                 |
+| +,1,=                       | 1                | Addition shortcut – treated as 0+1                                                                |
+| 2,+,3,+,4,=                 | 9                | Simple addition of numbers                                                                        |
+| 9,9,9,9,9,9,+,9,9,9,9,9,9,= | 199999           | Our display is limited to six digits only                                                         |
 
 **Johnny:** The limiting of digits displayed looks like a whole new feature, so I suggest we add it to the backlog and do it in another sprint. In this sprint, we will not handle such situation at all. How about that, Jane?
 
-**Jane:** Fine with me. Looks like a lot of work. Nice that we discovered it up-front. For me, the limiting capability seemed so obvious that I did not even think it would be worth mentioning.
+**Jane:** Fine with me. Looks like a lot of work. Nice that we discovered it up-front. For me, the limiting capability seemed so obvious that I didn't even think it would be worth mentioning.
 
-**Johnny:** See? That is why I do not like the word "obvious". Jane, we will get back to you if any more questions arise. For now, I think we know enough to implement these three stories for you.
+**Johnny:** See? That's why I don't like the word "obvious". Jane, we will get back to you if any more questions arise. For now, I think we know enough to implement these three stories for you.
 
 **Jane:** good luck!
 
@@ -207,7 +211,7 @@ Act 3: Test-Driven Development
 
 **Johnny:** In a greatly simplified version, yes. The reason I took you with me was to show you the similarities between working with customer the way we did and working with the code using TDD process. They are both applying the same set of principles, just on different levels.
 
-**Benjamin:** I am dying to see it with my own eyes. Shall we start?
+**Benjamin:** I'm dying to see it with my own eyes. Shall we start?
 
 **Johnny:** Sure. If we followed the ATDD process, we would start writing what we call acceptance-level specification. In our case, however, a unit-level specification will be enough. Let's take the first example:
 
@@ -754,3 +758,6 @@ Epilogue
 --------
 
 Time to leave Johnny and Benjamin, at least for now. I actually planned to make this chapter longer, and cover all the other operations, but I fear I would make this too long and bore you. You should have a feel of how the TDD cycle looks like, especially since Johnny and Benjamin had a lot of conversations on many other topics in the meantime. I will be revisiting these topics later in the book. For now, if you felt lost or unconvinced on any of the topics mentioned by Johnny, do not worry -- I do not expect you to be proficient with any of the techniques shown in this chapter just yet. The time will come for that.
+
+[^prefactoring]: K. Pugh, Prefactoring, O'Reilly Media, 2005
+
