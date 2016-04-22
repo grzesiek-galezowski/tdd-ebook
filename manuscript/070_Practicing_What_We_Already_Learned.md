@@ -223,7 +223,7 @@ Act 3: Test-Driven Development
 
 **Johnny:** Benjamin, try to write the first Statement.
 
-**Benjamin:** Boy, I do not know how to start.
+**Benjamin:** Oh boy, I don't know how to start.
 
 **Johnny:** Start by writing the statement in plain English. What should the calculator do?
 
@@ -246,11 +246,11 @@ ShouldDisplay0WhenCreated()
 
 **Benjamin:** Why is the name of the class `CalculatorSpecification` and the name of the method `ShouldDisplay0WhenCreated`?
 
-**Johnny:** It is a naming convention. There are many others, but this is the one that I like. The rule is that when you take the name of the class without the `Specification` part followed by the name of the method, it should form a legit sentence. For instance, if I apply it to what we wrote, it would make a sentence: "Calculator should display 0 when created".
+**Johnny:** It is a naming convention. There are many others, but this is the one that I like. In this convention, the rule is that when you take the name of the class without the `Specification` part followed by the name of the method, it should form a legit sentence. For instance, if I apply it to what we wrote, it would make a sentence: "Calculator should display 0 when created".
 
-**Benjamin:** Ah, I see now. So it is a statement of behavior, isn’t it?
+**Benjamin:** Ah, I see now. So it's a statement of behavior, isn’t it?
 
-**Johnny:** That is right. Now, the second trick I can sell to you is that if you do not know what code to start with, start with the expected result. In our case, we are expecting that the behavior will end up as displaying "0", right? So let's just write it in the form of an assertion.
+**Johnny:** That's right. Now, the second trick I can sell to you is that if you don't know what code to start your Statement with, start with the expected result. In our case, we are expecting that the behavior will end up as displaying "0", right? So let's just write it in the form of an assertion.
 
 **Benjamin:** You mean something like this?
 
@@ -269,13 +269,13 @@ ShouldDisplay0WhenCreated()
 
 **Johnny:** Precisely.
 
-**Benjamin:** But that does not even compile. What use is it?
+**Benjamin:** But that doesn't even compile. What use is it?
 
-**Johnny:** The code not compiling is the feedback that you needed to proceed. While previously you did not know where to start, now you have a clear goal -- make this code compile. Firstly, where do you get the displayed value from?
+**Johnny:** The code not compiling is the feedback that you needed to proceed. While before you didn't know where to start, now you have a clear goal -- make this code compile. Firstly, where do you get the displayed value from?
 
 **Benjamin:** From the calculator display, of course!
 
-**Johnny:** Then write down how you get the value form the display.
+**Johnny:** Then write down how you get the value from the display.
 
 **Benjamin:** Like how?
 
