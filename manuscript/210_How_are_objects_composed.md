@@ -956,7 +956,7 @@ public class MessageProcessing
     var message = 
       new Message(data, _database, _validation);
     
-    message.Vaidate();
+    message.Validate();
     message.Persist();
     
     //... other actions 
@@ -1010,7 +1010,7 @@ public class MessageProcessing
     //since they already are inside the factory:
     var message = _factory.CreateFrom(data);
     
-    message.Vaidate();
+    message.Validate();
     message.Persist();
     
     //... other actions 

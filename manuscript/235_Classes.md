@@ -18,7 +18,7 @@ A> A code of a Class should have only one reason to change.
 
 There has been a lot written about the principle on the web, so I am not going to be wiser than your favourite web search engine (my recent search yielded over 74 thousands results). Still, I believe it is useful to explain this principle in terms of composability.
 
-Usually, the hard part about this principle is how to understand "a reason to change". Robert C. Martin explains[^srponstackoverflow] that this is about a single source of entropy that generates changes to the class. Which leads us to another trouble of defining a "source of entropy". So I think it's better to just give you an example.
+Usually, the hard part about this principle is how to understand "a reason to change". Robert C. Martin explains[^srponstackoverflow] that this is about a single source of entropy that generates changes to the class, what leads us to another trouble of defining a "source of entropy". So I think it's better to just give you an example.
 
 ### Separating responsibilities
 
@@ -111,7 +111,7 @@ Likewise, a simplest software program that prints "hello world" on the screen ma
 
 ### The mutual relationship between Single Responsibility Principle and composability
 
-The reason I am writing all this is that responsibilities are the real granules of composability. The composability of objects that I have talked about a lot already is a means to achieve composability of responsibilities. So, this is what's our real goal. If we have two collaborating objects, each having a single responsibility, we can easily replace the way our application achieves one of these responsibilities without touching the other. Thus, objects conforming to SRP are the most comfortably composable and the right size.[^notrdd].
+The reason I am writing all this is that responsibilities are the real granules of composability. The composability of objects that I have talked about a lot already is a mean to achieve composability of responsibilities. So, this is what our real goal is. If we have two collaborating objects, each having a single responsibility, we can easily replace the way our application achieves one of these responsibilities without touching the other. Thus, objects conforming to SRP are the most comfortably composable and the right size.[^notrdd].
 
 A good example from another playground where single responsibility goes hand in hand with composability is UNIX. UNIX is famous for its collection of single-purpose command-line tools, like `ls`, `grep`, `ps`, `sed` etc. The single-purposeness of these utilities along with the ability of UNIX commandline to pass output stream of one command to the input stream of another by using the `|` (pipe) operator. For example, we may combine three commands: `ls` (lists contents of directory), `sort` (sorts passed input) and `more` (allows comfortably viewing on the screen input that takes more than one screen) into a pipeline:
 
@@ -128,7 +128,7 @@ While static fields in a class body may sometimes seem like a good idea of "shar
 
 ### SMTP Server
 
-Imagine we need to implement an e-mail server that receives and sends SMTP messages[^smtp]. In our code, have an `OutboundSmtpMessage` class which symbolizes SMTP messages we send to other parties. To send the message, we need to encode it. For now, we always use an encoding called *Quoted-Printable*, which is declared in a separate class called `QuotedPrintableEncoding` and the class `OutboundSmtpMessage` declares a private field of this type:
+Imagine we need to implement an e-mail server that receives and sends SMTP messages[^smtp]. We have an `OutboundSmtpMessage` class which symbolizes SMTP messages we send to other parties. To send the message, we need to encode it. For now, we always use an encoding called *Quoted-Printable*, which is declared in a separate class called `QuotedPrintableEncoding` and the class `OutboundSmtpMessage` declares a private field of this type:
 
 ```csharp
 public class OutboundSmtpMessage
@@ -229,7 +229,7 @@ public class SmtpMessageFactory : MessageFactory
 }  
 ```
 
-The performance and memory saving is not exactly as big as when using a static field (e.g. each `OutboundSmtpMessage` instance uses must store a separate reference to the received encoding), but it is still a huge improvement over creating a separate encoding object per message. 
+The performance and memory saving is not exactly as big as when using a static field (e.g. each `OutboundSmtpMessage` instance must store a separate reference to the received encoding), but it is still a huge improvement over creating a separate encoding object per message. 
 
 ### Where statics work?
 

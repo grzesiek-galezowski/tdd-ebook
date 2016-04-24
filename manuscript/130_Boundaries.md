@@ -16,7 +16,7 @@ ShouldCalculateTheSumOfTwoNumbers()
 {
   //GIVEN
   var a = Any.Integer();
-  var b = Any,Integer();
+  var b = Any.Integer();
   
   //WHEN
   var result = new Sum().Of(a, b);

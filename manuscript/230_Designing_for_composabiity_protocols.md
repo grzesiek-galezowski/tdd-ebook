@@ -337,7 +337,7 @@ foreach(var session in sessions)
 }
 ```
 
-It seems we solved the problem, by separating the data from the context it is used in and pulling data to a place that has the context, i.e. knows what to do with this data. Are we happy? We may be unless we look at how the other parts look like -- remember that in addition to displaying sessions, we also want to send them and persist them. The sending logic looks like this:
+It seems we solved the problemr by separating the data from the context it is used in and pulling data to a place that has the context, i.e. knows what to do with this data. Are we happy? We may be unless we look at how the other parts look like -- remember that in addition to displaying sessions, we also want to send them and persist them. The sending logic looks like this:
 
 ```csharp
 //part of sending logic
@@ -487,7 +487,7 @@ public class TimedSession : Session
 
 and there is no need to change any other code to get this working[^statemachine]. 
 
-Another added bonus of this situation that `Session` does not have to return anything from methods is that we are free to apply proxy and decorator patterns more freely to the `Session`. For example, we may have hidden sessions, that are not displayed/stored/sent at all, but retain the rest of the session functionality. We may implement the feature using a proxy, that forwards all messages it receives to the original, wrapped `Session` object, but discards the `DumpInto()` calls: 
+Another added bonus of this situation is that `Session` does not have to return anything from methods is that we are free to apply proxy and decorator patterns more freely to the `Session`. For example, we may have hidden sessions, that are not displayed/stored/sent at all, but retain the rest of the session functionality. We may implement the feature using a proxy, that forwards all messages it receives to the original, wrapped `Session` object, but discards the `DumpInto()` calls: 
 
 ```csharp
 public class HiddenSession : Session

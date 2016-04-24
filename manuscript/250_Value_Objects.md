@@ -28,7 +28,7 @@ One day, it turns out that these values must be shared across a few subdomains o
 
 1.  The website needs to display them
 2.  They are used in income calculations
-3.  They are taken into account when defining and checking promotion rules (e.g. "buy three, pay for two")
+3.  They are taken into account when defining and checking discount rules (e.g. "buy three, pay for two")
 4.  They must be supplied when printing invoices
 
 etc.
