@@ -296,7 +296,7 @@ ShouldDisplay0WhenCreated()
 }
 ```
 
-**Benjamin:** I see. Now the calculator is not created anywhere. I need to create it somewhere now or it will not compile and this is my next step. Is this how it works?
+**Benjamin:** I see. Now the calculator is not created anywhere. I need to create it somewhere now or it will not compile - this is how I know that it's my next step. Is this how it works?
 
 **Johnny:** Yes, you are catching on quickly.
 
@@ -321,7 +321,7 @@ ShouldDisplay0WhenCreated()
 
 **Johnny:** Bravo!
 
-**Benjamin:** Now the code still does not compile, because I do not have the `Calculator` class at all...
+**Benjamin:** The code doesn't compile yet, because I don't have the `Calculator` class defined at all...
 
 **Johnny:** Sounds like a good reason to create it.
 
@@ -333,7 +333,7 @@ public class Calculator
 }
 ```
 
-**Benjamin:** Looks like the `Display()` method is missing too. I will add it.
+**Benjamin:** Looks like the `Display()` method is missing too. I'll add it.
 
 ```csharp
 public class Calculator
@@ -349,7 +349,7 @@ public class Calculator
 
 **Benjamin:** What?
 
-**Johnny:** You already provided an implementation that will make our current Statement true. Remember its name? `ShouldDisplay0WhenCreated` -- and that is exactly what the code you wrote does. Before we arrive at this point, let's make sure this Statement can ever be evaluated as false. You won't achieve this by providing a correct implementation out of the box. So for now, let's change it to this:
+**Johnny:** You already provided an implementation of `Display()` that will make our current Statement true. Remember its name? `ShouldDisplay0WhenCreated` -- and that's exactly what the code you wrote does. Before we arrive at this point, let's make sure this Statement can ever be evaluated as false. You won't achieve this by providing a correct implementation out of the box. So for now, let's change it to this:
 
 ```csharp
 public class Calculator
@@ -365,7 +365,7 @@ public class Calculator
 
 **Benjamin:** Running... Ok, it is false. By the way, do you always use such silly values to make Statements false?
 
-**Johnny:** Hahaha, no, I just did it to emphasize the point. Normally, I would write `return "";` or something similarly simple. Now we can evaluate the Statement and see it evaluate to false. Now we are sure that we have not yet implemented what is required for the Statement to be true.
+**Johnny:** Hahaha, no, I just did it to emphasize the point. Normally, I would write `return "";` or something similarly simple. Now we can evaluate the Statement and see it turn false. Hence, we're sure that we have not yet implemented what is required for the Statement to be true.
 
 **Benjamin:** I think I get it. For now, the Statement shows that we do not have something we need and gives us a reason to add this "thing". When we do so, this Statement will show that we do have what we need. So what do we do now?
 
@@ -387,15 +387,15 @@ public class Calculator
 
 **Benjamin:** But that is not a real implementation. What is the value behind putting in a hardcoded string? The final implementation is not going to be like this for sure!
 
-**Johnny:** You’re right. The final implementation is most probably going to be different. What we did, however, is still valuable because:
+**Johnny:** You're right. The final implementation is most probably going to be different. What we did, however, is still valuable because:
 
 1.  You’re one step closer to implementing the final solution
 2.  This feeling that this is not the final implementation points you towards writing more Statements. When there is enough Statements to make your implementation complete, it usually means that you have a complete Specification of class behaviors as well.
-3.  If you treat making every Statement true as an achievement, this practice allows you to evolve your code without losing what you already achieved. If by accident you break any of the behaviors you’ve already implemented, the Specification is going to tell you because one of the existing Statements that were previously true will then evaluate to false. You can then either fix it or undo your changes using version control and start over from the point where all existing Statements were true.
+3.  If you treat making every Statement true as an achievement, this practice allows you to evolve your code without losing what you already achieved. If by accident you break any of the behaviors you've already implemented, the Specification is going to tell you because one of the existing Statements that were previously true will turn false. You can then either fix it or undo your changes using version control and start over from the point where all existing Statements were true.
 
-**Benjamin:** Looks like there are quite a few benefits. Still, I will have to get used to this kind of working.
+**Benjamin:** Ok, so it looks like there are some benefits after all. Still, I'll have to get used to this kind of working.
 
-**Johnny:** Do not worry, it is central to TDD, so you will grasp it in no time. Now, before we proceed to the next Statement, let's look at what we already achieved. First, we wrote a Statement that turned out false. Then, we wrote just enough code to make the Statement true. Time for a step called Refactoring. In this step, we will take a look at the Statement and the code and remove duplication. Can you see what is duplicated between the Statement and the code?
+**Johnny:** Don't worry, this approach is an important part of TDD, so you will grasp it in no time. Now, before we go ahead with the next Statement, let's look at what we already achieved. First, we wrote a Statement that turned out false. Then, we wrote just enough code to make the Statement true. Time for a step called Refactoring. In this step, we will take a look at the Statement and the code and remove duplication. Can you see what is duplicated between the Statement and the code?
 
 **Benjamin:** both of them contain the literal "0". The Statement has it here:
 
@@ -436,7 +436,7 @@ public class Calculator
 }
 ```
 
-**Benjamin:** The code looks better and having the constant in one place will make it more maintainable, but I think the Statement in its current form is weaker than before. We could change the `InitialValue` to anything and the Statement would still be true, since it does not force this constant to be "0".
+**Benjamin:** The code looks better and having the constant in one place will make it more maintainable, but I think the Statement in its current form is weaker than before. We can change the `InitialValue` to anything and the Statement will still be true, since it does not state that this constant needs to have a value of "0".
 
 **Johnny:** That's right. We need to add it to our TODO list to handle this case. Can you write it down?
 
