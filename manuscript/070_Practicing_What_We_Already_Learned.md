@@ -436,13 +436,15 @@ public class Calculator
 }
 ```
 
-**Benjamin:** The code looks better and having the constant in one place will make it more maintainable, but I think the Statement in its current form is weaker than before. We can change the `InitialValue` to anything and the Statement will still be true, since it does not state that this constant needs to have a value of "0".
+
+
+**Benjamin:** The code looks better and having the "0" constant in one place will make it more maintainable. However, I think the Statement in its current form is weaker than before. I mean, we can change the `InitialValue` to anything and the Statement will still be true, since it does not state that this constant needs to have a value of "0".
 
 **Johnny:** That's right. We need to add it to our TODO list to handle this case. Can you write it down?
 
 **Benjamin:** Sure. I will write it as "TODO: 0 should be used as an initial value."
 
-**Johnny:** Ok. We should handle it now, especially since it is part of the story we are currently implementing, but I will leave it for later just to show you the power of TODO list in TDD -- whatever is on the list, we can forget and get back to when we have nothing better to do. Our next item from the list is this:
+**Johnny:** Ok. We should handle it now, especially since it's part of the story we are currently implementing, but I will leave it for later just to show you the power of TODO list in TDD -- whatever is on the list, we can forget and get back to when we have nothing better to do. Our next item from the list is this:
 
 ### Statement 2: Calculator should display entered digits
 
@@ -452,7 +454,7 @@ public class Calculator
 
 **Johnny:** Benjamin, can you come up with a Statement for this behavior?
 
-**Benjamin:** I will try. Here goes:
+**Benjamin:** I'll try. Here goes:
 
 ```csharp
 [Fact] public void 
@@ -469,15 +471,15 @@ ShouldDisplayEnteredDigits()
 }
 ```
 
-**Johnny:** I am glad that you got the part about naming and writing a Statement. There is one thing we will have to work on here though.
+**Johnny:** I see that you're learning fast. You got the parts about naming ans structuring a Statement right. There's one thing we will have to work on here though.
 
 **Benjamin:** What is it?
 
 **Johnny:** When we talked to Jane, we used examples with real values. These real values were extremely helpful in pinning down the corner cases and uncovering missing scenarios. They were easier to imagine as well, so they were a perfect suit for conversation. If we were automating these examples on acceptance level, we would use those real values as well. When we write unit-level Statements, however, we use a different technique to get this kind of specification more abstract. First of all, let me enumerate the weaknesses of the approach you just used:
 
 1.  Making a method `Enter()` accept an integer value suggests that one can enter more than one digit at once, e.g. `calculator.Enter(123)`, which is not what we want. We could detect such cases and throw exceptions if the value is outside the 0-9 range, but there are better ways when we know we will only be supporting ten digits (0,1,2,3,4,5,6,7,8,9).
-2.  The Statement does not clearly show the relationship between input and output. Of course, in this simple case it is pretty self-evident that the sum is a concatenation of entered digits, we do not want anyone who will be reading this Specification in the future to have to guess.
-3.  The Statement suggests that what you wrote is sufficient for any value, which isn’t true, since the behavior for "0" is different (no matter how many times we enter "0", the result is just "0")
+2.  The Statement does not clearly show the relationship between input and output. Of course, in this simple case it's pretty self-evident that the sum is a concatenation of entered digits. In general case, however, we don't want anyone reading our Specification in the future to have to guess such things.
+3.  The name of the Statement suggests that what you wrote is true for any value, while in reality, it's true only for digits other than "0", since the behavior for "0" is different (no matter how many times we enter "0", the result is just "0"). There are some good ways to communicate it.
 
 Hence, I propose the following:
 
@@ -508,25 +510,37 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 }
 ```
 
-**Benjamin:** Johnny, I am lost! Can you explain what is going on here?
+**Benjamin:** Johnny, I'm lost! Can you explain what's going on here?
 
 **Johnny:** Sure, what do you want to know?
 
 **Benjamin:** For instance, what is this `DigitKeys` type doing here?
 
-**Johnny:** It is supposed to be an enumeration (note that it does not exist yet, we just assume that we have it) to hold all the possible digits a user can enter, which are 0-9. This is to ensure that the user will not write `calculator.Enter(123)`. Instead of allowing our users to enter any number and then detecting errors, we are giving them a choice from among only the valid values.
+**Johnny:** It is supposed to be an enumeration (note that it does not exist yet, we just assume that we have it) to hold all the possible digits a user can enter, which are from the range of 0-9. This is to ensure that the user will not write `calculator.Enter(123)`. Instead of allowing our users to enter any number and then detecting errors, we are giving them a choice from among only the valid values.
 
 **Benjamin:** Now I get it. So how about the `Any.Besides()` and `Any.Of()`? What do they do?
 
-**Johnny:** They are methods from a small utility library I am using when writing unit-level Specifications. `Any.Besides()` returns any value from enumeration besides the one supplied as an argument. Hence, the call `Any.Besides(DigitKeys.Zero)` means "any of the values contained in DigitKeys enumeration, but not DigitKeys.Zero".
+**Johnny:** They are methods from a small utility library I'm using when writing unit-level Specifications. `Any.Besides()` returns any value from enumeration besides the one passed as an argument. Hence, the call `Any.Besides(DigitKeys.Zero)` means "any of the values contained in DigitKeys enumeration, but not DigitKeys.Zero".
 
-The `Any.Of()` is simpler -- it just returns any value in an enumeration. Note that when I create the values this way, I state explicitly that this behavior occurs when first digit is non-zero. This technique of using generated values instead of literals has its own principles, but let's leave it for later. I promise to give you a detailed lecture on it. Agree?
+The `Any.Of()` is simpler -- it just returns any value in an enumeration. 
 
-**Benjamin:** You better do, because for now, I feel a bit uneasy with generating the values -- it seems like the Statement we are writing is getting less deterministic this way. The last question -- what about those weird comments you put in the code? Given? When? Then?
+Note that by saying:
+
+```csharp
+ var nonZeroDigit = Any.Besides(DigitKeys.Zero);
+ var anyDigit1 = Any.Of<DigitKeys>();
+ var anyDigit2 = Any.Of<DigitKeys>();
+```
+
+I specify explicitly, that the first value entered must be other than "0" and that this constraint does not apply to the second digit, the third one and so on.
+
+By the way, this technique of using generated values instead of literals has its own principles and constraints which you have to know to use it effectively. Let's leave this topic for now and I promise I'll give you a detailed lecture on it later. Agreed?
+
+**Benjamin:** You better do, because for now, I feel a bit uneasy with generating the values -- it seems like the Statement we are writing is getting less deterministic this way. The last question -- what about those weird comments you put in the code? `GIVEN`? `WHEN`? `THEN`?
 
 **Johnny:** Yes, this is a convention that I use, not only in writing, but in thinking as well. I like to think about every behavior in terms of three elements: assumptions (given), trigger (when) and expected result (then). Using the words, we can summarize the Statement we are writing in the following way: "**Given** a calculator, **when** I enter some digits, the first one being non-zero, **then** they should all be displayed in the order they were entered". This is also something that I will tell you more about later.
 
-**Benjamin:** Sure, for now I need just enough detail to understand what is going on -- we can talk about the principles, pros and cons later. By the way, the following sequence of casts looks a little bit ugly:
+**Benjamin:** Sure, for now I need just enough detail to be able to keep going -- we can talk about the principles, pros and cons later. By the way, the following sequence of casts looks a little bit ugly:
 
 ```csharp
 string.Format("{0}{1}{2}", 
@@ -536,38 +550,38 @@ string.Format("{0}{1}{2}",
 )
 ```
 
-**Johnny:** We will get back to it and make it "smarter" in a second after we make this statement true. For now, we need something obvious. Something we know works. let's evaluate this Statement. What is the result?
+**Johnny:** We will get back to it and make it "smarter" in a second after we make this statement true. For now, we need something obvious. Something we know works. Let's evaluate this Statement. What is the result?
 
-**Benjamin:** Failed, expected "331", but was "0".
+**Benjamin:** Failed: expected "351", but was "0".
 
-**Johnny:** Good, now let's write some code to make this Statement true. First, we're going to introduce an enumeration of digits:
+**Johnny:** Good, now let's write some code to make this Statement true. First, we're going to introduce an enumeration of digits. This enum will contain the digit we use in the Statement (which is `DigitKeys.Zero`) and some bogus values:
 
 ```csharp
 public enum DigitKeys
 {
  Zero = 0,
- TODO1, //TODO
- TODO2, //TODO
- TODO3, //TODO
- TODO4, //TODO
+ TODO1, //TODO - bogus value for now
+ TODO2, //TODO - bogus value for now
+ TODO3, //TODO - bogus value for now
+ TODO4, //TODO - bogus value for now
 }
 ```
 
-**Benjamin:** What is with all those bogus values? Should we not just enter all the digits we support?
+**Benjamin:** What's with all those bogus values? Shouldn't we correctly define values for all the digits we support?
 
-**Johnny:** Nope, not yet. We still do not have a Statement which would say what digits are supported and thus make us add them, right?
+**Johnny:** Nope, not yet. We still don't have a Statement which would say what digits are supported and which would make us add them, right?
 
 **Benjamin:** You say you need a Statement for an element to be in an enum?
 
-**Johnny:** This is a specification we are writing, remember? It should say somewhere which digits we support, should it not?
+**Johnny:** This is a specification we are writing, remember? It should say somewhere which digits we support, shouldn't it?
 
-**Benjamin:** It is difficult to agree with, especially since I am used to writing unit tests, not Statements, and, in unit tests, I wanted to verify what I was unsure of.
+**Benjamin:** It's difficult to agree with, I mean, I can see the values in the enum, should I really test for something when there's not complexity involved?
 
-**Johnny:** I will try to give you more arguments later. For now, just bear with me and note that adding such Statement will be almost effortless.
+**Johnny:** Again, we're not only testing, we're specifying. I will try to give you more arguments later. For now, just bear with me and note that when we get to specify the enum elements, adding such Statement will be almost effortless.
 
 **Benjamin:** OK.
 
-**Johnny:** Now for the implementation. Just to remind you -- up to now, it looked like this:
+**Johnny:** Now for the implementation. Just to remind you -- what we have so far looks like this:
 
 ```csharp
 public class Calculator
@@ -580,12 +594,13 @@ public class Calculator
 }
 ```
 
-This is not enough to support displaying multiple digits (as we saw, because the Statement saying they should be supported was evaluated to false). So let's evolve the code to handle this case:
+This clearly does not support support displaying multiple digits (as we just proved, because the Statement saying they are supported turned out false). So let's evolve the code to handle this case:
 
 ```csharp
 public class Calculator
 {
- private int _result = 0;
+ public const string InitialValue = "0";
+ private int _result = InitialValue;
 	  
  public void Enter(DigitKeys digit)
  {
@@ -629,7 +644,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 }
 ```
 
-**Johnny:** Remember you said that you do not like the part where `string.Format()` is used?
+**Johnny:** Remember you said that you don't like the part where `string.Format()` is used?
 
 **Benjamin:** Yeah, it seems a bit unreadable.
 
@@ -673,9 +688,9 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 }
 ```
 
-**Benjamin:** Looks better to me. The Statement is still evaluated as true, which means we got it right, did we not?
+**Benjamin:** Looks better to me. The Statement is still evaluated as true, which means we got it right, didn't we?
 
-**Johnny:** Not exactly. With moves such as this one, I like to be extra careful. Let's comment out the body of the `Enter()` method and see if this Statement can still be made false by the implementation:
+**Johnny:** Not exactly. With moves such as this one, I like to be extra careful and double check whether the Statement still describes the behavior accurately. To make sure that's still the case, let's comment out the body of the `Enter()` method and see if this Statement would still turn out false:
 
 ```csharp
 public void Enter(DigitKeys digit)
@@ -687,11 +702,11 @@ public void Enter(DigitKeys digit)
 
 **Benjamin:** Running... Ok, it is false now. Expected "243", got "0".
 
-**Johnny:** Good, now we are pretty sure that it works OK. Let's uncomment the lines we just commented out and move forward.
+**Johnny:** Good, now we're pretty sure it works OK. Let's uncomment the lines we just commented out and move forward.
 
 ### Statement 3: Calculator should display only one zero digit if it is the only entered digit even if it is entered multiple times 
 
-**Johnny:** Benjamin, this should be easy for you, so go ahead and try it. It is really a variation of previous Statement.
+**Johnny:** Benjamin, this should be easy for you, so go ahead and try it. It is really a variation of the previous Statement.
 
 **Benjamin:** Let me try... ok, here it is:
 
@@ -699,13 +714,15 @@ public void Enter(DigitKeys digit)
 [Fact] public void 
 ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipleTimes()
 {
- var zero = DigitKeys.Zero;
+ //GIVEN
  var calculator = new Calculator();
 	  
- calculator.Enter(zero);
- calculator.Enter(zero);      
- calculator.Enter(zero);
-	  
+ //WHEN
+ calculator.Enter(DigitKeys.Zero);
+ calculator.Enter(DigitKeys.Zero);      
+ calculator.Enter(DigitKeys.Zero);
+
+ //THEN
  Assert.Equal(
   StringConsistingOf(DigitKeys.Zero), 
   calculator.Display()
@@ -713,16 +730,17 @@ ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipl
 }
 ```
 
-**Johnny:** Good, you are learning fast! Let's evaluate this Statement.
+**Johnny:** Good, you're learning fast! Let's evaluate this Statement.
 
 **Benjamin:** It seems that our current code already fulfills the Statement. Should I try to comment some code to make sure this Statement can fail just like you did in the previous Statement?
 
-**Johnny:** That would be wise thing to do. When a Statement is true without requiring you to change any production code, it is always suspicious. Just like you said, we have to change production code for a second to force this Statement to be false, then undo this modification to make it true again. This isn’t as obvious as previously, so let me do it. I will mark all the added lines with `//+` comment so that you can see them easily:
+**Johnny:** That would be wise thing to do. When a Statement is true without requiring you to change any production code, it's always suspicious. Just like you said, we have to change production code for a second to force this Statement to become false, then undo this modification to make it true again. This isn’t as obvious as previously, so let me do it. I will mark all the added lines with `//+` comment so that you can see them easily:
 
 ```csharp
 public class Calculator
 {
- int _result = 0;
+ public const string InitialValue = "0";
+ private int _result = InitialValue;
  string _fakeResult = "0"; //+
 	  
  public void Enter(DigitKeys digit)
@@ -748,7 +766,7 @@ public class Calculator
 
 **Benjamin:** Wow, looks like a lot of code just to make the Statement false! Is it worth the hassle? We will undo this whole change in a second anyway...
 
-**Johnny:** Depends on how confident you want to feel. I would say that it is usually worth it -- at least you know that you got everything right. It might seem like a lot of work, but it only took me about a minute to add this code and imagine you got it wrong and had to debug it on a production environment. Now *that* would be a waste of time.
+**Johnny:** Depends on how confident you want to feel. I would say that it's usually worth it -- at least you know that you got everything right. It might seem like a lot of work, but it only took me about a minute to add this code and imagine you got it wrong and had to debug it on a production environment. Now *that* would be a waste of time.
 
 **Benjamin:** Ok, I think I get it. Since we saw this Statement turn false, I will undo this change to make it true again.
 
@@ -757,7 +775,7 @@ public class Calculator
 Epilogue
 --------
 
-Time to leave Johnny and Benjamin, at least for now. I actually planned to make this chapter longer, and cover all the other operations, but I fear I would make this too long and bore you. You should have a feel of how the TDD cycle looks like, especially since Johnny and Benjamin had a lot of conversations on many other topics in the meantime. I will be revisiting these topics later in the book. For now, if you felt lost or unconvinced on any of the topics mentioned by Johnny, do not worry -- I do not expect you to be proficient with any of the techniques shown in this chapter just yet. The time will come for that.
+Time to leave Johnny and Benjamin, at least for now. I actually planned to make this chapter longer, and cover all the other operations, but I fear I would make this too long and bore you. You should have a feel of how the TDD cycle looks like, especially since Johnny and Benjamin had a lot of conversations on many other topics in the meantime. I will be revisiting these topics later in the book. For now, if you felt lost or unconvinced on any of the topics mentioned by Johnny, don't worry -- I don't expect you to be proficient with any of the techniques shown in this chapter just yet. The time will come for that.
 
 [^prefactoring]: K. Pugh, Prefactoring, O'Reilly Media, 2005
 
