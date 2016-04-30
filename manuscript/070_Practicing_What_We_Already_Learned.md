@@ -29,7 +29,7 @@ Act 1: The Car
 
 **Benjamin:** Sure. Who's our customer?
 
-**Johhnny:** Her name's Jane. She runs a small shop nearby and wants us to write an application for her new mobile. You'll get the chance to meet her in a minute as we're almost there.
+**Johnny:** Her name's Jane. She runs a small shop nearby and wants us to write an application for her new mobile. You'll get the chance to meet her in a minute as we're almost there.
 
 Act 2: The Customer's Site
 -------------------
