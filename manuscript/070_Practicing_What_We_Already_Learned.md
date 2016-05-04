@@ -497,7 +497,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
  calculator.Enter(nonZeroDigit);
  calculator.Enter(anyDigit1);
  calculator.Enter(anyDigit2);
-		  
+          
  //THEN
  Assert.Equal(
   string.Format("{0}{1}{2}", 
@@ -594,14 +594,14 @@ public class Calculator
 }
 ```
 
-This clearly does not support support displaying multiple digits (as we just proved, because the Statement saying they are supported turned out false). So let's evolve the code to handle this case:
+This clearly does not support displaying multiple digits (as we just proved, because the Statement saying they are supported turned out false). So let's change the code to handle this case:
 
 ```csharp
 public class Calculator
 {
  public const string InitialValue = "0";
  private int _result = InitialValue;
-	  
+      
  public void Enter(DigitKeys digit)
  {
   _result *= 10;
@@ -626,12 +626,12 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
  var nonZeroDigit = Any.Besides(DigitKeys.Zero);
  var anyDigit1 = Any.Of<DigitKeys>();
  var anyDigit2 = Any.Of<DigitKeys>();
-		  
+          
  //WHEN
  calculator.Enter(nonZeroDigit);
  calculator.Enter(anyDigit1);
  calculator.Enter(anyDigit2);
-		  
+          
  //THEN
  Assert.Equal(
   string.Format("{0}{1}{2}", 
@@ -654,7 +654,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 string StringConsistingOf(params DigitKeys[] digits)
 {
  var result = string.Empty;
-	  
+      
  foreach(var digit in digits) 
  {
   result += (int)digit;
@@ -674,12 +674,12 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
  var nonZeroDigit = Any.Besides(DigitKeys.Zero);
  var anyDigit1 = Any.Of<DigitKeys>();
  var anyDigit2 = Any.Of<DigitKeys>();
-		  
+          
  //WHEN
  calculator.Enter(nonZeroDigit);
  calculator.Enter(anyDigit1);
  calculator.Enter(anyDigit2);
-		  
+          
  //THEN
  Assert.Equal(
   StringConsistingOf(nonZeroDigit, anyDigit1, anyDigit2),
@@ -716,7 +716,7 @@ ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipl
 {
  //GIVEN
  var calculator = new Calculator();
-	  
+      
  //WHEN
  calculator.Enter(DigitKeys.Zero);
  calculator.Enter(DigitKeys.Zero);      
@@ -742,7 +742,7 @@ public class Calculator
  public const string InitialValue = "0";
  private int _result = InitialValue;
  string _fakeResult = "0"; //+
-	  
+      
  public void Enter(DigitKeys digit)
  {
   _result *= 10;

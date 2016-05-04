@@ -1,5 +1,10 @@
 # Further Reading {#FurtherReading}
 
+## Motivation -- the first step to learning TDD
+
+  - Fearless Change: Patterns for Introducing New Ideas by Mary Lynn Manns Ph.D. and Linda Rising Ph.D. is worth looking at.
+  - [Resistance Is Not to Change](http://www.netobjectives.com/blogs/resistance-not-change) by Al Shalloway
+
 ## The Essential Tools
 
   - Gerard Meszaros has written a long book about using the XUnit family of test frameworks, called [XUnit Test Patterns](http://xunitpatterns.com/). This book also explains a lot of philosophy behind these tools. 

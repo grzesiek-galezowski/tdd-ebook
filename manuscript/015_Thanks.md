@@ -4,6 +4,7 @@ Thanks!
 I would like to thank the following people (listed alphabetically by name) for valuable feedback, suggestions, typo fixes and other contributions: 
 
 -   Brad Appleton
+-   Borysław Bobulski
 -   Chris Kucharski
 -   Daniel Dec
 -   Daniel Żołopa (cover image)
@@ -11,6 +12,7 @@ I would like to thank the following people (listed alphabetically by name) for v
 -   Marek Radecki
 -   Martin Moene
 -   Michael Whelan
+-   Polina Kravchenko
 -   Rafał Bigaj
 -   Reuven Yagel
 -   Rémi Goyard
@@ -21,6 +23,7 @@ This book is not original at all. It presents various topics that others invente
 
 -   Amir Kolsky
 -   Dan North
+-   Emily Bache 
 -   Ken Pugh
 -   Kent Beck
 -   Mark Seemann

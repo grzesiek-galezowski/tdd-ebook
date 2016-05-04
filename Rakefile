@@ -19,9 +19,9 @@ task :validate_encoding do
 
   puts "Validating files encoding"
   puts "========================="
-
+  
   for_each_manuscript_file do |rooted_filename, errors|
-	  encoding = CharDet.detect(File.read(rooted_filename, :encoding => 'utf-8'))["encoding"]
+      encoding = CharDet.detect(File.read(rooted_filename, :encoding => 'utf-8'))["encoding"]
   
     unless ["UTF-8", "ascii", "utf-8"].include? encoding
       errors.add "file #{rooted_filename} has encoding <#{encoding}>"
