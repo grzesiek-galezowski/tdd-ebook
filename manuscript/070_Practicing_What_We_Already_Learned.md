@@ -734,7 +734,7 @@ ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipl
 
 **Benjamin:** It seems that our current code already fulfills the Statement. Should I try to comment some code to make sure this Statement can fail just like you did in the previous Statement?
 
-**Johnny:** That would be wise thing to do. When a Statement is true without requiring you to change any production code, it's always suspicious. Just like you said, we have to change production code for a second to force this Statement to become false, then undo this modification to make it true again. This isn’t as obvious as previously, so let me do it. I will mark all the added lines with `//+` comment so that you can see them easily:
+**Johnny:** That would be a wise thing to do. When a Statement turns out true without requiring you to change any production code, it's always suspicious. Just like you said, we have to change production code for a second to force this Statement to become false, then undo this modification to make it true again. This isn’t as obvious as previously, so let me do it. I will mark all the added lines with `//+` comment so that you can see them easily:
 
 ```csharp
 public class Calculator
