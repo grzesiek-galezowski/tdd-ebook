@@ -18,7 +18,7 @@ A> A code of a Class should have only one reason to change.
 
 There has been a lot written about the principle on the web, so I am not going to be wiser than your favourite web search engine (my recent search yielded over 74 thousands results). Still, I believe it is useful to explain this principle in terms of composability.
 
-Usually, the hard part about this principle is how to understand "a reason to change". Robert C. Martin explains[^srponstackoverflow] that this is about a single source of entropy that generates changes to the class, what leads us to another trouble of defining a "source of entropy". So I think it's better to just give you an example.
+Usually, the hard part about this principle is how to understand "a reason to change". Robert C. Martin explains[^srponstackoverflow] that this is about a single source of entropy that generates changes to the class. Which leads us to another trouble of defining a "source of entropy". So I think it's better to just give you an example.
 
 ### Separating responsibilities
 

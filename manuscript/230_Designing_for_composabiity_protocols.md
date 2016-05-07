@@ -487,7 +487,7 @@ public class TimedSession : Session
 
 and there is no need to change any other code to get this working[^statemachine]. 
 
-Another added bonus of this situation is that `Session` does not have to return anything from methods is that we are free to apply proxy and decorator patterns more freely to the `Session`. For example, we may have hidden sessions, that are not displayed/stored/sent at all, but retain the rest of the session functionality. We may implement the feature using a proxy, that forwards all messages it receives to the original, wrapped `Session` object, but discards the `DumpInto()` calls: 
+ Another advantage of designing/making `Session` to not return anything from its methods is that we have more flexibility in applying patterns such as proxy and decorator to the `Session` implementations. For example, we can use proxy pattern to implement hidden sessions that are not displayed/stored/sent at all, but at the same time behave like another session in all the other cases. Such a proxy forwards all messages it receives to the original, wrapped `Session` object, but discards the `DumpInto()` calls: 
 
 ```csharp
 public class HiddenSession : Session
@@ -516,7 +516,7 @@ public class HiddenSession : Session
 }
 ```
 
-When we are not forced to return anything, we are more free to do as we like. Again, "Tell, don't ask".
+The clients of this code will not notice this change at all. When we are not forced to return anything, we are more free to do as we like. Again, "Tell, don't ask".
 
 ## Protocols should be small and abstract
 

@@ -83,7 +83,7 @@ Let's sum up these two conclusions with the following statement:
 
 I> The composition code is a declarative description of the overall behavior of our application.
 
-Wow, this is quite a statement, isn't it? But, as we already noticed, it is true. There is, however, one problem with treating the composition code as overall application description: readability. Even though the composition *is* the description of the system, it is not naturally readable. We want to see the description of behavior, but most of what we see is: `new`, `new`, `new`, `new`, `new`... There is a lot of syntactic noise involved, especially in real systems, where composition code is much longer than this tiny example. Can't we do something about it?
+Wow, this is quite a statement, isn't it? But, as we already noticed, it is true. There is, however, one problem with treating the composition code as overall application description: readability. Even though the composition *is* the description of the system, it doesn't read naturally. We want to see the description of behavior, but most of what we see is: `new`, `new`, `new`, `new`, `new`... There is a lot of syntactic noise involved, especially in real systems, where composition code is much longer than this tiny example. Can't we do something about it?
 
 ## Refactoring for readability
 
