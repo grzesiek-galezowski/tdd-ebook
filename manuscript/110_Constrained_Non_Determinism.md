@@ -277,4 +277,4 @@ I, after Amir Kolsky and Scott Bain, like to use Any class as seen in the previo
 Summary
 -------
 
-That was a long ride, wasn’t it? I hope that this chapter, gave you some understanding of how different TDD styles came into existence and why I use some of the techniques I do (and how these techniques are not just a series of random choices). In the next chapters, I will try to introduce some more techniques to help you grow a bag of neat tricks -- a coherent style.
+That was a long ride, wasn’t it? I hope that this chapter gave you some understanding of how different TDD styles came into existence and why I use some of the techniques I do (and how these techniques are not just a series of random choices). In the next chapters, I will try to introduce some more techniques to help you grow a bag of neat tricks -- a coherent style.

@@ -83,7 +83,7 @@ Let's sum up these two conclusions with the following statement:
 
 I> The composition code is a declarative description of the overall behavior of our application.
 
-Wow, this is quite a statement, isn't it? But, as we already noticed, it is true. There is, however, one problem with treating the composition code as overall application description: readability. Even though the composition *is* the description of the system, it does not read naturally. We want to see the description of behavior, but most of what we see is: `new`, `new`, `new`, `new`, `new`... There is a lot of syntactic noise involved, especially in real systems, where composition code is much longer than this tiny example. Can't we do something about it?
+Wow, this is quite a statement, isn't it? But, as we already noticed, it is true. There is, however, one problem with treating the composition code as overall application description: readability. Even though the composition *is* the description of the system, it is not naturally readable. We want to see the description of behavior, but most of what we see is: `new`, `new`, `new`, `new`, `new`... There is a lot of syntactic noise involved, especially in real systems, where composition code is much longer than this tiny example. Can't we do something about it?
 
 ## Refactoring for readability
 
@@ -423,7 +423,7 @@ DependingOnTimeOfDay firstPart = DependingOnTimeOfDay.DuringDay(dayAlarm);
 Alarm alarm = firstPart.AtNight(nightAlarm);
 ```
 
-Now, we can just chaing these calls and get the result we wanted to:
+Now, we can just chain these calls and get the result we wanted to:
 
 ```csharp
 new OfficeBuilding(
@@ -537,7 +537,7 @@ Both(
 to obtain different behavior. Note that we have invented something that has these properties:
 
  1. It defines some kind of *vocabulary* -- in our case, the following "words" are form part of the vocabulary: `Both`, `Calls`, `MakesLoudNoise`, `DependingOnTimeOfDay`, `atNight`, `duringDay`, `SecureAreaContaining`, `GuardsBuildingWithAlarmThat`, `OfficeBuildingWithAlarmThat`. 
- 1. It allows combining the words from the vocabulary. These combinations have meaning, which is based solely on the meaning of used words and the way they are combined. For example: `Both(Calls(Police), Calls(Guards))` has the meaning of "calls both police and guards when triggered" -- thus, what this thing we invented really does is allowing us to combine words into *sentences*.
+ 1. It allows combining the words from the vocabulary. These combinations have meaning, which is based solely on the meaning of used words and the way they are combined. For example: `Both(Calls(Police), Calls(Guards))` has the meaning of "calls both police and guards when triggered" -- thus, it allows us to combine words into *sentences*.
  1. Although we are quite liberal in defining behaviors for alarms, there are some rules as what can be composed with what (for example, we cannot compose guards building with an office, but each of them can only be composed with alarms). Thus, we can say that the *sentences* we write have to obey certain rules that look a lot like *a grammar*.
  1. The vocabulary is *constrained to the domain* of alarms. On the other hand, it *is more powerful and expressive* as a description of this domain than a combination of `if` statements, `for` loops, variable assignments and other elements of a general-purpose language. It is tuned towards describing rules of a domain on a *higher level of abstraction*. 
  1. The sentences written define a behavior of the application -- so by writing sentences like this, we still write software! Thus, what we do by combining *words* into *sentences* constrained by a *grammar* is still *programming*!
