@@ -10,3 +10,145 @@ I received some comments about these chapters that include Johnny and Benjamin. 
 
 Best regards and happy reading!
 grzesiek
+
+# 10-01-2015
+
+Hello!
+
+After Christmas, new year, some Ultra Street Fighter 4 + Path of Exile, learning for driving license and conducting some technical training, the new chapter is ready.
+
+This chapter is about two topics related to classes - Single Responsibility Principle and static fields usage. I planned to include the guildeline to avoid real work in constructors, but I could not come up with a flluent and clear argumentation yet, so I decided to postpone it. You can expect me to update this chapter in the future.
+
+The next thing is integrating a bunch of corrections constributed by Reuven Yagel (thanks!). If you'd like to view the changes, github has all the commits history.
+
+The third thing I did was to make a downloadable pdf sample (placed on the book page) which in reality is (and will be) the full book. Anybody can download it without creating an account on leanpub (but only you who registered will get these lovely e-mails :-) plus mobi and epub versions). This is my Christmas gift to the world.
+
+Happy reading!
+
+# 30-11-2014
+
+Hello!
+
+Yes, I know I e-mailed you about a week ago. Still, I have important message to share: the hardest and trickiest for me to write chapter is ready! 
+
+This chapter (Protocols) deals with the idea of creating a stable communication patterns between object and its collaborators. Understanding this idea is crucial for working effectively mock objects.
+
+If you like, please let me know what you think about this new chapter. It was difficult to write, I made three passes through it making corrections and I still feel it can be improved. Even one sentence or a small suggestion is valuable to me!
+
+Oh, and by the way, this is an open source e-book, with sources on github, so if you find a typo or something that is not proper English (I am not a native speaker), you are welcome to fork the repo (it's all in leanpub-flavored markdown, which is easy to understand) and send me a pull request or open an issue on github (or just let me know via leanpub).
+
+Have a great week and happy reading!
+
+# 20-03-2016
+
+Hi,
+
+It's been a long time since I last released a new version. The good news is that this time, an overhaul touched two chapters instead of one. I made two passed through chapters "It's not (only) a test" and "Statement-first programming". Now they more accurately reflect my current point of view and hopefully the examples are better explained. So, if you didn't like these chapters previously, please try to give them another go. I wrote these chapters a long time ago and in their first versions, they were just some text pulled from my blog. Now they should feel more as a part of a book and their quality should feel improved. I'm always looking forward to hear/read your suggestions and impressions, either via e-mail (leanpub has a button called "contact the author" or sth.), twitter, github...
+
+A big Thank You to all the contributors that pointed typos, style problems etc. I'm (and the rest of the readers probably are as well) very grateful for your contributions!
+
+# 08-12-2015
+
+Hello, dear readers and TDD practitioners!
+
+This is my second attempt to write to you. The first time, book release stopped due to an error and I lost what I wrote to you back then. I'm pretty sure you didn't get the previous message. If you did, then sorry for spamming you.
+
+Anyway, last time I released a new version, I promised that next chapters would not take as long to process. I was wrong. A lot of things happened since then - I passed an ISTQB exam, I started guest lectures on three universities in Cracow and did some other things, so the review of "The essential tools" chapter slipped. 
+
+As I said, this release contains a reviewed version of "the essential tools" - I read that chapter again and I noticed there was a lot of room for improvements, especially that this chapter was aimed at novice readers. So I added a lot of clarifications, expanded some of the descriptions, made several corrections to examples and replaced an old XUnit.net GUI runner screenshot with one from Resharper runner (this is because the new XUnit version does not have a GUI runner anymore).
+
+My next step is to review the "It's not a test" chapter. Some time ago, I was forced to re-read that chapter as a lot of fixes were submitted by Martin Moene (thanks again!). I noticed then that while this chapter does reflect my views, it does not do so as accurately as I would like to. Also, the language that I used for this chapter is not the same as I use today when discussing TDD. This is a good moment for you to send me any comments and suggestions you may have about this chapter - I will try to take as much of them as possible into account.
+
+The last news is that I added dead link detection to build scripts, so it will be easier to fix any links that go out of service. I also deleted the old HTML version of the book on github.io as it was out of date and not maintained anymore. It is replaced by leanpub's online version, so please use that.
+
+I don't expect next release to be this year. So, those of you that celebrate Christmas, please accept my wishes of Merry Christmas! And a Happy New Year to everyone!
+
+Best regards and happy reading!
+
+# 30-10-2015
+
+Hi,
+
+As promised, I started reviewing the book chapter by chapter, updating the content to better reflect my current point of view and what I have learned since I started this book.
+
+This release contains reviewed version of the first chapter: Motivation. Reading through the chapter again I noticed that the thing it lacked the most was respect for the reader. Some might say I got "soft", however, I really think you deserve this respect, whether you agree with my point of view or not. I also tried to use more e-prime language, not to impose my views on the reader. I don't want to treat my readers as students who should learn from "the master - me" :-), instead, I'd like to encourage you to engage in a discussion so that I can learn from you. I found that this works much better preaching. As much as I am a catholic dogmatic theology enthusiast, I believe software engineering shouldn't be treated as undisputable dogma, since it's not based on revelation.
+
+This chapter took long, since I was busy with other things like preparing three topics for internal conference and training for a driver's license exam. Now that these things are over, I will hopefully have more time to review further chapter. I am still open to any feedback you might have.
+
+Cheers and happy reading!
+
+# 17-09-2015
+
+Hi!
+
+The new version of TDD: Extensive Tutorial is available. It includes a new chapter on value object anatomy. The chapter continues a discussion on value objects. There will be one more (which you can read in a very draft form by going past the "warning" sign) and we'll get back to TDD and introduce mock objects properly.
+
+This version includes a lot of style corrections and changes to earlier chapters by Martin Moene (which you can look up in the committ history: https://github.com/grzesiek-galezowski/tdd-ebook/commits/master) and some corrections by Spyros Maniatopoulos and Reuven Yagel. Thanks, guys!
+
+Looking through the corrections, it occured to me that my style of writing and building argumentation has matured since I wrote the first chapters. I also noticed some parts of the text that are not as clear as I would like them to be. Thus, I'm thinking of revisiting the earlier chapters and making them clearer, maybe change some examples, maybe clarify existing ones. My dillema has always been between making the older material better and writing new. This time, however, I think there will be more value in reviewing older chapters as this is what most of you stumble upon when you open the book. Please let me know what you think, especially when you think otherwise. Maybe some of you are waiting on the mock introduction and would like to get it part faster?
+
+Anyway, best regards and happy reading! As always, please let me know on any opinions, issues, corrections etc. either through leanpub's contact facilities or through github.
+
+# 22-08-2015
+
+Hi!
+
+it has been a long time since I last wrote to you. Since then, there were few minor releases of the book, but I decided to write another message when I have a new chapter ready. So now you know ;-). The chapter is called Value Objects and is a first of three chapters on value objects that the book will include.
+
+Apart from that, I got a lot of help from Martin Moene, author of lest, a modern, C++11-native, header-only, tiny framework for unit-tests, TDD and BDD (https://github.com/martinmoene/lest). Martin did a titanic work fixing style and typos as well as proposing some changes to the structure and content of a several chapters. I am really happy I decided to make the book open source as I am beginning to see the power of collaboration with community members that bring a lot of good things to the content of the book. Our community is still pretty small, but I value every feedback, be it an opinion, a typo fix, a request for clarification or content change suggestion.
+
+I started thinking about maybe creating a small low-traffic google discussion group, so that some feedback can be shared with all of the community. Please let me know what you think (for now, you can use the feedback icon on the book's leanpub page).
+
+Enjoy!
+
+# 11-06-2015
+
+Hello!
+
+It's been a while since I last published. Just to let you know - this is not in any way a sign of me losing my motivation for writing this book. 
+
+The real reason is that I got to present on two great conferences: Academic Festival in Kraków and Quality Excites in Gliwice. I needed a lot of time to prepare slides and, additionally I made a lot of trainings inside my company, so I was busy. Which isn't bad at all, since it allowed some of my ideas to mature and for me to gain a little distance. What a nice surprise it was when I got back to the last chapter in progress that I paused writing for several months and discovered that what I have written still makes a lot of sense to me!
+
+So, I am back on track and I will be writing more. As a proof of this, the new version of the book contains a new, fresh chapter on viewing object composition as a language. This is heavy influenced by what Nat Pryce and Steve Freeman are researching nowadays, do I gave them a lot of credit in the chapter and am doing so here. 
+
+The chapter was very difficult for me to write (wait, didn't I say that about some previous chapters?), so I would be very, very grateful for any feedback, both big (like very valuable e-mails I have received from some of you) and very small (like a mention on twitter). Of course, another way of providing feedback is through pull requests, because the source markdown of the book is hosted on github (just look: https://github.com/grzesiek-galezowski/tdd-ebook/tree/master/manuscript).
+
+Hope you like it! One or two chapters more and we're back to core TDD and introducing mocks (wait, didn't I say that about some previous chapters? :-)).
+
+Happy reading!
+
+# 14-11-2014
+
+Hello!
+
+Long time no hear from me! Looking at the publish dates, seems like I have not published anything since 2 months ago.
+
+Today I added a new chapter on interfaces. I planned this chapter to be on both interfaces and protocols between objects, but there was too much to grasp and the nesting level for sections was suffering as well, so I figured I'd split the chapter to fix all these things. The protocol part will be published soon (well, actually it's already part of the book, just in draft state and after a warning sign ;-). 
+
+After that I am planning to do maybe one more chapter on value objects and then get back to TDD and mocks.
+
+Happy reading!
+
+# 08-09-2014
+
+Hi, haven't written for quite a long time, main purposes being:
+1. The release of Ultra Street Fighter 4 :-)
+2. Polishing new chapter on how to compose objects
+
+Yeah, the new chapter is ready! I struggled a lot with it and it is quite long, but I hope it proves useful since it touches on both ways of composing objects and *a lot* on benefits of factories.
+
+Happy reading!
+
+# 05-08-2014
+
+In this version:
+- definitely finished "Why do we need composability" chapter to make it cleaner
+- fixed a lot of small errors, typos and misformattings throughout the book
+
+Happy reading and I am eager to hear your opinions and suggestions through twitter, leanpub or github!
+
+# 29-07-2014
+
+- First version published on leanpub.
+- Contains full part 1
+- Part 2 is in progress
