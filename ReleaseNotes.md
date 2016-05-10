@@ -1,4 +1,4 @@
-# 05-09-2016
+# 09-05-2016
 
 Hi!
 
@@ -71,34 +71,6 @@ Apart from that, I got a lot of help from Martin Moene, author of lest, a modern
 I started thinking about maybe creating a small low-traffic google discussion group, so that some feedback can be shared with all of the community. Please let me know what you think (for now, you can use the feedback icon on the book's leanpub page).
 
 Enjoy!
-
-# 10-01-2015
-
-Hello!
-
-After Christmas, new year, some Ultra Street Fighter 4 + Path of Exile, learning for driving license and conducting some technical training, the new chapter is ready.
-
-This chapter is about two topics related to classes - Single Responsibility Principle and static fields usage. I planned to include the guildeline to avoid real work in constructors, but I could not come up with a flluent and clear argumentation yet, so I decided to postpone it. You can expect me to update this chapter in the future.
-
-The next thing is integrating a bunch of corrections constributed by Reuven Yagel (thanks!). If you'd like to view the changes, github has all the commits history.
-
-The third thing I did was to make a downloadable pdf sample (placed on the book page) which in reality is (and will be) the full book. Anybody can download it without creating an account on leanpub (but only you who registered will get these lovely e-mails :-) plus mobi and epub versions). This is my Christmas gift to the world.
-
-Happy reading!
-
-# 30-11-2014
-
-Hello!
-
-Yes, I know I e-mailed you about a week ago. Still, I have important message to share: the hardest and trickiest for me to write chapter is ready! 
-
-This chapter (Protocols) deals with the idea of creating a stable communication patterns between object and its collaborators. Understanding this idea is crucial for working effectively mock objects.
-
-If you like, please let me know what you think about this new chapter. It was difficult to write, I made three passes through it making corrections and I still feel it can be improved. Even one sentence or a small suggestion is valuable to me!
-
-Oh, and by the way, this is an open source e-book, with sources on github, so if you find a typo or something that is not proper English (I am not a native speaker), you are welcome to fork the repo (it's all in leanpub-flavored markdown, which is easy to understand) and send me a pull request or open an issue on github (or just let me know via leanpub).
-
-Have a great week and happy reading!
 
 # 20-03-2016
 
@@ -177,6 +149,35 @@ The chapter was very difficult for me to write (wait, didn't I say that about so
 Hope you like it! One or two chapters more and we're back to core TDD and introducing mocks (wait, didn't I say that about some previous chapters? :-)).
 
 Happy reading!
+
+# 10-01-2015
+
+Hello!
+
+After Christmas, new year, some Ultra Street Fighter 4 + Path of Exile, learning for driving license and conducting some technical training, the new chapter is ready.
+
+This chapter is about two topics related to classes - Single Responsibility Principle and static fields usage. I planned to include the guildeline to avoid real work in constructors, but I could not come up with a flluent and clear argumentation yet, so I decided to postpone it. You can expect me to update this chapter in the future.
+
+The next thing is integrating a bunch of corrections constributed by Reuven Yagel (thanks!). If you'd like to view the changes, github has all the commits history.
+
+The third thing I did was to make a downloadable pdf sample (placed on the book page) which in reality is (and will be) the full book. Anybody can download it without creating an account on leanpub (but only you who registered will get these lovely e-mails :-) plus mobi and epub versions). This is my Christmas gift to the world.
+
+Happy reading!
+
+
+# 30-11-2014
+
+Hello!
+
+Yes, I know I e-mailed you about a week ago. Still, I have important message to share: the hardest and trickiest for me to write chapter is ready! 
+
+This chapter (Protocols) deals with the idea of creating a stable communication patterns between object and its collaborators. Understanding this idea is crucial for working effectively mock objects.
+
+If you like, please let me know what you think about this new chapter. It was difficult to write, I made three passes through it making corrections and I still feel it can be improved. Even one sentence or a small suggestion is valuable to me!
+
+Oh, and by the way, this is an open source e-book, with sources on github, so if you find a typo or something that is not proper English (I am not a native speaker), you are welcome to fork the repo (it's all in leanpub-flavored markdown, which is easy to understand) and send me a pull request or open an issue on github (or just let me know via leanpub).
+
+Have a great week and happy reading!
 
 # 14-11-2014
 
