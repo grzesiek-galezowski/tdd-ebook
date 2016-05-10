@@ -72,14 +72,6 @@ I started thinking about maybe creating a small low-traffic google discussion gr
 
 Enjoy!
 
-# 20-03-2016
-
-Hi,
-
-It's been a long time since I last released a new version. The good news is that this time, an overhaul touched two chapters instead of one. I made two passed through chapters "It's not (only) a test" and "Statement-first programming". Now they more accurately reflect my current point of view and hopefully the examples are better explained. So, if you didn't like these chapters previously, please try to give them another go. I wrote these chapters a long time ago and in their first versions, they were just some text pulled from my blog. Now they should feel more as a part of a book and their quality should feel improved. I'm always looking forward to hear/read your suggestions and impressions, either via e-mail (leanpub has a button called "contact the author" or sth.), twitter, github...
-
-A big Thank You to all the contributors that pointed typos, style problems etc. I'm (and the rest of the readers probably are as well) very grateful for your contributions!
-
 # 08-12-2015
 
 Hello, dear readers and TDD practitioners!
