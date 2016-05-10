@@ -72,60 +72,6 @@ I started thinking about maybe creating a small low-traffic google discussion gr
 
 Enjoy!
 
-# 08-12-2015
-
-Hello, dear readers and TDD practitioners!
-
-This is my second attempt to write to you. The first time, book release stopped due to an error and I lost what I wrote to you back then. I'm pretty sure you didn't get the previous message. If you did, then sorry for spamming you.
-
-Anyway, last time I released a new version, I promised that next chapters would not take as long to process. I was wrong. A lot of things happened since then - I passed an ISTQB exam, I started guest lectures on three universities in Cracow and did some other things, so the review of "The essential tools" chapter slipped. 
-
-As I said, this release contains a reviewed version of "the essential tools" - I read that chapter again and I noticed there was a lot of room for improvements, especially that this chapter was aimed at novice readers. So I added a lot of clarifications, expanded some of the descriptions, made several corrections to examples and replaced an old XUnit.net GUI runner screenshot with one from Resharper runner (this is because the new XUnit version does not have a GUI runner anymore).
-
-My next step is to review the "It's not a test" chapter. Some time ago, I was forced to re-read that chapter as a lot of fixes were submitted by Martin Moene (thanks again!). I noticed then that while this chapter does reflect my views, it does not do so as accurately as I would like to. Also, the language that I used for this chapter is not the same as I use today when discussing TDD. This is a good moment for you to send me any comments and suggestions you may have about this chapter - I will try to take as much of them as possible into account.
-
-The last news is that I added dead link detection to build scripts, so it will be easier to fix any links that go out of service. I also deleted the old HTML version of the book on github.io as it was out of date and not maintained anymore. It is replaced by leanpub's online version, so please use that.
-
-I don't expect next release to be this year. So, those of you that celebrate Christmas, please accept my wishes of Merry Christmas! And a Happy New Year to everyone!
-
-Best regards and happy reading!
-
-# 30-10-2015
-
-Hi,
-
-As promised, I started reviewing the book chapter by chapter, updating the content to better reflect my current point of view and what I have learned since I started this book.
-
-This release contains reviewed version of the first chapter: Motivation. Reading through the chapter again I noticed that the thing it lacked the most was respect for the reader. Some might say I got "soft", however, I really think you deserve this respect, whether you agree with my point of view or not. I also tried to use more e-prime language, not to impose my views on the reader. I don't want to treat my readers as students who should learn from "the master - me" :-), instead, I'd like to encourage you to engage in a discussion so that I can learn from you. I found that this works much better preaching. As much as I am a catholic dogmatic theology enthusiast, I believe software engineering shouldn't be treated as undisputable dogma, since it's not based on revelation.
-
-This chapter took long, since I was busy with other things like preparing three topics for internal conference and training for a driver's license exam. Now that these things are over, I will hopefully have more time to review further chapter. I am still open to any feedback you might have.
-
-Cheers and happy reading!
-
-# 17-09-2015
-
-Hi!
-
-The new version of TDD: Extensive Tutorial is available. It includes a new chapter on value object anatomy. The chapter continues a discussion on value objects. There will be one more (which you can read in a very draft form by going past the "warning" sign) and we'll get back to TDD and introduce mock objects properly.
-
-This version includes a lot of style corrections and changes to earlier chapters by Martin Moene (which you can look up in the committ history: https://github.com/grzesiek-galezowski/tdd-ebook/commits/master) and some corrections by Spyros Maniatopoulos and Reuven Yagel. Thanks, guys!
-
-Looking through the corrections, it occured to me that my style of writing and building argumentation has matured since I wrote the first chapters. I also noticed some parts of the text that are not as clear as I would like them to be. Thus, I'm thinking of revisiting the earlier chapters and making them clearer, maybe change some examples, maybe clarify existing ones. My dillema has always been between making the older material better and writing new. This time, however, I think there will be more value in reviewing older chapters as this is what most of you stumble upon when you open the book. Please let me know what you think, especially when you think otherwise. Maybe some of you are waiting on the mock introduction and would like to get it part faster?
-
-Anyway, best regards and happy reading! As always, please let me know on any opinions, issues, corrections etc. either through leanpub's contact facilities or through github.
-
-# 22-08-2015
-
-Hi!
-
-it has been a long time since I last wrote to you. Since then, there were few minor releases of the book, but I decided to write another message when I have a new chapter ready. So now you know ;-). The chapter is called Value Objects and is a first of three chapters on value objects that the book will include.
-
-Apart from that, I got a lot of help from Martin Moene, author of lest, a modern, C++11-native, header-only, tiny framework for unit-tests, TDD and BDD (https://github.com/martinmoene/lest). Martin did a titanic work fixing style and typos as well as proposing some changes to the structure and content of a several chapters. I am really happy I decided to make the book open source as I am beginning to see the power of collaboration with community members that bring a lot of good things to the content of the book. Our community is still pretty small, but I value every feedback, be it an opinion, a typo fix, a request for clarification or content change suggestion.
-
-I started thinking about maybe creating a small low-traffic google discussion group, so that some feedback can be shared with all of the community. Please let me know what you think (for now, you can use the feedback icon on the book's leanpub page).
-
-Enjoy!
-
 # 11-06-2015
 
 Hello!
