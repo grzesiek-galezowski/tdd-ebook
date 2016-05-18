@@ -49,7 +49,7 @@ Note a few things about the name of the Statement:
 1.  It describes a behavior of an instance of a specific class. Note that it doesn't contain the name of the method that triggers the behavior, because what is specified is not a single method, but the behavior itself (this will be covered in more detail in the coming chapters). The Statement name simply tells what an instance does ("notifies listeners that server is unavailable") under certain circumstances ("when cannot connect to its monitoring port"). It is important for me because I can derive such a description from thinking about the responsibilities of a class without the need to know any of its method signatures or the code that's inside the class. Hence, this is something I can come up with before implementing -- I just need to know why I created this class and build on this knowledge.
 2.  The name is relatively long. Really, really, **really** don't worry about it. As long as you are describing a single behavior, I'd say it's fine. I've seen people hesitate to give long names to Statements, because they tried to apply the same rules to those names as to the names of methods in production code. In production code, a long method name can be a sign that the method has too many responsibilities or that insufficient abstraction level is used to describe a functionality and that the name may needlessly reveal implementation details. My opinion is that these two reasons don't apply as much to Statements. In case of Statements, the methods are not invoked by anyone besides the automatic test runner, so they will not obfuscate any code that would need to call them with their long names. In addition, the Statements names need not be as abstract as production code method names - they can reveal more. 
 
-Alternatively, we could put all the information in a comment instead of the Statement name and leave the name short, like this:
+    Alternatively, we could put all the information in a comment instead of the Statement name and leave the name short, like this:
 
     ```csharp
     [Fact]
@@ -62,7 +62,7 @@ Alternatively, we could put all the information in a comment instead of the Stat
     }
     ```
     
-    however, there are two downsides to this. First, we now have to add an extra piece information (`Statement_002`) only to satisfy the compiler, because every method needs to have a name anyway -- and there is usually no value a human could derive from a name such as `Statement_002`. The second downside is that when the Statement turns false, the test runner shows the following line: `Statement_002: FAILED` -- note that all the information included in the comment is missing from the failure report. I consider it much more valuable to receive a report like:
+    however, there are two downsides to this. First, we now have to add an extra piece of information (`Statement_002`) only to satisfy the compiler, because every method needs to have a name anyway -- and there is usually no value a human could derive from a name such as `Statement_002`. The second downside is that when the Statement turns false, the test runner shows the following line: `Statement_002: FAILED` -- note that all the information included in the comment is missing from the failure report. I consider it much more valuable to receive a report like:
 
     `notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort: FAILED`
 
@@ -121,15 +121,15 @@ This technique can be used as an extension to the previous one (i.e. starting wi
 **1.  What is the context ("GIVEN"), the action ("WHEN") and expected reaction ("THEN") of this behavior? Example answer: Given I turn on the calculator, when I enter any digit that's not a 0 followed by any digits, then they should be visible on the display**. 
 1.  How to specify this behavior through code? Example answer: `[Fact] public void ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes() ...` (i.e. a piece of code).
 
-Alternatively, it can be used without the naming step, when it's harder to come up with a name than with a GIVEN-WHEN-THEN structure. In other words, a GIVEN-WHEN-THEN structure can be easily derived from a good name and vice versa. 
+Alternatively, it can be used without the naming step, when it's harder to come up with a name than with a GIVEN-WHEN-THEN structure. In other words, a GIVEN-WHEN-THEN structure can be easily derived from a good name and vice versa.
 
-Anyway, this technique is about taking the GIVEN, WHEN and THEN parts and translating them into code in an almost literal, brute-force way (without paying attention to missing classes, methods or variables), and then adding all the missing pieces that are required for the code to compile and run.
-
-TODO
+This technique is about taking the GIVEN, WHEN and THEN parts and translating them into code in an almost literal, brute-force way (without paying attention to missing classes, methods or variables), and then adding all the missing pieces that are required for the code to compile and run.
 
 ### Example
 
-Let's try this on a simple problem of comparing two users. We assume that two users should be equal to each other if they have the same name:
+TODO TODO TODO TODO TODO TODO TODO TODO TODO
+
+Let's try it out on a simple problem of comparing two users. We assume that two users should be equal to each other if they have the same name:
 
 ```gherkin
 Given a user with any name
