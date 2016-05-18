@@ -241,14 +241,14 @@ ShouldAppearEqualToAnotherUserWithTheSameName()
 }
 ```
 
-And that's it -- the Statement is complete!
-
-TODO TODO TODO TODO
+And that's it -- the Statement itself is complete!
 
 Start from the end
 ------------------
 
-This is a technique that I suggest to people that seem to have absolutely no idea how to start. I got it from Kent Beck’s book Test Driven Development by Example. It seems funny initially, but it is quite powerful. The trick is to write the Statement ‘backwards’, i.e. starting with what the Statement asserts to be true (in terms of the GIVEN-WHEN-THEN structure, we would say that we start with our THEN).
+TODO TODO TODO
+
+This is a technique that I suggest to people that seem to have absolutely no idea how to start. I got it from Kent Beck’s book Test Driven Development by Example. It seems funny initially, but it's quite powerful. The trick is to write the Statement ‘backwards’, i.e. starting with what the Statement asserts to be true (in terms of the GIVEN-WHEN-THEN structure, we would say that we start with our THEN).
 
 This works, because many times we are quite sure of what the outcome of the behavior should be, but are unsure of how to get there.
 
