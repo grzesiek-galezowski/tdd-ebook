@@ -127,9 +127,7 @@ This technique is about taking the GIVEN, WHEN and THEN parts and translating th
 
 ### Example
 
-TODO TODO TODO TODO TODO TODO TODO TODO TODO
-
-Let's try it out on a simple problem of comparing two users. We assume that two users should be equal to each other if they have the same name:
+Let's try it out on a simple problem of comparing two users for equality. We assume that two users should be equal to each other if they have the same name:
 
 ```gherkin
 Given a user with any name
@@ -137,7 +135,7 @@ When I compare it to another user with the same name
 Then it should appear equal to this other user
 ```
 
-Let's start with the translation
+Let's start with the translation part. Again, remember we're trying to make the translation as literal as possible without paying attention to all the missing pieces for now.
 
 The first line:
 
@@ -145,11 +143,13 @@ The first line:
 Given a user with any name
 ```
 
-can be translated literally to code like this:
+can be translated literally to the following piece of code:
 
 ```csharp
 var user = new User(anyName);
 ```
+
+Note that we don't have the `User` class yet and we don't bother for now with what `anyName` really is. It's OK. 
 
 Then the second line:
 
@@ -163,7 +163,7 @@ can be written as:
 user.Equals(anotherUserWithTheSameName);
 ```
 
-Great! Now the last line:
+Great! Again, we don't care what `anotherUserWithTheSameName` is yet. We treat it as a placeholder. Now the last line:
 
 ```gherkin
 Then it should appear equal to this other user
@@ -175,7 +175,7 @@ and its translation into the code:
 Assert.True(usersAreEqual);
 ```
 
-Ok, so now we have made the translation, let's summarize it and see what is missing to make this code compile:
+Ok, so now that the literal translation is complete, let's put all the parts together and see what's missing to make this code compile:
 
 ```csharp
 [Fact] public void 
@@ -192,14 +192,14 @@ ShouldAppearEqualToAnotherUserWithTheSameName()
 }
 ```
 
-As we expected, this will not compile. Notably, our compiler might point us towards the following gaps:
+As we expected, this doesn't compile. Notably, our compiler might point us towards the following gaps:
 
 1.  Variable `anyName` is not declared.
-2.  Object `anotherUserWithTheSameName` is not declared.
-3.  Variable `usersAreEqual` is both not declared and it does not hold the comparison result.
-4.  If this is our first Statement, we might not even have the `User` class defined at all.
+1.  Object `anotherUserWithTheSameName` is not declared.
+1.  Variable `usersAreEqual` is both not declared and it does not hold the comparison result.
+1.  If this is our first Statement, we might not even have the `User` class defined at all.
 
-The compiler created a kind of a small TODO list for us, which is nice. Note that while we do not have compiling code, filling the gaps boils down to making a few trivial declarations and assignments:
+The compiler created a kind of a small TODO list for us, which is nice. Note that while we don't have compiling code, filling the gaps to make it compile boils down to making a few trivial declarations and assignments:
 
 1.  `anyName` can be defined as:
 
@@ -209,15 +209,20 @@ The compiler created a kind of a small TODO list for us, which is nice. Note tha
 
     `var anotherUserWithTheSameName = new User(anyName);`
 
-3.  `usersAreEqual` can be defined as follows:
+3.  `usersAreEqual` can be defined as variable which we assign the comparison result to:
 
     `var usersAreEqual = user.Equals(anotherUserWithTheSameName);`
 
 4.  If class `User` does not yet exist, we can add it by simply stating:
 
-    `public class User {}`
+    ```csharp
+    public class User 
+    {
+      public User(string name) {}
+    }
+    ```
 
-Putting it all together:
+Putting it all together again, after filling the gaps, gives us:
 
 ```csharp
 [Fact] public void 
@@ -237,6 +242,8 @@ ShouldAppearEqualToAnotherUserWithTheSameName()
 ```
 
 And that's it -- the Statement is complete!
+
+TODO TODO TODO TODO
 
 Start from the end
 ------------------
