@@ -246,44 +246,41 @@ And that's it -- the Statement itself is complete!
 Start from the end
 ------------------
 
-TODO TODO TODO
+This is a technique that I suggest to people that seem to have absolutely no idea how to start. I got it from Kent Beck’s book Test Driven Development by Example. It seems funny at first glance, but I found it quite powerful at times. The trick is to write the Statement "backwards", i.e. starting with what the Statement asserts to be true (in terms of the *GIVEN-WHEN-THEN* structure, we would say that we start with our *THEN* part).
 
-This is a technique that I suggest to people that seem to have absolutely no idea how to start. I got it from Kent Beck’s book Test Driven Development by Example. It seems funny initially, but it's quite powerful. The trick is to write the Statement ‘backwards’, i.e. starting with what the Statement asserts to be true (in terms of the GIVEN-WHEN-THEN structure, we would say that we start with our THEN).
-
-This works, because many times we are quite sure of what the outcome of the behavior should be, but are unsure of how to get there.
+This works, because many times we are quite sure of what the outcome of a behavior should be, but not quite so sure of how to get there.
 
 ### Example
 
-Imagine we are writing a class for granting access to a reporting functionality that is based on roles. We have no idea what the API should look like and how to write our Statement, but we do know one thing: in our domain the access can be either granted or denied. Let's take the first case we can think of and, starting backwards, begin with the following assertion:
+Imagine we are writing a class for granting access to a reporting functionality. This reporting functionality is based on roles. We have no idea what the API should look like and how to write our Statement, but we do know one thing: in our domain the access can be either granted or denied. Let's take the first case we can think of -- the "access granted" case -- and, starting backwards, begin with the following assertion:
 
 ```csharp
 //THEN
 Assert.True(accessGranted);
 ```
 
-Ok, that part was easy, but did we make any progress with that? Of course we did -- we now have code that does not compile, with the error caused by the variable `accessGranted`. Now, in contrast to the previous approach where we translated a GIVEN-WHEN-THEN structure into a Statement, our goal is not to make this compile as soon as possible. Instead we are to answer the question: how do I know whether the access is granted or not? The answer: it is the result of authorization of the allowed role. Ok, so let's just write it down, ignoring everything that stands in our way:
+Ok, that part was easy, but did we make any progress with that? Of course we did -- we now have code that does not compile, with the error caused by the variable `accessGranted`. Now, in contrast to the previous approach where we translated a GIVEN-WHEN-THEN structure into a Statement, our goal is not to make this compile as soon as possible. Instead, we need to answer the question: how do I know whether the access is granted or not? The answer: it is the result of authorization of the allowed role. Ok, so let's just write it down in code, ignoring everything that stands in our way:
 
 ```csharp
 //WHEN
 var accessGranted 
- = authorization.AccessToReportingIsGrantedTo(
-  roleAllowedToUseReporting);
+ = access.ToReportingIsGrantedTo(roleAllowedToUseReporting);
 ```
 
-Resist the urge to define a class or variable as soon as it seems needed, as that will only throw you off the track and steal your focus from what is important. The key to doing TDD successfully is to learn to use something that does not exist yet as if it existed.
+For now, try to resist the urge to define a class or variable to make the compiler happy, as that will only throw you off the track and steal your focus from what is important. The key to doing TDD successfully is to learn to use something that does not exist yet as if it existed.
 
-Note that we do not know what `roleAllowedToUseReporting` is, neither do we know what `authorization` is, but that did not stop us from writing this line. Also, the `AccessToReportingIsGrantedTo()` method is just taken off the top of our head. It is not defined anywhere, it just made sense to write it like this, because it is the most direct translation of what we had in mind.
+Note that we don't know what `roleAllowedToUseReporting` is, neither do we know what `access` object stands for, but that didn't stop us from writing this line. Also, the `ToReportingIsGrantedTo()` method is just taken off the top of our head. It's not defined anywhere, it just made sense to write it like this, because it is the most direct translation of what we had in mind.
 
-Anyway, this new line answers the question about where we take the `accessGranted` from, but it also makes us ask further questions:
+Anyway, this new line answers the question about where we take the `accessGranted` value from, but it also makes us ask further questions:
 
-1.  Where does the `authorization` variable come from?
+1.  Where does the `access` variable come from?
 2.  Where does the `roleAllowedToUseReporting` variable come from?
 
-As for `authorization`, we do not have anything specific to say about it other than that it is an object of a class that we do not yet have. To proceed, let's pretend that we have such a class. How do we call it? The instance name is `authorization`, so it is quite straightforward to name the class `Authorization` and instantiate it in the simplest way we can think of:
+As for `access`, we don't have anything specific to say about it other than that it is an object of a class that is not defined yet. To proceed, let's pretend that we have such a class (but not define it yet). How do we call it? The instance name is `access`, so it's quite straightforward to name the class `Access` and instantiate it in the simplest way we can think of:
 
 ```csharp
 //GIVEN
-var authorization = new Authorization();
+var access = new Access();
 ```
 
 Now for the `roleAllowedToUseReporting`. The first question that comes to mind when looking at this is: which roles are allowed to use reporting? Let's assume that in our domain, this is either an Administrator or an Auditor. Thus, we know what is going to be the value of this variable. As for the type, there are various ways we can model a role, but the most obvious one for a type that has few possible values is an enum. So:
@@ -293,7 +290,7 @@ Now for the `roleAllowedToUseReporting`. The first question that comes to mind w
 var roleAllowedToUseReporting = Any.Of(Roles.Admin, Roles.Auditor);
 ```
 
-And so, working our way backwards, we have arrived at the final solution:
+And so, working our way backwards, we have arrived at the final solution (in the code below, I already gave the Statement a name - this is the last step):
 
 ```csharp
 [Fact] public void
@@ -301,11 +298,11 @@ ShouldAllowAccessToReportingWhenAskedForEitherAdministratorOrAuditor()
 {
  //GIVEN
  var roleAllowedToUseReporting = Any.Of(Roles.Admin, Roles.Auditor);
- var authorization = new Authorization();
+ var access = new Access();
 
  //WHEN
- var accessGranted = authorization
-  .AccessToReportingIsGrantedTo(roleAllowedToUseReporting);
+ var accessGranted 
+     = access.ToReportingIsGrantedTo(roleAllowedToUseReporting);
 
  //THEN
  Assert.True(accessGranted);
@@ -313,6 +310,8 @@ ShouldAllowAccessToReportingWhenAskedForEitherAdministratorOrAuditor()
 ```
 
 Using what we learned by formulating the Statement, it was easy to give it a name.
+
+TODO TODOTODO TODO TODO TODO TODO TODO  
 
 Start by invoking a method if you have one
 ------------------------------------------
