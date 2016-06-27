@@ -320,8 +320,6 @@ Many times, we have to add a new class that implements an already existing inter
 
 ### Example
 
-TODOTODO TODO TODO TODO TODO  
-
 Imagine we have an application that, among other things, handles importing an existing database exported from another instance of the application. Given that the database is large and importing it can be a lengthy process, a message box is displayed each time a user performs the import. Assuming the user's name is Johnny, the message box displays the message "Johnny, please sit down and enjoy your coffee for a few minutes as we take time to import your database." The class that implements this looks like:
 
 ```csharp
@@ -339,7 +337,7 @@ public class FriendlyMessages
 }
 ```
 
-Now, imagine that we want to ship a trial version of the application with some features disabled, one of which is importing a database. One of the things we need to do is to display a message saying that this is a trial version and that the import feature is locked. We can do this by extracting an interface from class `FriendlyMessages` and implement this interface in a new class that is used when the application is run as the trial version. The extracted interface looks like this:
+Now, imagine that we want to ship a trial version of the application with some features disabled, one of which is importing a database. One of the things we need to do is to display a message saying that this is a trial version and that the import feature is locked. We can do this by extracting an interface from class `FriendlyMessages` and implement this interface in a new class used when the application is run as the trial version. The extracted interface looks like this:
 
 ```csharp
 public interface Messages
@@ -348,19 +346,7 @@ public interface Messages
 }
 ```
 
-So our new implementation is forced to support the `HoldOnASecondWhileWeImportYourDatabase` method. When we implement the class, we start with the following:
-
-```csharp
-public class TrialVersionMessages : Messages
-{
- public string HoldOnASecondWhileWeImportYourDatabase(string userName)
- {
-   return null;
- }
-}
-```
-
-Now, we are ready to start writing a Statement. Assuming we do not know where to start, we just start with creating an object and invoking the method that needs to be implemented:
+So our new implementation is forced to support the `HoldOnASecondWhileWeImportYourDatabase()` method. Let's call this new class `TrialVersionMessages` (but not create it yet) and we can write a Statement for it. Assuming we do not know where to start, we just start with creating an object of the class (we already know the name) and invoking the method we already know we need to implement:
 
 ```csharp
 [Fact] 
@@ -377,7 +363,21 @@ public void TODO()
 }
 ```
 
-As you can see, we added an assertion that always fails at the end to remind ourselves that the Statement is not finished yet. As we don't have any relevant assertions yet, the Statement would otherwise be evaluated as true and we might not notice that it's incomplete. However, as it stands the Statement does not compile anyway, because the method `HoldOnASecondWhileWeImportYourDatabase` takes a string argument and we didn't pass any. This makes us ask the question what this argument is and what its role is in the behavior triggered by method `HoldOnASecondWhileWeImportYourDatabase`. It looks like it is a user name and we want it to be somewhere in the result of the method. Thus, we can add it to the Statement like this:
+As you can see, we added an assertion that always fails at the end to remind ourselves that the Statement is not finished yet. As we don't have any relevant assertions yet, the Statement would otherwise be evaluated as true and we might not notice that it's incomplete. However, as it stands the Statement does not compile anyway, because there's now `TrialVersionMessages` class. Let's create one with as little implementation as possible:
+
+```csharp
+public class TrialVersionMessages : Messages
+{
+ public string HoldOnASecondWhileWeImportYourDatabase(string userName)
+ {
+   throw new NotImplementedException();
+ }
+}
+```
+
+TODO TODO TODO
+
+Note that there's only as much implementation as we need to compile this code. Still, the Statement won't compile yet. This is because the method `HoldOnASecondWhileWeImportYourDatabase()` takes a string argument and we didn't pass any in the Statement. This makes us ask the question what this argument is and what its role is in the behavior triggered by the `HoldOnASecondWhileWeImportYourDatabase()` method . It looks like it's a user name and we want it to be somewhere in the result of the method. Thus, we can add it to the Statement like this:
 
 ```csharp
 [Fact] 
