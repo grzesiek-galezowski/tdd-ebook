@@ -246,13 +246,13 @@ And that's it -- the Statement itself is complete!
 Start from the end
 ------------------
 
-This is a technique that I suggest to people that seem to have absolutely no idea how to start. I got it from Kent Beck’s book Test Driven Development by Example. It seems funny at first glance, but I found it quite powerful at times. The trick is to write the Statement "backwards", i.e. starting with what the Statement asserts to be true (in terms of the *GIVEN-WHEN-THEN* structure, we would say that we start with our *THEN* part).
+This is a technique that I suggest to people that seem to have absolutely no idea how to start. I got it from Kent Beck’s book Test Driven Development by Example. It seems funny at first glance, but I found it quite powerful at times. The trick is to write the Statement "backwards", i.e. starting with what the result verification (in terms of the *GIVEN-WHEN-THEN* structure, we would say that we start with our *THEN* part).
 
-This works, because many times we are quite sure of what the outcome of a behavior should be, but not quite so sure of how to get there.
+This works well when we are quite sure of what the outcome of a behavior should be, but not quite so sure of how to get there.
 
 ### Example
 
-Imagine we are writing a class for granting access to a reporting functionality. This reporting functionality is based on roles. We have no idea what the API should look like and how to write our Statement, but we do know one thing: in our domain the access can be either granted or denied. Let's take the first case we can think of -- the "access granted" case -- and, starting backwards, begin with the following assertion:
+Imagine we are writing a class containing the rules for granting or denying access to a reporting functionality. This reporting functionality is based on roles. We have no idea what the API should look like and how to write our Statement, but we do know one thing: in our domain the access can be either granted or denied. Let's take the first case we can think of -- the "access granted" case -- and, starting backwards, begin with the following assertion:
 
 ```csharp
 //THEN
@@ -267,7 +267,7 @@ var accessGranted
  = access.ToReportingIsGrantedTo(roleAllowedToUseReporting);
 ```
 
-For now, try to resist the urge to define a class or variable to make the compiler happy, as that will only throw you off the track and steal your focus from what is important. The key to doing TDD successfully is to learn to use something that does not exist yet as if it existed.
+For now, try to resist the urge to define a class or variable to make the compiler happy, as that may throw you off the track and steal your focus from what is important. The key to doing TDD successfully is to learn to use something that does not exist yet as if it existed and not worry until really needed.
 
 Note that we don't know what `roleAllowedToUseReporting` is, neither do we know what `access` object stands for, but that didn't stop us from writing this line. Also, the `ToReportingIsGrantedTo()` method is just taken off the top of our head. It's not defined anywhere, it just made sense to write it like this, because it is the most direct translation of what we had in mind.
 
@@ -276,14 +276,14 @@ Anyway, this new line answers the question about where we take the `accessGrante
 1.  Where does the `access` variable come from?
 2.  Where does the `roleAllowedToUseReporting` variable come from?
 
-As for `access`, we don't have anything specific to say about it other than that it is an object of a class that is not defined yet. To proceed, let's pretend that we have such a class (but not define it yet). How do we call it? The instance name is `access`, so it's quite straightforward to name the class `Access` and instantiate it in the simplest way we can think of:
+As for `access`, we don't have anything specific to say about it other than that it is an object of a class that is not defined yet. What we need to do now is to pretend that we have such a class (but let's not define it yet). How do we call it? The instance name is `access`, so it's quite straightforward to name the class `Access` and instantiate it in the simplest way we can think of:
 
 ```csharp
 //GIVEN
 var access = new Access();
 ```
 
-Now for the `roleAllowedToUseReporting`. The first question that comes to mind when looking at this is: which roles are allowed to use reporting? Let's assume that in our domain, this is either an Administrator or an Auditor. Thus, we know what is going to be the value of this variable. As for the type, there are various ways we can model a role, but the most obvious one for a type that has few possible values is an enum. So:
+Now for the `roleAllowedToUseReporting`. The first question that comes to mind when looking at this is: which roles are allowed to use reporting? Let's assume that in our domain, this is either an Administrator or an Auditor. Thus, we know what is going to be the value of this variable. As for the type, there are various ways we can model a role, but the most obvious one for a type that has few possible values is an enum[^differenttestingenums]. So:
 
 ```csharp
 //GIVEN
@@ -311,16 +311,18 @@ ShouldAllowAccessToReportingWhenAskedForEitherAdministratorOrAuditor()
 
 Using what we learned by formulating the Statement, it was easy to give it a name.
 
-TODO TODOTODO TODO TODO TODO TODO TODO  
-
 Start by invoking a method if you have one
 ------------------------------------------
 
-Sometimes, we have to add a new class that must implement an existing interface. The interface imposes what methods the new class must support. If this point is already decided, we can start our Statement by first calling the method and then discovering what we need to supply.
+If preconditions for this approach are met, it's the most straightforward one and I use it a lot[^lookfordetailsinchapter2].
+
+Many times, we have to add a new class that implements an already existing interface. The interface imposes what methods the new class must support. If the method signatures are already decided, we can start our Statement with a call to one of the methods and then figure out the rest of the context we need to make it run properly.
 
 ### Example
 
-Suppose we have an application that, among other things, handles importing an existing database from another instance of the application. Given that the database is large and importing it can be a lengthy process, a message box is displayed each time a user performs the import. Assuming the user's name is Johnny, the message box displays the message "Johnny, please sit down and enjoy your coffee for a few minutes as we take time to import your database." The class that implements this looks like:
+TODOTODO TODO TODO TODO TODO  
+
+Imagine we have an application that, among other things, handles importing an existing database exported from another instance of the application. Given that the database is large and importing it can be a lengthy process, a message box is displayed each time a user performs the import. Assuming the user's name is Johnny, the message box displays the message "Johnny, please sit down and enjoy your coffee for a few minutes as we take time to import your database." The class that implements this looks like:
 
 ```csharp
 public class FriendlyMessages
@@ -426,3 +428,6 @@ When you are stuck and do not know how to start, the techniques from this chapte
 
 [^argumentsagainstshould]: There are also some arguments against using the word "should", e.g. by Kevlin Henney (see http://www.infoq.com/presentations/testing-communication).
 
+[^differenttestingenums]: This approach of picking a single value out of several ones using `Any.From()` does not always work well with enums. Sometimes a parameterized test (a "theory" in XUnit.NET terminology) is better. This topic will be discussed in one of the the coming chapters.
+
+[^lookfordetailsinchapter2]: Look for details in chapter 2.
