@@ -337,7 +337,7 @@ public class FriendlyMessages
 }
 ```
 
-Now, imagine that we want to ship a trial version of the application with some features disabled, one of which is importing a database. One of the things we need to do is to display a message saying that this is a trial version and that the import feature is locked. We can do this by extracting an interface from class `FriendlyMessages` and implement this interface in a new class used when the application is run as the trial version. The extracted interface looks like this:
+Now, imagine that we want to ship a trial version of the application with some features disabled, one of which being the database import. One of the things we need to do is display a message saying that this is a trial version and that the import feature is locked. We can do this by extracting an interface from the `FriendlyMessages` class and implement this interface in a new class used when the application is run as the trial version. The extracted interface looks like this:
 
 ```csharp
 public interface Messages
@@ -346,7 +346,7 @@ public interface Messages
 }
 ```
 
-So our new implementation is forced to support the `HoldOnASecondWhileWeImportYourDatabase()` method. Let's call this new class `TrialVersionMessages` (but not create it yet) and we can write a Statement for it. Assuming we do not know where to start, we just start with creating an object of the class (we already know the name) and invoking the method we already know we need to implement:
+So our new implementation is forced to support the `HoldOnASecondWhileWeImportYourDatabase()` method. Let's call this new class `TrialVersionMessages` (but don't create it yet!) and we can write a Statement for its behavior. Assuming we don't know where to start, we just start with creating an object of the class (we already know the name) and invoking the method we already know we need to implement:
 
 ```csharp
 [Fact] 
@@ -363,7 +363,7 @@ public void TODO()
 }
 ```
 
-As you can see, we added an assertion that always fails at the end to remind ourselves that the Statement is not finished yet. As we don't have any relevant assertions yet, the Statement would otherwise be evaluated as true and we might not notice that it's incomplete. However, as it stands the Statement does not compile anyway, because there's now `TrialVersionMessages` class. Let's create one with as little implementation as possible:
+As you can see, we added an assertion that always fails at the end to remind ourselves that the Statement is not finished yet. As we don't have any relevant assertions yet, the Statement will otherwise be considered as true as soon as it compiles and runs and we may not notice that it's incomplete. As it currently stands, the Statement doesn't compile anyway, because there's no `TrialVersionMessages` class yet. Let's create one with as little implementation as possible:
 
 ```csharp
 public class TrialVersionMessages : Messages
@@ -375,9 +375,7 @@ public class TrialVersionMessages : Messages
 }
 ```
 
-TODO TODO TODO
-
-Note that there's only as much implementation as we need to compile this code. Still, the Statement won't compile yet. This is because the method `HoldOnASecondWhileWeImportYourDatabase()` takes a string argument and we didn't pass any in the Statement. This makes us ask the question what this argument is and what its role is in the behavior triggered by the `HoldOnASecondWhileWeImportYourDatabase()` method . It looks like it's a user name and we want it to be somewhere in the result of the method. Thus, we can add it to the Statement like this:
+Note that there's only as much implementation in this class as required to compile this code. Still, the Statement won't compile yet. This is because the method `HoldOnASecondWhileWeImportYourDatabase()` takes a string argument and we didn't pass any in the Statement. This makes us ask the question what this argument is and what its role is in the behavior triggered by the `HoldOnASecondWhileWeImportYourDatabase()` method  It looks like it's a user name. Thus, we can add it to the Statement like this:
 
 ```csharp
 [Fact] 
@@ -396,7 +394,7 @@ public void TODO()
 }
 ```
 
-Now, this compiles but is evaluated as false because of the guard assertion that we put at the end. Our goal is to substitute it with a proper assertion for the expected result. The return value of the call to `HoldOnASecondWhileWeImportYourDatabase` is a string message, so all we need to do is to come up with the message that we expect in case of the trial version:
+Now, this compiles but is considered false because of the guard assertion that we put at the end. Our goal is to substitute it with a proper assertion for the expected result. The return value of the call to `HoldOnASecondWhileWeImportYourDatabase` is a string message, so all we need to do is to come up with the message that we expect in case of the trial version:
 
 ```csharp
 [Fact] 
@@ -405,25 +403,27 @@ public void TODO()
  //GIVEN
  var trialMessages = new TrialVersionMessages();
  var userName = Any.String();
+ var expectedMessage = 
+  string.Format(
+    "{0}, better get some pocket money and buy a full version!", 
+    userName);
  
  //WHEN
  var message = trialMessages.
   HoldOnASecondWhileWeImportYourDatabase(userName);
 
  //THEN
- var expectedMessage = 
-  string.Format("{0}, better get some pocket money!", userName);
 
  Assert.Equal(expectedMessage, message);
 }
 ```
 
-All what is left is to find a good name for the Statement. This isn’t an issue since we already specified the desired behavior in the code, so we can just summarize it as something like `ShouldYieldAMessageSayingThatFeatureIsLockedWhenAskedForImportDatabaseMessage`.
+All what is left is to find a good name for the Statement. This isn’t an issue since we already specified the desired behavior in the code, so we can just summarize it as something like `ShouldCreateAPromptForFullVersionPurchaseWhenAskedForImportDatabaseMessage()`.
 
 Summary
 -------
 
-When you are stuck and do not know how to start, the techniques from this chapter may help to get you on your way. Note that the examples given are simplistic and assume that there is only one object that takes some kind of input parameter and returns a well defined result. However, this is not how most of the object-oriented world is built. There we have many objects that communicate with other objects, send messages, invoke methods on each other and that often do not return a value. Don't worry, all of these techniques also work there and we’ll revisit them as soon as we learn how to do TDD in the larger object-oriented world (after the introduction of the concept of mock objects). Here, I’ve tried to keep it simple.
+When I'm stuck and don't know how to start writing a new failing Statement, the techniques from this chapter help me push things in the right direction. Note that the examples given are simplistic and built on an assumption that there is only one object that takes some kind of input parameter and returns a well defined result. However, this isn't how most of the object-oriented world is built. In that world, we often have objects that communicate with other objects, send messages, invoke methods on each other and these methods often don't have any return values but are instead declared as `void`. Even though, all of the techniques described in this chapter will still work in such case and we’ll revisit them as soon as we learn how to do TDD in the larger object-oriented world (after the introduction of the concept of mock objects in Part 2). Here, I tried to keep it simple.
 
 
 [^argumentsagainstshould]: There are also some arguments against using the word "should", e.g. by Kevlin Henney (see http://www.infoq.com/presentations/testing-communication).
