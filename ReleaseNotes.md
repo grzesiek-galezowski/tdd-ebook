@@ -1,3 +1,9 @@
+# 29-06-2016
+
+Hi!
+
+Quality Excites 2016 is over, so time for another release of your favourite book :-) err... never mind. In this release, I did an overhaul to "How to start?" chapter - corrected some explanations, fixed some mistakes in examples etc. From my point of view, the chapter is more "complete" now. Have fun!
+
 # 09-05-2016
 
 Hi!
