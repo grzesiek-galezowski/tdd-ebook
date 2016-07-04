@@ -24,7 +24,6 @@ But what about the first requirement? What about breaking a complex logic into 
 If you go back to Johnny and Benjamin's story, you will note that when talking to a customer and when writing code, they used a TODO list. This list was first filled with whatever scenarios they came up with, but later, they would add smaller units of work. When doing TDD, we do the same, essentially decomposed complex topics into smaller items and putting them on the TODO list (this is one of the practices that serve decomposition. The other one is mocking, but let's not get into that yet). Thanks to this, we can focus on one thing at a time, crossing off item after item from the list after it's done. If we learn something new or encounter a new issue that needs our attention, we can add it to the TODO list and get back to it later, for now continuing our work on the current point of focus.
 
 I> An example TODO list from the middle of an implementation task may look like this (don't read through it, I put it here just to give you a glimpse - you're not supposed to understand what the list items are about):
-I> 
 I> 1.  --- Create an entry point to the module (top-level abstraction)
 I> 2.  --- Implement main workflow of the module
 I> 3.  --- Implement `Message` interface
