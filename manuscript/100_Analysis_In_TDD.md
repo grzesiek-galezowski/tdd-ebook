@@ -1,6 +1,8 @@
 How is TDD about analysis and what does "GIVEN-WHEN-THEN" mean?
 ===============================================================
 
+During their work on the calculator code, Johnny mentioned that TDD is, among other things, about analysis. This chapter examines this concept further. Let's start by answering the following question:
+
 Is there really a commonality between analysis and TDD?
 -------------------------------------------------------
 
@@ -8,59 +10,60 @@ From Wikipedia:
 
 > Analysis is the process of breaking a complex topic or substance into smaller parts to gain a better understanding of it.
 
-Thus, for TDD to be about analysis, it has to fulfill two conditions: 
+Thus, for TDD to be about analysis, it has to fulfill two conditions:
 
-1.  Be a process of breaking a complex topic into smaller parts
-2.  Allow gaining a better understanding of such broken topics
+1.  It has to be a process of breaking a complex topic into smaller parts
+2.  It has to allow gaining a better understanding of such smaller parts
 
 In the story about Johnny, Benjamin and Jane, I included a part where they analyze requirements using concrete examples. Johnny explained that this is a part of a technique called Acceptance Test-Driven Development. The process followed by the three characters fulfilled both mentioned conditions for a process to be analytical. But what about TDD itself?
 
-Although I used parts of the ATDD process in the story to make the analysis part more obvious, similar things happen at pure technical levels. For example, when starting development with a failing application-wide Statement (we will talk about levels of granularity of Statements later. For now the only thing you need to know is that the so called "unit tests level" is not the only level of granularity we write Statements on), we may encounter a situation where we need to call a web method and assert its result. This makes us think: what should this method be called? What are the scenarios supported? What do I need to get out of it? How should its user be notified about errors? Many times, this leads us to either a conversation (if there is another stakeholder that needs to be involved in the decision) or rethinking our assumptions. This is how we gain a better understanding of the topic we are analyzing, which makes TDD fulfill the first of the two requirements for it to be an analysis method.
+Although I used parts of the ATDD process in the story to make the analysis part more obvious, similar things happen at pure technical levels. For example, when starting development with a failing application-wide Statement (i.e. one that covers a behavior of an application as a whole. We will talk about levels of granularity of Statements later. For now the only thing you need to know is that the so called "unit tests level" is not the only level of granularity we write Statements on), we may encounter a situation where we need to call a web method and make an assertion on its result. This makes us think: what should this method be called? What are the scenarios supported? What do I need to get out of it? How should its user be notified about errors? Many times, this leads us to either a conversation (if there is another stakeholder that needs to be involved in the decision) or rethinking our assumptions. The same applies on "unit level" - if a class implements a domain rule, there might be some good domain-related questions resulting from trying to write a Statement for it. If a class implements a technical rule, there might be some good technical questions to discuss with other developers etc. This is how we gain a better understanding of the topic we are analyzing, which makes TDD fulfill the second of the two requirements for it to be an analysis method.
 
 But what about the first requirement? What about breaking a complex logic into smaller parts?
 
-If you go back to our example, you will note that both when talking to a customer and when writing code, Johnny and Benjamin used a TODO list. This list was first filled with whatever scenarios they came up with, but later, they would add a smaller unit of work. This is one way complex topics are decomposed into smaller items that all land on the TODO list (the other way is mocking, but we will not get into that yet). Thanks to this, we can focus on one thing at a time, crossing off item after item from the list after it is done. If we learn something new or encounter new issue that needs our attention, we can add it to the TODO list and get back to it later, for now continuing our work on the current point of focus.
+If you go back to Johnny and Benjamin's story, you will note that when talking to a customer and when writing code, they used a TODO list. This list was first filled with whatever scenarios they came up with, but later, they would add smaller units of work. When doing TDD, we do the same, essentially decomposed complex topics into smaller items and putting them on the TODO list (this is one of the practices that serve decomposition. The other one is mocking, but let's not get into that yet). Thanks to this, we can focus on one thing at a time, crossing off item after item from the list after it's done. If we learn something new or encounter a new issue that needs our attention, we can add it to the TODO list and get back to it later, for now continuing our work on the current point of focus.
 
-An example TODO list from the middle of implementation may look like this (do not read through it, I put it here only to give you a glimpse):
+I> An example TODO list from the middle of an implementation task may look like this (don't read through it, I put it here just to give you a glimpse - you're not supposed to understand what the list items are about):
+I> 
+I> 1.  --- Create an entry point to the module (top-level abstraction)
+I> 2.  --- Implement main workflow of the module
+I> 3.  --- Implement `Message` interface
+I> 4.  --- Implement `MessageFactory` interface
+I> 5.  Implement `ValidationRules` interface
+I> 6.  --- Implement behavior required from Wrap method in `LocationMessageFactory` class
+I> 7.  Implement behavior required from ValidateWith method in `LocationMessage` class for Speed field
+I> 8.  Implement behavior required from ValidateWith method in `LocationMessage` class for Age field
+I> 9.  Implement behavior required from ValidateWith method in `LocationMessage` class for Sender field
 
-1.  --- Create entry point to the module (top-level abstraction)
-2.  --- Implement main workflow of the module
-3.  --- Implement Message interface
-4.  --- Implement MessageFactory interface
-5.  Implement ValidationRules interface
-6.  --- Implement behavior required from Wrap method in LocationMessageFactory class
-7.  Implement behavior required from ValidateWith method in LocationMessage class for Speed field
-8.  Implement behavior required from ValidateWith method in LocationMessage class for Age field
-9.  Implement behavior required from ValidateWith method in LocationMessage class for Sender field
+Note that some items are already crossed out as done, while others remain pending and waiting to be addressed. All these items are what the article on Wikipedia calls "smaller parts" - a result of breaking a bigger topic.
 
-Note that some items are already crossed out as done, while other remain undone and waiting to be addressed.
-
-Ok, that is it for the discussion. Now that we are sure that TDD is about analysis, let's focus on the tools we can use to aid and inform it. You already saw both of them in this book, now we are going to have a closer look.
+Ok, that's it for the discussion. Now that we are sure that TDD is about analysis, let's focus on the tools we can use to aid and inform it. You already saw both of them in this book, now we're going to have a closer look.
 
 Gherkin
 -------
 
-Hungry? Too bad, because the Gkerkin I am gonna talk about is not edible. It is a notation and a way of thinking about behaviors of the specified piece of code. It can be applied on different levels of granularity -- any behavior, whether of a whole system or a single class, may be described using it.
+Hungry? Too bad, because the Gkerkin I am gonna talk about is not edible. It is a notation and a way of thinking about behaviors of the specified piece of code. It can be applied on different levels of granularity -- any behavior, whether of a whole system or a single class, may be described using Gherkin.
 
-In fact we already used the Gherkin notation, we just didn't name it so. Gherkin is the GIVEN-WHEN-THEN structure that you can see everywhere, even as comments in the code samples. This time, we are stamping a name on it and analyzing it further.
+In fact we already used this notation, we just didn't name it so. Gherkin is the GIVEN-WHEN-THEN structure that you can see everywhere, even as comments in the code samples. This time, we are stamping a name on it and analyzing it further.
 
-In Gherkin, a behavior description consists of three parts:
+In Gherkin, a behavior description consists mostly of three parts:
 
 1.  Given -- a context
 2.  When -- a cause
 3.  Then -- a effect
 
-In other words, the emphasis is on causality in a given context.
+In other words, the emphasis is on causality in a given context. There's also a fourth keyword: And -- we can use it to add more context, more causes or more effects. You'll have a chance to see an example in a few seconds
 
 As I said, there are different levels you can apply this. Here is an example for such a behavior description from the perspective of its end user (this is called acceptance-level Statement):
 
 ```gherkin
 Given a bag of tea costs $20
-When I buy two of them
-Then I should be charged $30 due to discount
+And there is a discount saying "pay half for a second bag"
+When I buy two bags
+Then I should be charged $30
 ```
 
-And here is one for unit-level (note the line starting with "And" that adds to the context):
+And here is one for unit-level (note again the line starting with "And" that adds to the context):
 
 ```gherkin
 Given a list with 2 items
@@ -69,7 +72,7 @@ And check items count
 Then the count should be 3
 ```
 
-While on acceptance level we put such behavior descriptions together with code as the same artifact (If this does not ring a bell, look at tools like SpecFlow or Cucumber or FIT to get some examples), on the unit level the description is usually not written down literally, but in form of code only. Still, this structure is useful when thinking about behaviors required from an object or objects, as we saw when we talked about starting from Statement rather than code. I like to put the structure explicitly in my Statements -- I find that it makes them more readable. So most of my unit-level Statements follow this template:
+While on acceptance level  we put such behavior descriptions together with code as a single whole (If this doesn't ring a bell, look at tools such as SpecFlow or Cucumber or FIT to get some examples), on the unit level the description is usually not written down in a literal way, but rather it is translated and written only in form of source code. Still, this structure is useful when thinking about behaviors required from an object or objects, as we saw when we talked about starting from Statement rather than code. I like to put the structure explicitly in my Statements -- I find that it helps make them more readable (TODO TODO TODO add article stating otherwise). So most of my unit-level Statements follow this template:
 
 ```csharp
 [Fact]
@@ -107,7 +110,9 @@ By thinking in terms of these three parts of behavior, we may arrive at differen
 TODO list... again!
 -----------------
 
-As we said previously, a TODO list is a repository for anything that comes to our mind when writing or thinking about a Statement, but is not a part o the current Statement we are writing. We do not want to forget it, neither do we want it to haunt us and distract us from our current task, so we write it down as soon as possible and continue with our current task.
+As I said earlier, a TODO list is a repository for anything that comes to our mind when writing or thinking about a Statement, but is not a part o the current Statement we are writing. On one hand, we don't want to forget it, on the other - we don't want it to haunt us and distract us from our current task, so we write it down as soon as possible and continue with our current task.
+
+TODOTODOTODOTODOTODOTODOTODOTODOTODOTODO
 
 Suppose you are writing a piece of small logic that allows user access when he is an employee of a zoo, but denies access if he is a guest of the zoo. Then, after starting writing a Statement it gets to you that any employee can be a guest as well -- for example, he might choose to visit the zoo with his family during his vacation. Still, the two previous rules hold, so not to allow this case to distract you, you quickly add an item to the TODO list (like "TODO: what if someone is an employee, but comes to the zoo as a guest?") and finish the current Statement. When you are finished, you can always come back to the list and pick item to do next.
 
