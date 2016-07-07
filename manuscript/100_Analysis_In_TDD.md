@@ -6,7 +6,7 @@ During their work on the calculator code, Johnny mentioned that TDD is, among ot
 Is there really a commonality between analysis and TDD?
 -------------------------------------------------------
 
-From Wikipedia:
+From [Wikipedia](https://en.wikipedia.org/wiki/Analysis):
 
 > Analysis is the process of breaking a complex topic or substance into smaller parts to gain a better understanding of it.
 
