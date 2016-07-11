@@ -138,24 +138,25 @@ The second alternative is to use a TODO list functionality built-in into an IDE
 2.  I can put a TODO item in a certain place in the code where is makes sense and then navigate back to it later with a click of a mouse. This, apart from other advantages, allows writing shorter notes than if I had to do it on paper. For example, a TODO item saying "TODO: what if it throws an exception?" looks out of place on a sheet of paper, but when added as a comment to my code in the right place, it's sufficient.
 3.  Many TODO lists automatically add items for certain things that happen in the code. E.g. in C\#, when I'm yet to implement a method that was automatically generated the IDE, its body usually consists of a line that throws a `NotImplementedException` exception. Guess what -- `NotImplementedException` occurences are added to the TODO list automatically, so I don't have to manually add items to the TODO list for implementing the methods where they occur.
 
-The TODO list maintained in the source code has one minor drawback - we have to remember to clear the list or we may end up pushing the items to the source control repository along with the rest of the source code. Such leftover TODO items may accumulate in the code, effectively reducing the ability to navigate through the items that were added by me. There are several strategies of dealing with this:
+The TODO list maintained in the source code has one minor drawback - we have to remember to clear the list when we finish working with it or we may end up pushing the TODO items to the source control repository along with the rest of the source code. Such leftover TODO items may accumulate in the code, effectively reducing the ability to navigate through the items that were only added by a specific developer. There are several strategies of dealing with this:
 
-//TODO//TODO//TODO//TODO//TODO//TODO//TODO//TODO//TODO//TODO//TODO//TODO
-
-1. For greenfield projects, I found it relatively easy to set up a static analysis check that runs when the code is built and doesn't allow the build to finish unless all TODO items are removed.
-2. removing all TODO items at start
-3. Using a different marker 
+1. For greenfield projects, I found it relatively easy to set up a static analysis check that runs when the code is built and doesn't allow the build to pass unless all TODO items are removed.
+2. In other cases, it's possible to use a strategy of removing all TODO items from a project before starting working with it. Sometimes it may lead to conflicts when TODO items atre used for something else than a TDD task list and someone for whatever reason wants them to stay in the code longer. I'm of opinion that such cases should be extremely rare at best, however, others may have different opinions.
+3. Most modern IDEs offer support markers other than `//TODO` for placing items on a TODO list, for example, `//BUG`. In such case, I can use the `//BUG` marker to mark just my items and then I can filter other items out. Bug markers are commonly not intended to be left in the code, so it's much less risky for them to accumulate. 
+4. As a last resort technique, I can usually define my own markers to be placed on TODO list and, again, use filters to see only the items that were defined by me (plus usually `NotImplementedException`s).
 
 ### Expanded TDD process with a TODO list 
 
-In one of the previous chapters, I introduced you to the basic TDD process that contained three steps: write unfulfilled Statement, fulfill it and refactor the code. TODO list adds new steps to this process leading to the following list of steps:
+In one of the previous chapters, I introduced you to the basic TDD process that contained three steps: write false Statement, change the production code so that the Statement is true it and refactor the code. TODO list adds new steps to this process leading to the following expanded list:
 
 1.  Examine TODO list and pick an item that makes most sense to implement next
-2.  Write unfulfilled Statement
-3.  Make it unfulfilled for the right reason
-4.  Fulfill the Statement and make sure all already fulfilled Statements are still fulfilled
+2.  Write false Statement you wish was true
+3.  See it reported as false for the right reason
+4.  Change the production code to make the Statement true and make sure all already true Statements remain true
 5.  Cross out the item from TODO list
 6.  Repeat until no item is left on the TODO list
+
+//TODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODO
 
 Of course, we are free to add new items to the TODO list as we make progress with the existing ones and at the beginning of each cycle the list is re-evaluated to choose the most important item to implement next taking into account what was added during the previous cycle.
 
