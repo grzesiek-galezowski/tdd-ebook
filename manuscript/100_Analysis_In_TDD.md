@@ -138,6 +138,8 @@ The second alternative is to use a TODO list functionality built-in into an IDE
 2.  I can put a TODO item in a certain place in the code where is makes sense and then navigate back to it later with a click of a mouse. This, apart from other advantages, allows writing shorter notes than if I had to do it on paper. For example, a TODO item saying "TODO: what if it throws an exception?" looks out of place on a sheet of paper, but when added as a comment to my code in the right place, it's sufficient.
 3.  Many TODO lists automatically add items for certain things that happen in the code. E.g. in C\#, when I'm yet to implement a method that was automatically generated the IDE, its body usually consists of a line that throws a `NotImplementedException` exception. Guess what -- `NotImplementedException` occurences are added to the TODO list automatically, so I don't have to manually add items to the TODO list for implementing the methods where they occur.
 
+![Resharper TODO Explorer docked as a window in Visual Studio 2015 IDE](images/TodoExplorer.PNG)
+
 The TODO list maintained in the source code has one minor drawback - we have to remember to clear the list or we may end up pushing the items to the source control repository along with the rest of the source code. Such leftover TODO items may accumulate in the code, effectively reducing the ability to navigate through the items that were added by me. There are several strategies of dealing with this:
 
 //TODO//TODO//TODO//TODO//TODO//TODO//TODO//TODO//TODO//TODO//TODO//TODO
