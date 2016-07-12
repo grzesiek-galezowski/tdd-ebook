@@ -1,5 +1,4 @@
-Why do we need composability?
-=============================
+# Why do we need composability?
 
 It might seem stupid to ask this question here -- if you have managed to stay with me this long, then you're probably motivated enough not to need a justification? Well, anyway, it's still worth discussing it a little. Hopefully, you'll learn as much reading this back-to-basics chapter as I did writing it.
 

@@ -1,5 +1,4 @@
-The need for mock objects
-=========================
+# The need for mock objects
 
 We already experienced mock objects in the chapter about tools, although at that point, I gave you an oversimplified and deceiving explanation of what a mock object is, promising that I will make up for it later. Now is the time.
 

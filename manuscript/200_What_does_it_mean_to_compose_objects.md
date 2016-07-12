@@ -1,6 +1,4 @@
-
-Web, messages and protocols
-===========================
+# Web, messages and protocols
 
 In the previous chapter, we talked a little bit about why composability is valuable, now let's flesh a little bit of terminology to get more precise understanding.
 

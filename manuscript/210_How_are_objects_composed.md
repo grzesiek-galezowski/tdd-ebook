@@ -1,5 +1,4 @@
-Composing a web of objects
-==========================
+# Composing a web of objects
 
 Three important questions
 -------------------------

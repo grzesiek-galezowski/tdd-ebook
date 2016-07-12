@@ -1,5 +1,4 @@
-Telling, not asking {#170-TellDoNotAsk}
-===================
+# Telling, not asking {#170-TellDoNotAsk}
 
 In this chapter, we'll get back to Johnny and Benjamin as they introduce another change in the code they are working on. In the process, they discover the impact that return values and getters have on composability of objects.
 

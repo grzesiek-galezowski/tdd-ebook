@@ -1,5 +1,4 @@
-Protocols
-===============================
+# Protocols
 
 You already know that objects are connected (composed) together and communicate through interfaces, just as in IP network. There is one more similarity, that's as important. It's *protocols*. In this section, we will look at protocols between objects and their place on our design approach.
 

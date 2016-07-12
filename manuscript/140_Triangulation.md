@@ -1,10 +1,8 @@
+# Triangulation
 
-Triangulation
-=============
-
-### A disclaimer
-
-The first occurrence of the term triangulation I know about is in Kent Beck’s book [Test-Driven Development: By Example](http://www.pearsonhighered.com/educator/product/Test-Driven-Development-By-Example/9780321146533.page). 
+I> ### A disclaimer
+I> 
+I> The first occurrence of the term triangulation I know about is in Kent Beck’s book [Test-Driven Development: By Example (http://www.pearsonhighered.com/educator/product/Test-Driven-Development-By-Example/9780321146533.page). 
 
 As one of the last topics of the core TDD techniques that do not require us to delve into the object-oriented world, I’d like to show you triangulation.
 
