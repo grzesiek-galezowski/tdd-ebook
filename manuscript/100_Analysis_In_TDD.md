@@ -69,7 +69,7 @@ And check items count
 Then the count should be 3
 ```
 
-While on acceptance level  we put such behavior descriptions together with code as a single whole (If this doesn't ring a bell, look at tools such as SpecFlow or Cucumber or FIT to get some examples), on the unit level the description is usually not written down in a literal way, but rather it is translated and written only in form of source code. Still, this structure is useful when thinking about behaviors required from an object or objects, as we saw when we talked about starting from Statement rather than code. I like to put the structure explicitly in my Statements -- I find that it helps make them more readable (TODO TODO TODO add article stating otherwise). So most of my unit-level Statements follow this template:
+While on acceptance level  we put such behavior descriptions together with code as a single whole (If this doesn't ring a bell, look at tools such as SpecFlow or Cucumber or FIT to get some examples), on the unit level the description is usually not written down in a literal way, but rather it is translated and written only in form of source code. Still, this structure is useful when thinking about behaviors required from an object or objects, as we saw when we talked about starting from Statement rather than code. I like to put the structure explicitly in my Statements -- I find that it helps make them more readable[^sebrosegwt]. So most of my unit-level Statements follow this template:
 
 ```csharp
 [Fact]
@@ -161,3 +161,5 @@ Of course, we can (and should) add new items to the TODO list as we make progres
 There are also some downsides. I already mentioned the biggest of them - that I often saw people add TODO items for means other than to support TDD and they never went back to these items. Some people joke that a TODO comment left in the code means "There was a time when I wanted to do ...". Anyway, such items may pollute our TDD-related TODO list with so much cruft that your own items are barely findable.
 
 Another downside is that when you work with multiple workspaces/solutions, your IDE will gather TODO items only from a single solution/workspace, so there will be several TODO lists -- one per workspace or solution. Fortunately, this isn’t usually a big deal.
+
+[^sebrosegwt]: Seb Rose wrote a blog post where he suggests against the `//GIVEN //WHEN //THEN` comments and states that he only uses empty lines to separate the three sections, see http://claysnow.co.uk/unit-tests-are-your-specification/
