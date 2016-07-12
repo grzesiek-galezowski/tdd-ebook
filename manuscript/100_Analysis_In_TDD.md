@@ -155,15 +155,13 @@ In one of the previous chapters, I introduced you to the basic TDD process that
 2.  Write false Statement you wish was true
 3.  See it reported as false for the right reason
 4.  Change the production code to make the Statement true and make sure all already true Statements remain true
-5.  Cross out the item from TODO list
-6.  Repeat until no item is left on the TODO list
+5.  Cross off the item from the TODO list
+6.  Repeat steps 1-5 until no item is left on the TODO list
 
-//TODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODOTODO
+Of course, we can (and should) add new items to the TODO list as we make progress with the existing ones and at the beginning of each cycle the list is re-evaluated to choose the most important item to implement next taking into account what was added during the previous cycle.
 
-Of course, we are free to add new items to the TODO list as we make progress with the existing ones and at the beginning of each cycle the list is re-evaluated to choose the most important item to implement next taking into account what was added during the previous cycle.
+### Potential downsides of TODO lists
 
-### Potential downsides
+There are also some downsides. I already mentioned the biggest of them - that I often saw people add TODO items for means other than to support TDD and they never went back to these items. Some people joke that a TODO comment left in the code means "There was a time when I wanted to do ...". Anyway, such items may pollute our TDD-related TODO list with so much cruft that your own items are barely findable.
 
-There are also some downsides. The biggest is that people often add TODO items for other means than to support TDD and they never go back to such items. Some people joke that a TODO left in the code means "Once, I wanted to...". Anyway, such items may pollute your TDD-related TODO list with so much cruft that your own items are barely findable. To work around it, I tend to use a different tag than TODO (many IDEs let you define your own tags, or support multiple tag types out of the box. E.g. with Resharper, I like to use "bug" tag, because this is something no one would leave in the code) and filter by it. Another options is, of course, getting rid of the leftover TODO items -- if no one addressed it for a year, then probably no one ever will.
-
-Another downside is that when you work with multiple workspaces/solutions, your IDE will gather TODO items only from current solution/workspace, so you will have few TODO lists -- one per workspace or solution. Fortunately, this isn’t usually a big deal.
+Another downside is that when you work with multiple workspaces/solutions, your IDE will gather TODO items only from a single solution/workspace, so there will be several TODO lists -- one per workspace or solution. Fortunately, this isn’t usually a big deal.
