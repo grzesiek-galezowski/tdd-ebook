@@ -1,5 +1,6 @@
--# Dedications
+-# Front Matter
 
+# Dedications
 
 *Ad Deum qui laetificat iuventutem meam.*
 
