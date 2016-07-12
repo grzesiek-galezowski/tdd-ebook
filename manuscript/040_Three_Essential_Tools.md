@@ -1,5 +1,5 @@
-The essential tools
-===================
+# The essential tools
+
 
 Ever watched Karate Kid, either the old version or the new one? The thing they have in common is that when the "kid" starts learning karate (or kung-fu) from his master, he is given a basic, repetitive task (like taking off a jacket, and putting it on again), not knowing yet where it would lead him. Or look at the first Rocky film (yeah, the one starring Sylvester Stallone), where Rocky chases a chicken in order to train agility.
 
@@ -11,8 +11,7 @@ In other words, I will give you a brief tour of the three tools we will use th
 
 In this chapter, I will oversimplify some things just to get you up and running without getting into the philosophy of TDD yet (think: physics lessons in primary school). Don't worry about it :-), I will make up for it in the coming chapters!
 
-Test framework
---------------
+## Test framework
 
 The first tool we'll use is a test framework. A test framework allows us to specify and execute our tests.
 
@@ -165,8 +164,7 @@ Phew, I hope I made the transition quite painless for you. Now the last thing 
 
 ![Resharper test runner docked as a window in Visual Studio 2015 IDE](images/Resharper_Test_Runner.PNG)
 
-Mocking framework
------------------
+## Mocking framework
 
 W> This introduction is written for those who are not proficient with using mocks. Even though, I accept the fact that the concept may be too difficult for you to grasp. If, while reading this section, you find youreslf lost, please skip it. We won't be dealing with mock objects until part 2, where I offer a richer and more accurate description of the concept.
 
@@ -379,8 +377,7 @@ Note that we don't need the `SelectAllOrders()` method on the database connectio
 
 This explanation of mock objects is very shallow and its purpose is only to get you up and running. We'll get back to mocks later as we've only scratched the surface here.
 
-Anonymous values generator
---------------------------
+## Anonymous values generator
 
 Looking at the test data in the previous section we see that many values are specified literally, e.g. in the following code:
 
@@ -481,7 +478,6 @@ public static class Any
 
 In the next chapters, we'll see many different methods from the `Any` type, plus the full explanation of the philosophy behind it. The more you use this class, the more it grows with other methods for creating customized objects.
 
-Summary
--------
+## Summary
 
 This chapter introduced the three tools we'll use in this book that, when mastered, will make your test-driven development flow smoother. If this chapter leaves you with insufficient justification for their use, don't worry -- we will dive into the philosophy behind them in the coming chapters. For now, I just want you to get familiar with the tools themselves and their syntax. Go on, download these tools, launch them, try to write something simple with them. You don't need to understand their full purpose yet, just go out and play :-).

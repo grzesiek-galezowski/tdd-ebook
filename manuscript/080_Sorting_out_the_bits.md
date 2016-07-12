@@ -1,5 +1,4 @@
-Sorting out the bits
-====================
+# Sorting out the bits
 
 In the last chapter, there has been a lively conversation between Johnny and Benjamin. Even in such a short session, Benjamin, as a TDD novice, had a lot of questions and a lot of things he needed sorted out. We will pick up all those questions that were not already answered and try to answer in the coming chapters. Here are the questions:
 

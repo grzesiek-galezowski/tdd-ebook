@@ -1,5 +1,5 @@
-Dedications
-===========
+# Dedications
+
 
 *Ad Deum qui laetificat iuventutem meam.*
 

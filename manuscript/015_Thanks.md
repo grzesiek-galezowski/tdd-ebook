@@ -1,5 +1,5 @@
-Thanks!
-=======
+# Thanks!
+
 
 I would like to thank the following people (listed alphabetically by name) for valuable feedback, suggestions, typo fixes and other contributions: 
 

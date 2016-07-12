@@ -1,8 +1,6 @@
-Statement-first programming
-===========================
+# Statement-first programming
 
-What's the point of writing a specification after the fact?
---------------------------------------------------------------
+## What's the point of writing a specification after the fact?
 
 One of the best known thing about TDD is that a failing test for a behavior of a piece of code is written before this behavior is implemented. This concept is often called "test-first development" and seems controversial to many.
 
@@ -35,8 +33,7 @@ Refactor
 
 By the way, this process is sometimes referred to as "Red-Green-Refactor", because of the colors that xUnit tools display for failing and passing test. I am just mentioning it here for the record -- I will not be using this term further in the book.
 
-"Test-First" means seeing a failure
------------------------------------
+## "Test-First" means seeing a failure
 
 Explaining the illustration with the TDD process above, I pointed out that we are supposed to write a Statement that we wish was true **but is not**. It means that not only do we have to write a Statement before we provide implementation that makes it true, we also have to evaluate it (i.e. run it) and watch it fail its assertions before we provide the implementation. 
 
@@ -212,8 +209,7 @@ And here's what I often see programmers do when they write the code first (extra
 
 What is the equivalent of the marked steps in the Statement-first approach? There is none! Doing these things is a waste of time! Sadly, this is a waste I encounter a lot.
 
-Summary
---------------------------------------------------------------
+## Summary
 
 In this chapter, I tried to show you that the choice of *when* we write our Specification often makes a huge difference  and that there are numerous benefits of starting with a Statement. When we consider the Specification as what it really is - not only as a suite of tests that check runtime correctness - then Statement-first approach becomes less awkward and less counter-intuitive.
 

@@ -1,12 +1,11 @@
-It's not (only) a test
-================
+# It's not (only) a test
+
 
 Is the role of a test only to "verify" or "check" whether a piece of software works? Surely, this is a significant part of its runtime value, i.e. the value that we get when we execute the test. However, when we limit our perspective on tests only to this, it could lead us to a conclusion that the only thing that is valuable about having a test is to be able to execute it and view the result. Such acts as designing a test or implementing a test would only have the value of producing something we can run. Reading a test would only have value when debugging. Is this really true?
 
 In this chapter, I argue that the acts of designing, implementing, compiling and reading a test are all very valuable activities. And they let us treat tests as something more than just "automated checks".
 
-When a test becomes something more 
-----------------------------------
+## When a test becomes something more 
 
 I studied in Łódź, a large city in the center of Poland. As probably all other students in all other countries, we have had lectures, exercises and exams. The exams were pretty difficult. As my computer science group was on the faculty of electronic and electric engineering, we had to grasp a lot of classes that didn't have anything to do with programming. For instance: electrotechnics, solid-state physics or electronic and electrical metrology.
 
@@ -25,8 +24,7 @@ So the tests became something more. They proved very valuable before the "implem
 
 That was the value of a test before learning. Note that the tests we would usually receive were not exactly what we would encounter at the time of the exam, so we still had to guess. Yet, the role of a **test as a specification of a need** was already visible.
 
-Taking it to the software development land
---------------------------------------
+## Taking it to the software development land
 
 I chose this lengthy metaphor to show you that a writing a "test" is really another way of specifying a requirement or a need and that it's not counter-intuitive to think about it this way -- it occurs in our everyday lives. This is also true in software development. Let's take the following "test" and see what kind of needs it specifies: 
 
@@ -47,8 +45,7 @@ Let's look at those (only!) three lines of code and imagine that the production 
 
 Also, we are already after the phase of designing an API (because the test is already using it) that will fulfill the need. Don’t you think this is already quite some information about the application functionality from just three lines of code?
 
-A Specification rather than a test suite
----------------------------------------
+## A Specification rather than a test suite
 
 I hope you can see now that what we called "a test" can also be seen as a kind of specification. This is also the answer to the question I raised at the beginning of this chapter. 
 
@@ -84,8 +81,7 @@ Given this variety in terminology, I'd like to make a deal: to be consistent th
 
 From time to time I'll refer back to the "traditional" terminology, because it is better established and because you may have already heard some other established terms and wonder how they should be understood in the context of thinking of tests as a specification.
 
-The differences between executable and "traditional" specifications
----------------------------------------
+## The differences between executable and "traditional" specifications
 
 You may be familiar with requirements specifications or design specifications that are written in plain English or other spoken language. However, our Specifications differ from them in at least few ways. In particular, the kind of Specification that we create by writing tests:
 

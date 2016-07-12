@@ -1,10 +1,8 @@
-How is TDD about analysis and what does "GIVEN-WHEN-THEN" mean?
-===============================================================
+# How is TDD about analysis and what does "GIVEN-WHEN-THEN" mean?
 
 During their work on the calculator code, Johnny mentioned that TDD is, among other things, about analysis. This chapter examines this concept further. Let's start by answering the following question:
 
-Is there really a commonality between analysis and TDD?
--------------------------------------------------------
+## Is there really a commonality between analysis and TDD?
 
 From [Wikipedia](https://en.wikipedia.org/wiki/Analysis):
 
@@ -39,8 +37,7 @@ Note that some items are already crossed out as done, while others remain pendin
 
 Ok, that's it for the discussion. Now that we are sure that TDD is about analysis, let's focus on the tools we can use to aid and inform it. You already saw both of them in this book, now we're going to have a closer look.
 
-Gherkin
--------
+## Gherkin
 
 Hungry? Too bad, because the Gkerkin I am gonna talk about is not edible. It is a notation and a way of thinking about behaviors of the specified piece of code. It can be applied on different levels of granularity -- any behavior, whether of a whole system or a single class, may be described using Gherkin.
 
@@ -107,8 +104,7 @@ public void ShouldThrowExceptionWhenAskedToStoreNull()
 
 By thinking in terms of these three parts of behavior, we may arrive at different circumstances (GIVEN) at which the behavior takes place, or additional ones that are needed. The same goes for triggers (WHEN) and effects (THEN). If anything like this comes to our mind, we add it to the TODO list.
 
-TODO list... again!
------------------
+## TODO list... again!
 
 As I said earlier, a TODO list is a repository for our deferred work, including anything that comes to our mind when writing or thinking about a Statement, but is not a part o the current Statement we are writing. On one hand, we don't want to forget it, on the other - we don't want it to haunt us and distract us from our current task, so we write it down as soon as possible and continue with our current task. When we'are finished with it, we take another item from TODO list and start working on it.
 

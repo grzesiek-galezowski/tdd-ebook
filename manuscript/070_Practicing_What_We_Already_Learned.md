@@ -1,5 +1,4 @@
-Practicing what we have already learned
-==================================
+# Practicing what we have already learned
 
 > And now, a taste of things to come!
 >
@@ -9,13 +8,11 @@ The above quote took place just before a [fighting scene](https://www.youtube.c
 
 The previous chapter was filled with a lot of theory and philosophy, don’t you think? I really hope you didn't fall asleep while reading it. To tell you the truth, we need to grasp much more theory until we are really able to write real-world applications using TDD. To compensate for this somehow, I propose we take a side trip from the trail and try what we already learned on a quick and easy example. As we go through the example, you might wonder how on earth could you possibly write real applications the way we will write our simple program. Don't worry, I will not show you all the tricks yet, so treat it as a "taste of things to come". In other words, the example will be as close to real world problems as the fight between Sub-Zero and nameless ninja was to real martial arts fight, but will show you some of the elements of TDD process.
 
-Let me tell you a story 
------------------------
+## Let me tell you a story 
 
 Meet Johnny and Benjamin, two developers from Buthig Company. Johnny is quite fluent in programming and Test-Driven Development, while Benjamin is an intern under Johnny’s mentorship and is eager to learn TDD. They are on their way to their customer, Jane, who requested their presence as she wants them to write a small program for her. Along with them, we will see how they interact with the customer and how Benjamin tries to understand the basics of TDD. Like you, Benjamin is a novice so his questions may reflect yours. However, if you find anything explained in not enough details, do not worry -- in the next chapters, we will be expanding on this material.
 
-Act 1: The Car
---------------
+## Act 1: The Car
 
 **Johnny:** How do you feel about your first assignment?
 
@@ -31,8 +28,7 @@ Act 1: The Car
 
 **Johnny:** Her name's Jane. She runs a small shop nearby and wants us to write an application for her new mobile. You'll get the chance to meet her in a minute as we're almost there.
 
-Act 2: The Customer's Site
--------------------
+## Act 2: The Customer's Site
 
 **Johnny:** Hi, Jane, how are you?
 
@@ -204,8 +200,7 @@ What do you think?
 
 **Jane:** good luck!
 
-Act 3: Test-Driven Development
-------------------------------
+## Act 3: Test-Driven Development
 
 **Benjamin:** Wow, that was cool. Was that Acceptance Test-Driven Development?
 
@@ -772,8 +767,7 @@ public class Calculator
 
 **Johnny:** Sure.
 
-Epilogue
---------
+## Epilogue
 
 Time to leave Johnny and Benjamin, at least for now. I actually planned to make this chapter longer, and cover all the other operations, but I fear I would make this too long and bore you. You should have a feel of how the TDD cycle looks like, especially since Johnny and Benjamin had a lot of conversations on many other topics in the meantime. I will be revisiting these topics later in the book. For now, if you felt lost or unconvinced on any of the topics mentioned by Johnny, don't worry -- I don't expect you to be proficient with any of the techniques shown in this chapter just yet. The time will come for that.
 

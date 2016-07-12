@@ -1,10 +1,8 @@
-How to start?
-=============
+# How to start?
 
 Whenever I sat down with someone who was about to write code in a Statement-first manner for the first time, the person would stare at the screen, then at me, then would say: "what now?". It's easy to say: "You know how to write code, you know how to write a test for it, just this time start with the latter rather than the first", but for many people, this is something that blocks them completely. If you are one of them, don't worry -- you're not alone. I decided to dedicate this chapter solely to techniques for kicking off a Statement when there is no code.
 
-Start with a good name
-----------------------
+## Start with a good name
 
 I already said that a Statement is a description of a behavior expressed in code. A thought process leading to creation of such an executable Statement might look like the following sequence of questions:
 
@@ -111,8 +109,7 @@ When I find myself having trouble with naming like this, I suspect one of the fo
 
 A few paragraphs ago, I mentioned you shouldn't worry about the length of Statement names, but I have to admit that the name can become too long occasionally. A rule I try to follow is that the name of a Statement should be easier to read than its content. Thus, if it takes me less time to understand the point of a Statement by reading its body than by reading its name, then I consider the name too long. If this is the case, I try to apply the heuristics described above to find and fix the root cause of the problem.
 
-Start by filling the GIVEN-WHEN-THEN structure with the obvious
-----------------------------------------------------------------
+## Start by filling the GIVEN-WHEN-THEN structure with the obvious
 
 This technique can be used as an extension to the previous one (i.e. starting with a good name), by inserting one more question to the question sequence we followed the last time:
 
@@ -243,8 +240,7 @@ ShouldAppearEqualToAnotherUserWithTheSameName()
 
 And that's it -- the Statement itself is complete!
 
-Start from the end
-------------------
+## Start from the end
 
 This is a technique that I suggest to people that seem to have absolutely no idea how to start. I got it from Kent Beck’s book Test Driven Development by Example. It seems funny at first glance, but I found it quite powerful at times. The trick is to write the Statement "backwards", i.e. starting with what the result verification (in terms of the *GIVEN-WHEN-THEN* structure, we would say that we start with our *THEN* part).
 
@@ -311,8 +307,7 @@ ShouldAllowAccessToReportingWhenAskedForEitherAdministratorOrAuditor()
 
 Using what we learned by formulating the Statement, it was easy to give it a name.
 
-Start by invoking a method if you have one
-------------------------------------------
+## Start by invoking a method if you have one
 
 If preconditions for this approach are met, it's the most straightforward one and I use it a lot[^lookfordetailsinchapter2].
 
@@ -420,8 +415,7 @@ public void TODO()
 
 All what is left is to find a good name for the Statement. This isn’t an issue since we already specified the desired behavior in the code, so we can just summarize it as something like `ShouldCreateAPromptForFullVersionPurchaseWhenAskedForImportDatabaseMessage()`.
 
-Summary
--------
+## Summary
 
 When I'm stuck and don't know how to start writing a new failing Statement, the techniques from this chapter help me push things in the right direction. Note that the examples given are simplistic and built on an assumption that there is only one object that takes some kind of input parameter and returns a well defined result. However, this isn't how most of the object-oriented world is built. In that world, we often have objects that communicate with other objects, send messages, invoke methods on each other and these methods often don't have any return values but are instead declared as `void`. Even though, all of the techniques described in this chapter will still work in such case and we’ll revisit them as soon as we learn how to do TDD in the larger object-oriented world (after the introduction of the concept of mock objects in Part 2). Here, I tried to keep it simple.
 
