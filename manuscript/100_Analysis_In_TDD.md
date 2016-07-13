@@ -1,6 +1,6 @@
 # How is TDD about analysis and what does "GIVEN-WHEN-THEN" mean?
 
-During their work on the calculator code, Johnny mentioned that TDD is, among other things, about analysis. This chapter examines this concept further. Let's start by answering the following question:
+During their work on the calculator code, Johnny mentioned that TDD is, among other things, about analysis. This chapter further explores this concept. Let's start by answering the following question:
 
 ## Is there really a commonality between analysis and TDD?
 
@@ -8,18 +8,18 @@ From [Wikipedia](https://en.wikipedia.org/wiki/Analysis):
 
 > Analysis is the process of breaking a complex topic or substance into smaller parts to gain a better understanding of it.
 
-Thus, for TDD to be about analysis, it has to fulfill two conditions:
+Thus, for TDD to be about analysis, it would have to fulfill two conditions:
 
-1.  It has to be a process of breaking a complex topic into smaller parts
-2.  It has to allow gaining a better understanding of such smaller parts
+1.  It would have to be a process of breaking a complex topic into smaller parts
+2.  It would have to allow gaining a better understanding of such smaller parts
 
-In the story about Johnny, Benjamin and Jane, I included a part where they analyze requirements using concrete examples. Johnny explained that this is a part of a technique called Acceptance Test-Driven Development. The process followed by the three characters fulfilled both mentioned conditions for a process to be analytical. But what about TDD itself?
+In the story about Johnny, Benjamin and Jane, I included a part where they analyze requirements using concrete examples. Johnny explained that this is a part of process called Acceptance Test-Driven Development. This process, followed by the three characters, fulfilled both mentioned conditions for it to be considered analytical. But what about TDD itself?
 
-Although I used parts of the ATDD process in the story to make the analysis part more obvious, similar things happen at pure technical levels. For example, when starting development with a failing application-wide Statement (i.e. one that covers a behavior of an application as a whole. We will talk about levels of granularity of Statements later. For now the only thing you need to know is that the so called "unit tests level" is not the only level of granularity we write Statements on), we may encounter a situation where we need to call a web method and make an assertion on its result. This makes us think: what should this method be called? What are the scenarios supported? What do I need to get out of it? How should its user be notified about errors? Many times, this leads us to either a conversation (if there is another stakeholder that needs to be involved in the decision) or rethinking our assumptions. The same applies on "unit level" - if a class implements a domain rule, there might be some good domain-related questions resulting from trying to write a Statement for it. If a class implements a technical rule, there might be some good technical questions to discuss with other developers etc. This is how we gain a better understanding of the topic we are analyzing, which makes TDD fulfill the second of the two requirements for it to be an analysis method.
+Although I used parts of the ATDD process in the story to make the analysis part more obvious, similar things happen at pure technical levels. For example, when starting development with a failing application-wide Statement (i.e. one that covers a behavior of an application as a whole. We will talk about levels of granularity of Statements later. For now the only thing you need to know is that the so called "unit tests level" is not the only level of granularity we write Statements on), we may encounter a situation where we need to call a web method and make an assertion on its result. This makes us think: how should this method be named? What are the scenarios it supports? What do I expect to get out of it? How should I, as its user, be notified about errors? Many times, this leads us to either a conversation (if there is another stakeholder that needs to be involved in the decision) or rethinking our assumptions. The same applies on "unit level" - if a class implements a domain rule, there might be some good domain-related questions resulting from trying to write a Statement for it. If a class implements a technical rule, there might be some technical questions to discuss with other developers etc. This is how we gain a better understanding of the topic we are analyzing, which makes TDD fulfill the second of the two requirements for it to be an analysis method.
 
 But what about the first requirement? What about breaking a complex logic into smaller parts?
 
-If you go back to Johnny and Benjamin's story, you will note that when talking to a customer and when writing code, they used a TODO list. This list was first filled with whatever scenarios they came up with, but later, they would add smaller units of work. When doing TDD, we do the same, essentially decomposed complex topics into smaller items and putting them on the TODO list (this is one of the practices that serve decomposition. The other one is mocking, but let's not get into that yet). Thanks to this, we can focus on one thing at a time, crossing off item after item from the list after it's done. If we learn something new or encounter a new issue that needs our attention, we can add it to the TODO list and get back to it later, for now continuing our work on the current point of focus.
+If you go back to Johnny and Benjamin's story, you will note that when talking to a customer and when writing code, they used a TODO list. This list was first filled with whatever scenarios they came up with, but later, they would add smaller units of work. When doing TDD, I do the same, essentially decomposing complex topics into smaller items and putting them on the TODO list (this is one of the practices that serve decomposition. The other one is mocking, but let's leave that for now). Thanks to this, I can focus on one thing at a time, crossing off item after item from the list after it's done. If I learn something new or encounter a new issue that needs our attention, I can add it to the TODO list and get back to it later, for now continuing my work on the current item of focus.
 
 An example TODO list from the middle of an implementation task may look like this (don't read through it, I put it here just to give you a glimpse - you're not supposed to understand what the list items are about):
 
@@ -33,7 +33,7 @@ An example TODO list from the middle of an implementation task may look like thi
 8.  Implement behavior required from ValidateWith method in `LocationMessage` class for Age field
 9.  Implement behavior required from ValidateWith method in `LocationMessage` class for Sender field
 
-Note that some items are already crossed out as done, while others remain pending and waiting to be addressed. All these items are what the article on Wikipedia calls "smaller parts" - a result of breaking a bigger topic.
+Note that some items are already crossed off as done, while others remain pending and waiting to be addressed. All these items are what the article on Wikipedia calls "smaller parts" - a result of breaking a bigger topic.
 
 Ok, that's it for the discussion. Now that we are sure that TDD is about analysis, let's focus on the tools we can use to aid and inform it. You already saw both of them in this book, now we're going to have a closer look.
 
