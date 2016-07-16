@@ -1,3 +1,15 @@
+# 16-07-2016
+
+Hi,
+
+This time, the "Is TDD about analysis..." chapter underwent an overhaul. I corrected a lot of phrases, expanded some explanations and I hope the readability of the chapter is much better now.
+
+As a bonus, I fixed chapter markers for about half of the chapters. They were broken since several releases and I didn't even notice, lol :-).
+
+Anyway, I'm currently planning to prepare a talk about how test-first is not as counter-intuitive as many think. I found interesting comparisons of TDD to scientific method and the other think I'd like to do is present TDD as an agile process. I'm really curious about your experiences - do you view test-first approach as counter-intuitive? If so, why? If not, what view or metaphor of TDD appealed to you the most? If you'd like to share your point of view and experience, you can reach me through the leanpub's "contact the author" feature.
+
+Happy reading!
+
 # 29-06-2016
 
 Hi!
