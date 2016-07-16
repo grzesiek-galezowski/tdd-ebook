@@ -1,6 +1,6 @@
 # How is TDD about analysis and what does "GIVEN-WHEN-THEN" mean?
 
-During their work on the calculator code, Johnny mentioned that TDD is, among other things, about analysis. This chapter further explores this concept. Let's start by answering the following question:
+During the work on the calculator code, Johnny mentioned that TDD is, among other things, about analysis. This chapter further explores this concept. Let's start by answering the following question:
 
 ## Is there really a commonality between analysis and TDD?
 
