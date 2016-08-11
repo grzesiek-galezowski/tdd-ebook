@@ -74,7 +74,7 @@ As you see, we need to pass a `Destination` to a `DataDispatch`, but we don't kn
 From the perspective of `DataDispatch`, it is designed to work with different destinations, so no context is more appropriate than other. This means that we can pick and choose the one we like. Ideally, we'd like to pass a context that best fulfills the following requirements:
 
 1. Does not add side effects of its own - when we are specifying a protocol of an object, we want to be sure that what we are making assertions on are the actions of this object itself, not its context. This is a requirement of trust - you want to trust your specifications that they are specifying what they say they do.
-1. Is easy to control - so that we can easily make it trigger different behaviors in the object we are specifying, Also, we want to be able to easily verify how the specified object interacts with its context. This is a requirement of convenience.
+1. Is easy to control - so that we can easily make it trigger different behaviors in the object we are specifying. Also, we want to be able to easily verify how the specified object interacts with its context. This is a requirement of convenience.
 1. Is quick to create and easy to maintain - because we want to focus on the behaviors we specify, not on maintaining or creating helper context. Also, we don't want to write special Statements for the behaviors of this context. This is a requirement of low friction.
 
 There is a tool that fulfills these three requirements - you guessed it - mock objects!
