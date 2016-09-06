@@ -114,8 +114,8 @@ string newString = oldString.Replace('r', 'l');
 When I want to have a date later by five days than another date:
 
 ```csharp
-string oldDate = DateTime.Now;
-string newString = oldDate + TimeSpan.FromDays(5);
+DateTime oldDate = DateTime.Now;
+DateTime newString = oldDate + TimeSpan.FromDays(5);
 //oldDate is unchanged, newDate is later by 5 days
 ```
 
