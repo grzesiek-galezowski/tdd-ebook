@@ -34,7 +34,7 @@ and try for yourself how difficult it is to answer the following questions:
 8.  What do you answer new developers in your team when they ask you "what is this Statement for?"
 9.  How do you know when your Specification is complete if you can't tell from the Statement names what behaviors you already have covered and what not?
 
-### What does a good name contain? 
+### What does a good name contain?
 
 To be of any use, the name of a Statement has to describe its expected behavior. At the minimum, it should describe what happens under what circumstances. Let's take a look at one of the names Steve Freeman and Nat Pryce came up with in their great book [Growing Object-Oriented Software Guided By Tests](http://www.growing-object-oriented-software.com/): 
 
@@ -408,7 +408,6 @@ public void TODO()
   HoldOnASecondWhileWeImportYourDatabase(userName);
 
  //THEN
-
  Assert.Equal(expectedMessage, message);
 }
 ```
