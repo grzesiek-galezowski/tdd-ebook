@@ -1,14 +1,14 @@
 # Developing a TDD style and Constrained Non-Determinism
 
-In one of the first chapters, I introduced to you the idea of anonymous values generator idea, which I have wrapped in a static class called `Any`. Throughout the next chapters, you have seen me using it quite extensively in many of the Statements I wrote.
+In [one of the first chapters](#chapter-essential-tools), I introduced to you the idea of anonymous values generator. I showed you the `Any` class which I use for generating such values. Throughout the chapters that followed, I have used it quite extensively in many of the Statements I wrote.
 
-The time has come to explain a little bit more carefully what principles lie under this technique and tool. I will also use this technique as a case study to show you how one develops a style of Test-Driven Development.
+The time has come to explain a little bit more about the underlying principles of using anonymous values in Statements. Along the way, we'll also examine developing a style of TDD.
 
 ## A style?
 
-Yep. Why am I wasting your time writing about style instead of giving you the hardcore technical details? The answer is simple. Before I started writing this tutorial, I read four or five books solely on TDD and maybe two others that contain chapters on TDD. All of this sums up to about two or three thousands of paper pages, plus numerous posts on many blogs. And you know what I noticed? No two authors use exactly the same sets of techniques for test-driving their code! I mean, sometimes, when you look at the techniques they are suggesting, two authorities contradict each other. As each authority has their followers, it is not uncommon to observe and take part in discussions about whether this or that technique is better than a competing one or which one leads to trouble in the long run.
+Yep. Why am I wasting your time writing about style instead of giving you the hardcore technical details? The answer is simple. Before I started writing this tutorial, I read four or five books solely on TDD and maybe two others that contained chapters on TDD. All of this sums up to about two or three thousands of paper pages, plus numerous posts on many blogs. And you know what I noticed? No two authors use exactly the same sets of techniques for test-driving their code! I mean, sometimes, when you look at the techniques they are suggesting, two authorities contradict each other. As each authority has their followers, it is not uncommon to observe and take part in discussions about whether this or that technique is better than a competing one or which technique is "a smell"[^mocks-are-not-stubs] and leads to trouble in the long run.
 
-I did this, too. I also tried to understand how come people praise techniques I KNEW were wrong and led to disaster. Then, Finally, I got it. I understood that it is not a "technique A vs. technique B" debate. There are certain sets of techniques that work together and choosing one technique leaves us with issues we have to resolve by adopting other techniques. This is how a style is created.
+I did this, too. I also tried to understand how come people praise techniques I KNEW were wrong and led to disaster. Then, Finally, I got it. I understood that it is not a "technique A vs. technique B" debate. There are certain sets of techniques that work together and symbiotically enhance each other. Choosing one technique leaves us with issues we have to resolve by adopting other techniques. This is how a style is created.
 
 Developing a style starts with a set of problems to solve and an underlying set of principles we consider important. These principles lead us to adopt our first technique, which makes us adopt another one and, ultimately, a coherent style emerges. Using Constrained Non-Determinism as an example, I will try to show you how part of a style gets derived from a technique that is derived from a principle.
 
@@ -268,3 +268,5 @@ I, after Amir Kolsky and Scott Bain, like to use Any class as seen in the previo
 ## Summary
 
 That was a long ride, wasn’t it? I hope that this chapter gave you some understanding of how different TDD styles came into existence and why I use some of the techniques I do (and how these techniques are not just a series of random choices). In the next chapters, I will try to introduce some more techniques to help you grow a bag of neat tricks -- a coherent style.
+
+[^mocks-are-not-stubs] One of such articles can be found at http://martinfowler.com/articles/mocksArentStubs.html 
