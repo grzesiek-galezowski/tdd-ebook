@@ -8,13 +8,13 @@ The time has come to explain a little bit more about the underlying principles 
 
 Yep. Why am I wasting your time writing about style instead of giving you the hardcore technical details? The answer is simple. Before I started writing this tutorial, I read four or five books solely on TDD and maybe two others that contained chapters on TDD. All of this sums up to about two or three thousands of paper pages, plus numerous posts on many blogs. And you know what I noticed? No two authors use exactly the same sets of techniques for test-driving their code! I mean, sometimes, when you look at the techniques they are suggesting, two authorities contradict each other. As each authority has their followers, it is not uncommon to observe and take part in discussions about whether this or that technique is better than a competing one or which technique is "a smell"[^mocks-are-not-stubs] and leads to trouble in the long run.
 
-I did this, too. I also tried to understand how come people praise techniques I KNEW were wrong and led to disaster. Then, Finally, I got it. I understood that it is not a "technique A vs. technique B" debate. There are certain sets of techniques that work together and symbiotically enhance each other. Choosing one technique leaves us with issues we have to resolve by adopting other techniques. This is how a style is created.
+I did this, too. I also tried to understand how come people praise techniques I KNEW were wrong and led to disaster. Then, Finally, I got it. I understood that it is not a "technique A vs. technique B" debate. There are certain sets of techniques that work together and symbiotically enhance each other. Choosing one technique leaves us with issues we have to resolve by adopting other techniques. This is how a style is developed.
 
 Developing a style starts with a set of problems to solve and an underlying set of principles we consider important. These principles lead us to adopt our first technique, which makes us adopt another one and, ultimately, a coherent style emerges. Using Constrained Non-Determinism as an example, I will try to show you how part of a style gets derived from a technique that is derived from a principle.
 
 ## Principle: Tests As Specification
 
-As I already stressed, I strongly believe that unit tests constitute an executable specification. Thus, they should not only pass input values to an object and assert on the output, they should also convey to their reader the rules according to which objects and functions work. The following oversimplified example shows a Statement where it is not explicitly stated what is the relationship between input and output:
+As I already stressed, I strongly believe that unit tests constitute an executable specification. Thus, they should not only pass input values to an object and assert on the output, they should also convey to their reader the rules according to which objects and functions work. The following toy example shows a Statement where it isn't explicitly stated what the relationship between input and output is:
 
 ```csharp
 [Fact] public void 
@@ -31,9 +31,13 @@ ShouldCreateBackupFileNameContainingPassedHostName()
 }
 ```
 
-Although the relationship can be guessed quite easily, remember it is just an example. Also, seeing code like that makes me ask questions like: is the "backup\_" prefix always applied? What if I pass the prefix itself instead of "MY\_HOST\_NAME"? Will the name be "backup\_backup\_.zip", or just "backup\_.zip"? Also, is this object responsible for any validation of passed string?
+Although the relationship can be guessed quite easily in this toy example, it's not explicitly stated, so in more complex scenarios it might not be as trivial to spot. Also, seeing code like that makes me ask questions like: 
 
-This makes me invent a first technique to provide my Statements with better support for the principle I believe in.
+* Is the "backup\_" prefix always applied? What if I pass the prefix itself instead of "MY\_HOST\_NAME"? Will the name be "backup\_backup\_.zip", or just "backup\_.zip"? 
+* Is this object responsible for any validation of passed string? If I pass "MY HOST NAME" (with spaces) will this throw an exception or just apply the pattern?
+* Last but not least, what about letter casing? Why is "MY\_HOST\_NAME" written as an upper-case string? If I pass "my\_host\_name", will it be rejected or accepted? Or maybe it will be automatically converted to upper case? 
+
+This makes me invent a first technique to provide my Statements with better support for the principle I follow.
 
 ## First technique: Anonymous Input
 
@@ -60,7 +64,7 @@ public string AnyString()
 }
 ```
 
-By using **anonymous input**, we provide a better documentation of the input value. Here, I wrote `AnyString()`, but of course, there can be a situation where I use more constrained data, e.g. `AnyAlphaNumericString()` when I need a string that does not contain any characters other than letters and digits. Note that this technique **is applicable only when the particular value of the variable is not important, but rather its "trait"**. Taking authorization as an example, when a certain behavior occurs only when the input value is `Users.Admin`, there is **no sense** making it anonymous. On the other hand, for a behavior that occurs for all values other than `Users.Admin`, it makes sense to use a method like `AnyUserOtherThan(Users.Admin)` or even `AnyNonAdminUser()`.
+By using **anonymous input**, we provide a better documentation of the input value. Here, I wrote `AnyString()`, but of course, there can be a situation where I use more constrained data, e.g. I would invent a method called `AnyAlphaNumericString()` if I was in need of a string that does not contain any characters other than letters and digits. Note that this technique **is applicable only when the particular value of the variable is not important, but rather its "trait"**. Taking authorization as an example, when a certain behavior occurs only when the input value is `Users.Admin`, there is **no sense** making it anonymous. On the other hand, for a behavior that occurs for all values other than `Users.Admin`, it makes sense to use a method like `AnyUserOtherThan(Users.Admin)` or even `AnyNonAdminUser()`.
 
 Now that the Statement itself is freed from the knowledge of the concrete value of `hostName` variable, the concrete value of "backup\_MY\_HOST\_NAME.zip" looks kind of weird. There is no clear indication of the kind of relationship between input and output and whether there is any at all (one may reason whether the output is always the same string or maybe it depends on the string length). It is unclear which part is added by the production code and which part depends on the input we pass to the method. This leads us to another technique.
 
