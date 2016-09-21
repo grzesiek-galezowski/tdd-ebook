@@ -64,9 +64,13 @@ public string AnyString()
 }
 ```
 
-By using **anonymous input**, we provide a better documentation of the input value. Here, I wrote `AnyString()`, but of course, there can be a situation where I use more constrained data, e.g. I would invent a method called `AnyAlphaNumericString()` if I was in need of a string that does not contain any characters other than letters and digits. Note that this technique **is applicable only when the particular value of the variable is not important, but rather its "trait"**. Taking authorization as an example, when a certain behavior occurs only when the input value is `Users.Admin`, there is **no sense** making it anonymous. On the other hand, for a behavior that occurs for all values other than `Users.Admin`, it makes sense to use a method like `AnyUserOtherThan(Users.Admin)` or even `AnyNonAdminUser()`.
+By using **anonymous input**, we provided a better documentation of the input value. Here, I wrote `AnyString()`, but of course, there can be a situation where I use more constrained data, e.g. I would invent a method called `AnyAlphaNumericString()` if I was in need of a string that does not contain any characters other than letters and digits. 
 
-Now that the Statement itself is freed from the knowledge of the concrete value of `hostName` variable, the concrete value of "backup\_MY\_HOST\_NAME.zip" looks kind of weird. There is no clear indication of the kind of relationship between input and output and whether there is any at all (one may reason whether the output is always the same string or maybe it depends on the string length). It is unclear which part is added by the production code and which part depends on the input we pass to the method. This leads us to another technique.
+I> # Anonymous input and equivalence classes
+I>
+I> Note that this technique is useful only when we specify a behavior that should occur for all members of an equivalence class. An example of equivalence class is "a string starting with a number" or "a positive integer" or "any legal URI". When a behavior should occur only for a single specific input value, there is no room for making it anonymous. Taking authorization as an example, when a certain behavior occurs only when the input value is `Users.Admin`, we have no useful equivalence class and we should just use the literal value of `Users.Admin`. On the other hand, for a behavior that occurs for all values other than `Users.Admin`, it makes sense to use a method like `AnyUserOtherThan(Users.Admin)` or even `AnyNonAdminUser()`, because this is a useful equivalence class.
+
+Now that the Statement itself is freed from the knowledge of the concrete value of `hostName` variable, the concrete value of "backup\_MY\_HOST\_NAME.zip" looks kind of weird. There is still no clear indication of the kind of relationship between input and output and whether there is any at all (one may guess that the result of the `ApplyTo()` is always the same or that it depends on the `hostName` length). It is unclear which part is added by the production code and which part depends on the input we pass to the method. This leads us to another technique.
 
 ## Second technique: Derived Values
 
@@ -84,9 +88,7 @@ ShouldCreateBackupFileNameContainingPassedHostName()
   var name = fileNamePattern.ApplyTo(hostName);
   
   //THEN
-  Assert.Equal(
-    string.Format("backup_{0}.zip", hostName),
-    name);
+  Assert.Equal($"backup_{hostName}.zip", name);
 }
 public string AnyString()
 {
@@ -94,13 +96,13 @@ public string AnyString()
 }
 ```
 
-This looks more like a part of specification, because we are documenting the format of the backup file name and show which part of the format is variable and which part is fixed. This is something you would probably find documented in a paper specification for the application you are writing -- it would probably contain a sentence saying: "The format of a backup file should be **backup\_H.zip**, where **H** is the current local host name".
+This looks more like a part of specification, because we are documenting the format of the backup file name and show which part of the format is variable and which part is fixed. This is something you would probably find documented in a paper specification for the application you are writing -- it would probably contain a sentence saying: "The format of a backup file should be **backup\_H.zip**, where **H** is the current local host name". What we used here was a derived value.
 
-**Derived values** are about defining expected output in terms of the input that was passed to provide a clear indication on what is the "transformation" of the input required of the specified production code.
+**Derived values** are about defining expected output in terms of the input that was passed to provide a clear indication on what kind of  "transformation" the production code is required to perform on its input.
 
 ## Third technique: Distinct Generated Values
 
-Let's assume that some time after our initial version is shipped, we are asked to make the backup feature applied locally per user only for this user’s data. As the customer does not want to confuse files from different users, we are asked to add name of the user doing backup to the backup file name. Thus, the new format is "backup\_H\_U.zip", where H is still the host name and U is the user name. Our Statement for the pattern must change as well to include this information. Of course, we are trying to use the anonymous input again as a proven technique and we end up with:
+Let's assume that some time after our initial version is shipped, we are asked to change the backup feature so that it stored backed up data separately for each user that backs up their private data. As the customer does not want to confuse files from different users, we are asked to add name of the user doing backup to the backup file name. Thus, the new format is "backup\_H\_U.zip", where H is still the host name and U is the user name. Our Statement for the pattern must change as well to include this information. Of course, we are trying to use the anonymous input again as a proven technique and we end up with:
 
 ```csharp
 [Fact] public void 
