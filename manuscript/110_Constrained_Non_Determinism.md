@@ -102,7 +102,7 @@ This looks more like a part of specification, because we are documenting the fo
 
 ## Third technique: Distinct Generated Values
 
-Let's assume that some time after our initial version is shipped, we are asked to change the backup feature so that it stored backed up data separately for each user that backs up their private data. As the customer does not want to confuse files from different users, we are asked to add name of the user doing backup to the backup file name. Thus, the new format is "backup\_H\_U.zip", where H is still the host name and U is the user name. Our Statement for the pattern must change as well to include this information. Of course, we are trying to use the anonymous input again as a proven technique and we end up with:
+Let's assume that some time after our initial version is shipped, we are asked to change the backup feature so that it stores backed up data separately for each user that invokes this functionality. As the customer does not want to have name conflicts between files created by different users, we are asked to add name of the user doing backup to the backup file name. Thus, the new format is "backup\_H\_**U**.zip", where H is still the host name and U is the user name. Our Statement for the pattern must change as well to include this information. Of course, we are trying to use the anonymous input again as a proven technique and we end up with:
 
 ```csharp
 [Fact] public void 
@@ -117,9 +117,7 @@ ShouldCreateBackupFileNameContainingPassedHostNameAndUserName()
   var name = fileNamePattern.ApplyTo(hostName, userName);
   
   //THEN
-  Assert.Equal(string.Format(
-    "backup_{0}_{1}.zip", hostName, userName),
-    name);
+  Assert.Equal($"backup_{hostName}_{userName}.zip", name);
 }
 
 public string AnyString()
@@ -128,7 +126,7 @@ public string AnyString()
 }
 ```
 
-Now, we can clearly see that there is something wrong with this Statement. AnyString() is used twice and each time it returns the same value, which means that evaluating the Statement does not give us any guarantee, that both values are applied and that they are applied in the correct places. For example, the Statement will be evaluated to true when user name is used instead of host name in specified production code. This means that if we still want to use the anonymous input effectively, we have to make the two values distinct, e.g. like this:
+Now, we can clearly see that there is something wrong with this Statement. AnyString() is used twice and each time it returns the same value, which means that evaluating the Statement does not give us any guarantee, that both arguments of the `ApplyTo()` method are used and that they are used in the correct places. For example, the Statement will be evaluated to true when user name is used instead of host name in specified production code. This means that if we still want to use the anonymous input effectively, we have to make the two values distinct, e.g. like this:
 
 ```csharp
 [Fact] public void 
@@ -143,9 +141,7 @@ ShouldCreateBackupFileNameContainingPassedHostNameAndUserName()
   var name = fileNamePattern.ApplyTo(hostName, userName);
   
   //THEN
-  Assert.Equal(string.Format(
-    "backup_{0}_{1}.zip", hostName, userName),
-    name);
+  Assert.Equal($"backup_{hostName}_{userName}.zip", name);
 }
 
 public string AnyString()
@@ -159,7 +155,7 @@ public string AnyString2()
 }
 ```
 
-We solved the problem (for now) by introducing another helper method. However, this, as you can see, is not a very scalable solution. Thus, let's try to reduce the amount of helper methods for string generation to one and make it return a different value each time:
+We solved the problem (for now) by introducing another helper method. However, as you can see, this is not a very scalable solution. Thus, let's try to reduce the amount of helper methods for string generation to one and make it return a different value each time:
 
 ```csharp
 [Fact] public void 
@@ -174,18 +170,16 @@ ShouldCreateBackupFileNameContainingPassedHostNameAndUserName()
   var name = fileNamePattern.ApplyTo(hostName, userName);
   
   //THEN
-  Assert.Equal(string.Format(
-    "backup_{0}_{1}.zip", hostName, userName),
-    name);
+  Assert.Equal($"backup_{hostName}_{userName}.zip", name);
 }
 
 public string AnyString()
 {
-  return Guid.NewGuid.ToString();
+  return Guid.NewGuid().ToString();
 }
 ```
 
-This time, we are not returning an understandable string, but rather a guid, which gives us the fairly strong guarantee of generating distinct value each time. The string not being understandable (contrary to something like "MY\_HOST\_NAME") may leave you worried that maybe we are losing something, but hey, didn’t we say **Any**String()?
+This time, we are not returning a human-readable text, but rather a guid, which gives us a fairly strong guarantee of generating distinct value each time. The string not being human-readable (contrary to something like "MY\_HOST\_NAME") may leave you worried that maybe we are losing something, but hey, didn’t we say **Any**String()?
 
 **Distinct generated values** means that each time we need a value of a particular type, we get something different (if possible) than the last time and each value is generated automatically using some kind of heuristics.
 
