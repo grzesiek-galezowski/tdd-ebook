@@ -179,13 +179,13 @@ public string AnyString()
 }
 ```
 
-This time, we are not returning a human-readable text, but rather a guid, which gives us a fairly strong guarantee of generating distinct value each time. The string not being human-readable (contrary to something like "MY\_HOST\_NAME") may leave you worried that maybe we are losing something, but hey, didn’t we say **Any**String()?
+This time, the `AnyString()` method returns a guid instead of a human-readable text. Generating a new guid each time gives us a fairly strong guarantee that each value would be distinct. The string not being human-readable (contrary to something like "MY\_HOST\_NAME") may leave you worried that maybe we are losing something, but hey, didn’t we say **Any**String()?
 
 **Distinct generated values** means that each time we need a value of a particular type, we get something different (if possible) than the last time and each value is generated automatically using some kind of heuristics.
 
 ## Fourth technique: Constant Specification
 
-Let's consider another modification that we are requested to make -- this time, the backup file name needs to contain version number of our application as well. Remembering that we want to use Derived Values, we will not hardcode the version number into our Statement. Instead, we are going to use a constant that is already defined somewhere else in the application (this way we also avoid duplication of this version number across the application):
+Let's consider another modification that we are requested to make -- this time, the backup file name needs to contain version number of our application as well. Remembering that we want to use Derived Values, we will not hardcode the version number into our Statement. Instead, we will use a constant that's already defined somewhere else in the application's production code (this way we also avoid duplication of this version number across the application). Let's imagine this version number is stored as a constant called `Number` in `Version` class. The Statement updated for the new requirements looks like this:
 
 ```csharp
 [Fact] public void 
@@ -201,10 +201,7 @@ ShouldCreateBackupFileNameContainingPassedHostNameAndUserNameAndVersion()
   
   //THEN
   Assert.Equal(
-    string.Format(
-      "backup_{0}_{1}_{2}.zip", 
-      hostName, userName, Version.Number),
-    name);
+    $"backup_{hostName}_{userName}_{Version.Number}.zip", name);
 }
 
 public string AnyString()
@@ -213,48 +210,51 @@ public string AnyString()
 }
 ```
 
-Note that I didn’t use the literal constant value, but rather, the value inside the `Version.Number` constant. This allows us to use derived value, but leaves us a little worried about whether the value of the constant is correct -- after all, we are using it for creation of our expected value, but it is a part of production code -- i.e. is something that should be specified itself!
+Again, rather than a literal constant value of something like `5.0`, I used the `Version.Number` constant which holds the value. This allowed me to use derived value in the assertion, but left me a little worried about whether the value of the constant itself is correct -- after all, I used the production code constant for creation of expected value. If I accidentally modify this constant in my code to an invalid value, the Statement would still be considered true, even though the behavior itself would be wrong.
 
-To keep everyone happy, we write a single Statement just for the constant to specify what the value should be:
+To keep everyone happy, I usually solve this dillemma by writing a single Statement just for the constant to specify what the value should be:
 
 ```csharp
-[Fact] public void 
-ShouldContainNumberEqualTo1_0()
+public class VersionSpecification
 {
-  Assert.Equal("1.0", Version.Number);
+ [Fact] public void 
+ ShouldContainNumberEqualTo1_0()
+ {
+   Assert.Equal("1.0", Version.Number);
+ }
 }
 ```
 
-By doing so, we make the value in the production code just echo what is in our executable Specification, which we can fully trust.
+By doing so, I made sure that there is a Statement that will turn false whenever I accidentally change the value of `Version.Number`. This way, I don't have to worry about it in the rest of the Statement. As long as this Statement holds, the rest can use the constant from the production code without worries.
 
 ## Summary of the example 
 
-In this example, I tried to show you how a style can evolve from the principles you value when doing TDD. I did so for two reasons:
+By showing you this example, I tried to demonstrate a style can evolve from the principles we believe in and constraints we encounter when applying those principles. I did so for two reasons:
 
-1.  To introduce to you a set of techniques I personally use and recommend and to do it in a fluent and logical way.
-2.  To help you better communicate with people that are using different styles. Instead of just throwing "you are doing it wrong" at them, try to understand their principles and how their techniques of choice support those principles.
+1.  To introduce to you a set of techniques I personally use and recommend. An example was the best way of describing them in a fluent and logical way I could think of.
+2.  To help you better communicate with people that are using different styles. Instead of just throwing "you are doing it wrong" at them, consider understanding their principles and how their techniques of choice support those principles.
 
-Now, let's take a quick summary of all the techniques introduced in example:
+Now, let's take a quick summary of all the techniques introduced in the backup file name example:
+
+Derived Values
+:   I define my expected output in terms of the input to document the relationship between input and output.
 
 Anonymous Input
-:   moving the output out of the Statement code and hide it behind a method that to emphasize the constrain on the data used rather than what is its value
-    
-Derived Values
-:   defining expected output in terms of the input to document the relationship between input and output
+:   When I want to document the fact that a particular value is not relevant for the current Statement, I use a special method that produces the value for me. I name this method after the equivalence class that I need it to belong to (e.g. `Any.AlphaNumericString()`) and this way, I make my Statement agnostic of what particular value is used.     
     
 Distinct Generated Values
-:   When using Anonymous Input, generate a distinct value each time (in case of types that have very few values, like boolean, try at least not to generate the same value twice in a row) to make the Statement more reliable. 
+:   When using anonymous input, I generate a distinct value each time (in case of types that have very few values, like boolean, try at least not to generate the same value twice in a row) to make the Statement more reliable. 
     
 Constant Specification
-:   Write a separate Statement for a constant and use the constant instead of its literal value in all other Statements to create a Derived Value.
+:   I write a separate Statement for a constant to specify what its value should be. This way, I can use the constant instead of its literal value in all the other Statements to create a Derived Value without the risk that changing the value of the constant would not be detected by my executable Specification.
 
 ## Constrained non-determinism
 
 When we combine anonymous input together with distinct generated values, we get something that is called **Constrained Non-Determinism**. This is a term coined by Mark Seemann and basically means three things:
 
-1.  Values are anonymous i.e. we do not know the actual value we are using
+1.  Values are anonymous i.e. we don't know the actual value we are using.
 2.  The values are generated in as distinct as possible sequence (which means that, whenever possible, no two values generated one after another hold the same value)
-3.  The non-determinism in generation of the values is constrained, which means that the algorithms for generating values are carefully picked in order to provide values that are not special in any way (e.g. when generating integers, we do not allow generating ‘0’ as it is usually a special-case-value) and that are not "evil" (e.g. for integers, we generate small positive values first and go with bigger numbers only when we run out of those small ones).
+3.  The non-determinism in generation of the values is constrained, which means that the algorithms for generating values are carefully picked in order to provide values that belong to a specific equivalence class (e.g. when generating "any integer", we don't allow generating ‘0’ as it is usually a special-case-value) and that are not "evil" (e.g. for integers, we generate small positive values first and go with bigger numbers only when we run out of those small ones).
 
 There are multiple ways to implement constrained non-determinism. Mark Seemann himself has invented the AutoFixture library for C\# that is [freely available to download](https://github.com/AutoFixture/AutoFixture). Here is a shortest possible snippet to generate an anonymous integer using AutoFixture:
 
@@ -263,7 +263,7 @@ Fixture fixture = new Fixture();
 var anonymousInteger = fixture.Create<int>();
 ```
 
-I, after Amir Kolsky and Scott Bain, like to use Any class as seen in the previous chapters of this book. Any takes a slightly different approach than AutoFixture (although it uses AutoFixture internally). My implementation of Any class is [available to download as well](https://github.com/grzesiek-galezowski/tdd-toolkit).
+I, on the other hand, follow Amir Kolsky and Scott Bain, who recomment using `Any` class as seen in the previous chapters of this book. `Any` takes a slightly different approach than AutoFixture (although it uses AutoFixture internally). My implementation of `Any` class is [available to download as well](https://github.com/grzesiek-galezowski/tdd-toolkit).
 
 ## Summary
 
