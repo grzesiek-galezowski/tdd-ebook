@@ -66,7 +66,7 @@ public string AnyString()
 
 By using **anonymous input**, I provided a better documentation of the input value. Here, I wrote `AnyString()`, but of course, there can be a situation where I use more constrained data, e.g. I would invent a method called `AnyAlphaNumericString()` if I was in need of a string that doesn't contain any characters other than letters and digits. 
 
-I> # Anonymous input and equivalence classes
+I> ### Anonymous input and equivalence classes
 I>
 I> Note that this technique is useful only when we specify a behavior that should occur for all members of some kind of equivalence class. An example of equivalence class is "a string starting with a number" or "a positive integer" or "any legal URI". When a behavior should occur only for a single specific input value, there is no room for making it anonymous. Taking authorization as an example, when a certain behavior occurs only when the input value is `Users.Admin`, we have no useful equivalence class and we should just use the literal value of `Users.Admin`. On the other hand, for a behavior that occurs for all values other than `Users.Admin`, it makes sense to use a method like `AnyUserOtherThan(Users.Admin)` or even `AnyNonAdminUser()`, because this is a useful equivalence class.
 
