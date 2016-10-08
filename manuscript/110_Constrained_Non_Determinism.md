@@ -126,7 +126,7 @@ public string AnyString()
 }
 ```
 
-Now, we can clearly see that there is something wrong with this Statement. `AnyString()` is used twice and each time it returns the same value, which means that evaluating the Statement does not give us any guarantee, that both arguments of the `ApplyTo()` method are used and that they are used in the correct places. For example, the Statement will be considered true when user name value is used in place of a host name by the `ApplyTo()` method. This means that if we still want to use the anonymous input effectively without running into false positives[^false positive], we have to make the two values distinct, e.g. like this:
+Now, we can clearly see that there is something wrong with this Statement. `AnyString()` is used twice and each time it returns the same value, which means that evaluating the Statement does not give us any guarantee, that both arguments of the `ApplyTo()` method are used and that they are used in the correct places. For example, the Statement will be considered true when user name value is used in place of a host name by the `ApplyTo()` method. This means that if we still want to use the anonymous input effectively without running into false positives[^false-positive], we have to make the two values distinct, e.g. like this:
 
 ```csharp
 [Fact] public void 
@@ -271,4 +271,4 @@ I hope that this chapter gave you some understanding of how different TDD style
 
 [^mocks-are-not-stubs]: One of such articles can be found at http://martinfowler.com/articles/mocksArentStubs.html 
 [^xunitpatterns]: For the biggest collection of such techniques, or more precisely, patterns, see XUnit Test Patterns by Gerard Meszaros.
-[^false positive]: A "false positive" is a test that should be failing but is passing.
+[^false-positive]: A "false positive" is a test that should be failing but is passing.
