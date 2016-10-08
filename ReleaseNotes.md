@@ -1,3 +1,9 @@
+# 08-10-2016
+
+Hi,
+
+This release marks several small improvements by contributors (thanks!) and an overhaul to constrained non-determinism chapter. I fixed a lot of misconceptions, added more explanation, links to external sources etc. Hope you like it better!
+
 # 16-07-2016
 
 Hi,
