@@ -9,8 +9,8 @@
 080_Sorting_out_the_bits.md
 090_How_to_start.md
 100_Analysis_In_TDD.md
-110_Constrained_Non_Determinism.md
-120_What_is_the_scope_of_a_Statement_in_TDD.md
+110_What_is_the_scope_of_a_Statement_in_TDD.md
+120_Constrained_Non_Determinism.md
 130_Boundaries.md
 140_Triangulation.md
 150_Part2Marker.md
