@@ -1,5 +1,7 @@
 # What is the scope of a unit-level Statement in TDD?
 
+TODO add a short discussion about what is a scope.
+
 Ha, now I have to admit that I have deferred for a long time the answer a pretty fundamental question: what should be the scope of a single Statement? If I put the whole system together, can I write a Statement for its behavior? Or maybe the other way round -- there should be a Statement for each method of each class, including the private ones? Well, first thing I want to explain is that there are multiple levels we can write our Statements on. This varies depending on the context of a specific system or solution. There seems to be no single answer to this question. In this book, we will cover two of such levels -- unit level and component level. For now, let's stick to the unit level, which is what we have done so far anyway. The time will come for the rest. For now, let's consider what should be the "scope" of a single unit-level Statement in TDD. Is it method scope? Class scope? Feature scope?
 
 Let's try to answer the question by examining some TDD unit-level Statements:
