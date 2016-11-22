@@ -57,7 +57,7 @@ Count with me: how many methods are called? Depending on how we count, it is two
 
 ## It is the scope of a behavior!
 
-The proper answer is: behavior! Each TDD Statement specifies a single behavior (on unit level it means a class behavior). I like how [Amir Kolsky and Scott Bain](http://www.sustainabletdd.com/) phrase it, by saying that each unit-level Statement should "introduce a behavioral distinction not existing before".
+The proper answer is: behavior! Each TDD Statement specifies a single behavior (on unit level it means a class behavior). I like how [Amir Kolsky and Scott Bain](http://www.sustainabletdd.com/) phrase it, by saying that each Statement should "introduce a behavioral distinction not existing before".
 
 Most of the time, I specify behaviors using the "GIVEN-WHEN-THEN" thinking framework. A behavior occurs in some kind of context and there are always some kind of results of that behavior.
 
@@ -112,7 +112,11 @@ By the way, this Statement is an example of an antipattern that some call a ["ch
 
 ### behavior scope vs class scope
 
-There is no decisive answer to the second question as well. A behavior may span several classes (in part 2 of this book I'll tell you how I decide which classes should be included in such Statement) behavior scope does not necessarily have to be broader than class scope. Let's take the following example that proves it:
+There is no decisive answer to the second question as well. A behavior may span several classes (in part 2 of this book I'll tell you how I decide which classes should be included in such Statementand which should not) and a single class may contain many behaviors. 
+
+As an example, let's imagine we have a class that represents a telecom call (in this case, it's a digital call). Let's call it  `DigitalCall`. Instances of this class can be used to start and monitor the status of a real call as well as transmit a voice frame over the wire.
+
+Now, a Statement with a class scope for a `DigitalCall` class would look like this:
 
 ```csharp
 [Fact] public void
@@ -125,19 +129,28 @@ ShouldReportItIsStartedAndItDoesNotYetTransmitVoiceWhenItStarts()
   //WHEN
   var callStarted = call.IsStarted;
   
-  //THEN
+  //THEN 
   Assert.True(callStarted);
 
-  //WHEN-THEN
+  //WHEN-THEN - second behavior
   Assert.Throws<Exception>(
     () => call.Transmit(Any.InstanceOf<Frame>())
   );
 }
 ```
 
-Again, there are two behaviors here: reporting the call status after start and not being able to transmit frames after start. That is why this test should be split into two.
+Again, there are two behaviors here: reporting the call status after it's started and not being able to transmit voice frames after start. That's why this test should be split into two.
 
-How to catch that you are writing a Statement about two or more behaviors rather than one? First, take a look at the test name -- if it looks strange and contains some "And" or "Or" words, it may (but does not have to) be about more than one behavior. Another way is to write the description of a behavior in a Given-When-Then way. If you have more than one item in the "When" section or the structure is not Given-When-Then, but rather a "Given-When-Then-When-Then" -- that is also a signal.
+## How do we know we specify more than one behavior?
+
+I don't know a strict answer to this question. In the end, there are always some cases where I have a dillema. Still, there are some guidelines that help me make my decision most of the time.
+
+1. Take a look at the test name -- if it looks strange (e.g. is very long or very generic) and contains some "And" or "Or" words, it may (but does not have to) be about more than one behavior. 
+2. You can try to write (or imagine) the description of a behavior in a Given-When-Then way. If you have more than one item in the "When" section or the structure is not Given-When-Then, but rather a "Given-When-Then-When-Then" -- that is also a signal.
+3. If we have a Statement that specifies several behaviors, the whole Specification usually violates the three  
 
 
-//TODO three rules by ken pugh
+//TODO three rules cited by ken pugh from Amir Kolsky
+//a test should fail for well-defined reason
+//no other test should fail for the same reason
+//a test should not fail for any other reason
