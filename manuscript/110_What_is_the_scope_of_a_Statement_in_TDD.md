@@ -1,8 +1,25 @@
 # What is the scope of a unit-level Statement in TDD?
 
+In previous chapters, I tried to explain how tests for a kind of excutable Specification consisting of many Statements. If so, then some fundamental questions regarding these Statements need to be raised, e.g.:
+
+1. What goes into a single Statement?
+1. Gow do I know that I need to write another Statement instead of expanding existing one?
+1. When I see a Statement, how do I know whether it is too big, too small, or just enough?
+
+This can be summarized as one more general question: what should be the scope of a single Statement?
+
+## Scope and level
+
+The software we write usually has two things: structure and functionality. Structure is how the code is organized, e.g. subsystems, services, components, classes, methods etc. Functionality is about the features - things something does and does not given certain circumstances. 
+
+A structural element can easily handle several functionalities (either by itself or in cooperation with other elements). For example, many lists implement retrieving added items as well as some kind of searching. On the other hand, a single feature can easily span several structural elements (e.g. paying for a product in an online store will likely span at least several classes and may even touch some kind of database).
+
+Thus, when deciding what should go into a single Statement, we have to consider both structure and functionality:  
+
+
 TODO add a short discussion about what is a scope.
 
-Ha, now I have to admit that I have deferred for a long time the answer a pretty fundamental question: what should be the scope of a single Statement? If I put the whole system together, can I write a Statement for its behavior? Or maybe the other way round -- there should be a Statement for each method of each class, including the private ones? Well, first thing I want to explain is that there are multiple levels we can write our Statements on. This varies depending on the context of a specific system or solution. There seems to be no single answer to this question. In this book, we will cover two of such levels -- unit level and component level. For now, let's stick to the unit level, which is what we have done so far anyway. The time will come for the rest. For now, let's consider what should be the "scope" of a single unit-level Statement in TDD. Is it method scope? Class scope? Feature scope?
+I have to admit that I have deferred for a long time the answer to very fundamental question: what should be the scope of a single Statement? If I put the whole system together, can I write a Statement for its behavior? Or maybe the other way round -- there should be a Statement for each method of each class, including the private ones? Well, first thing I want to explain is that there are multiple levels we can write our Statements on and each has its scope. This varies depending on the context of a specific system or solution. There seems to be no single answer to this question. In this book, we will cover two of such levels -- unit level and component level. For now, let's stick to the unit level, which is what we have done so far anyway. The time will come for the rest. For now, let's consider what should be the "scope" of a single unit-level Statement in TDD. Is it method scope? Class scope? Feature scope?
 
 Let's try to answer the question by examining some TDD unit-level Statements:
 
