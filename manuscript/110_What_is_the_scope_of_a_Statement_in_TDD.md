@@ -14,18 +14,19 @@ The software we write usually has two things: structure and functionality. Struc
 
 A structural element can easily handle several functionalities (either by itself or in cooperation with other elements). For example, many lists implement retrieving added items as well as some kind of searching. On the other hand, a single feature can easily span several structural elements (e.g. paying for a product in an online store will likely span at least several classes and may even touch some kind of database).
 
-Thus, when deciding what should go into a single Statement, we have to consider both structure and functionality:  
+Thus, when deciding what should go into a single Statement, we have to consider both structure and functionality:
+- structure - do we specify what a class should do, what the whole component should do, or maybe a Statement should be about the whole system? I will refer to such structural decision as "level".
+- functionality - should a single Statement specify everything that structural element does, or maybe only a part of it? If only a part, then which part and how big should that part be? I will refer to such functional decision as "scope".
 
+Our questions from the beginning of the chapter can be rephrased as:
+1. On what level do we specify our software?
+1. What should be the scope of a single Statement?
 
-TODO add a short discussion about what is a scope.
+## On what level do we specify our software?
 
-I have to admit that I have deferred for a long time the answer to very fundamental question: what should be the scope of a single Statement? If I put the whole system together, can I write a Statement for its behavior? Or maybe the other way round -- there should be a Statement for each method of each class, including the private ones? Well, first thing I want to explain is that there are multiple levels we can write our Statements on and each has its scope. This varies depending on the context of a specific system or solution. There seems to be no single answer to this question. In this book, we will cover two of such levels -- unit level and component level. For now, let's stick to the unit level, which is what we have done so far anyway. The time will come for the rest. For now, let's consider what should be the "scope" of a single unit-level Statement in TDD. Is it method scope? Class scope? Feature scope?
+The answer to the first question is relatively simple - we specify on multiple levels. How many levels there are and which ones we're interested in depends very much on the specific type of application that we write. In this (and next) chapter, I focus mostly on class level (I will refer to it as unit level, since a class is a unit of behavior), i.e. every Statement was written against a public API of a specified class. 
 
-Let's try to answer the question by examining some TDD unit-level Statements:
-
-## Is it class scope? 
-
-Does a TDD Statement cover no more or less than a single class? Let's look at the first example of a valid Statement and try to answer this question:
+Does that mean that we can only use a single class in our executable Statement? Let's look at the first example of a well-written Statement and try to answer this question:
 
 ```csharp
 [Fact] public void
@@ -44,13 +45,15 @@ ShouldThrowValidationExceptionWithFatalErrorLevelWhenValidatedStringIsEmpty()
 }
 ```
 
-This is an example of a well-written unit-level Statement. Ok, so let's see... how many real classes take part in this spec? Three: a string, an exception and the validation. On the other hand, there may be other features in the `Validation` class that are not specified in this Statement. So "specifying a class" (class scope) is not the most accurate description.
+Ok, so let's see... how many real classes take part in this Statement? Three: a string, an exception and the validation. So even though this is a Statement written against the public API of `Validation` class, the API itself demands using objects of additional classes. 
 
-## Or a method scope?
+## What should be the functional scope of a single Statement?
 
-So, maybe the scope covers a single method, meaning a Statement always exercises one method of a specified object?
+The short answer to this question is: behavior. Putting it together with the previous section, we can say that each unit-level Statement specifies a single behavior of a class written against public API of that class. I like how [Liz Keogh](https://lizkeogh.com/2012/05/30/showcasing-the-language-of-bdd/) says that a Statement shows one example of how a class is valuable to its users. Also, [Amir Kolsky and Scott Bain](http://www.sustainabletdd.com/) say that each Statement should "introduce a behavioral distinction not existing before".
 
-Let's consider the following example of a "business rule" for some kind of queue. This rule is considered fulfilled when it is notified three times of something being queued on the queue (so in a bigger piucture, it's an observer of the queue) :
+If you read this book from the beginning, you've probably seen a lot of Statements that specify behaviors. Let me give you another one, though. 
+
+Let's consider the following example of a "business rule" for some kind of queue. A single bahvior we can specify is that the rule is considered fulfilled when it is notified three times of something being queued on a queue (so from a bigger-piucture point of view, it's an observer of a queue):
 
 ```csharp
 [Fact] public void 
@@ -69,6 +72,27 @@ ShouldBeFulfilledWhenEventOccursThreeTimes()
   Assert.True(isRuleFulfilled);
 }
 ```
+
+The first thing to note is that at two methods are called on the `rule` object: `Queued()` (three times) and `IsFulfilled()` once. I consider this example important because I have seen people misunderstand unit level as "specifying a single method". Sure, there is usually a single method triggering the behavior (in this case it's `isFulfilled()`, placed in the `//WHEN` section), but sometimes, more calls are necessary to set up a preconditions for a given behavior (hence the three `Queued()` calls placed in the `//GIVEN` section).
+
+The second thing to note is that the Statement only says what happens when the `rule` object is notified three times. This is a single behavior. What about the scenario where the `rule` is only notified two times and in such case should say it isn't fulfilled? This is a separate behavior and should be written as a separate Statement. The ideal to which we strive is characterized by three rules by Amir Kolsky and cited by Ken Pugh in his book Lean-Agile Acceptance Test-Driven Development:
+
+1. A Statement should turn false for well-defined reason.
+1. No other Statement should turn false for the same reason.
+1. A Statement should not turn false for any other reason.
+
+While it's impossible to achieve it in literal sense (e.g. all Statements specifying the `FullQueueRule` behaviors must call a constructor, so when I put a `throw new Exception()` inside it, all Statements turn false), however we want to keep as close to this goal as possible. This way, each Statement will introduce that "behavioral distinction" we talked before, i.e. show a new way the class can be valuable to its users.
+
+
+
+
+
+
+
+## Or a method scope?
+
+So, maybe the scope covers a single method, meaning a Statement always exercises one method of a specified object?
+
 
 Count with me: how many methods are called? Depending on how we count, it is two methods (`Queued()` and `IsFulfilled()`) or four calls (`Queued(), Queued(), Queued(), IsFulfilled()`). In any case, not one. So it's not like we specify a single method here. Henve, a "method scope" is not an accurate explanation either.
 
@@ -171,3 +195,19 @@ I don't know a strict answer to this question. In the end, there are always some
 //a test should fail for well-defined reason
 //no other test should fail for the same reason
 //a test should not fail for any other reason
+
+//////////////////////////////////////////////////////////////////////////////////
+## What should be the scope of a single Statement?
+
+On the other hand, there may be other features in the `Validation` class that are not specified in this Statement. So "specifying a class" (class scope) is not the most accurate description.
+
+
+TODO add a short discussion about what is a scope.
+
+I have to admit that I have deferred for a long time the answer to very fundamental question: what should be the scope of a single Statement? If I put the whole system together, can I write a Statement for its behavior? Or maybe the other way round -- there should be a Statement for each method of each class, including the private ones? Well, first thing I want to explain is that there are multiple levels we can write our Statements on and each has its scope. This varies depending on the context of a specific system or solution. There seems to be no single answer to this question. In this book, we will cover two of such levels -- unit level and component level. For now, let's stick to the unit level, which is what we have done so far anyway. The time will come for the rest. For now, let's consider what should be the "scope" of a single unit-level Statement in TDD. Is it method scope? Class scope? Feature scope?
+
+Let's try to answer the question by examining some TDD unit-level Statements:
+
+## Is it class scope? 
+
+Does a TDD Statement cover no more or less than a single class? 
