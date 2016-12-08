@@ -49,11 +49,11 @@ Ok, so let's see... how many real classes take part in this Statement? Three: a�
 
 ## What should be the functional scope of a single Statement?
 
-The short answer to this question is: behavior. Putting it together with the previous section, we can say that each unit-level Statement specifies a single behavior of a class written against public API of that class. I like how [Liz Keogh](https://lizkeogh.com/2012/05/30/showcasing-the-language-of-bdd/) says that a Statement shows one example of how a class is valuable to its users. Also, [Amir Kolsky and Scott Bain](http://www.sustainabletdd.com/) say that each Statement should "introduce a behavioral distinction not existing before".
+The short answer to this question is: behavior. Putting it together with the previous section, we can say that each unit-level Statement specifies a single behavior of a class written against public API of that class. I like how [Liz Keogh](https://lizkeogh.com/2012/05/30/showcasing-the-language-of-bdd/) says that a unit-level Statement shows one example of how a class is valuable to its users. Also, [Amir Kolsky and Scott Bain](http://www.sustainabletdd.com/) say that each Statement should "introduce a behavioral distinction not existing before".
 
 If you read this book from the beginning, you've probably seen a lot of Statements that specify behaviors. Let me give you another one, though. 
 
-Let's consider the following example of a "business rule" for some kind of queue. A single bahvior we can specify is that the rule is considered fulfilled when it is notified three times of something being queued on a queue (so from a bigger-piucture point of view, it's an observer of a queue):
+Let's consider the following example of a "business rule" for some kind of queue. A single bahvior we can specify is that the rule is considered fulfilled when it is notified three times of something being queued on a queue (so from a bigger-picture point of view, it's an observer of a queue):
 
 ```csharp
 [Fact] public void 
@@ -75,7 +75,7 @@ ShouldBeFulfilledWhenEventOccursThreeTimes()
 
 The first thing to note is that at two methods are called on the `rule` object: `Queued()` (three times) and `IsFulfilled()` once. I consider this example important because I have seen people misunderstand unit level as "specifying a single method". Sure, there is usually a single method triggering the behavior (in this case it's `isFulfilled()`, placed in the `//WHEN` section), but sometimes, more calls are necessary to set up a preconditions for a given behavior (hence the three `Queued()` calls placed in the `//GIVEN` section).
 
-The second thing to note is that the Statement only says what happens when the `rule` object is notified three times. This is a single behavior. What about the scenario where the `rule` is only notified two times and in such case should say it isn't fulfilled? This is a separate behavior and should be written as a separate Statement. The ideal to which we strive is characterized by three rules by Amir Kolsky and cited by Ken Pugh in his book Lean-Agile Acceptance Test-Driven Development:
+The second thing to note is that the Statement only says what happens when the `rule` object is notified three times. This is a single behavior. What about the scenario where the `rule` is only notified two times and when asked afterwards, should say it isn't fulfilled? This is a separate behavior and should be written as a separate Statement. The ideal to which we strive is characterized by three rules by Amir Kolsky and cited by Ken Pugh in his book Lean-Agile Acceptance Test-Driven Development:
 
 1. A Statement should turn false for well-defined reason.
 1. No other Statement should turn false for the same reason.
@@ -83,24 +83,65 @@ The second thing to note is that the Statement only says what happens when the `
 
 While it's impossible to achieve it in literal sense (e.g. all Statements specifying the `FullQueueRule` behaviors must call a constructor, so when I put a `throw new Exception()` inside it, all Statements turn false), however we want to keep as close to this goal as possible. This way, each Statement will introduce that "behavioral distinction" we talked before, i.e. show a new way the class can be valuable to its users.
 
+Most of the time, I specify behaviors using the "GIVEN-WHEN-THEN" thinking framework. A behavior is triggered (`WHEN`) in some kind of context (`GIVEN`) and there are always some kind of results (`THEN`) of that behavior.
+
+
+## Failing to adhere to the three rules
+
+The three rules I mentioned are derived from practical means. Let's see what happens if we don't follow them.
+
+//TODO
+//TODO
+//TODO
+//TODO
+//TODO
+//TODO
+//TODO
+
+Here goes the first example of a Statement that specifies something about some kind.........
+
+```csharp
+[Fact] public void 
+ShouldReportItCanHandleStringWithLengthOf3ButNotOf4AndNotNullString()
+{
+  //GIVEN
+  var bufferSizeRule = new BufferSizeRule();
+  
+  //WHEN
+  var resultForLength3 
+    = bufferSizeRule.CanHandle(Any.StringOfLength(3));
+  //THEN
+  Assert.True(resultForLength3);
+
+  //WHEN - again?
+  var resultForLength4 
+    = bufferSizeRule.CanHandle(Any.StringOfLength(4))
+  //THEN - again?
+  Assert.False(resultForLength4);
+
+  //WHEN - again??
+  var resultForNull = bufferSizeRule.CanHandle(null);
+  //THEN - again??
+  Assert.False(resultForNull);
+}
+```
+
+Note that it specifies three (or two -- depending on how you count) behaviors: 
+
+1. acceptance of string of allowed size
+1. refusal of handling string above the allowed size 
+1. special case of null string. 
+
+I consider the above example a good one for showing why I (and many others) prefer behavior scope over a method scope. The issue with the above Statement is that it can turn false for at least two reasons -- when the allowed string size changes and when the reaction to null input is different. Also, xUnit tools by default stop execution on first error, so, assuming that the first assertion fails, we won't know the outcome of the next assertion unless we fix the previous one (does that mean we always have to use a single `Assert` per Statement? We will take care of this question in a second. For now, let the answer be: "not necessarily").
+
+By the way, this Statement is an example of an antipattern that some call a ["check-it-all test"](http://blog.typemock.com/2012/08/the-test-you-regret-the-check-it-all.html)
 
 
 
-
-
-
-## Or a method scope?
-
-So, maybe the scope covers a single method, meaning a Statement always exercises one method of a specified object?
-
-
-Count with me: how many methods are called? Depending on how we count, it is two methods (`Queued()` and `IsFulfilled()`) or four calls (`Queued(), Queued(), Queued(), IsFulfilled()`). In any case, not one. So it's not like we specify a single method here. Henve, a "method scope" is not an accurate explanation either.
 
 ## It is the scope of a behavior!
 
-The proper answer is: behavior! Each TDD Statement specifies a single behavior (on unit level it means a class behavior). I like how [Amir Kolsky and Scott Bain](http://www.sustainabletdd.com/) phrase it, by saying that each Statement should "introduce a behavioral distinction not existing before".
 
-Most of the time, I specify behaviors using the "GIVEN-WHEN-THEN" thinking framework. A behavior occurs in some kind of context and there are always some kind of results of that behavior.
 
 ## How does behavior scope relate to other scopes?
 
