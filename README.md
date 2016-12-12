@@ -2,7 +2,7 @@
 
 ### Book Download Links
 
-The book binaries [are now hosted on Leanpub](https://leanpub.com/tdd-ebook), as well as [online version](https://leanpub.com/tdd-ebook/read). It is and will always be free. 
+The book binaries and [online version](https://leanpub.com/tdd-ebook/read) [are hosted on Leanpub](https://leanpub.com/tdd-ebook). The book is (and always will be) free. 
 
 <a href="https://leanpub.com/tdd-ebook">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/manuscript/images/webpage/document-epub.png" />Epub
