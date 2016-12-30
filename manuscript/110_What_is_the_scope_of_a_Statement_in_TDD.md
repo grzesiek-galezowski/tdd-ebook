@@ -10,14 +10,14 @@ This can be summarized as one more general question: what should be the scope of
 
 ## Scope and level
 
-The software we write can be viewed in terms of structure and functionality. Functionality is about the features - things something does and does not given certain circumstances. Structure is how this functionality is organized and divided between many subelements, e.g. subsystems, services, components, classes, methods etc. 
+The software we write can be viewed in terms of structure and functionality. Functionality is about the features -- things something does and does not given certain circumstances. Structure is how this functionality is organized and divided between many subelements, e.g. subsystems, services, components, classes, methods etc. 
 
 A structural element can easily handle several functionalities (either by itself or in cooperation with other elements). For example, many lists implement retrieving added items as well as some kind of searching or sorting. On the other hand, a single feature can easily span several structural elements (e.g. paying for a product in an online store will likely span at least several classes and probably touch a database).
 
 Thus, when deciding what should go into a single Statement, we have to consider both structure and functionality and make the following decisions:
 
-- structure - do we specify what a class should do, or what the whole component should do, or maybe a Statement should be about the whole system? I will refer to such structural decision as "level".
-- functionality - should a single Statement specify everything that structural element does, or maybe only a part of it? If only a part, then which part and how big should that part be? I will refer to such functional decision as "functional scope".
+- structure -- do we specify what a class should do, or what the whole component should do, or maybe a Statement should be about the whole system? I will refer to such structural decision as "level".
+- functionality -- should a single Statement specify everything that structural element does, or maybe only a part of it? If only a part, then which part and how big should that part be? I will refer to such functional decision as "functional scope".
 
 Our questions from the beginning of the chapter can be rephrased as:
 
@@ -26,7 +26,7 @@ Our questions from the beginning of the chapter can be rephrased as:
 
 ## On what level do we specify our software?
 
-The answer to the first question is relatively simple - we specify on multiple levels. How many levels there are and which ones we're interested in depends very much on the specific type of application that we write and programming paradigm (e.g. in pure functional programming, we don't have classes).
+The answer to the first question is relatively simple -- we specify on multiple levels. How many levels there are and which ones we're interested in depends very much on the specific type of application that we write and programming paradigm (e.g. in pure functional programming, we don't have classes).
 
 In this (and next) chapter, I focus mostly on class level (I will refer to it as unit level, since a class is a unit of behavior), i.e. every Statement is written against a public API of a specified class.
 
@@ -41,7 +41,7 @@ ShouldThrowValidationExceptionWithFatalErrorLevelWhenValidatedStringIsEmpty()
 
   //WHEN
   var exceptionThrown = Assert.Throws<CustomException>(
-    () => validation.ApplyTo(string.Empty) 
+    () => validation.ApplyTo(string.Empty)
   );
 
   //THEN
@@ -79,7 +79,7 @@ ShouldBeMetWhenNotifiedThreeTimesOfItemQueued()
 
 The first thing to note is that two methods are called on the `condition` object: `NotifyItemQueued()` (three times) and `IsMet()` (once). I consider this example educative because I have seen people misunderstand unit level as "specifying a single method". Sure, there is usually a single method triggering the behavior (in this case it's `isMet()`, placed in the `//WHEN` section), but sometimes, more calls are necessary to set up a preconditions for a given behavior (hence the three `Queued()` calls placed in the `//GIVEN` section).
 
-The second thing to note is that the Statement only says what happens when the `condition` object is notified three times - this is the specified behavior. What about the scenario where the `condition` is only notified two times and when asked afterwards, should say it isn't met? This is a separate behavior and should be described by a separate Statement. The ideal to which we strive is characterized by three rules by Amir Kolsky and cited by Ken Pugh in his book *Lean-Agile Acceptance Test-Driven Development*:
+The second thing to note is that the Statement only says what happens when the `condition` object is notified three times -- this is the specified behavior. What about the scenario where the `condition` is only notified two times and when asked afterwards, should say it isn't met? This is a separate behavior and should be described by a separate Statement. The ideal to which we strive is characterized by three rules by Amir Kolsky and cited by Ken Pugh in his book *Lean-Agile Acceptance Test-Driven Development*:
 
 1. A Statement should turn false for well-defined reason.
 1. No other Statement should turn false for the same reason.
@@ -121,77 +121,76 @@ ShouldReportItCanHandleStringWithLengthOf3ButNotOf4AndNotNullString()
 }
 ```
 
-
-
-
-
-
-
 Note that it specifies three behaviors:
 
-1. acceptance of string of allowed size
-1. refusal of handling string above the allowed size 
-1. special case of null string.
+1. Acceptance of a string of allowed size.
+1. Refusal of handling a string of size above the allowed limit.
+1. Special case of null string.
 
-As such, the Statement breaks rules 1 (A Statement should turn false for well-defined reason) and 3 (A Statement should not turn false for any other reason). In fact, there are three reasons that can make our Statement false.
+As such, the Statement breaks rules: 1 (A Statement should turn false for well-defined reason) and 3 (A Statement should not turn false for any other reason). In fact, there are three reasons that can make our Statement false.
 
 There are several reasons to avoid writing Statements like this. Some of them are:
 
-1. Most xUnit frameworks stop executing a Statement when an assertion fails. If the first assertion fails in the above Statement, we won't know whether the rest of the behaviors work fine until we fix the first one. 
+1. Most xUnit frameworks stop executing a Statement on first assertion failure. If the first assertion fails in the above Statement, we won't know whether the rest of the behaviors work fine until we fix the first one. 
 1. Readability tends to be worse as well as the documentation value of our Specification (the names of such Statements tend to be far from helpful). 
-1. Failure isolation is worse - when a Statement turns false, we'd prefer to know exactly which behavior was broken. Statements such as the one above don't give us this advantage.
+1. Failure isolation is worse -- when a Statement turns false, we'd prefer to know exactly which behavior was broken. Statements such as the one above don't give us this advantage.
 1. In one Statement we usually work with the same object. When we trigger multiple behaviors on it, we can't be sure how they impact subsequent behaviors in the same Statement. If we have e.g. four behaviors in a single Statement, we don't know how the three earlier ones impact the last one. In the example above, we could get away with this, since the specified object returned its result based only on the input of a specific method (i.e. it did not accumulate state). Imagine, however, what could happen if we triggered multiple behaviors on a single list. Would we be sure that it does not contain any leftover element TODO
 
 ## How many assertions do I need?
 
-An assertion checks a single specified condition. If a single Statement is about a single behavior, then what about assertions? Does "single behavior" mean I can only have a single assertion per Statement? That was mostly the case in the Statements I already showed you, but not for all.
+A single assertion by definition checks a single specified condition. If a single Statement is about a single behavior, then what about assertions? Does "single behavior" mean I can only have a single assertion per Statement? That was mostly the case for the Statements you have already seen throughout this book, but not for all.
 
-To tell you the truth, there is a rule that says "have a single assertion per test". What is important to remember is that it applies to "logical assertions", as Robert C. Martin indicated[^CleanCode].
+To tell you the truth, there is a straightforward answer to this question -- a rule that says: "have a single assertion per test". What is important to remember is that it applies to "logical assertions", as Robert C. Martin indicated[^CleanCode]. 
 
-A logical assertion is a set of assertions that collectively check one logical condition. It would be easy to demonstrate it on example of built-in Xunit.Net assertion called `Assert.Unique()` which checks whether a collection does not contain duplicate items: (TOOOOOOOOOODOOOOOOOOOOOOO check the name here and in example!):
+Before we go further, I'd like to introduce a distinction. A "physical assertion" is a single `AssertXXXXX()` call. A "logical assertion" is one or more physical assertions that together specify one logical condition. To further illustrate this distinction, I'd like to give you two examples of logical assertions.
+
+### Logical assertion -- example #1
+
+A good example would be an assertion that specifies that all items in a list are unique (i.e. the list contains no duplicates). XUnit.net does not have such an assertion by default, but we can imagine we have written something like that and called it `AssertHasUniqueItems()`. Here's some code that uses this assertion:
 
 ```csharp
-//some hypothetical code for getting the collection:
-var collection = GetCollection();
+//some hypothetical code for getting the list:
+var list = GetList();
 
 //invoking the assertion:
-Assert.Unique(collection);
+AssertHasUniqueItems(list);
 ```
 
-Note that it's a single assertion. This, however, can be as well written as:
+Note that it's a single logical assertion, specifying a well-defined condition. If we peek into the implementation however, we will find the following code:
 
 ```csharp
-//some hypothetical code for getting the collection:
-var collection = GetCollection();
-
-//invoking the assertion:
-for(var i = 0 ; i < collection.Count ; i++)
+public static void AssertHasUniqueItems<T>(List<T> list)
 {
-  for(var j = 0 ; j < collection.Count ; j++)
+  for(var i = 0 ; i < list.Count ; i++)
   {
-    if(i != j)
+    for(var j = 0 ; j < list.Count ; j++)
     {
-      Assert.NotEqual(collection[i], collection[j]);
+      if(i != j)
+      {
+        Assert.NotEqual(list[i], list[j]);
+      }
     }
   }
 }
 ```
 
-Which already makes it several assertions, at least in terms of times of executions. If we knew the exact number of elements in collection, we could even write it as:
+Which already executes several physical assertions. If we knew the exact number of elements in collection, we could even use three `Assert.NotEqual()` assertions instead of `AssertHasUniqueItems()`:
 
 ```csharp
 //some hypothetical code for getting the collection:
-var collection = GetLastThreeElements();
+var list = GetLastThreeElements();
 
 //invoking the assertions:
-Assert.NotEqual(collection[0], collection[1]);
-Assert.NotEqual(collection[0], collection[2]);
-Assert.NotEqual(collection[1], collection[2]);
+Assert.NotEqual(list[0], list[1]);
+Assert.NotEqual(list[0], list[2]);
+Assert.NotEqual(list[1], list[2]);
 ```
 
-Is it still a single assertion? "Physically", no, but logically - yes. There is still one logical thing these assertions specify and that is the uniqueness of items in the collection.
+Is it still a single assertion? Physically no, but logically -- yes. There is still one logical thing these assertions specify and that is the uniqueness of the items in the list.
 
-Another would be the case of assertions that handle exceptions. We already encountered one like this in this chapter:
+### Logical assertion -- example #2
+
+Another example of a logical assertion is one that specifies exceptions: `Assert.Throws()`. We already encountered one like this in this chapter. Here is the code again:
 
 ```csharp
 [Fact] public void
@@ -210,7 +209,7 @@ ShouldThrowValidationExceptionWithFatalErrorLevelWhenValidatedStringIsEmpty()
 }
 ```
 
-Note that in this case, there are two "physical" assertions, but one intent - to specify the exception that should be thrown. We may as well extract these two "physical" assertions into a single one with a meaningful name:
+Note that in this case, there are two physical assertions (`Assert.Throws()` and `Assert.True()`), but one intent -- to specify the exception that should be thrown. We may as well extract these two physical assertions into a single one with a meaningful name:
 
 ```csharp
 [Fact] public void
@@ -226,10 +225,10 @@ ShouldThrowValidationExceptionWithFatalErrorLevelWhenValidatedStringIsEmpty()
 }
 ```
 
-So every time we have several physical assertions that can be (or are) extracted into a single method with a meaningful name, I consider them a single logical assertion. There is always a gray area in what can be considered a "meaningful name" (but let's agree that `AssertAllConditionsAreMet()` is not a meaningful name, ok?). The rule of thumb is that this name should express our intent better and clearer than the bunch of assertions. If we look again at the examples of `Assert.Unique()` this assertion does a better job in expressing our intent than the approach with double loop or three `Assert.NotEqual()`.
+So every time we have several physical assertions that can be (or are) extracted into a single assertion method with a meaningful name, I consider them a single logical assertion. There is always a gray area in what can be considered a "meaningful name" (but let's agree that `AssertAllConditionsAreMet()` is not a meaningful name, ok?). The rule of thumb is that this name should express our intent better and clearer than the bunch of assertions it hides. If we look again at the example of `AssertHasUniqueItems()` this assertion does a better job of expressing our intent than a set of three `Assert.NotEqual()`.
 
-# Summary
+## Summary
 
-In this chapter, we tried to find out how much should go into a single Statement. We examined the notions of level and scope to end up with a conclusion that a Statemtn should cover a single behavior. We backed this statement by three rules by Amir Kolsky and looked at an example of what could happen when we don't follow one of them. Finally, we discussed how the notion of "single Statement per behavior" is related to "single assertion per Statement".
+In this chapter, we tried to find out how much should go into a single Statement. We examined the notions of level and functional scope to end up with a conclusion that a Statement should cover a single behavior. We backed this statement by three rules by Amir Kolsky and looked at an example of what could happen when we don't follow one of them. Finally, we discussed how the notion of "single Statement per behavior" is related to "single assertion per Statement".
 
-[^CleanCode]: Clean Code movies, don't remember which episode - please help me find it and report issue on github.
+[^CleanCode]: Clean Code movies, don't remember which episode -- please help me find it and report issue on github.
