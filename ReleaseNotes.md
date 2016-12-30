@@ -1,3 +1,9 @@
+# 30-12-2016
+
+Hi, along with my wishes for a Happy New Year, I'd like to give you a new version of the book with almost completely rewritten chapter "What is the scope of a unit-level Statement in TDD?". The previous version of this chapter was an almost copy-pasted blog post and it lacked in many ways. I hope you like the new version of the chapter and if you have any suggestions, bug reports, topics you'd like to discuss, you know how to contact me, don't you?
+
+So, again, happy reading and a happy 2017!
+
 # 08-10-2016
 
 Hi,
