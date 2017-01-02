@@ -1,5 +1,7 @@
 # Composing a web of objects
 
+A> This chapter has an outstanding issue raised that needs to be addressed: https://github.com/grzesiek-galezowski/tdd-ebook/issues/93
+
 Three important questions
 -------------------------
 
