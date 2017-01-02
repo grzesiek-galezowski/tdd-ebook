@@ -5,7 +5,7 @@ A> This chapter has an outstanding issue raised that needs to be addressed: http
 Three important questions
 -------------------------
 
-Ok, I told you that such a thing as a web of objects exists, that there are connections, protocols and such, but there is one thing I left out: how does a web of objects come into existence?
+Now that we know that such a thing as a web of objects exists, that there are connections, protocols and such, but there is one thing I left out: how does a web of objects come into existence?
 
 This is, of course, a fundamental question, because if we are not able to build a web, we do not have a web. In addition, this is a question that is a little more tricky that you may think and it contains three other questions that we need to answer:
 

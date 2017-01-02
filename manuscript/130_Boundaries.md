@@ -201,7 +201,7 @@ So, what about a behavior that is valid in a range? Let's assume that we live 
 2.  17 \<= age \>= 65 -- returns enum value `QueryResults.AllowedToApply`
 3.  Age \> 65 -- returns enum value `QueryResults.TooOld`
 
-Now, remember I told you that we specify the behaviors near boundaries? This, however, when applied to the situation I just described, would give us the following Statements:
+Now, remember I wrote that we specify the behaviors near boundaries? Such approach, however, when applied to the situation I just described, would give us the following Statements:
 
 1.  Age = 17, should yield result `QueryResults.TooYoung`
 2.  Age = 18, should yield result `QueryResults.AllowedToApply`
