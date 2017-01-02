@@ -1,5 +1,7 @@
 # Web, messages and protocols
 
+A> This chapter has an outstanding issue raised that needs to be addressed: https://github.com/grzesiek-galezowski/tdd-ebook/issues/94
+
 In the previous chapter, we talked a little bit about why composability is valuable, now let's flesh a little bit of terminology to get more precise understanding.
 
 So, again, what does it mean to compose objects?
