@@ -1,6 +1,6 @@
 # What is the scope of a unit-level Statement in TDD?
 
-In previous chapters, I told you how tests form a kind of excutable Specification consisting of many Statements. If so, then some fundamental questions regarding these Statements need to be raised, e.g.:
+In previous chapters, I described how tests form a kind of excutable Specification consisting of many Statements. If so, then some fundamental questions regarding these Statements need to be raised, e.g.:
 
 1. What goes into a single Statement?
 1. Gow do I know that I need to write another Statement instead of expanding existing one?
