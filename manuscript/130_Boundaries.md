@@ -3,26 +3,27 @@ Specifying Boundaries and Conditions
 
 I> ### A Disclaimer
 I> 
-I> Before I begin, I have to admit that this chapter is mostly based on the material from a series of posts by Scot Bain and Amir Kolsky from the blog Sustainable Test-Driven Development and their upcoming book by the same title. I like their idea of boundaries so much that I just follow the guidelines they outlined. This chapter is going to be a rephrase of these guidelines. I placed it here so that you have all the important topics covered in one place, but I encourage you to read the original blog posts on this subject on http://www.sustainabletdd.com/ (and the upcoming book).
+I> Before I begin, I have to disclaim that this chapter draws from a series of posts by Scott Bain and Amir Kolsky from the blog Sustainable Test-Driven Development and their upcoming book by the same title. I like how they adapt the idea of [boundary testing](https://en.wikipedia.org/wiki/Boundary_testing) so much that I learned to follow the guidelines they outlined. This chapter is going to be a rephrase of these guidelines. I encourage you to read the original blog posts on this subject on http://www.sustainabletdd.com/ (and buy the upcoming book by Scott, Amir and Max Guernsey).
 
 Sometimes, anonymous value is not enough
 ----------------------------------------
 
-When we specify a behavior, there are times when this behavior should be the same no matter what arguments we pass to the constructor or invoked methods. An example would be an addition of two numbers -- whatever numbers we would supply, the answer would always be a sum of those numbers:
+When we specify a behavior, there are times when this behavior should be the same no matter what arguments we pass to the constructor or invoked methods. An example would be pushing an integer onto a stack and popping it back -- the behavior is consistent for whatever number we push and pop:
 
 ```csharp
 [Fact] public void
 ShouldCalculateTheSumOfTwoNumbers()
 {
   //GIVEN
-  var a = Any.Integer();
-  var b = Any.Integer();
+  var pushedItem = Any.Integer();
+  var stack = new Stack<int>();
+  s.Push(pushedItem);
   
   //WHEN
-  var result = new Sum().Of(a, b);
-  
+  var poppedItem = s.Pop();
+
   //THEN
-  Assert.Equal(a + b, result);
+  Assert.Equal(poppedItem, pushedItem);
 }
 ```
 
