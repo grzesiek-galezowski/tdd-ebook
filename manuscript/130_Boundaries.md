@@ -1,83 +1,169 @@
-Specifying Boundaries and Conditions
-====================================
+# Specifying Functional Boundaries and Conditions
 
 I> ### A Disclaimer
 I> 
 I> Before I begin, I have to disclaim that this chapter draws from a series of posts by Scott Bain and Amir Kolsky from the blog Sustainable Test-Driven Development and their upcoming book by the same title. I like how they adapt the idea of [boundary testing](https://en.wikipedia.org/wiki/Boundary_testing) so much that I learned to follow the guidelines they outlined. This chapter is going to be a rephrase of these guidelines. I encourage you to read the original blog posts on this subject on http://www.sustainabletdd.com/ (and buy the upcoming book by Scott, Amir and Max Guernsey).
 
-Sometimes, anonymous value is not enough
-----------------------------------------
+## Sometimes, an anonymous value is not enough
 
-When we specify a behavior, there are times when this behavior should be the same no matter what arguments we pass to the constructor or invoked methods. An example would be pushing an integer onto a stack and popping it back -- the behavior is consistent for whatever number we push and pop:
+Anonymous values are useful when we specify a behavior, that should be the same no matter what arguments we pass to the constructor or invoked methods. An example would be pushing an integer onto a stack and popping it back to see whether it's the same item we pushed -- the behavior is consistent for whatever number we push and pop:
 
 ```csharp
 [Fact] public void
-ShouldCalculateTheSumOfTwoNumbers()
+ShouldPopLastPushedItem()
 {
   //GIVEN
-  var pushedItem = Any.Integer();
+  var lastPushedItem = Any.Integer();
   var stack = new Stack<int>();
-  s.Push(pushedItem);
-  
+  stack.Push(Any.Integer());
+  stack.Push(Any.Integer());
+  stack.Push(lastPushedItem);
+
   //WHEN
-  var poppedItem = s.Pop();
+  var poppedItem = stack.Pop();
 
   //THEN
-  Assert.Equal(poppedItem, pushedItem);
+  Assert.Equal(lastPushedItem, poppedItem);
 }
 ```
 
-In this case, the integer numbers can really be "any" -- the described relationship between input and output is independent of the actual values we use. As indicated in one of the previous chapters, this is the canonical case where Constrained Non-Determinism applies.
+In this case, the integer numbers can really be "any" -- the described relationship between input and output is independent of the actual values we use. As indicated in one of the previous chapters, this is the typical case where Constrained Non-Determinism applies.
 
-Sometimes, however, objects exhibit different behaviors based on what is passed to their constructor and to their methods (OK, we also have static methods and singletons. Longer discussion on those will be included in one of the next chapters -- for now we can safely ignore them). For example, in our application we may have a licensing policy where a feature is allowed to use only if the license is valid, and denied after it has expired. Another example would be that some shops are open from 10:00 to 18:00, so if we had a query in our application whether the shop is currently open, we would expect it to be answered differently based on what the current time is.
+Sometimes, however, specified objects exhibit different behaviors based on what is passed to their constructors or methods or what they get by calling other objects. For example:
 
-In such cases, Scott and Amir offer us other guidelines for choosing input values.
+- in our application we may have a licensing policy where a feature is allowed to be used only when the license is valid, and denied after it has expired. In such case, the behavior for dates before expiry date is different than after - the expiry date is the functional behavior boundary.
+- Some shops are open from 10:00 to 18:00, so if we had a query in our application whether the shop is currently open, we would expect it to be answered differently based on what the current time is.
+- An algorithm calculating the absolute value of an integer number returns the same number for inputs greater than or equal to `0` but negated input for negative numbers.
 
-Exceptions to the rule
-----------------------
+In such cases, Scott and Amir offer us other guidelines for choosing input values. I'll divide the explanation into three parts: 
 
-There are times, when a Statement is true for every value except one (or more) explicitly specified. For example, in Poland, high school students are graded for exams between "mediocre" and "very good". Every grade means the exam is passed except for "mediocre" grade which means the exam is failed. If we imagine we have to specify an object that decides whether the exam is passed based on rating, we would have to write two Statements: one for the mediocre rating and other for all the others.
+1. specifying exceptions to the rules - where behavior is the same for every input values except one or more explicitly specified values,
+2. specifying boundaries
+3. specifying ranges - where there are more boundaries than one.
 
-Here is the Statement for mediocre grade (let's imagine that all grades are members of an enum):
+## Exceptions to the rule
+
+There are times, when a Statement is true for every value except one (or more) explicitly specified. 
+
+### Example 1: a single exception from a large set of values
+
+Let's examine the following example: in some countries, some digits are skipped e.g. as floor numbers in some hospitals and hotels due to some local superstitions or just sounding similar to another word that has very negative meaning. One example of this is tetraphobia[^tetraphobia], which leads to skipping the digit `4`, as in some languages, it sounds similar to the word "death". In other words, anu number containing `4` is skipped. Let's imagine we have several such rules for our hotels in different parts of the world and we want the software to tell us if a certain number is allowed by local superstitions. One of our classes is called `Tetraphobia`:
+
+```csharp
+public class Tetraphobia : LocalSuperstition
+{
+  public bool Allows(char number)
+  {
+    throw new NotImplementedException("not implemented yet");
+  }
+}
+```
+
+It implements the `LocalSuperstition` interface which as the `AllowsInFloorNumber()`, so for the sake of compile-correctness we had to create the class and the method. Now that we have it, we want to test-drive the implementation. What Statements do we write?
+
+Obviously we need a Statement that says what happens when we pass a disallowed number:
 
 ```csharp
 [Fact] public void
-ShouldNotPassTheExamWhenGradeIsMediocre()
+ShouldReject4()
 {
   //GIVEN
-  var decision = new PassOrNotDecision();
+  var tetraphobia = new Tetraphobia();
 
   //WHEN
-  var examPassed = decision.MakeBasedOn(Grades.Mediocre);
+  var isFourAccepted = tetraphobia.Allows('4');
 
   //THEN
-  Assert.False(examPassed);
+  Assert.False(isFourAccepted);
 }
 ```
 
-Note that here, we used the literal value of `Grades.Mediocre`. This is because no other value gives the same behavior as this one, so generating the value would not make any sense.
-
-The second Statement is for all the other cases. Here, we are going to use another method of the `Any` class for generating any enum member other than specified:
+Note that we use the specific value for which the exceptional behavior takes place. It may be a very good idea to extract `4` into a constant. In one of the previous chapters, I described a technique called **Constant Specification**, where we write an explicit Statement about the value of the named constant and use the named constant everywhere else instead of its literal. So why did i not use this technique this time? The only reason is that this might have looked a little bit silly with such extremely trivial example. In reality, I should have used the named constant. Let's do this exercise now and see what happens.
 
 ```csharp
 [Fact] public void
-ShouldPassTheExamWhenGradeIsOtherThanMediocre()
+ShouldRejectSuperstitiousValue()
 {
   //GIVEN
-  var decision = new PassOrNotDecision();
+  var tetraphobia = new Tetraphobia();
 
   //WHEN
-  var examPassed 
-    = decision.MakeBasedOn(Any.Besides(Grades.Mediocre));
-  
+  var isSuperstitiousValueAccepted = 
+    tetraphobia.Allows(Tetraphobia.SuperstitiousValue);
+
   //THEN
-  Assert.True(examPassed);
+  Assert.False(isSuperstitiousValueAccepted);
 }
 ```
 
-Here, `Any.Besides()` takes care of the enum value generation, producing a nice, readable code as a side effect.
+When we do that, we have to document the named constant with the following Statement:
 
-The example shown above assumes there is only one exception to the rule (the mediocre grade). However, this concept can be scaled up to more values, as long as it is a finished, discrete set. If there are multiple exceptional values that produce the same behavior, a single Statement is sufficient to cover them all (using `Any` class and making the following call for exception Statement: `Any.Of(value1, value2)` and the following for the rest: `Any.OtherThan(value1, value2)`). However, when there are multiple exceptions to the rule and each one triggers a different behavior, each one deserves its own Statement.
+```csharp
+[Fact] public void
+ShouldReturn4AsSuperstitiousValue()
+{
+  Assert.Equal('4', Tetraphobia.SuperstitiousValue);
+}
+```
+
+The next Statement is for all the other cases. Here, we are going to use a method of the `Any` class named `Any.OtherThan()`, that generates any value other than the one specified (and produces nice, readable code as a side effect):
+
+```csharp
+[Fact] public void
+ShouldRejectSuperstitiousValue()
+{
+  //GIVEN
+  var tetraphobia = new Tetraphobia();
+
+  //WHEN
+  var isNonSuperstitiousValueAccepted =
+    tetraphobia.Allows(Any.OtherThan(Tetraphobia.SuperstitiousValue);
+
+  //THEN
+  Assert.True(isNonSuperstitiousValueAccepted);
+}
+```
+
+and this is it - I don't usually write more Statements in such cases. There are so many possible input values that it would not be rational to specify all of them.
+
+### Example 2: a single exception from a small set of values
+
+The situation is different, however, in case where the exceptional value is chosen from a small set - this is often the case where the input value type is an enumeration. Let's go back to an example from one of our previous chapters, where we specified that there is some kind of reporting feature and it can be accessed by either an administrator role or by an auditor role. Let's modify this example for now and say that only administrators:
+
+```csharp
+[Fact] public void
+ShouldAllowAccessToReportingWhenAskedForEitherAdministratorOrAuditor()
+{
+ //GIVEN
+ var roleAllowedToUseReporting = Any.Of(Roles.Admin, Roles.Auditor);
+ var access = new Access();
+
+ //WHEN
+ var accessGranted 
+     = access.ToReportingIsGrantedTo(roleAllowedToUseReporting);
+
+ //THEN
+ Assert.True(accessGranted);
+}
+```
+
+The example shown above assumes there is only one exception to the rule (the mediocre grade). However, this concept can be scaled up to more values, as long as it is a finished, discrete set.
+
+TODO TODO TODO TODO TODO 
+
+The example shown above assumes there is only one exception to the rule (the mediocre grade). However, this concept can be scaled up to more values, as long as it is a finished, discrete set. If there are multiple exceptional values that produce the same behavior, I usually try to cover them all with a single Statement using a parameterized Statement. In XUnit.Net this is achieved using `[Theory]` attribute with data specified as `[InlineData()]`:
+
+```csharp
+[Theory]
+[InlineData(17, QueryResults.TooYoung)]
+[InlineData(18, QueryResults.AllowedToApply)]
+[InlineData(65, QueryResults.AllowedToApply)]
+[InlineData(66, QueryResults.TooOld)]
+public void ShouldYieldResultForAge(int age, QueryResults expectedResult)
+
+```
+
+a single Statement is sufficient to cover them all (using `Any` class and making the following call for exception Statement: `Any.Of(value1, value2)` and the following for the rest: `Any.OtherThan(value1, value2)`). However, when there are multiple exceptions to the rule and each one triggers a different behavior, each one deserves its own Statement.
 
 Rules valid within boundaries
 -----------------------------
@@ -305,3 +391,6 @@ Summary
 -------
 
 In this chapter, we covered specifying numerical boundaries with a minimal amount of code, so that the Specification is more maintainable and runs fast. There is one more kind of situation left: when we have compound conditions (e.g. a password must be at least 10 characters and contain at least 2 special characters) -- we’ll get back to those when we introduce mocks.
+
+
+[^tetraphobia]: TODO link to wikipedia
