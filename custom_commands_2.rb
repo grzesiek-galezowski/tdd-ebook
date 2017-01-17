@@ -57,6 +57,7 @@ def validate_uris uris, errors
       if url.scheme == "https" then 
         req.use_ssl = true
         req.verify_mode = OpenSSL::SSL::VERIFY_NONE # read into this
+        req.read_timeout = 60
       end
       
       res = req.request_head(url.path)
