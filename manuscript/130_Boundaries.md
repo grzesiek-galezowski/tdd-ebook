@@ -132,57 +132,113 @@ The situation is different, however, in case where the exceptional value is chos
 
 ```csharp
 [Fact] public void
-ShouldAllowAccessToReportingWhenAskedForEitherAdministratorOrAuditor()
+ShouldAllowAccessToReportingByAdministrator()
 {
  //GIVEN
- var roleAllowedToUseReporting = Any.Of(Roles.Admin, Roles.Auditor);
  var access = new Access();
 
  //WHEN
  var accessGranted 
-     = access.ToReportingIsGrantedTo(roleAllowedToUseReporting);
+     = access.ToReportingIsGrantedTo(Roles.Admin);
 
  //THEN
  Assert.True(accessGranted);
 }
 ```
 
-The example shown above assumes there is only one exception to the rule (the mediocre grade). However, this concept can be scaled up to more values, as long as it is a finished, discrete set.
+This part is no different than what we did in the previous example - we wrote a Statement for the single exceptional value. Time to think about the other Statement - the one that specifies what should happen for the rest of the roles. I'd like to describe two ways this task can be tackled.
 
-TODO TODO TODO TODO TODO 
+The first way is to do it like in the previous example - pick a value different than the exceptional one. This time we will use `Any.Besides()` method, which is best suited for enums:
 
-The example shown above assumes there is only one exception to the rule (the mediocre grade). However, this concept can be scaled up to more values, as long as it is a finished, discrete set. If there are multiple exceptional values that produce the same behavior, I usually try to cover them all with a single Statement using a parameterized Statement. In XUnit.Net this is achieved using `[Theory]` attribute with data specified as `[InlineData()]`:
+```csharp
+[Fact] public void
+ShouldNotAllowAccessToReportingByAnyRoleOtherThanAdministrator()
+{
+ //GIVEN
+ var access = new Access();
+
+ //WHEN
+ var accessGranted 
+     = access.ToReportingIsGrantedTo(Any.Besides(Roles.Admin));
+
+ //THEN
+ Assert.False(accessGranted);
+}
+```
+
+This approach has two advantages:
+
+1. Only one Statement is executed for the "access denied" case, so there is no significant run time penalty.
+2. However we expand our enum in the future, we don't have to modify this Statement - the added enum member will get a chance to be picked for this Statement.
+
+However, there is also one disadvantage - we can't be sure the newly added enum member is used in this Statement. So In the previous example, we would accept that, because
+
+* `char` range was quite large so specifying the behaviors for all the values could prove troublesome and inefficient given our desired confidence level
+* `char` is a fixed set of values - we can't expand `char` as we expand enums, so there is no need to worry about the future.
+
+So what if there are only two more roles except `Roles.Admin`, e.g. `Auditor` and `CasualUser`? In such cases, I sometimes write a Statement that's executed against all the non-exceptional values, using XUnit.NET's `[Theory]` attribute that allows me to execute the same Statement code with different sets of arguments. An example here would be:
 
 ```csharp
 [Theory]
-[InlineData(17, QueryResults.TooYoung)]
-[InlineData(18, QueryResults.AllowedToApply)]
-[InlineData(65, QueryResults.AllowedToApply)]
-[InlineData(66, QueryResults.TooOld)]
-public void ShouldYieldResultForAge(int age, QueryResults expectedResult)
+[InlineData(Roles.Auditor)]
+[InlineData(Roles.CasualUser)]
+public void
+ShouldNotAllowAccessToReportingByAnyRoleOtherThanAdministrator(Roles role)
+{
+ //GIVEN
+ var access = new Access();
 
+ //WHEN
+ var accessGranted 
+     = access.ToReportingIsGrantedTo(role);
+
+ //THEN
+ Assert.False(accessGranted);
+}
 ```
 
-a single Statement is sufficient to cover them all (using `Any` class and making the following call for exception Statement: `Any.Of(value1, value2)` and the following for the rest: `Any.OtherThan(value1, value2)`). However, when there are multiple exceptions to the rule and each one triggers a different behavior, each one deserves its own Statement.
+The Statement above is executed for both `Roles.Auditor` and `Roles.CasualUser`. The downside of this approach is that each time we expand an enumeration, we need to go back here and update the Statement. As it often happens to me to forget such things, I try to keep only one Statement in the system depending on the enum - if I find more than one place where I vary my behavior based on values of a particular enumeration, I change the design to replace enum with polymorphism. Statements in TDD can be used as a tool to detect design issues and I'll provide a longer discussion on this in a later chapter.
 
-Rules valid within boundaries
------------------------------
+### Example 3: More than one exception
+
+The previous two examples assume there is only one exception to the rule. However, this concept can be extended to more values, as long as it is a finished, discrete set. If there are multiple exceptional values that produce the same behavior, I usually try to cover them all with using the mentioned `[Theory]` feature of Xunit.net. I'll demonstrate it by taking the previous example of granting access and assuming that this time, both administrator and auditor are allowed to use the feature. A Statement for behavior would look like this:
+
+```csharp
+[Theory]
+[InlineData(Roles.Admin)]
+[InlineData(Roles.Auditor)]
+public void
+ShouldAllowAccessToReportingBy(Roles role)
+{
+ //GIVEN
+ var access = new Access();
+
+ //WHEN
+ var accessGranted 
+     = access.ToReportingIsGrantedTo(role);
+
+ //THEN
+ Assert.False(accessGranted);
+}
+```
+
+## Rules valid within boundaries
 
 Sometimes, a behavior varies around a numerical boundary. The simplest example would be a set of rules on how to calculate an absolute value of a number:
 
-1.  for any X less than 0, the result is -X (e.g. absolute value of -1.5 is 1.5)
-2.  for any X greater or equal to 0, the result is X (e.g. absolute value of 3 is 3).
+1.  for any X less than `0`, the result is -X (e.g. absolute value of `-1.5` is `1.5`)
+2.  for any X greater or equal to `0`, the result is X (e.g. absolute value of `3` is `3`).
 
-As you can see, there is a boundary between the two behaviors and the right edge of the boundary is 0. Why do I say "right edge"? That is because the boundary always has two edges and there’s a length between them. If we assume we are talking about the mentioned absolute value calculation and that our numerical domain is that of integer numbers, we can as well use -1 as edge value and say that:
+As you can see, there is a boundary between the two behaviors and the right edge of the boundary is 0. Why do I say "right edge"? That is because the boundary always has two edges and there’s a length between them. If we assume we are talking about the mentioned absolute value calculation and that our numerical domain is that of integer numbers, we can as well use `-1` instead of `0` as edge value and say that:
 
 1.  for any X less or equal to -1, the result is -X (e.g. absolute value of -1.5 is 1.5)
 2.  for any X greater than -1, the result is X (e.g. absolute value of 3 is 3).
 
 So a boundary is not a single number -- it always has a length -- the length between last value of the previous behavior and the first value of the next behavior. In case of our example, the length between -1 (left edge -- last negated number) and 0 (right edge -- first non-negated) is 1.
 
-Now, imagine that we are not talking about integer values anymore, but about floating point values. Then the right edge value would still be 0. But what about left edge? It would not be possible for it to stay -1, because the rule applies to e.g. -0.9 as well. So what is the correct right edge value and the correct length of the boundary? Would the length be 0.1? Or 0.001? Or maybe 0.00000001? This is harder to answer and depends heavily on the context, but it is something that must be answered for each particular case -- this way we know what kind of precision is expected of us. In our Specification, we have to document the boundary length somehow.
+Now, imagine that we are not talking about integer values anymore, but about floating point values. Then the right edge value would still be 0. But what about left edge? It would not be possible for it to stay -1, because the rule would apply to e.g. -0.9 as well. So what is the correct right edge value and the correct length of the boundary? Would the length be 0.1? Or 0.001? Or maybe 0.00000001? This is harder to answer and depends heavily on the context, but it is something that must be answered for each particular case -- this way we know what kind of precision is expected of us. In our Specification, we have to document the boundary length somehow.
 
-So the next topic is: how to describe the boundary length with Statements? To illustrate this, I want to show you two Statements assuming we’re implementing the mentioned absolute value calculation for integers. The first Statement is for values smaller than 0 and we want to use the left edge value here like this:
+So the next topic is: how to describe the boundary length with Statements? To illustrate this, I want to show you two Statements describing the mentioned absolute value calculation for integers. The first Statement is for values smaller than 0 and we want to use the left edge value here like this:
 
 ```csharp
 [Fact] public void
@@ -190,7 +246,7 @@ ShouldNegateTheNumberWhenItIsLessThan0()
 {
   //GIVEN
   var function = new AbsoluteValueCalculation();
-  var lessThan0 = 0 - 1;
+  var lessThan0 = 0 - 1; //more on this later
 
   //WHEN
   var result = function.PerformFor(lessThan0);
@@ -218,9 +274,12 @@ ShouldNotNegateTheNumberWhenItIsGreaterOrEqualTo0()
 }
 ```
 
-There are two things to note about these examples. The first one is that we don’t use any kind of `Any` methods. We explicitly take the edges, because they’re the numbers that most strictly define the boundary. This way we document the boundary length.
+There are two things to note about these examples. The first one is that we don’t use any kind of `Any` methods. We explicitly specify the behaviors for the edge values, because they’re the numbers that most strictly define the boundary. This way we document the boundary length.
 
-It is important to understand why we are not using methods like `Any.IntegerGreaterOrEqualTo(0)`, even though we do use `Any` in case when we have no boundary. This is because in the latter case, no value is better than the other in any particular way. In case of boundaries, however, the edge values are better in that they more strictly define the boundary and drive the right implementation.
+TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+
+
+It is important to understand why we are not using methods like `Any.IntegerGreaterOrEqualTo(0)`, even though we do use `Any` in cases when we have no boundary. This is because in the latter case, no value is better than the other in any particular way. In case of boundaries, however, the edge values are better in that they more strictly define the boundary and drive the right implementation.
 
 The second thing to note is the usage of literal constant 0 in the above example. In one of the previous chapter, I showed you a technique called **Constant Specification**, where we write an explicit Statement about the value of the named constant and use the named constant everywhere else instead of its literal. So why did i not use this technique?
 
