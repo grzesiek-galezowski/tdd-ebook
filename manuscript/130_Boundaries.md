@@ -1,7 +1,5 @@
 # Specifying Functional Boundaries and Conditions
 
-There is one outstanding TODO for this chapter
-
 I> ### A Disclaimer
 I> 
 I> Before I begin, I have to disclaim that this chapter draws from a series of posts by Scott Bain and Amir Kolsky from the blog Sustainable Test-Driven Development and their upcoming book by the same title. I like how they adapt the idea of [boundary testing](https://en.wikipedia.org/wiki/Boundary_testing) so much that I learned to follow their guidelines. This chapter is going to be a rephrase of these guidelines. I encourage you to read the original blog posts on this subject on http://www.sustainabletdd.com/ (and buy the upcoming book by Scott, Amir and Max Guernsey).
@@ -33,15 +31,15 @@ In this case, the integer numbers can really be "any" -- the described relations
 
 Sometimes, however, specified objects exhibit different behaviors based on what is passed to their constructors or methods or what they get by calling other objects. For example:
 
-- in our application we may have a licensing policy where a feature is allowed to be used only when the license is valid, and denied after it has expired. In such case, the behavior before the expiry date is different than after - the expiry date is the functional behavior boundary.
+- in our application we may have a licensing policy where a feature is allowed to be used only when the license is valid, and denied after it has expired. In such case, the behavior before the expiry date is different than after -- the expiry date is the functional behavior boundary.
 - Some shops are open from 10 AM to 6 PM, so if we had a query in our application whether the shop is currently open, we would expect it to be answered differently based on what the current time is. Again, the open and closed dates are functional behavior boundaries.
 - An algorithm calculating the absolute value of an integer number returns the same number for inputs greater than or equal to `0` but negated input for negative numbers. Thus, `0` marks the functional boundary in this case.
 
 In such cases, we need to carefully choose our input values to gain a sufficient confidence level while avoiding overspecifying the behaviors with too many Statements (which usually introduces penalties in both Specification run time and maintenance). Scott and Amir build on the proven practices from the testing community[^istqb] and give us some advice on how to pick the values. I'll describe these guidelines (slightly modified in several places) in three parts:
 
-1. specifying exceptions to the rules - where behavior is the same for every input values except one or more explicitly specified values,
+1. specifying exceptions to the rules -- where behavior is the same for every input values except one or more explicitly specified values,
 2. specifying boundaries
-3. specifying ranges - where there are more boundaries than one.
+3. specifying ranges -- where there are more boundaries than one.
 
 ## Exceptions to the rule
 
@@ -126,11 +124,11 @@ ShouldRejectSuperstitiousValue()
 }
 ```
 
-and this is it - I don't usually write more Statements in such cases. There are so many possible input values that it would not be rational to specify all of them. Paraphrasing Kent Beck's opinion[^kentconfidence], our job is not to write as many Statements as we can, but as little as possible to truly document the system and give us a desired level of confidence.
+and that's it -- I don't usually write more Statements in such cases. There are so many possible input values that it would not be rational to specify all of them. Paraphrasing Kent Beck's opinion[^kentconfidence], our job is not to write as many Statements as we can, but as little as possible to truly document the system and give us a desired level of confidence.
 
 ### Example 2: a single exception from a small set of values
 
-The situation is different, however, in when the exceptional value is chosen from a small set - this is often the case where the input value type is an enumeration. Let's go back to an example from one of our previous chapters, where we specified that there is some kind of reporting feature and it can be accessed by either an administrator role or by an auditor role. Let's modify this example for now and say that only administrators are allowed to access reporting:
+The situation is different, however, in when the exceptional value is chosen from a small set -- this is often the case where the input value type is an enumeration. Let's go back to an example from one of our previous chapters, where we specified that there is some kind of reporting feature and it can be accessed by either an administrator role or by an auditor role. Let's modify this example for now and say that only administrators are allowed to access reporting:
 
 ```csharp
 [Fact] public void
@@ -148,9 +146,9 @@ ShouldGrantAdministratorsAccessToReporting()
 }
 ```
 
-The approach to this part is no different than what I did in the first example - I wrote a Statement for the single exceptional value. Time to think about the other Statement - the one that specifies what should happen for the rest of the roles. I'd like to describe two ways this task can be tackled.
+The approach to this part is no different than what I did in the first example -- I wrote a Statement for the single exceptional value. Time to think about the other Statement -- the one that specifies what should happen for the rest of the roles. I'd like to describe two ways this task can be tackled.
 
-The first way is to do it like in the previous example - pick a value different than the exceptional one. This time we will use `Any.Besides()` method, which is best suited for enums:
+The first way is to do it like in the previous example -- pick a value different than the exceptional one. This time we will use `Any.Besides()` method, which is best suited for enums:
 
 ```csharp
 [Fact] public void
@@ -171,12 +169,12 @@ ShouldDenyAnyRoleOtherThanAdministratorAccessToReporting()
 This approach has two advantages:
 
 1. Only one Statement is executed for the "access denied" case, so there is no significant run time penalty.
-2. In case we expand our enum in the future, we don't have to modify this Statement - the added enum member will get a chance to be picked up.
+2. In case we expand our enum in the future, we don't have to modify this Statement -- the added enum member will get a chance to be picked up.
 
-However, there is also one disadvantage - we can't be sure the newly added enum member is used in this Statement. In the previous example, we didn't really care that much about the values that were used, because:
+However, there is also one disadvantage -- we can't be sure the newly added enum member is used in this Statement. In the previous example, we didn't really care that much about the values that were used, because:
 
 * `char` range was quite large so specifying the behaviors for all the values could prove troublesome and inefficient given our desired confidence level,
-* `char` is a fixed set of values - we can't expand `char` as we expand enums, so there is no need to worry about the future.
+* `char` is a fixed set of values -- we can't expand `char` as we expand enums, so there is no need to worry about the future.
 
 So what if there are only two more roles except `Roles.Admin`, e.g. `Auditor` and `CasualUser`? In such cases, I sometimes write a Statement that's executed against all the non-exceptional values, using XUnit.NET's `[Theory]` attribute that allows me to execute the same Statement code with different sets of arguments. An example here would be:
 
@@ -199,7 +197,7 @@ ShouldDenyAnyRoleOtherThanAdministratorAccessToReporting(Roles role)
 }
 ```
 
-The Statement above is executed for both `Roles.Auditor` and `Roles.CasualUser`. The downside of this approach is that each time we expand an enumeration, we need to go back here and update the Statement. As I tend to forget such things, I try to keep at most one Statement in the system depending on the enum - if I find more than one place where I vary my behavior based on values of a particular enumeration, I change the design to replace enum with polymorphism. Statements in TDD can be used as a tool to detect design issues and I'll provide a longer discussion on this in a later chapter.
+The Statement above is executed for both `Roles.Auditor` and `Roles.CasualUser`. The downside of this approach is that each time we expand an enumeration, we need to go back here and update the Statement. As I tend to forget such things, I try to keep at most one Statement in the system depending on the enum -- if I find more than one place where I vary my behavior based on values of a particular enumeration, I change the design to replace enum with polymorphism. Statements in TDD can be used as a tool to detect design issues and I'll provide a longer discussion on this in a later chapter.
 
 ### Example 3: More than one exception
 
@@ -224,7 +222,7 @@ ShouldAllowAccessToReportingBy(Roles role)
 }
 ```
 
-In the last example I used this approach for the non-exceptional values, saying that this is what I sometimes do. However, when specifying multiple exceptions to the rule, this is my default approach - the nature of the exceptional values is that they are strictly specified, so I want them all to be included in my Specification.
+In the last example I used this approach for the non-exceptional values, saying that this is what I sometimes do. However, when specifying multiple exceptions to the rule, this is my default approach -- the nature of the exceptional values is that they are strictly specified, so I want them all to be included in my Specification.
 
 This time, I'm not showing you the Statement for non-exceptional values as it follows the approach I outlined in the previous example.
 
@@ -337,27 +335,28 @@ ShouldNotNegateNumberWhenItIsGreaterOrEqualToSmallestValueNotToNegate()
 
 As you can see, the first Statement contains the following expression: `Constants.SmallestValueNotToNegate - 1`, where `1` is the exact length of the boundary. Like I said, the example is so trivial that it may look silly and funny, however, in real life scenarios, this is a technique I apply anytime, anywhere.
 
-Boundaries may look like they apply only to integer input, but they occur at many other places. There are boundaries associated with date/time (e.g. an action is performed again when time from last action is at least 30 seconds -- the decision would need to be made whether we need precision in seconds or maybe in ticks), to strings (e.g. validation of user name where it must be at least 2 characters, or password that must contain at least 2 special characters). They also apply to regular expressions. For example, for a simple regex `\d+`, we would surely specify for at least three values: an empty string, a single digit and a single non-digit.
+Boundaries may look like they apply only to numeric input, but they occur at many other places. There are boundaries associated with date/time (e.g. an action is performed again when time from last action is at least 30 seconds -- the decision would need to be made whether we need precision in seconds or maybe in ticks), to strings (e.g. validation of user name where it must be at least 2 characters, or password that must contain at least 2 special characters). They also apply to regular expressions. For example, for a simple regex `\d+`, we would surely specify for at least three values: an empty string, a single digit and a single non-digit.
 
-TODO TODO TODO TODO TODO TODO TODO 
+## Combination of boundaries -- ranges
 
-Combination of boundaries -- ranges
-----------------------------------
+The previous examples focused on a single boundary. So, what about a situation when there are more, i.e. a behavior is valid within a range?
 
-So, what about a behavior that is valid in a range? Let's assume that we live in a country where a citizen can get a driving license only after their 17th birthday, but before 65th (the government decided that people after 65 have worse sight and it's safer not to give them new driving licenses). Let's also assume that we try to develop a class that answers the question whether we can apply for driving license and the values returned of this query are as follows:
+### Example -- driving license
 
-1.  Age \< 17 -- returns enum value `QueryResults.TooYoung`
-2.  17 \<= age \>= 65 -- returns enum value `QueryResults.AllowedToApply`
-3.  Age \> 65 -- returns enum value `QueryResults.TooOld`
+Let's consider the following example: we live in a country where a citizen can get a driving license only after their 17th birthday, but before 65th (the government decided that people after 65 may have worse sight and that it's safer not to give them new driving licenses). Let's assume that are trying to develop a class that answers the question whether we can apply for driving license and the values returned by this query are as follows:
 
-Now, remember I wrote that we specify the behaviors near boundaries? Such approach, however, when applied to the situation I just described, would give us the following Statements:
+1. Age \< 17 -- returns enum value `QueryResults.TooYoung`
+2. 17 \<= age \>= 65 -- returns enum value `QueryResults.AllowedToApply`
+3. Age \> 65 -- returns enum value `QueryResults.TooOld`
 
-1.  Age = 17, should yield result `QueryResults.TooYoung`
-2.  Age = 18, should yield result `QueryResults.AllowedToApply`
-3.  Age = 65, should yield result `QueryResults.AllowedToApply`
-4.  Age = 66, should yield result `QueryResults.TooOld`
+Now, remember I wrote that I specify the behaviors with boundaries by using the edge values? This approach, when applied to the situation I just described, would give me the following Statements:
 
-thus, we would describe the behavior where the query should return `AllowedToApply` value twice, which effectively means that we would copy-paste the Statement and change just one value. How do we deal with this? Again, by using a parameteried Statement, i.e. the Xunit.net's `[Theory]` ttribute. Thanks to it, can write the code of the Statement once, but make the xUnit framework invoke it twice with different sets of input values. The code looks like this:
+1. Age = 17, should yield result `QueryResults.TooYoung`
+2. Age = 18, should yield result `QueryResults.AllowedToApply`
+3. Age = 65, should yield result `QueryResults.AllowedToApply`
+4. Age = 66, should yield result `QueryResults.TooOld`
+
+thus, I would describe the behavior where the query should return `AllowedToApply` value twice, which effectively means that I would need to copy-paste the Statement and change just one value. How do we deal with this? Again, by using a parameterized Statement, i.e. the Xunit.net's `[Theory]` attribute. Thanks to it, we can write the code of the Statement once, but make the xUnit framework invoke it twice with different sets of input values. The code looks like this:
 
 ```csharp
 [Theory]
@@ -378,11 +377,13 @@ public void ShouldYieldResultForAge(int age, QueryResults expectedResult)
 }
 ```
 
-This way, there is only one Statement executed four times. The case of `AllowedToApply` is still evaluated twice for both edge cases (so there is more time spent on executing it, which for small cases is not an issue), but the code maintenance is easier -- we don’t have to copy-paste the code to specify both edges of the behavior in two separate Statements.
+This way, thereI only need to werite a single method and by decorating it with `[InlineData]`, I make it executed four times with different values. The case of `AllowedToApply` is still evaluated twice for both edge cases (so there is more time spent on executing it, which for small cases is not an issue), but the code maintenance is easier -- we don’t have to copy-paste the code to specify both edges of the behavior in two separate Statements.
 
-Note that we’re quite lucky because the specified logic is strictly functional (i.e. returns different results based on different inputs). Thanks to this, we could parameterize input values together with expected results. This is not always the case. For example, let's imagine that we have a clock class where we can set alarm time. The class allows us to set the hour safely between 0 and 24, otherwise it throws an exception.
+### Example -- setting an alarm
 
-This time, we have to write two parameterized Statements -- one where a value is returned (for valid cases) and one where exception is thrown (for invalid cases). The first would look like this:
+In the previous example, we were quite lucky because the specified logic was purely functional (i.e. it returned different results based on different inputs). Thanks to this, we could parameterize input values together with expected results. This is not always the case. For example, let's imagine that we have a `Clock` class that allows us to schedule an alarm. The class allows us to set the hour safely between 0 and 24, otherwise it throws an exception.
+
+This time, I have to write two parameterized Statements -- one where a value is returned (for valid cases) and one where exception is thrown (for invalid cases). The first would look like this:
 
 ```csharp
 [Theory]
@@ -423,9 +424,11 @@ ShouldThrowOutOfRangeExceptionWhenTryingToSetAlarmHourOutsideValidRange(
 }
 ```
 
+Other than that, I used exactly the same approach as the last time.
+
 ## Summary
 
-In this chapter, we covered specifying functional boundaries with a minimum amount of code and Statements, so that the Specification is more maintainable and runs faster. There is one more kind of situation left: when we have compound conditions (e.g. a password must be at least 10 characters and contain at least 2 special characters) -- we’ll get back to those when we introduce mocks.
+In this chapter, I described specifying functional boundaries with a minimum amount of code and Statements, so that the Specification is more maintainable and runs faster. There is one more kind of situation left: when we have compound conditions (e.g. a password must be at least 10 characters and contain at least 2 special characters) -- we’ll get back to those when we introduce mock objects.
 
 
 [^tetraphobia]: TODO link to wikipedia
