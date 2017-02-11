@@ -333,7 +333,13 @@ ShouldNotNegateNumberWhenItIsGreaterOrEqualToSmallestValueNotToNegate()
 }
 ```
 
-As you can see, the first Statement contains the following expression: `Constants.SmallestValueNotToNegate - 1`, where `1` is the exact length of the boundary. Like I said, the example is so trivial that it may look silly and funny, however, in real life scenarios, this is a technique I apply anytime, anywhere.
+As you can see, the first Statement contains the following expression: 
+
+```csharp
+Constants.SmallestValueNotToNegate - 1
+```
+
+where `1` is the exact length of the boundary. Like I said, the example is so trivial that it may look silly and funny, however, in real life scenarios, this is a technique I apply anytime, anywhere.
 
 Boundaries may look like they apply only to numeric input, but they occur at many other places. There are boundaries associated with date/time (e.g. an action is performed again when time from last action is at least 30 seconds -- the decision would need to be made whether we need precision in seconds or maybe in ticks), to strings (e.g. validation of user name where it must be at least 2 characters, or password that must contain at least 2 special characters). They also apply to regular expressions. For example, for a simple regex `\d+`, we would surely specify for at least three values: an empty string, a single digit and a single non-digit.
 
