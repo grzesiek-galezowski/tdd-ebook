@@ -124,7 +124,7 @@ ShouldRejectSuperstitiousValue()
 }
 ```
 
-and that's it -- I don't usually write more Statements in such cases. There are so many possible input values that it would not be rational to specify all of them. Paraphrasing Kent Beck's opinion[^kentconfidence], our job is not to write as many Statements as we can, but as little as possible to truly document the system and give us a desired level of confidence.
+and that's it -- I don't usually write more Statements in such cases. There are so many possible input values that it would not be rational to specify all of them. Drawing from Kent Beck's famouns comment from Stack Overflow[^kentconfidence], I think that our job is not to write as many Statements as we can, but as little as possible to truly document the system and give us a desired level of confidence.
 
 ### Example 2: a single exception from a small set of values
 
@@ -437,6 +437,6 @@ Other than that, I used exactly the same approach as the last time.
 In this chapter, I described specifying functional boundaries with a minimum amount of code and Statements, so that the Specification is more maintainable and runs faster. There is one more kind of situation left: when we have compound conditions (e.g. a password must be at least 10 characters and contain at least 2 special characters) -- we’ll get back to those when we introduce mock objects.
 
 
-[^tetraphobia]: TODO link to wikipedia
-[^istqb]: TODO istwb syllabus
-[^kentconfidence]: TODO
+[^tetraphobia]: https://en.wikipedia.org/wiki/Tetraphobia
+[^istqb]: see e.g. chapter 4.3 of ISQTB Foundation Level Syllabus at http://www.istqb.org/downloads/send/2-foundation-level-documents/3-foundation-level-syllabus-2011.html4
+[^kentconfidence]: http://stackoverflow.com/a/153565
