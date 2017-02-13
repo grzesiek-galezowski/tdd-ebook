@@ -1,3 +1,9 @@
+# 13-02-2017
+
+One day before the Valentine's day, I'd like to present you with another version of the tutorial. This time, I did an overhaul of the chapter about specifying boundaries and functional conditions. Since I last wrote it, my approach changed a bit to a more nuanced one and I tried to convey a bit about the different situations in which I make different choices. Also, I incorporated one or two small but useful fixes by others (thanks!!). Where I knew there are still open issues (this is true for two chapters), I decided to add a note at the beginning of each chapter do that you can find it. These issues are very minor, so they should not get in the way when reading.
+
+Hope you like the changes and, as always, I welcome comments, opinions and suggestions.
+
 # 30-12-2016
 
 Hi, along with my wishes for a Happy New Year, I'd like to give you a new version of the book with almost completely rewritten chapter "What is the scope of a unit-level Statement in TDD?". The previous version of this chapter was an almost copy-pasted blog post and it lacked in many ways. I hope you like the new version of the chapter and if you have any suggestions, bug reports, topics you'd like to discuss, you know how to contact me, don't you?
