@@ -1,4 +1,4 @@
-# Specifying Functional Boundaries and Conditions
+# Specifying functional boundaries and conditions
 
 I> ### A Disclaimer
 I> 
@@ -176,7 +176,7 @@ However, there is also one disadvantage -- we can't be sure the newly added enum
 * `char` range was quite large so specifying the behaviors for all the values could prove troublesome and inefficient given our desired confidence level,
 * `char` is a fixed set of values -- we can't expand `char` as we expand enums, so there is no need to worry about the future.
 
-So what if there are only two more roles except `Roles.Admin`, e.g. `Auditor` and `CasualUser`? In such cases, I sometimes write a Statement that's executed against all the non-exceptional values, using XUnit.NET's `[Theory]` attribute that allows me to execute the same Statement code with different sets of arguments. An example here would be:
+So what if there are only two more roles except `Roles.Admin`, e.g. `Auditor` and `CasualUser`? In such cases, I sometimes write a Statement that's executed against all the non-exceptional values, using xUnit.net's `[Theory]` attribute that allows me to execute the same Statement code with different sets of arguments. An example here would be:
 
 ```csharp
 [Theory]
@@ -201,7 +201,7 @@ The Statement above is executed for both `Roles.Auditor` and `Roles.CasualUser`.
 
 ### Example 3: More than one exception
 
-The previous two examples assume there is only one exception to the rule. However, this concept can be extended to more values, as long as it is a finished, discrete set. If there are multiple exceptional values that produce the same behavior, I usually try to cover them all by using the mentioned `[Theory]` feature of Xunit.net. I'll demonstrate it by taking the previous example of granting access and assuming that this time, both administrator and auditor are allowed to use the feature. A Statement for behavior would look like this:
+The previous two examples assume there is only one exception to the rule. However, this concept can be extended to more values, as long as it is a finished, discrete set. If there are multiple exceptional values that produce the same behavior, I usually try to cover them all by using the mentioned `[Theory]` feature of xUnit.net. I'll demonstrate it by taking the previous example of granting access and assuming that this time, both administrator and auditor are allowed to use the feature. A Statement for behavior would look like this:
 
 ```csharp
 [Theory]
@@ -362,7 +362,7 @@ Now, remember I wrote that I specify the behaviors with boundaries by using the 
 3. Age = 65, should yield result `QueryResults.AllowedToApply`
 4. Age = 66, should yield result `QueryResults.TooOld`
 
-thus, I would describe the behavior where the query should return `AllowedToApply` value twice, which effectively means that I would need to copy-paste the Statement and change just one value. How do we deal with this? Again, by using a parameterized Statement, i.e. the Xunit.net's `[Theory]` attribute. Thanks to it, we can write the code of the Statement once, but make the xUnit framework invoke it twice with different sets of input values. The code looks like this:
+thus, I would describe the behavior where the query should return `AllowedToApply` value twice, which effectively means that I would need to copy-paste the Statement and change just one value. How do we deal with this? Again, by using a parameterized Statement, i.e. the xUnit.net's `[Theory]` attribute. Thanks to it, we can write the code of the Statement once, but make the xUnit framework invoke it twice with different sets of input values. The code looks like this:
 
 ```csharp
 [Theory]
