@@ -39,7 +39,7 @@ For me, the arguments that I gave you are enough to think that TDD is about anal
 
 ## Gherkin
 
-Hungry? Too bad, because the Gkerkin I am going to tell you about is not edible. It is a notation and a way of thinking about behaviors of the specified piece of code. It can be applied on different levels of granularity -- any behavior, whether of a whole system or a single class, may be described using Gherkin.
+Hungry? Too bad, because the Gherkin I am going to tell you about is not edible. It is a notation and a way of thinking about behaviors of the specified piece of code. It can be applied on different levels of granularity -- any behavior, whether of a whole system or a single class, may be described using Gherkin.
 
 In fact we already used this notation, we just didn't name it so. Gherkin is the GIVEN-WHEN-THEN structure that you can see everywhere, even as comments in the code samples. This time, we are stamping a name on it and analyzing it further.
 
@@ -114,7 +114,7 @@ There are two important questions related to TODO lists: "what exactly should we
 
 ### What to put on a TODO list?
 
-Everything that we need addressed but is out of scope of the current Statement. Those items may be related to implementing unimplemented methods, to add whole functionalities (such items are usually broken further into more fine-grained sub tasks as soon as we start implementing them), they might be reminders to take a better look at something (e.g. "investigate what is this component’s policy for logging errors") or questions about the domain that need to get answered. If we ten to get carried away too much in coding and miss our lunch, we can even add a reminder ("TODO: eat lunch!"). I never encountered a case where I needed to share this TODO list with anyone else, so I treat it as my personal sketchbook. I recommend the same to you - the list is yours!
+Everything that we need addressed but is out of scope of the current Statement. Those items may be related to implementing unimplemented methods, to add whole functionalities (such items are usually broken further into more fine-grained sub tasks as soon as we start implementing them), they might be reminders to take a better look at something (e.g. "investigate what is this component’s policy for logging errors") or questions about the domain that need to get answered. If we tend to get carried away too much in coding and miss our lunch, we can even add a reminder ("TODO: eat lunch!"). I never encountered a case where I needed to share this TODO list with anyone else, so I treat it as my personal sketchbook. I recommend the same to you - the list is yours!
 
 ### How to pick items from a TODO list?
 

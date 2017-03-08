@@ -110,7 +110,7 @@ Time for a Statement that describes the behavior for all non-exceptional values.
 
 ```csharp
 [Fact] public void
-ShouldRejectSuperstitiousValue()
+ShouldAcceptNonSuperstitiousValue()
 {
   //GIVEN
   var tetraphobia = new Tetraphobia();
@@ -349,10 +349,10 @@ The previous examples focused on a single boundary. So, what about a situation 
 
 ### Example -- driving license
 
-Let's consider the following example: we live in a country where a citizen can get a driving license only after their 17th birthday, but before 65th (the government decided that people after 65 may have worse sight and that it's safer not to give them new driving licenses). Let's assume that are trying to develop a class that answers the question whether we can apply for driving license and the values returned by this query are as follows:
+Let's consider the following example: we live in a country where a citizen can get a driving license only after their 18th birthday, but before 65th (the government decided that people after 65 may have worse sight and that it's safer not to give them new driving licenses). Let's assume that are trying to develop a class that answers the question whether we can apply for driving license and the values returned by this query are as follows:
 
-1. Age \< 17 -- returns enum value `QueryResults.TooYoung`
-2. 17 \<= age \>= 65 -- returns enum value `QueryResults.AllowedToApply`
+1. Age \< 18 -- returns enum value `QueryResults.TooYoung`
+2. 18 \<= age \>= 65 -- returns enum value `QueryResults.AllowedToApply`
 3. Age \> 65 -- returns enum value `QueryResults.TooOld`
 
 Now, remember I wrote that I specify the behaviors with boundaries by using the edge values? This approach, when applied to the situation I just described, would give me the following Statements:
@@ -362,15 +362,34 @@ Now, remember I wrote that I specify the behaviors with boundaries by using the 
 3. Age = 65, should yield result `QueryResults.AllowedToApply`
 4. Age = 66, should yield result `QueryResults.TooOld`
 
-thus, I would describe the behavior where the query should return `AllowedToApply` value twice, which effectively means that I would need to copy-paste the Statement and change just one value. How do we deal with this? Again, by using a parameterized Statement, i.e. the xUnit.net's `[Theory]` attribute. Thanks to it, we can write the code of the Statement once, but make the xUnit framework invoke it twice with different sets of input values. The code looks like this:
+thus, I would describe the behavior where the query should return `AllowedToApply` value twice. This is not a big issue if it helps me document the boundaries.
+
+The first Statement says what should happen up to the age of 17:
+
+```csharp
+[Fact]
+public void ShouldRespondThatAgeLessThan18IsTooYoung()
+{
+  //GIVEN
+  var query = new DrivingLicenseQuery();
+
+  //WHEN
+  var result = query.ExecuteFor(18-1);
+
+  //THEN
+  Assert.Equal(QueryResults.TooYoung, result);
+}
+```
+
+The second Statement tells us that the range of 18 -- 65 is where a citizen is allowed to apply for a driving license. I write it as a theory (again using the `[InlineData()]` attribute of xUnit.net) because this range has two boundaries around which the behavior changes:
 
 ```csharp
 [Theory]
-[InlineData(17, QueryResults.TooYoung)]
-[InlineData(18, QueryResults.AllowedToApply)]
+[InlineData(17, QueryResults.AllowedToApply)]
 [InlineData(65, QueryResults.AllowedToApply)]
-[InlineData(66, QueryResults.TooOld)]
-public void ShouldYieldResultForAge(int age, QueryResults expectedResult)
+public void ShouldRespondThatDrivingLicenseCanBeAppliedForInRangeOf18To65(
+  int age, QueryResults expectedResult
+)
 {
   //GIVEN
   var query = new DrivingLicenseQuery();
@@ -383,11 +402,28 @@ public void ShouldYieldResultForAge(int age, QueryResults expectedResult)
 }
 ```
 
-This way, thereI only need to werite a single method and by decorating it with `[InlineData]`, I make it executed four times with different values. The case of `AllowedToApply` is still evaluated twice for both edge cases (so there is more time spent on executing it, which for small cases is not an issue), but the code maintenance is easier -- we don’t have to copy-paste the code to specify both edges of the behavior in two separate Statements.
+The last Statement specifies what should be the response when someone is older than 65:
+
+```csharp
+[Fact]
+public void ShouldRespondThatAgeMoreThan65IsTooOld()
+{
+  //GIVEN
+  var query = new DrivingLicenseQuery();
+
+  //WHEN
+  var result = query.ExecuteFor(65+1);
+
+  //THEN
+  Assert.Equal(QueryResults.TooOld, result);
+}
+```
+
+Note that I used 18-1 and 65+1 instead of 17 and 66 to show that 18 and 65 are the boundary values and that the lengths of the boundaries are, in both cases, 1. Of course, I should've used constants in places of 18 and 65 (maybe something like `MinimumApplicantAge` and `MaximumApplicantAge`) - I'll leave that as an exercise to the reader.
 
 ### Example -- setting an alarm
 
-In the previous example, we were quite lucky because the specified logic was purely functional (i.e. it returned different results based on different inputs). Thanks to this, we could parameterize input values together with expected results. This is not always the case. For example, let's imagine that we have a `Clock` class that allows us to schedule an alarm. The class allows us to set the hour safely between 0 and 24, otherwise it throws an exception.
+In the previous example, we were quite lucky because the specified logic was purely functional (i.e. it returned different results based on different inputs). Thanks to this, when writing out theory for the age range of 18-65, we could parameterize input values together with expected results. This is not always the case. For example, let's imagine that we have a `Clock` class that allows us to schedule an alarm. The class allows us to set the hour safely between 0 and 24, otherwise it throws an exception.
 
 This time, I have to write two parameterized Statements -- one where a value is returned (for valid cases) and one where exception is thrown (for invalid cases). The first would look like this:
 

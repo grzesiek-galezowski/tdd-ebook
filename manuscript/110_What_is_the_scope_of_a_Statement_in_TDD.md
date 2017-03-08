@@ -3,7 +3,7 @@
 In previous chapters, I described how tests form a kind of excutable Specification consisting of many Statements. If so, then some fundamental questions regarding these Statements need to be raised, e.g.:
 
 1. What goes into a single Statement?
-1. Gow do I know that I need to write another Statement instead of expanding existing one?
+1. How do I know that I need to write another Statement instead of expanding existing one?
 1. When I see a Statement, how do I know whether it is too big, too small, or just enough?
 
 This can be summarized as one more general question: what should be the scope of a single Statement?
@@ -28,7 +28,7 @@ Our questions from the beginning of the chapter can be rephrased as:
 
 The answer to the first question is relatively simple -- we specify on multiple levels. How many levels there are and which ones we're interested in depends very much on the specific type of application that we write and programming paradigm (e.g. in pure functional programming, we don't have classes).
 
-In this (and next) chapter, I focus mostly on class level (I will refer to it as unit level, since a class is a unit of behavior), i.e. every Statement is written against a public API of a specified class.
+In this (and next) chapter, I focus mostly on class level (I will refer to it as unit level, since a class is a unit of behavior), i.e. every Statement is written against a public API of a specified class[^unclebobdisagrees].
 
 Does that mean that we can only use a single class in our executable Statement? Let's look at an example of a well-written Statement and try to answer this question:
 
@@ -232,3 +232,4 @@ So every time we have several physical assertions that can be (or are) extracted
 In this chapter, we tried to find out how much should go into a single Statement. We examined the notions of level and functional scope to end up with a conclusion that a Statement should cover a single behavior. We backed this statement by three rules by Amir Kolsky and looked at an example of what could happen when we don't follow one of them. Finally, we discussed how the notion of "single Statement per behavior" is related to "single assertion per Statement".
 
 [^CleanCode]: Clean Code movies, don't remember which episode -- please help me find it and report issue on github.
+[^unclebobdisagrees]: Some disagree, however, with writing Statements on the class level - see http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html
