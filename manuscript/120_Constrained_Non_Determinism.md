@@ -179,7 +179,7 @@ public string AnyString()
 }
 ```
 
-This time, the `AnyString()` method returns a guid instead of a human-readable text. Generating a new guid each time gives us a fairly strong guarantee that each value would be distinct. The string not being human-readable (contrary to something like `"MY_HOST_NAME"`) may leave you worried that maybe we are losing something, but hey, didn’t we say **Any**String()?
+This time, the `AnyString()` method returns a guid instead of a human-readable text. Generating a new guid each time gives us a fairly strong guarantee that each value would be distinct. The string not being human-readable (contrary to something like `"MY_HOST_NAME"`) may leave you worried that maybe we are losing something, but hey, didn't we say **Any**String()?
 
 **Distinct generated values** means that each time we generate an anonymous value, it's different (if possible) than the previous one and each such value is generated automatically using some kind of heuristics.
 
@@ -254,7 +254,7 @@ When we combine anonymous input together with distinct generated values, we get 
 
 1.  Values are anonymous i.e. we don't know the actual value we are using.
 2.  The values are generated in as distinct as possible sequence (which means that, whenever possible, no two values generated one after another hold the same value)
-3.  The non-determinism in generation of the values is constrained, which means that the algorithms for generating values are carefully picked in order to provide values that belong to a specific equivalence class and that are not "evil" (e.g. when generating "any integer", we'd rather not allow generating ‘0’ as it is usually a special-case-value that often deserves its own Statement).
+3.  The non-determinism in generation of the values is constrained, which means that the algorithms for generating values are carefully picked in order to provide values that belong to a specific equivalence class and that are not "evil" (e.g. when generating "any integer", we'd rather not allow generating ‘0' as it is usually a special-case-value that often deserves its own Statement).
 
 There are multiple ways to implement constrained non-determinism. Mark Seemann himself has invented the AutoFixture library for C\# that is [freely available to download](https://github.com/AutoFixture/AutoFixture). Here is a shortest possible snippet to generate an anonymous integer using AutoFixture:
 

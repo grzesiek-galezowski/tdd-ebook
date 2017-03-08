@@ -278,7 +278,7 @@ ShouldNotNegateTheNumberWhenItIsGreaterOrEqualTo0()
 }
 ```
 
-There are two things to note about these examples. The first one is that I din’t use any kind of `Any` methods. I use `Any` in cases where I don't have a boundary or when I consider no value from an equivalence class better than others in any particular way. When I specify boundaries, however, instead of using methods like `Any.IntegerGreaterOrEqualTo(0)`, I use the edge values as I find that they more strictly define the boundary and drive the right implementation. Also, explicitly specifying the behaviors for the edge values allows me to document the boundary length.
+There are two things to note about these examples. The first one is that I didn't use any kind of `Any` methods. I use `Any` in cases where I don't have a boundary or when I consider no value from an equivalence class better than others in any particular way. When I specify boundaries, however, instead of using methods like `Any.IntegerGreaterOrEqualTo(0)`, I use the edge values as I find that they more strictly define the boundary and drive the right implementation. Also, explicitly specifying the behaviors for the edge values allows me to document the boundary length.
 
 The second thing to note is the usage of literal constant `0` in the example above. In one of the previous chapter, I described a technique called **Constant Specification** that is about writing an explicit Statement about the value of the named constant and use the named constant everywhere else instead of its literal. So why didn't I use this technique this time?
 
@@ -470,7 +470,7 @@ Other than that, I used exactly the same approach as the last time.
 
 ## Summary
 
-In this chapter, I described specifying functional boundaries with a minimum amount of code and Statements, so that the Specification is more maintainable and runs faster. There is one more kind of situation left: when we have compound conditions (e.g. a password must be at least 10 characters and contain at least 2 special characters) -- we’ll get back to those when we introduce mock objects.
+In this chapter, I described specifying functional boundaries with a minimum amount of code and Statements, so that the Specification is more maintainable and runs faster. There is one more kind of situation left: when we have compound conditions (e.g. a password must be at least 10 characters and contain at least 2 special characters) -- we'll get back to those when we introduce mock objects.
 
 
 [^tetraphobia]: https://en.wikipedia.org/wiki/Tetraphobia

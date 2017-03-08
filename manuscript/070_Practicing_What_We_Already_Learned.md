@@ -4,13 +4,13 @@
 >
 >  -- Shang Tsung, Mortal Kombat The Movie
 
-The above quote took place just before a [fighting scene](https://www.youtube.com/watch?v=b0vhGEGJC8g) in which a nameless warrior jumped at Sub-Zero only to be frozen and broken into multiple pieces upon hitting the wall. The scene was not spectacular in terms of fighting technique or length. Also, the nameless guy didn't even try hard -- the only thing he did was to jump only to be hit by a freezing ball, which, by the way, he actually could see coming. It looked a lot like the fight was set up only to showcase Sub-Zero’s freezing ability. Guess what? In this chapter, we're ging to do roughly the same thing -- set up a fake, easy scenario just to showcase some of the basic TDD elements!
+The above quote took place just before a [fighting scene](https://www.youtube.com/watch?v=b0vhGEGJC8g) in which a nameless warrior jumped at Sub-Zero only to be frozen and broken into multiple pieces upon hitting the wall. The scene was not spectacular in terms of fighting technique or length. Also, the nameless guy didn't even try hard -- the only thing he did was to jump only to be hit by a freezing ball, which, by the way, he actually could see coming. It looked a lot like the fight was set up only to showcase Sub-Zero's freezing ability. Guess what? In this chapter, we're ging to do roughly the same thing -- set up a fake, easy scenario just to showcase some of the basic TDD elements!
 
-The previous chapter was filled with a lot of theory and philosophy, don’t you think? I really hope you didn't fall asleep while reading it. To tell you the truth, we need to grasp much more theory until we are really able to write real-world applications using TDD. To compensate for this somehow, I propose we take a side trip from the trail and try what we already learned on a quick and easy example. As we go through the example, you might wonder how on earth could you possibly write real applications the way we will write our simple program. Don't worry, I will not show you all the tricks yet, so treat it as a "taste of things to come". In other words, the example will be as close to real world problems as the fight between Sub-Zero and nameless ninja was to real martial arts fight, but will show you some of the elements of TDD process.
+The previous chapter was filled with a lot of theory and philosophy, don't you think? I really hope you didn't fall asleep while reading it. To tell you the truth, we need to grasp much more theory until we are really able to write real-world applications using TDD. To compensate for this somehow, I propose we take a side trip from the trail and try what we already learned on a quick and easy example. As we go through the example, you might wonder how on earth could you possibly write real applications the way we will write our simple program. Don't worry, I will not show you all the tricks yet, so treat it as a "taste of things to come". In other words, the example will be as close to real world problems as the fight between Sub-Zero and nameless ninja was to real martial arts fight, but will show you some of the elements of TDD process.
 
 ## Let me tell you a story 
 
-Meet Johnny and Benjamin, two developers from Buthig Company. Johnny is quite fluent in programming and Test-Driven Development, while Benjamin is an intern under Johnny’s mentorship and is eager to learn TDD. They are on their way to their customer, Jane, who requested their presence as she wants them to write a small program for her. Along with them, we will see how they interact with the customer and how Benjamin tries to understand the basics of TDD. Like you, Benjamin is a novice so his questions may reflect yours. However, if you find anything explained in not enough details, do not worry -- in the next chapters, we will be expanding on this material.
+Meet Johnny and Benjamin, two developers from Buthig Company. Johnny is quite fluent in programming and Test-Driven Development, while Benjamin is an intern under Johnny's mentorship and is eager to learn TDD. They are on their way to their customer, Jane, who requested their presence as she wants them to write a small program for her. Along with them, we will see how they interact with the customer and how Benjamin tries to understand the basics of TDD. Like you, Benjamin is a novice so his questions may reflect yours. However, if you find anything explained in not enough details, do not worry -- in the next chapters, we will be expanding on this material.
 
 ## Act 1: The Car
 
@@ -76,7 +76,7 @@ What do you think?
 
 **Johnny:** Now we'll take each story and collect some examples of how it should work.
 
-**Benjamin:** Johnny, don’t you think it is obvious enough to proceed with implementation straight away?
+**Benjamin:** Johnny, don't you think it is obvious enough to proceed with implementation straight away?
 
 **Johnny:** Trust me, Benjamin, if there is one word I fear most in communication, it is "obvious". Miscommunication happens most often around things that people consider obvious, simply because other people do not.
 
@@ -243,7 +243,7 @@ ShouldDisplay0WhenCreated()
 
 **Johnny:** It is a naming convention. There are many others, but this is the one that I like. In this convention, the rule is that when you take the name of the class without the `Specification` part followed by the name of the method, it should form a legit sentence. For instance, if I apply it to what we wrote, it would make a sentence: "Calculator should display 0 when created".
 
-**Benjamin:** Ah, I see now. So it's a statement of behavior, isn’t it?
+**Benjamin:** Ah, I see now. So it's a statement of behavior, isn't it?
 
 **Johnny:** That's right. Now, the second trick I can sell to you is that if you don't know what code to start your Statement with, start with the expected result. In our case, we are expecting that the behavior will end up as displaying "0", right? So let's just write it in the form of an assertion.
 
@@ -384,7 +384,7 @@ public class Calculator
 
 **Johnny:** You're right. The final implementation is most probably going to be different. What we did, however, is still valuable because:
 
-1.  You’re one step closer to implementing the final solution
+1.  You're one step closer to implementing the final solution
 2.  This feeling that this is not the final implementation points you towards writing more Statements. When there is enough Statements to make your implementation complete, it usually means that you have a complete Specification of class behaviors as well.
 3.  If you treat making every Statement true as an achievement, this practice allows you to evolve your code without losing what you already achieved. If by accident you break any of the behaviors you've already implemented, the Specification is going to tell you because one of the existing Statements that were previously true will turn false. You can then either fix it or undo your changes using version control and start over from the point where all existing Statements were true.
 
@@ -729,7 +729,7 @@ ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipl
 
 **Benjamin:** It seems that our current code already fulfills the Statement. Should I try to comment some code to make sure this Statement can fail just like you did in the previous Statement?
 
-**Johnny:** That would be a wise thing to do. When a Statement turns out true without requiring you to change any production code, it's always suspicious. Just like you said, we have to change production code for a second to force this Statement to become false, then undo this modification to make it true again. This isn’t as obvious as previously, so let me do it. I will mark all the added lines with `//+` comment so that you can see them easily:
+**Johnny:** That would be a wise thing to do. When a Statement turns out true without requiring you to change any production code, it's always suspicious. Just like you said, we have to change production code for a second to force this Statement to become false, then undo this modification to make it true again. This isn't as obvious as previously, so let me do it. I will mark all the added lines with `//+` comment so that you can see them easily:
 
 ```csharp
 public class Calculator

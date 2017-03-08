@@ -242,7 +242,7 @@ And that's it -- the Statement itself is complete!
 
 ## Start from the end
 
-This is a technique that I suggest to people that seem to have absolutely no idea how to start. I got it from Kent Beck’s book Test Driven Development by Example. It seems funny at first glance, but I found it quite powerful at times. The trick is to write the Statement "backwards", i.e. starting with what the result verification (in terms of the *GIVEN-WHEN-THEN* structure, we would say that we start with our *THEN* part).
+This is a technique that I suggest to people that seem to have absolutely no idea how to start. I got it from Kent Beck's book Test Driven Development by Example. It seems funny at first glance, but I found it quite powerful at times. The trick is to write the Statement "backwards", i.e. starting with what the result verification (in terms of the *GIVEN-WHEN-THEN* structure, we would say that we start with our *THEN* part).
 
 This works well when we are quite sure of what the outcome of a behavior should be, but not quite so sure of how to get there.
 
@@ -412,11 +412,11 @@ public void TODO()
 }
 ```
 
-All what is left is to find a good name for the Statement. This isn’t an issue since we already specified the desired behavior in the code, so we can just summarize it as something like `ShouldCreateAPromptForFullVersionPurchaseWhenAskedForImportDatabaseMessage()`.
+All what is left is to find a good name for the Statement. This isn't an issue since we already specified the desired behavior in the code, so we can just summarize it as something like `ShouldCreateAPromptForFullVersionPurchaseWhenAskedForImportDatabaseMessage()`.
 
 ## Summary
 
-When I'm stuck and don't know how to start writing a new failing Statement, the techniques from this chapter help me push things in the right direction. Note that the examples given are simplistic and built on an assumption that there is only one object that takes some kind of input parameter and returns a well defined result. However, this isn't how most of the object-oriented world is built. In that world, we often have objects that communicate with other objects, send messages, invoke methods on each other and these methods often don't have any return values but are instead declared as `void`. Even though, all of the techniques described in this chapter will still work in such case and we’ll revisit them as soon as we learn how to do TDD in the larger object-oriented world (after the introduction of the concept of mock objects in Part 2). Here, I tried to keep it simple.
+When I'm stuck and don't know how to start writing a new failing Statement, the techniques from this chapter help me push things in the right direction. Note that the examples given are simplistic and built on an assumption that there is only one object that takes some kind of input parameter and returns a well defined result. However, this isn't how most of the object-oriented world is built. In that world, we often have objects that communicate with other objects, send messages, invoke methods on each other and these methods often don't have any return values but are instead declared as `void`. Even though, all of the techniques described in this chapter will still work in such case and we'll revisit them as soon as we learn how to do TDD in the larger object-oriented world (after the introduction of the concept of mock objects in Part 2). Here, I tried to keep it simple.
 
 
 [^argumentsagainstshould]: There are also some arguments against using the word "should", e.g. by Kevlin Henney (see http://www.infoq.com/presentations/testing-communication).

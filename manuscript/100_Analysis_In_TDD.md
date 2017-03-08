@@ -114,7 +114,7 @@ There are two important questions related to TODO lists: "what exactly should we
 
 ### What to put on a TODO list?
 
-Everything that we need addressed but is out of scope of the current Statement. Those items may be related to implementing unimplemented methods, to add whole functionalities (such items are usually broken further into more fine-grained sub tasks as soon as we start implementing them), they might be reminders to take a better look at something (e.g. "investigate what is this component’s policy for logging errors") or questions about the domain that need to get answered. If we tend to get carried away too much in coding and miss our lunch, we can even add a reminder ("TODO: eat lunch!"). I never encountered a case where I needed to share this TODO list with anyone else, so I treat it as my personal sketchbook. I recommend the same to you - the list is yours!
+Everything that we need addressed but is out of scope of the current Statement. Those items may be related to implementing unimplemented methods, to add whole functionalities (such items are usually broken further into more fine-grained sub tasks as soon as we start implementing them), they might be reminders to take a better look at something (e.g. "investigate what is this component's policy for logging errors") or questions about the domain that need to get answered. If we tend to get carried away too much in coding and miss our lunch, we can even add a reminder ("TODO: eat lunch!"). I never encountered a case where I needed to share this TODO list with anyone else, so I treat it as my personal sketchbook. I recommend the same to you - the list is yours!
 
 ### How to pick items from a TODO list?
 
@@ -160,7 +160,7 @@ Of course, we can (and should) add new items to the TODO list as we make progres
 
 There are also some issues one may run into when using TODO lists. I already mentioned the biggest of them - that I often saw people add TODO items for means other than to support TDD and they never went back to these items. Some people joke that a TODO comment left in the code means "There was a time when I wanted to do ...". Anyway, such items may pollute our TDD-related TODO list with so much cruft that your own items are barely findable.
 
-Another downside is that when you work with multiple workspaces/solutions, your IDE will gather TODO items only from a single solution/workspace, so there may be times when several TODO lists will need to be maintained -- one per workspace or solution. Fortunately, this isn’t usually a big deal.
+Another downside is that when you work with multiple workspaces/solutions, your IDE will gather TODO items only from a single solution/workspace, so there may be times when several TODO lists will need to be maintained -- one per workspace or solution. Fortunately, this isn't usually a big deal.
 
 [^sebrosegwt]: Seb Rose wrote a blog post where he suggests against the `//GIVEN //WHEN //THEN` comments and states that he only uses empty lines to separate the three sections, see http://claysnow.co.uk/unit-tests-are-your-specification/
 

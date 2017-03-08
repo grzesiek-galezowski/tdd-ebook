@@ -123,7 +123,7 @@ And we're done. Now if we need another test, e.g. for division, we can just add 
 
 As you see, we can easily write automated checks like this, using our primitive methods. However, this approach has some disadvantages:
 
-1.  Every time we add a new test, we have to update the `Main()` method with a call to the new test. If we forget to add such a call, the test will never be run. At first it isn’t a big deal, but as soon as we have dozens of tests, an omission will become hard to notice.
+1.  Every time we add a new test, we have to update the `Main()` method with a call to the new test. If we forget to add such a call, the test will never be run. At first it isn't a big deal, but as soon as we have dozens of tests, an omission will become hard to notice.
 2.  Imagine your system consists of more than one application -- you would have some problems trying to gather summary results for all of the applications that your system consists of.
 3.  Soon you'll need to write a lot of other methods similar to `AssertTwoIntegersAreEqual()` -- the one we already have compares two integers for equality, but what if we wanted to check a different condition, e.g. that one integer is greater than another? What if we wanted to check equality not for integers, but for characters, strings, floats etc.? What if we wanted to check some conditions on collections, e.g. that a collection is sorted or that all items in the collection are unique?
 4.  Given a test fails, it would be hard to navigate from the commandline output to the corresponding line of the source in your IDE. Wouldn't it be easier if you could click on the error message to take you immediately to the code where the failure occurred?
