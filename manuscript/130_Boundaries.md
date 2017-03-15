@@ -228,69 +228,71 @@ This time, I'm not showing you the Statement for non-exceptional values as it fo
 
 ## Rules valid within boundaries
 
-Sometimes, a behavior varies around a boundary. The simplest example would be a set of rules on how to calculate an absolute value of a number:
+Sometimes, a behavior varies around a boundary. A simple example would be a rule on how to determine whether someone is adult or not. One is usually considered an adult after reaching a certain age, let's say, of 18. Pretending we operate at the granule of years (not taking months into account), the rule is:
 
-1.  for any X less than `0`, the result is -X (e.g. absolute value of `-1.5` is `1.5`)
-2.  for any X greater or equal to `0`, the result is X (e.g. absolute value of `3` is `3`).
+1.  When one's age in years is less than 18, they are considered not an adult.
+2.  When one's age in years is at least 18, they are considered an adult.
 
-As you can see, there is a boundary between the two behaviors. The right edge of this boundary is 0. Why do I say "right edge"? That is because the boundary always has two edges, which, by the way, also means it has a length. If we assume we are talking about the mentioned absolute value calculation and that our numerical domain is that of integer numbers, we can as well use `-1` instead of `0` as edge value and say that:
+As you can see, there is a boundary between the two behaviors. The "right edge" of this boundary is 18. Why do I say "right edge"? That is because the boundary always has two edges, which, by the way, also means it has a length. If we assume we are talking about the mentioned adult age rule and that our numerical domain is that of integer numbers, we can as well use `17` instead of `18` as edge value and say that:
 
-1.  for any X less or equal to `-1`, the result is -X (e.g. absolute value of `-1.5` is `1.5`)
-2.  for any X greater than `-1`, the result is X (e.g. absolute value of `3` is `3`).
+1.  When one's age in years is at most 17, they are considered not an adult.
+2.  When one's age in years is more than 17, they are considered an adult.
 
-So a boundary is not a single number -- it always has a length -- the length between last value of the previous behavior and the first value of the next behavior. In case of our example, the length between `-1` (left edge -- last negated number) and `0` (right edge -- first non-negated) is `1`.
+So a boundary is not a single number -- it always has a length -- the length between last value of the previous behavior and the first value of the next behavior. In case of our example, the length between `17` (left edge -- last non-adult age) and `18` (right edge -- first adult value) is `1`.
 
-Now, imagine that we are not talking about integer values anymore, but about floating point values. Then the right edge value would still be `0`. But what about the left edge? It would not be possible for it to stay `-1`, because the rule would apply to e.g. `-0.9` as well. So what is the correct right edge value and the correct length of the boundary? Would the length be `0.1`? Or `0.001`? Or maybe `0.00000001`? This is harder to answer and depends heavily on the context, but it is something that must be answered for each particular case -- this way we know what kind of precision is expected of us. In our Specification, we have to document the boundary length somehow.
+Now, imagine that we are not talking about integer values anymore, but we treat the time as what it really is -- a continuum. Then the right edge value would still be 18 years. But what about the left edge? It would not be possible for it to stay 17 years, as the rule would apply to e.g. 17 years and 1 day as well. So what is the correct right edge value and the correct length of the boundary? Would the left edge need to be 17 years and 11 months? Or 17 years, 11 months, 365/366 days (we have the leap year issue here)? Or maybe 17 years, 11 months, 365/366 days, 23 hours, 59 minutes etc.? This is harder to answer and depends heavily on the context -- it must be answered for each particular case based on the domain and the business needs -- this way we know what kind of precision is expected of us. 
 
-This brings an interesting question: how to describe the boundary length with Statements? To illustrate this, I want to show you two Statements describing the mentioned absolute value calculation for integers. The first Statement is for values smaller than 0 and we want to use the left edge value as our reference.
+In our Specification, we have to document the boundary length somehow. This brings an interesting question: how to describe the boundary length with Statements? To illustrate this, I want to show you two Statements describing the mentioned adult age calculation expressed using the granule of years (so we leave months, days etc. out). 
 
-```csharp
-[Fact] public void
-ShouldNegateTheNumberWhenItIsLessThan0()
-{
-  //GIVEN
-  var function = new AbsoluteValueCalculation();
-  var lessThan0 = 0 - 1; //more on this later
-
-  //WHEN
-  var result = function.PerformFor(lessThan0);
-
-  //THEN
-  Assert.Equal(-lessThan0, result);
-}
-```
-
-And the next Statement for values at least 0 and we want to use the right edge value:
+The first Statement is for values smaller than 18 and we want to specify that for the left edge value (i.e. `17`), but calculated in reference to the right edge value (i.e. instead of writing `17`, we write `18-1`):
 
 ```csharp
 [Fact] public void
-ShouldNotNegateTheNumberWhenItIsGreaterOrEqualTo0()
+ShouldNotBeSuccessfulForAgeLessThan18()
 {
   //GIVEN
-  var function = new AbsoluteValueCalculation();
-  var moreOrEqualTo0 = 0;
+  var detection = new AdultAgeDetection();
+  var notAnAdult = 18 - 1; //more on this later
 
   //WHEN
-  var result = function.PerformFor(moreOrEqualTo0);
+  var isSuccessful = detection.PerformFor(notAnAdult);
 
   //THEN
-  Assert.Equal(moreOrEqualTo0, result);
+  Assert.False(isSuccessful);
 }
 ```
 
-There are two things to note about these examples. The first one is that I didn't use any kind of `Any` methods. I use `Any` in cases where I don't have a boundary or when I consider no value from an equivalence class better than others in any particular way. When I specify boundaries, however, instead of using methods like `Any.IntegerGreaterOrEqualTo(0)`, I use the edge values as I find that they more strictly define the boundary and drive the right implementation. Also, explicitly specifying the behaviors for the edge values allows me to document the boundary length.
+And the next Statement for values greater than or equal to 18 and we want to use the right edge value:
 
-The second thing to note is the usage of literal constant `0` in the example above. In one of the previous chapter, I described a technique called **Constant Specification** that is about writing an explicit Statement about the value of the named constant and use the named constant everywhere else instead of its literal. So why didn't I use this technique this time?
+```csharp
+[Fact] public void
+ShouldBeSuccessfulForAgeGreaterThanOrEqualTo18()
+{
+  //GIVEN
+  var detection = new AdultAgeDetection();
+  var adult = 18;
 
-The only reason is that this might have looked a little bit silly with such extremely trivial example as calculating absolute value. In reality, I should have used the named constant in both Statements and it would show the boundary length even more clearly. Let's perform this exercise now and see what happens.
+  //WHEN
+  var isSuccessful = detection.PerformFor(adult);
+
+  //THEN
+  Assert.True(isSuccessful);
+}
+```
+
+There are two things to note about these examples. The first one is that I didn't use any kind of `Any` methods. I use `Any` in cases where I don't have a boundary or when I consider no value from an equivalence class better than others in any particular way. When I specify boundaries, however, instead of using methods like `Any.IntegerGreaterOrEqualTo(18)`, I use the edge values as I find that they more strictly define the boundary and drive the right implementation. Also, explicitly specifying the behaviors for the edge values allows me to document the boundary length.
+
+The second thing to note is the usage of literal constant `18` in the example above. In one of the previous chapter, I described a technique called **Constant Specification** which is about writing an explicit Statement about the value of the named constant and use the named constant everywhere else instead of its literal value. So why didn't I use this technique this time?
+
+The only reason is that this might have looked a little bit silly with such extremely trivial example as detecting adult age. In reality, I should have used the named constant in both Statements and it would show the boundary length even more clearly. Let's perform this exercise now and see what happens.
 
 First, let's document the named constant with the following Statement:
 
 ```csharp
 [Fact] public void
-ShouldIncludeSmallestValueNotToNegateSetToZero()
+ShouldIncludeMinimumAdultAgeEqualTo18()
 {
-  Assert.Equal(0, Constants.SmallestValueNotToNegate);
+  Assert.Equal(18, Age.MinimumAdult);
 }
 ```
 
@@ -298,50 +300,48 @@ Now we've got everything we need to rewrite the two Statements we wrote earlier.
 
 ```csharp
 [Fact] public void
-ShouldNegateTheNumberWhenItIsLessThanSmallestValueNotToNegate()
+ShouldNotBeSuccessfulForLessThanMinimumAdultAge()
 {
   //GIVEN
-  var function = new AbsoluteValueCalculation();
-  var lastNumberToNegate 
-    = Constants.SmallestValueNotToNegate - 1;
+  var detection = new AdultAgeDetection();
+  var notAnAdultYet = Age.MinimumAdult - 1;
 
   //WHEN
-  var result = function.PerformFor(lastNumberToNegate);
+  var isSuccessful = detection.PerformFor(notAnAdultYet);
 
   //THEN
-  Assert.Equal(-lastNumberToNegate, result);
+  Assert.False(isSuccessful);
 }
 ```
 
-And the second Statement for values at least 0:
+And the next Statement for values greater than or equal to 18 would look like this:
 
 ```csharp
 [Fact] public void
-ShouldNotNegateNumberWhenItIsGreaterOrEqualToSmallestValueNotToNegate()
+ShouldBeSuccessfulForAgeGreaterThanOrEqualToMinimumAdultAge()
 {
   //GIVEN
-  var function = new AbsoluteValueCalculation();
+  var detection = new AdultAgeDetection();
+  var adultAge = Age.MinimumAdult;
 
   //WHEN
-  var result = function.PerformFor(
-    Constants.SmallestValueNotToNegate
-  );
+  var isSuccessful = detection.PerformFor(adultAge);
 
   //THEN
-  Assert.Equal(
-    Constants.SmallestValueNotToNegate, result);
+  Assert.True(isSuccessful);
 }
 ```
+
 
 As you can see, the first Statement contains the following expression: 
 
 ```csharp
-Constants.SmallestValueNotToNegate - 1
+Age.MinimumAdult - 1
 ```
 
 where `1` is the exact length of the boundary. Like I said, the example is so trivial that it may look silly and funny, however, in real life scenarios, this is a technique I apply anytime, anywhere.
 
-Boundaries may look like they apply only to numeric input, but they occur at many other places. There are boundaries associated with date/time (e.g. an action is performed again when time from last action is at least 30 seconds -- the decision would need to be made whether we need precision in seconds or maybe in ticks), to strings (e.g. validation of user name where it must be at least 2 characters, or password that must contain at least 2 special characters). They also apply to regular expressions. For example, for a simple regex `\d+`, we would surely specify for at least three values: an empty string, a single digit and a single non-digit.
+Boundaries may look like they apply only to numeric input, but they occur at many other places. There are boundaries associated with date/time (e.g. the adult age calculation would be this kind of case if we didn't stop at counting years but instead considered time as a continuum -- the decision would need to be made whether we need precision in seconds or maybe in ticks), or strings (e.g. validation of user name where it must be at least 2 characters, or password that must contain at least 2 special characters). They also apply to regular expressions. For example, for a simple regex `\d+`, we would surely specify for at least three values: an empty string, a single digit and a single non-digit.
 
 ## Combination of boundaries -- ranges
 
@@ -419,7 +419,7 @@ public void ShouldRespondThatAgeMoreThan65IsTooOld()
 }
 ```
 
-Note that I used 18-1 and 65+1 instead of 17 and 66 to show that 18 and 65 are the boundary values and that the lengths of the boundaries are, in both cases, 1. Of course, I should've used constants in places of 18 and 65 (maybe something like `MinimumApplicantAge` and `MaximumApplicantAge`) - I'll leave that as an exercise to the reader.
+Note that I used 18-1 and 65+1 instead of 17 and 66 to show that 18 and 65 are the boundary values and that the lengths of the boundaries are, in both cases, 1. Of course, I should've used constants in places of 18 and 65 (maybe something like `MinimumApplicantAge` and `MaximumApplicantAge`) -- I'll leave that as an exercise to the reader.
 
 ### Example -- setting an alarm
 
@@ -471,7 +471,6 @@ Other than that, I used exactly the same approach as the last time.
 ## Summary
 
 In this chapter, I described specifying functional boundaries with a minimum amount of code and Statements, so that the Specification is more maintainable and runs faster. There is one more kind of situation left: when we have compound conditions (e.g. a password must be at least 10 characters and contain at least 2 special characters) -- we'll get back to those when we introduce mock objects.
-
 
 [^tetraphobia]: https://en.wikipedia.org/wiki/Tetraphobia
 [^istqb]: see e.g. chapter 4.3 of ISQTB Foundation Level Syllabus at http://www.istqb.org/downloads/send/2-foundation-level-documents/3-foundation-level-syllabus-2011.html4
