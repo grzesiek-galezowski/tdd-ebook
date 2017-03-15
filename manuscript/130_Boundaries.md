@@ -385,7 +385,7 @@ The second Statement tells us that the range of 18 -- 65 is where a citizen is a
 
 ```csharp
 [Theory]
-[InlineData(17, QueryResults.AllowedToApply)]
+[InlineData(18, QueryResults.AllowedToApply)]
 [InlineData(65, QueryResults.AllowedToApply)]
 public void ShouldRespondThatDrivingLicenseCanBeAppliedForInRangeOf18To65(
   int age, QueryResults expectedResult
