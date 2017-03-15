@@ -1,3 +1,7 @@
+# 15-03-2017
+
+This version includes some fixes to the boundary chapter - the one that was most recently reviewed. Thanks to Łukasz Maternia for spotting some bugs and an area for improvement. This led me to change two examples in the boundaries and ranges sections.
+
 # 13-02-2017
 
 One day before the Valentine's day, I'd like to present you with another version of the tutorial. This time, I did an overhaul of the chapter about specifying boundaries and functional conditions. Since I last wrote it, my approach changed a bit to a more nuanced one and I tried to convey a bit about the different situations in which I make different choices. Also, I incorporated one or two small but useful fixes by others (thanks!!). Where I knew there are still open issues (this is true for two chapters), I decided to add a note at the beginning of each chapter do that you can find it. These issues are very minor, so they should not get in the way when reading.
