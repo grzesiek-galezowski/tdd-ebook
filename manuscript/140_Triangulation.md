@@ -256,7 +256,49 @@ public class Sum
 }
 ```
 
-Now, looking at this code, we may spot a pattern - for every input values so far, we return the value of the first one: for 1 we return 1, for 2 we return 2, for 0 we return 0. Thus, we can generalize this implementation to always return the first input:
+Now, looking at this code, we can notice a pattern - for every input values so far, we return the value of the first one: for 1 we return 1, for 2 we return 2, for 0 we return 0. Thus, we can generalize this implementation. Thus, we can generalize this implementation. Let's change only the part related to the number 2 to see whether the direction is right:
+
+```csharp
+public class Sum
+{
+  public int Of(int a, int b)
+  {
+    if(a == 2) return a;
+    if(a == 1) return 1;
+    return 0;
+  }
+}
+```
+
+The examples are still true, so time to change the second `if` statement:
+
+```csharp
+public class Sum
+{
+  public int Of(int a, int b)
+  {
+    if(a == 2) return a;
+    if(a == 1) return a;
+    return 0;
+  }
+}
+```
+
+We still have the green bar, so the next step would be to change the `return 0`:
+
+```csharp
+public class Sum
+{
+  public int Of(int a, int b)
+  {
+    if(a == 2) return a;
+    if(a == 1) return a;
+    return a;
+  }
+}
+```
+
+Triangulation doesn't force us to take as tiny steps as in this case, however, I wanted to show you that it makes it possible. The ability to take smaller steps when needed is something I value a lot when I use TDD. Anyway, we can notice that each of the conditions ends with exactly the same result, so we don't need the conditions at all. We can remove them and leave only:
 
 ```csharp
 public class Sum
@@ -268,9 +310,117 @@ public class Sum
 }
 ```
 
-Thus, we have generalized the first axis of variability, which is the first input argument. Time to vary the second one, by leaving the first value unchanged. Our next example would be:
+Thus, we have generalized the first axis of variability, which is the first input argument. Time to vary the second one, by leaving the first value unchanged. To the following existing examples:
 
-TODO TODO TODO TODO TODO TODO TODO 
+```csharp
+[Theory]
+[InlineData(0,0,0)] //0+0=0
+[InlineData(1,0,1)] //1+0=1
+[InlineData(2,0,2)] //2+0=2
+```
+
+We add the following one:
+
+```csharp
+[InlineData(2,1,3)] //2+1=3
+```
+
+Note that we already used the value of 2 for the first input in one of the previous examples, so this time we decide to freeze it and vary the second input, which was always 0 up to now. The implementation would be something like this:
+
+
+```csharp
+public class Sum
+{
+  public int Of(int a, int b)
+  {
+    if(b == 1)
+    {
+      return a + 1;
+    }
+    else
+    {
+      return a;
+    }
+  }
+}
+```
+
+We already have two examples for the variation of the second input, so we could generalize. Let's say, however, we don't see the pattern yet. We add another example for a different value of second input:
+
+```csharp
+[Theory]
+[InlineData(0,0,0)] //0+0=0
+[InlineData(1,0,1)] //1+0=1
+[InlineData(2,0,2)] //2+0=2
+[InlineData(2,1,3)] //2+1=3
+[InlineData(2,2,4)] //2+2=4
+```
+
+So, we added 2+2=4. Again, the implementation should be as naive as possible:
+
+```csharp
+public class Sum
+{
+  public int Of(int a, int b)
+  {
+    if(b == 1)
+    {
+      return a + 1;
+    }
+    else if(b == 2)
+    {
+      return a + 2;
+    }
+    else
+    {
+      return a;
+    }
+  }
+}
+```
+
+Again, we can clearly see the pattern. Whatever is the value of `b` we pass to the `Of()` method, it gets added to `a`. Let's try to generalize, this time using a little bigger step:
+
+```csharp
+public class Sum
+{
+  public int Of(int a, int b)
+  {
+    if(b == 1)
+    {
+      return a + b;
+    }
+    else if(b == 2)
+    {
+      return a + b;
+    }
+    else
+    {
+      return a + b;
+    }
+  }
+}
+```
+
+We can see that the result for each branch is exactly the same: `a+b`, so we can remove the conditions altogether and get:
+
+```csharp
+public class Sum
+{
+  public int Of(int a, int b)
+  {
+    return a + b;
+  }
+}
+```
+
+and there we go - we have successfully triangulated the sum function. Now, I understand that it must have felt extremely over-the-top for you to derive an obvious addition this way. Remember I did this exercise only to show you the mechanics.
+
+# Example 2 - LED display
+
+The second example is something I sometimes give as an exercise to teams during TDD workshops.
+
+TODO TODO TODO TODO TODO TODO 
 
 
 
