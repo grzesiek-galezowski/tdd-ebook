@@ -1,19 +1,12 @@
-# Triangulation
+# Driving the implementation from Specification
 
-TODO CHANGE THIS CHAPTER NAME TO SOMETHING ELSE!!
-
-As one of the last topics of the core TDD techniques that do not require us to delve into the object-oriented world, I'd like to show you triangulation - one of the techniques for turning a false Statement true. I consider it an important technique because:
-
-1. Many TDD practitioners use it and demonstrate it, so I assume you will see it sooner or later and most likely have questions regarding it.
-1. It allows us to take tiny steps in arriving at the right implementation (tiniest than any you have seen so far in this book) and I find it very useful when I'm uncertain how the correct implementation and design should look like.
-
-*Triangulation* seems to be a mysterious term at first - at least it was to me, especially that it didn't bring anything related to software engineering to my mind. The first time I encountered it was when reading Kent Beck's book [Test-Driven Development: By Example](http://www.pearsonhighered.com/educator/product/Test-Driven-Development-By-Example/9780321146533.page). In this book, Kent mentions three approaches to make a failing test pass (or, in our words, to turn a false Statement true):
+As one of the last topics of the core TDD techniques that do not require us to delve into the object-oriented world, I'd like to show you three techniques for turning a false Statement true. The origin of the names of the techniques is a book by Kent Beck, [Test-Driven Development: By Example](http://www.pearsonhighered.com/educator/product/Test-Driven-Development-By-Example/9780321146533.page). In this book, Kent mentions three approaches to make a failing test pass (or, in our words, to turn a false Statement true):
 
 1. Type the obvious implementation
-1. Fake it (‘til you make it)
+1. Fake it (`til you make it)
 1. Triangulate
 
-Don't worry if these names don't tell you anything, the techniques are quite simple and I will try to give an example for each (putting more emphasis on triangulation).
+Don't worry if these names don't tell you anything, the techniques are quite simple and I will try to give an example for each.
 
 ## Type the obvious implementation
 
@@ -153,14 +146,17 @@ And that's it. I used a trivial example, since I don't want to spend too much
 
 ## Triangulate
 
-Triangulation is considered the most conservative technique of the described trio, because following it involves the tiniest possible steps to arrive at the right solution. The technique is called triangulation by analogy to [radar triangulation](http://encyclopedia2.thefreedictionary.com/radar+triangulation) where outputs from at least two radars must be used to determine the position of a unit. Also, in radar triangulation, the position is measured indirectly, by combining the following data: range (not position!) between two radars, measurement done by each radar and the positions of the radars (which we know, because we are the ones who put the radars there). From this data, we can derive a triangle, so we can use trigonometry to calculate the position of the third point of the triangle, which is the desired position of the unit (two remaining points are the positions of radars). Such measurement is indirect in nature, because we don't measure the position directly, but calculate it from other helper measurements.
+*Triangulation* seems to be a mysterious term at first - at least it was to me, especially that it didn't bring anything related to software engineering to my mind. It is considered the most conservative technique of the described trio, because following it involves the tiniest possible steps to arrive at the right solution. The technique is called triangulation by analogy to [radar triangulation](http://encyclopedia2.thefreedictionary.com/radar+triangulation) where outputs from at least two radars must be used to determine the position of a unit. Also, in radar triangulation, the position is measured indirectly, by combining the following data: range (not position!) between two radars, measurement done by each radar and the positions of the radars (which we know, because we are the ones who put the radars there). From this data, we can derive a triangle, so we can use trigonometry to calculate the position of the third point of the triangle, which is the desired position of the unit (two remaining points are the positions of radars). Such measurement is indirect in nature, because we don't measure the position directly, but calculate it from other helper measurements.
 
 These two characteristics: indirect measurement and using at least two sources of information are at the core of TDD triangulation. Basically, it translates like this:
 
 1. **Indirect measurement**: derive the internal implementation and design of a module from several known examples of its desired externally visible behavior by looking at what varies in these examples and changing the production code so that this variability is treated in a generic way. For example, variability might lead us from changing a constant to a variable.
 1. **Using at least two sources of information**: start with the simplest possible implementation and make it more general **only** when you have two or more different examples (i.e. Statements that describe the desired functionality for specific inputs). Then new examples can be added and generalization can be done again. This process is repeated until we reach the desired implementation. Robert C. Martin developed a maxim on this, saying that "As the tests get more specific, the code gets more generic.
 
-Usually, when TDD is showcased on simple examples, triangulation is the primary technique used, so many novices mistakenly believe TDD is all about triangulation. This isn't true, although triangulation is an important tool in our toolbox.
+Usually, when TDD is showcased on simple examples, triangulation is the primary technique used, so many novices mistakenly believe TDD is all about triangulation. This isn't true, although I consider it an important technique because:
+
+1. Many TDD practitioners use it and demonstrate it, so I assume you will see it sooner or later and most likely have questions regarding it.
+1. It allows us to take tiny steps in arriving at the right implementation (tiniest than any you have seen so far in this book) and I find it very useful when I'm uncertain how the correct implementation and design should look like.
 
 ### Example - addition of numbers
 
@@ -418,10 +414,111 @@ and there we go - we have successfully triangulated the sum function. Now, I und
 
 # Example 2 - LED display
 
-The second example is something I sometimes give as an exercise to teams during TDD workshops.
+I don't blame you if the first example did little to convince you that triangulation can be useful. After all, that was calculating a sum of two integers! The next example is going to be something less obvious. I would like to warn you, however, that I will take my time to describe the problem and to show you part of the solution, so if you have enough of trisangulation already, just skip this example and get back to it later.
 
-TODO TODO TODO TODO TODO TODO 
+Now that we're through with the disclaimer, here goes the description.
 
+Imagine we need to write a class that produced a 7-segment LED display ASCII art. In real life, such displays are used to display numbers:
+
+TODO insert an actual picture!!!
+
+An example of an ASCII art that is expected from us looks like this:
+
+```
+.-.
+|.|
+.-.
+|.|
+.-.
+```
+
+Note that there are three kinds of symbols:
+
+- `.` mean either an empty space (there is no segment there) or a segment that is not lit.
+- `-` mean a lit horizontal segment
+- `|` mean a lit vertical segment
+
+The functionality we need to implement should allow one to not only display numbers, but to light any combination of segments at will. So, we can decide to not light any segment, thus getting the following output:
+
+```
+...
+...
+...
+...
+...
+```
+
+Or to light only the upper segment, which leads to the following output:
+
+```
+.-.
+...
+...
+...
+...
+```
+
+How do we tell our class to light this or that segment? We pass it a string of segment names. The segments are named A,B,C,D,E,F,G and the mapping of each name to a specific segment can be visualized as:
+
+```
+.A.
+F.B
+.G.
+E.C
+.D.
+```
+
+So to achieve the described earlier output where only the upper segment is lit, we need to pass the input consisting of `"A"`. If we want to light all segments, we pass `"ABCDEFG"`. If we want to keep all segments turned off, we pass `""` (or a C# equivalent: `string.Empty`).
+
+The last thing I need to say before we begin is that for the sake of this exercise, we focus only on the valid input (e.g. we assume we won't get inputs such as "AAAA", or "abc" or "ZXVN"). Of course, in a real projects invalid input cases should be specified as well.
+
+Time to start with the first Statement. For starters, I'm going to specify the case of empty input that results in all segments turned off:
+
+```csharp
+[Theory]
+[InlineData("", new [] {
+  "...",
+  "...",
+  "...",
+  "...",
+  "...",
+})]
+public void ShouldGenerateAsciiArtLedDisplayFromInput(
+  string input, string[] expectedOutput
+)
+{
+  //GIVEN
+  var asciiArt = new LedAsciiArts();
+
+  //WHEN
+  var asciiArtString = asciiArt.GenerateLedArt(input);
+
+  //THEN
+  Assert.Equal(expectedOutput, asciiArtString);
+}
+```
+
+Again, as I described in the previous example, implementing production code, we do the easiest thing just to make this example true. In our case, this would be:
+
+```csharp
+public string[] GenerateLedArt(string input)
+{
+  return new [] {
+    "...",
+    "...",
+    "...",
+    "...",
+    "...",
+  };
+}
+```
+
+The example is now implemented. TODO choose axis - upper segment
+
+
+
+
+This is a case
 
 
 ### Example 2
