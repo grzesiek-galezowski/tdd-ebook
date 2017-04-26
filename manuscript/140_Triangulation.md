@@ -483,7 +483,7 @@ Time to start with the first Statement. For starters, I'm going to specify the c
   "...",
   "...",
 })]
-public void ShouldGenerateAsciiArtLedDisplayFromInput(
+public void ShouldConvertInputToAsciiArtLedDisplay(
   string input, string[] expectedOutput
 )
 {
@@ -491,17 +491,17 @@ public void ShouldGenerateAsciiArtLedDisplayFromInput(
   var asciiArt = new LedAsciiArts();
 
   //WHEN
-  var asciiArtString = asciiArt.GenerateLedArt(input);
+  var asciiArtString = asciiArt.ConvertToLedArt(input);
 
   //THEN
   Assert.Equal(expectedOutput, asciiArtString);
 }
 ```
 
-Again, as I described in the previous example, implementing production code, we do the easiest thing just to make this example true. In our case, this would be:
+Again, as I described in the previous example, we do the easiest thing just to make this example true. In our case, this would be:
 
 ```csharp
-public string[] GenerateLedArt(string input)
+public string[] ConvertToLedArt(string input)
 {
   return new [] {
     "...",
@@ -513,221 +513,119 @@ public string[] GenerateLedArt(string input)
 }
 ```
 
-The example is now implemented. TODO choose axis - upper segment
-
-
-
-
-This is a case
-
-
-### Example 2
-
-Suppose we want to write a logic that creates an aggregate sum of the list. Let's assume that we have no idea how to design the internals of our custom list class so that it fulfills its responsibility. Thus, we start with the simplest example of calculating a sum of 0 elements:
+The example is now implemented. Of course, this is not the final implementation of the whole conversion logic. This is why we need to choose the next example to specify. This choice will determine which axis of change we will pursue first. I decided to specify the uppermost segment (i.e. the `A` segment) - we already have an example that says when this segment is turned off, now we need one that will say what should happen when I turn it on. I will reuse the same Statement body and just add another `InlineData` attribute to execute the Statement for the new set of input and expected output:
 
 ```csharp
-[Fact] public void 
-ShouldReturn0AsASumOfNoElements()
-{
-  //GIVEN
-  var listWithAggregateOperations 
-    = new ListWithAggregateOperations();
-
-  //WHEN
-  var result = listWithAggregateOperations.SumOfElements();
-
-  //THEN
-  Assert.Equal(0, result);
-}
+[InlineData("A", new [] {
+  ".-.", // note the '-' character
+  "...",
+  "...",
+  "...",
+  "...",
+})]
 ```
 
-Remember we want to write just enough code to make the Statement true. We can achieve it with just returning 0 from the `SumOfElements` method:
+This time, I'm passing `"A"` as the input and expect to receive almost the same output as before, only that this time the first line reads "`.-.`" instead of "`...`".
+
+I implement this example using, again, the most naive and easiest to write code. The result is:
 
 ```csharp
-public class ListWithAggregateOperations
+public string[] ConvertToLedArt(string input)
 {
-  public int SumOfElements()
+  if(input == "A"))
   {
-    return 0;
+    return new [] {
+      ".-.",
+      "...",
+      "...",
+      "...",
+      "...",
+    };
   }
-}
-```
-
-This is not yet the implementation we are happy with, which makes us add another Statement -- this time for a single element:
-
-```csharp
-[Fact] public void 
-ShouldReturnTheSameElementAsASumOfSingleElement()
-{
-  //GIVEN
-  var singleElement = Any.Integer();
-  var listWithAggregateOperations 
-    = new ListWithAggregateOperations(singleElement);
-
-  //WHEN
-  var result = listWithAggregateOperations.SumOfElements();
-
-  //THEN
-  Assert.Equal(singleElement, result);
-}
-```
-
-The naive implementation can be as follows:
-
-```csharp
-public class ListWithAggregateOperations
-{
-  int _element = 0;
-
-  public ListWithAggregateOperations()
-  {    
-  }
-
-  public ListWithAggregateOperations(int element)
+  else
   {
-    _element = element;
-  }
-
-  public int SumOfElements()
-  {
-    return _element;
+    return new [] {
+      "...",
+      "...",
+      "...",
+      "...",
+      "...",
+    };
   }
 }
 ```
 
-We have two examples, so let's check whether we can generalize now. We could try to get rid of the two constructors now, but let's wait just a little bit longer and see if this is the right path to go (after all, I wrote that we need **at least** two examples).
-
-Let's add third example then. What would be the next more complex one? Note that the choice of next example is not random. Triangulation is about considering the axes of variability. If you carefully read the last example, you probably noticed that we already skipped one axis of variability -- the value of the element. We used `Any.Integer()` where we could use a literal value and add a second example with another value to make us turn it into variable. This time, however, I decided to **type the obvious implementation**. The second axis of variability is the number of elements. The third example will move us further along this axis -- so it will use two elements instead of one or zero. This is how it looks like:
+The implementation is pretty dumb, but now that we have two examples, we are able to spot a pattern. Note that, depending on the input string, there are two possible results that can be returned. All of the rows are the same with the exception of the first row, which, so far, is the only one that depends on the value of `input`. Thus, we can generalize the production code by extracting the duplication into something like this:
 
 ```csharp
-[Fact] public void 
-ShouldReturnSumOfTwoElementsAsASumWhenTwoElementsAreSupplied()
+public string[] ConvertToLedArt(string input)
 {
-  //GIVEN
-  var firstElement = Any.Integer();
-  var secondElement = Any.Integer();
-  var listWithAggregateOperations 
-    = new ListWithAggregateOperations(firstElement, secondElement);
-
-  //WHEN
-  var result = listWithAggregateOperations.SumOfElements();
-
-  //THEN
-  Assert.Equal(firstElement + secondElement, result);
+    return new [] {
+      (input == "A") ? ".-." : "...",
+      "...",
+      "...",
+      "...",
+      "...",
+    };
 }
 ```
 
-And the naive implementation will look like this:
+Note that I changed the code so that only the first row depends on the `input`. This isn't over, however. When looking at the condition for the first row:
 
 ```csharp
-public class ListWithAggregateOperations
+(input == "A") ? ".-." : "..."
+```
+
+we can further note that it's only the middle character that changes depending on what we pass. Both left-most character and right-most character of the first row are always `.`. Thus, let's generalize even further, to end up with something like this:
+
+```csharp
+public string[] ConvertToLedArt(string input)
 {
-  int _element1 = 0;
-  int _element2 = 0;
-
-  public ListWithAggregateOperations()
-  {
-  }
-
-  public ListWithAggregateOperations(int element)
-  {
-    _element1 = element;
-  }
-
-  //added
-  public ListWithAggregateOperations(int element1, int element2)
-  {
-    _element1 = element1;
-    _element2 = element2;
-  }
-
-  public int SumOfElements()
-  {
-    return _element1 + _element2; //changed
-  }
+    return new [] {
+      "." + ((input == "A") ? "-" : ".") + ".",
+      "...",
+      "...",
+      "...",
+      "...",
+    };
 }
 ```
 
-After adding and implementing the third example, the variability of elements count becomes obvious. Now that we have three examples, we see even more clearly that we have redundant constructors and redundant fields for each element in the list and if we added a fourth example for three elements, we'd have to add another constructor, another field and another element of the sum computation. Time to generalize!
-
-How do we encapsulate the variability of the element count so that we can get rid of this redundancy? A collection! How do we generalize the addition of multiple elements? A foreach loop through the collection! Thankfully, C# supports `params` keyword, so let's use it to remove the redundant constructor like this:
+Now, if we look closer at the expression:
 
 ```csharp
-public class ListWithAggregateOperations
+((input == "A") ? "-" : ".")
+```
+
+We can note that its responsibility is to determine whether the value of the current segment based on the `input`. We can use this knowledge to extract it into a method with an intent-revealing name:
+
+```csharp
+public string DetermineSegmentValue(
+  string input,
+  string turnOnToken,
+  string turnOnValue)
 {
-  int[] _elements;  
-
-  public ListWithAggregateOperations(params int[] elements)
-  {
-    _elements = elements;
-  }
-
-  public int SumOfElements()
-  {
-    //changed
-    int sum = 0;
-    foreach(var element in _elements)
-    {
-      sum += element;
-    }
-    return sum;
-  }
+  return ((input == turnOnToken) ? turnOnValue : ".");
 }
 ```
 
-While the first Statement ("no elements") seems like a special case, the remaining two -- for one and two elements -- seem to be just two variations of the same behavior ("some elements"). Thus, it is a good idea to make a more general Statement that describes this logic to replace the two examples. After all, we don't want more than one failure for the same reason. So as the next step, I will write a Statement to replace these examples (I leave them in though, until I get this one to evaluate to true).
+After the extraction, our `ConvertToLedArt` method becomes:
 
 ```csharp
-[Fact]
-public void 
-ShouldReturnSumOfAllItsElementsWhenAskedForAggregateSum()
+public string[] ConvertToLedArt(string input)
 {
-  //GIVEN
-  var firstElement = Any.Integer();
-  var secondElement = Any.Integer();
-  var thirdElement = Any.Integer();
-  var listWithAggregateOperations 
-    = new ListWithAggregateOperations(
-        firstElement, 
-        secondElement, 
-        thirdElement);
-
-  //WHEN
-  var result = listWithAggregateOperations.SumOfElements();
-
-  //THEN
-  Assert.Equal(
-   firstElement + 
-   secondElement + 
-   thirdElement, result);
+    return new [] {
+      "." + DetermineSegmentValue(input, "A", "-") + ".",
+      "...",
+      "...",
+      "...",
+      "...",
+    };
 }
 ```
 
-This Statement uses three values rather than zero, one or two as in the examples we had. When I need to use collections with deterministic size (and I do prefer to do it everywhere where using collection with non-deterministic size would force me to use a `for` loop in my Statement), I pick 3, which is the number I got from Mark Seemann and the rationale is that 3 is the smallest number that has distinct head, tail and middle element. One or two elements seem like a special case, while three sounds generic enough.
-
-One more thing we can do is to ensure that we didn't write a **false positive**, i.e. a Statement that is always true due to being badly written. In other words, we need to ensure that the Statement we just wrote will ever evaluate to false if the implementation is wrong. As we wrote it after the implementation is in place, we do not have this certainty.
-
-What we will do is to modify the implementation slightly to make it badly implemented and see how our Statement will react (we expect it to evaluate to false):
-
-```csharp
-public int SumOfElements()
-{
-  //changed
-  int sum = 0;
-  foreach(var element in _elements)
-  {
-    sum += element;
-  }
-  return sum + 1; //modified with "+1"!
-}
-```
-
-When we do this, we can see our last Statement evaluate to false with a message like "expected 21, got 22". We can now undo this one little change and go back to correct implementation.
-
-The examples ("zero elements", "one element" and "two elements") still evaluate to true, but it's now safe to remove the last two, leaving only the Statement about a behavior we expect when we calculate sum of no elements and the Statement about N elements we just wrote.
-
-And voilà! We have arrived at the final, generic solution. Note that the steps we took were tiny -- so you might get the impression that the effort was not worth it. Indeed, this example was only to show the mechanics of triangulation -- in real life, if we encountered such simple situation we'd know straight away what the design would be and we'd start with the general Statement straight away and just type in the obvious implementation. Triangulation shows its power in more complex problems with multiple design axes and where taking tiny steps helps avoid "analysis paralysis".
+The `DetermineSegmentValue` method is something we can use to implement lighting other segments - no need to triangulate it again for every segment. This is an example where the result of triangulation was not apparent at the beginning and we really arrived at more generic code by eliminating duplication. I'd like to stop here, leaving the rest of this exercise for the reader.
 
 ## Summary
 
-As I stated before, triangulation is most useful when you have no idea how the internal design of a piece of functionality will look like (e.g. even if there are work-flows, they cannot be easily derived from your knowledge of the domain) and it's not obvious along which axes your design must provide generality, but you are able to give some examples of the observable behavior of that functionality given certain inputs. These are usually situations where you need to slow down and take tiny steps that slowly bring you closer to the right design and functionality -- and that's what triangulation is for! 
+Like I mentioned, triangulation is most useful when we have no idea how the internal design of a piece of functionality should look like (e.g. even if there are workflows, they cannot be easily derived from your knowledge of the domain) and we are not sure about along which axes our design needs to provide generality, but still are able to give some examples of the observable behavior of that functionality given certain inputs. These are usually situations where we need to slow down and take tiny steps that slowly bring us closer to more generic design and correct functionality -- and that's what triangulation is for!
