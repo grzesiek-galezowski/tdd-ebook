@@ -1,16 +1,16 @@
 # Driving the implementation from Specification
 
-As one of the last topics of the core TDD techniques that do not require us to delve into the object-oriented world, I'd like to show you three techniques for turning a false Statement true. The origin of the names of the techniques is a book by Kent Beck, [Test-Driven Development: By Example](http://www.pearsonhighered.com/educator/product/Test-Driven-Development-By-Example/9780321146533.page). In this book, Kent mentions three approaches to make a failing test pass (or, in our words, to turn a false Statement true):
+As one of the last topics of the core TDD techniques that do not require us to delve into the object-oriented world, I'd like to show you three techniques for turning a false Statement true. The names of the techniques come from a book by Kent Beck, [Test-Driven Development: By Example](http://www.pearsonhighered.com/educator/product/Test-Driven-Development-By-Example/9780321146533.page) and are:
 
 1. Type the obvious implementation
 1. Fake it (`til you make it)
 1. Triangulate
 
-Don't worry if these names don't tell you anything, the techniques are quite simple and I will try to give an example for each.
+Don't worry if these names don't tell you anything, the techniques are not that difficult to grasp and I will try to give an example for each of them.
 
 ## Type the obvious implementation
 
-The first of the three techniques is what we have done a lot throughout this book. It simply says: when you know the correct and final implementation to turn a Statement true, then just type it. If the implementation is simple, this approach makes a lot of sense - after all, the amount of Statements required to specify (and test) a functionality is about a level of confidence. If this level is very high, we can just type the correct code in response to a single Statement. Let's see it again using a trivial example of adding two numbers:
+The first technique is what we have already done a lot throughout the previous chapters. It simply says: when you know the correct and final implementation to turn a Statement true, then just type it. If the implementation is obvious, this approach makes a lot of sense - after all, the amount of Statements required to specify (and test) a functionality should reflect our desired level of confidence. If this level is very high, we can just type the correct code in response to a single Statement. Let's see it in action on a trivial example of adding two numbers:
 
 ```csharp
 [Fact] public void
@@ -27,7 +27,7 @@ ShouldAddTwoNumbersTogether()
 }
 ```
 
-You may remember I told you that usually we write the simplest production code that would make the Statement true. This rule would encourage us to just return 8 from the `Of` method, because it would be sufficient to make the Statement true. Instead, we can decide that the logic is so obvious, that we can just write it based on this one Statement:
+You may remember I told you that usually we write the simplest production code that would make the Statement true. This rule would encourage us to just return 8 from the `Of` method, because it would be sufficient to make the Statement true. Instead, we can decide that the logic is so obvious, that we can just type it in its final form:
 
 ```csharp
 public class Sum
@@ -39,7 +39,7 @@ public class Sum
 }
 ```
 
-and that's it. Note that I didn't use Constrained Non-Determinism here, because its use kind of enforces using "Just write obvious implementation" technique. As I mentioned before, most (if not all) Statements we wrote so far in previous chapters, uses this approach because of this fact. Let's take a look at how the above Statement would look if we used Constrained Non-Determinism:
+and that's it. Note that I didn't use Constrained Non-Determinism in the Statement, because its use kind of enforces using "type the obvious implementation" approach. This is also one of the reasons that many Statements we wrote so far in previous chapters use the approach. Just to illustrate it, let's take a look at how the above Statement would look if we used Constrained Non-Determinism:
 
 ```csharp
 [Fact] public void
@@ -58,7 +58,7 @@ ShouldAddTwoNumbersTogether()
 }
 ```
 
-Here, we don't have any choice. The most obvious implementation that would make this Statement true is the correct implementation. We are unable to return a constant value as we previously could (even though we chose not to), because we just don't know what the expected result is and it is strictly dependent on the input values which we don't know as well.
+The most obvious implementation that would make this Statement true is the correct implementation - we can't get away with returning a constant value as we could when we didn't use Constrained Non-Determinigm. This is because we just don't know what the expected result is as it is strictly dependent on the input values which we don't know as well.
 
 ## Fake it (‘til you make it)
 
@@ -624,7 +624,56 @@ public string[] ConvertToLedArt(string input)
 }
 ```
 
-The `DetermineSegmentValue` method is something we can use to implement lighting other segments - no need to triangulate it again for every segment. This is an example where the result of triangulation was not apparent at the beginning and we really arrived at more generic code by eliminating duplication. I'd like to stop here, leaving the rest of this exercise for the reader.
+When we look at the code of the `DetermineSegmentValue()` method:
+
+```csharp
+public string DetermineSegmentValue(
+  string input,
+  string turnOnToken,
+  string turnOnValue)
+{
+  return ((input == turnOnToken) ? turnOnValue : ".");
+}
+```
+
+We can clearly see that the method of detecting a token by doing a direct string comparison (it will fail if I pass "AB"), so we probably need to triangulate along this axis to arrive at the implementation:
+
+
+```csharp
+public string DetermineSegmentValue(
+  string input,
+  string turnOnToken,
+  string turnOnValue)
+{
+  return ((input.Contains(turnOnToken) ? turnOnValue : ".");
+}
+```
+
+And after we do it, the `DetermineSegmentValue` method will be something we will be able to use to implement lighting other segments - no need to discover it again using triangulation for every segment. So, assuming this method is in its final form, when I write an example for the B segment, I will make it true by using the `DetermineSegmentValue()` method instead of putting an `if`:
+
+```csharp
+public string[] ConvertToLedArt(string input)
+{
+    return new [] {
+      "." + DetermineSegmentValue(input, "A", "-") + ".",
+      ".." + DetermineSegmentValue(input, "B", "|"),
+      "...",
+      "...",
+      "...",
+    };
+}
+```
+
+So note that this time, I used the *type the obvious implementation* approach - this is because, due to previous triangulation, this step *became* obvious. 
+
+The two lessons from this are:
+
+1. When I stop triangulating along one axis, I may still need to triangulate along others.
+1. Triangulation allows me to take smaller steps when we *need* and when I don't, I use another approach. There are many things I don't triangulate.
+
+
+TODO rewrite the paragraph below:
+Summing up this example, I hope it was a situation where the result of triangulation was not apparent at the beginning and we really arrived at more generic code by eliminating duplication. I'd like to stop here, leaving the rest of this exercise for the reader.
 
 ## Summary
 
