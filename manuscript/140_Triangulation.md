@@ -10,7 +10,7 @@ Don't worry if these names don't tell you anything, the techniques are not that 
 
 ## Type the obvious implementation
 
-The first technique is what we have already done a lot throughout the previous chapters. It simply says: when you know the correct and final implementation to turn a Statement true, then just type it. If the implementation is obvious, this approach makes a lot of sense - after all, the amount of Statements required to specify (and test) a functionality should reflect our desired level of confidence. If this level is very high, we can just type the correct code in response to a single Statement. Let's see it in action on a trivial example of adding two numbers:
+The first technique simply says: when you know the correct and final implementation to turn a Statement true, then just type it. If the implementation is obvious, this approach makes a lot of sense - after all, the amount of Statements required to specify (and test) a functionality should reflect our desired level of confidence. If this level is very high, we can just type the correct code in response to a single Statement. Let's see it in action on a trivial example of adding two numbers:
 
 ```csharp
 [Fact] public void
@@ -27,19 +27,19 @@ ShouldAddTwoNumbersTogether()
 }
 ```
 
-You may remember I told you that usually we write the simplest production code that would make the Statement true. This rule would encourage us to just return 8 from the `Of` method, because it would be sufficient to make the Statement true. Instead, we can decide that the logic is so obvious, that we can just type it in its final form:
+You may remember that in one of the previous chapters I wrote that usually we write the simplest production code that would make the Statement true. This approach would encourage us to just return 8 from the `Of` method, because it would be sufficient to make the Statement true. Instead, we can decide that the logic is so obvious, that we can just type it in its final form:
 
 ```csharp
 public class Sum
 {
   public int Of(int a, int b)
   {
-    return a+b;
+    return a + b;
   }
 }
 ```
 
-and that's it. Note that I didn't use Constrained Non-Determinism in the Statement, because its use kind of enforces using "type the obvious implementation" approach. This is also one of the reasons that many Statements we wrote so far in previous chapters use the approach. Just to illustrate it, let's take a look at how the above Statement would look if we used Constrained Non-Determinism:
+and that's it. Note that I didn't use Constrained Non-Determinism in the Statement, because its use kind of enforces using "type the obvious implementation" approach. This is also one of the reasons that many Statements we wrote so far in previous chapters were implemented by typing the correct implementation. Just to illustrate it, let's take a look at how the above Statement would look if we used Constrained Non-Determinism:
 
 ```csharp
 [Fact] public void
@@ -58,18 +58,18 @@ ShouldAddTwoNumbersTogether()
 }
 ```
 
-The most obvious implementation that would make this Statement true is the correct implementation - we can't get away with returning a constant value as we could when we didn't use Constrained Non-Determinigm. This is because we just don't know what the expected result is as it is strictly dependent on the input values which we don't know as well.
+The most obvious implementation that would make this Statement true is the correct implementation - we can't get away with returning a constant value as we could when we didn't use Constrained Non-Determinism. This is because this time we just don't know what the expected result is as it is strictly dependent on the input values which we don't know as well.
 
-## Fake it (‘til you make it)
+## Fake it ('til you make it)
 
-This technique is kind of funny. I don't recall myself ever using it, yet it is so interesting that I want to show it to you anyway. It is so simple you will not regret these few minutes even if just for broadening your horizons.
+The second technique made me smile when I first learned about it. I don't recall myself ever using it, yet it is so interesting that I want to show it to you anyway. It is so simple you will not regret these few minutes even if just for broadening your horizons.
 
 There are two core steps of *fake it ('till you make it)*:
 
-1. It starts with a "fake it" step. Here, we turn a false Statement true by using the simplest implementation possible, even if it's not the correct implementation (hence the name of the step). Usually, returning a literal constant is enough at the beginning. 
-1. Then we proceed with the "make it" step - we rely on your sense of duplication between Statement and (fake) implementation to gradually transform both into their more general forms that eliminate this duplication. Usually, we achieve this by introducing variables, parameters etc.
+1. It starts with a "fake it" step. Here, we turn a false Statement true by using the most obivous implementation possible, even if it's not the correct implementation (hence the name of the step). Usually, returning a literal constant is enough at the beginning.
+1. Then we proceed with the "make it" step - we rely on your sense of duplication between the Statement and (fake) implementation to gradually transform both into their more general forms that eliminate this duplication. Usually, we achieve this by changing constants into variables, , or introducing parameters etc. 
 
-Let's apply Fake It to the same addition example as before (I promise, for triangulation, I will give you better one). The Statement looks the same as before:
+An example would be handy just about now, so let's apply *fake it...* to the same addition example as in the *type the obvious implementation* section. The Statement looks the same as before:
 
 ```csharp
 [Fact] public void
@@ -86,7 +86,7 @@ ShouldAddTwoNumbersTogether()
 }
 ```
 
-For the implementation, however, we are going to use the simplest code that will turn the Statement true. As I wrote, this simplest implementation is almost always to return a constant:
+For the implementation, however, we are going to use the most obvious code that will turn the Statement true. As I wrote, this simplest implementation is almost always to return a constant:
 
 ```csharp
 public class Sum
@@ -420,7 +420,7 @@ Now that we're through with the disclaimer, here goes the description.
 
 Imagine we need to write a class that produced a 7-segment LED display ASCII art. In real life, such displays are used to display numbers:
 
-TODO insert an actual picture!!!
+![A 7-segment LED display mockup](images/7SegmentDisplay.PNG)
 
 An example of an ASCII art that is expected from us looks like this:
 

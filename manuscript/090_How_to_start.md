@@ -198,19 +198,19 @@ As we expected, this doesn't compile. Notably, our compiler might point us towar
 
 The compiler created a kind of a small TODO list for us, which is nice. Note that while we don't have compiling code, filling the gaps to make it compile boils down to making a few trivial declarations and assignments:
 
-1.  `anyName` can be defined as:
+1. `anyName` can be defined as:
 
     `var anyName = Any.String();`
 
-2.  `anotherUserWithTheSameName` can be defined as:
+1. `anotherUserWithTheSameName` can be defined as:
 
     `var anotherUserWithTheSameName = new User(anyName);`
 
-3.  `usersAreEqual` can be defined as variable which we assign the comparison result to:
+1. `usersAreEqual` can be defined as variable which we assign the comparison result to:
 
     `var usersAreEqual = user.Equals(anotherUserWithTheSameName);`
 
-4.  If class `User` does not yet exist, we can add it by simply stating:
+1. If class `User` does not yet exist, we can add it by simply stating:
 
     ```csharp
     public class User 
@@ -269,8 +269,8 @@ Note that we don't know what `roleAllowedToUseReporting` is, neither do we know 
 
 Anyway, this new line answers the question about where we take the `accessGranted` value from, but it also makes us ask further questions:
 
-1.  Where does the `access` variable come from?
-2.  Where does the `roleAllowedToUseReporting` variable come from?
+1. Where does the `access` variable come from?
+1. Where does the `roleAllowedToUseReporting` variable come from?
 
 As for `access`, we don't have anything specific to say about it other than that it is an object of a class that is not defined yet. What we need to do now is to pretend that we have such a class (but let's not define it yet). How do we call it? The instance name is `access`, so it's quite straightforward to name the class `Access` and instantiate it in the simplest way we can think of:
 
@@ -402,7 +402,7 @@ public void TODO()
   string.Format(
     "{0}, better get some pocket money and buy a full version!", 
     userName);
- 
+
  //WHEN
  var message = trialMessages.
   HoldOnASecondWhileWeImportYourDatabase(userName);
