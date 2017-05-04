@@ -1,12 +1,12 @@
 # Driving the implementation from Specification
 
-As one of the last topics of the core TDD techniques that do not require us to delve into the object-oriented world, I'd like to show you three techniques for turning a false Statement true. The names of the techniques come from a book by Kent Beck, [Test-Driven Development: By Example](http://www.pearsonhighered.com/educator/product/Test-Driven-Development-By-Example/9780321146533.page) and are:
+As one of the last topics of the core TDD techniques that don't require us to delve into the object-oriented design world, I'd like to show you three techniques for turning a false Statement true. The names of the techniques come from a book by Kent Beck, [Test-Driven Development: By Example](http://www.pearsonhighered.com/educator/product/Test-Driven-Development-By-Example/9780321146533.page) and are:
 
 1. Type the obvious implementation
 1. Fake it (`til you make it)
 1. Triangulate
 
-Don't worry if these names don't tell you anything, the techniques are not that difficult to grasp and I will try to give an example for each of them.
+Don't worry if these names don't tell you anything, the techniques are not that difficult to grasp and I will try to give an example of each of them.
 
 ## Type the obvious implementation
 
@@ -17,20 +17,20 @@ The first technique simply says: when you know the correct and final implementat
 ShouldAddTwoNumbersTogether()
 {
   //GIVEN
-  var sum = new Sum();
+  var addition = new Addition();
 
   //WHEN
-  var result = sum.Of(3,5);
+  var sum = addition.Of(3,5);
 
   //THEN
-  Assert.Equal(8, result);
+  Assert.Equal(8, sum);
 }
 ```
 
-You may remember that in one of the previous chapters I wrote that usually we write the simplest production code that would make the Statement true. This approach would encourage us to just return 8 from the `Of` method, because it would be sufficient to make the Statement true. Instead, we can decide that the logic is so obvious, that we can just type it in its final form:
+You may remember that in one of the previous chapters I wrote that usually we write the simplest production code that would make the Statement true. The mentioned approach would encourage us to just return 8 from the `Of()` method, because it would be sufficient to make the Statement true. Instead of doing that, however, we may decide that the logic is so obvious, that we can just type it in its final form:
 
 ```csharp
-public class Sum
+public class Addition
 {
   public int Of(int a, int b)
   {
@@ -39,7 +39,7 @@ public class Sum
 }
 ```
 
-and that's it. Note that I didn't use Constrained Non-Determinism in the Statement, because its use kind of enforces using "type the obvious implementation" approach. This is also one of the reasons that many Statements we wrote so far in previous chapters were implemented by typing the correct implementation. Just to illustrate it, let's take a look at how the above Statement would look if we used Constrained Non-Determinism:
+and that's it. Note that I didn't use Constrained Non-Determinism in the Statement, because its use kind of enforces using "type the obvious implementation" approach. This is also one of the reasons that many Statements I wrote so far in the previous chapters were implemented by typing the correct implementation. Just to illustrate it, let's take a look at how the above Statement would look if I used Constrained Non-Determinism:
 
 ```csharp
 [Fact] public void
@@ -48,26 +48,26 @@ ShouldAddTwoNumbersTogether()
   //GIVEN
   var a = Any.Integer();
   var b = Any.Integer();
-  var sum = new Sum();
+  var addition = new Addition();
 
   //WHEN
-  var result = sum.Of(a,b);
+  var sum = addition.Of(a,b);
 
   //THEN
-  Assert.Equal(a + b, result);
+  Assert.Equal(a + b, sum);
 }
 ```
 
-The most obvious implementation that would make this Statement true is the correct implementation - we can't get away with returning a constant value as we could when we didn't use Constrained Non-Determinism. This is because this time we just don't know what the expected result is as it is strictly dependent on the input values which we don't know as well.
+The most obvious implementation that would make this Statement true is the correct implementation - I can't get away with returning a constant value as I could when I didn't use Constrained Non-Determinism. This is because this time I just don't know what the expected result is as it is strictly dependent on the input values which I don't know as well.
 
 ## Fake it ('til you make it)
 
-The second technique made me smile when I first learned about it. I don't recall myself ever using it, yet it is so interesting that I want to show it to you anyway. It is so simple you will not regret these few minutes even if just for broadening your horizons.
+The second technique made me smile when I first learned about it. I don't recall myself ever using it in real production code, yet I find it so interesting that I want to show it to you anyway. It is so simple you will not regret these few minutes even if just for broadening your horizons.
 
-There are two core steps of *fake it ('till you make it)*:
+Let's assume we already have a false Statement written and are about to make it true by writing production code. At this moment, we apply *fake it ('till you make it)* in two steps:
 
-1. It starts with a "fake it" step. Here, we turn a false Statement true by using the most obivous implementation possible, even if it's not the correct implementation (hence the name of the step). Usually, returning a literal constant is enough at the beginning.
-1. Then we proceed with the "make it" step - we rely on your sense of duplication between the Statement and (fake) implementation to gradually transform both into their more general forms that eliminate this duplication. Usually, we achieve this by changing constants into variables, , or introducing parameters etc. 
+1. We start with a "fake it" step. Here, we turn a false Statement true by using the most obivous implementation possible, even if it's not the correct implementation (hence the name of the step - we "fake" the real implementation to "cheat" the Statement). Usually, returning a literal constant is enough at the beginning.
+1. Then we proceed with the "make it" step - we rely on our sense of duplication between the Statement and (fake) implementation to gradually transform both into their more general forms that eliminate this duplication. Usually, we achieve this by changing constants into variables, variables into parameters etc. 
 
 An example would be handy just about now, so let's apply *fake it...* to the same addition example as in the *type the obvious implementation* section. The Statement looks the same as before:
 
@@ -76,34 +76,34 @@ An example would be handy just about now, so let's apply *fake it...* to the sam
 ShouldAddTwoNumbersTogether()
 {
   //GIVEN
-  var sum = new Sum();
+  var addition = new Addition();
 
   //WHEN
-  var result = sum.Of(3, 5);
+  var sum = addition.Of(3, 5);
 
   //THEN
-  Assert.Equal(8, result);
+  Assert.Equal(8, sum);
 }
 ```
 
-For the implementation, however, we are going to use the most obvious code that will turn the Statement true. As I wrote, this simplest implementation is almost always to return a constant:
+For the implementation, however, we are going to use the most obvious code that will turn the Statement true. As mentioned, this most obvious implementation is almost always returning a constant:
 
 ```csharp
-public class Sum
+public class Addition
 {
   public int Of(int a, int b)
   {
-    return 8;
+    return 8; //we faked the real implementation
   }
 }
 ```
 
 The Statement turns true (green) now, even though the implementation is obviously wrong. Now is the time to remove duplication between the Statement and the production code.
 
-First, let's note that the number 8 is duplicated between Statement and implementation -- the implementation returns it and the Statement asserts on it. To reduce this duplication, let's break the 8 in the implementation into a sum:
+First, let's note that the number 8 is duplicated between Statement and implementation -- the implementation returns it and the Statement asserts on it. To reduce this duplication, let's break the 8 in the implementation into an addition:
 
 ```csharp
-public class Sum
+public class Addition
 {
   public int Of(int a, int b)
   {
@@ -112,16 +112,34 @@ public class Sum
 }
 ```
 
-Note the smart trick I did. I changed the duplication between implementation and *expected result* to duplication between implementation and *input values* of the Statement. I used `3 + 5` exactly because the Statement used these two values like this:
+Note the smart trick I did. I changed the duplication between implementation and *expected result* of the Statement to duplication between implementation and *input values* of the Statement. I changed the production code to use 
 
-```csharp
-var result = sum.Of(3, 5);
+```csharp 
+return 3 + 5;
 ```
 
-This kind of duplication is different from the previous one in that it can be removed using variables (this applies not only to input variables, but basically anything we have access to prior to triggering specified behavior -- constructor parameters, fields etc. in contrast to result which we normally don't know until we invoke the behavior). The duplication of number 3 can be eliminated by changing the production code to use the value passed from the Statement:
+exactly because the Statement used these two values like this:
 
 ```csharp
-public class Sum
+var sum = addition.Of(3, 5);
+```
+
+This kind of duplication is different from the previous one in that it can be removed using parameters (this applies not only to input parameters of a method, but basically anything we have access to prior to triggering specified behavior -- constructor parameters, fields etc. in contrast to result which we normally don't know until we invoke the behavior). The duplication of number 3 can be eliminated by changing the production code to use the value passed from the Statement. So this:
+
+```csharp
+public class Addition
+{
+  public int Of(int a, int b)
+  {
+    return 3 + 5;
+  }
+}
+```
+
+Is transformed into this:
+
+```csharp
+public class Addition
 {
   public int Of(int a, int b)
   {
@@ -130,10 +148,10 @@ public class Sum
 }
 ```
 
-and we only have the number 5 duplicated, because we used variable to transfer the value of 3 from Statement method to the `Of` implementation, so we have it in one place now. let's do the same with 5:
+This way we eliminated the duplication of number 3 - we used a method parameter to transfer the value of 3 from Statement to the `Of()` implementation, so we have it in a single place now. After this transformation, we only have the number 5 left duplicated, so let's transform it the same way we transformed 3:
 
 ```csharp
-public class Sum
+public class Addition
 {
   public int Of(int a, int b)
   {
@@ -142,55 +160,57 @@ public class Sum
 }
 ```
 
-And that's it. I used a trivial example, since I don't want to spend too much time on this, but you can find more advanced ones in Kent Beck's book if you like.
+And that's it - we arrived at the correct implementation. I used a trivial example, since I don't want to spend too much time on this, but you can find more advanced ones in Kent Beck's book if you like.
 
 ## Triangulate
 
-*Triangulation* seems to be a mysterious term at first - at least it was to me, especially that it didn't bring anything related to software engineering to my mind. It is considered the most conservative technique of the described trio, because following it involves the tiniest possible steps to arrive at the right solution. The technique is called triangulation by analogy to [radar triangulation](http://encyclopedia2.thefreedictionary.com/radar+triangulation) where outputs from at least two radars must be used to determine the position of a unit. Also, in radar triangulation, the position is measured indirectly, by combining the following data: range (not position!) between two radars, measurement done by each radar and the positions of the radars (which we know, because we are the ones who put the radars there). From this data, we can derive a triangle, so we can use trigonometry to calculate the position of the third point of the triangle, which is the desired position of the unit (two remaining points are the positions of radars). Such measurement is indirect in nature, because we don't measure the position directly, but calculate it from other helper measurements.
+Triangulation is considered the most conservative technique of the described trio, because following it involves the tiniest possible steps to arrive at the right solution. The term *Triangulation* seems mysterious at first - at least it was to me, especially that it didn't bring anything related to software engineering to my mind. The name was taken from [radar triangulation](http://encyclopedia2.thefreedictionary.com/radar+triangulation) where outputs from at least two radars must be used to determine the position of a unit. Also, in radar triangulation, the position is measured indirectly, by combining the following data: range (not position!) between two radars, measurement done by each radar and the positions of the radars (which we know, because we are the ones who put the radars there). From this data, we can derive a triangle, so we can use trigonometry to calculate the position of the third point of the triangle, which is the desired position of the unit (two remaining points are the positions of radars). Such measurement is indirect in nature, because we don't measure the position directly, but calculate it from other helper measurements.
 
-These two characteristics: indirect measurement and using at least two sources of information are at the core of TDD triangulation. Basically, it translates like this:
+These two characteristics: indirect measurement and using at least two sources of information are at the core of TDD triangulation. Basically, it translates from radars to code like this:
 
-1. **Indirect measurement**: derive the internal implementation and design of a module from several known examples of its desired externally visible behavior by looking at what varies in these examples and changing the production code so that this variability is treated in a generic way. For example, variability might lead us from changing a constant to a variable.
-1. **Using at least two sources of information**: start with the simplest possible implementation and make it more general **only** when you have two or more different examples (i.e. Statements that describe the desired functionality for specific inputs). Then new examples can be added and generalization can be done again. This process is repeated until we reach the desired implementation. Robert C. Martin developed a maxim on this, saying that "As the tests get more specific, the code gets more generic.
+1. **Indirect measurement**: in code, it means we derive the internal implementation and design of a module from several known examples of its desired externally visible behavior by looking at what varies in these examples and changing the production code so that this variability is handled in a generic way. For example, variability might lead us from changing a constant to a variable, because several different examples use different input values.
+1. **Using at least two sources of information**: in code, it means we start with the simplest possible implementation of a behavior and make it more general **only** when we have two or more different examples of this behavior (i.e. Statements that describe the desired functionality for several different inputs). Then new examples can be added and generalization can be done again. This process is repeated until we reach the desired implementation. Robert C. Martin developed a maxim on this, saying that ["As the tests get more specific, the code gets more generic"](http://blog.cleancoder.com/uncle-bob/2014/12/17/TheCyclesOfTDD.html).
 
-Usually, when TDD is showcased on simple examples, triangulation is the primary technique used, so many novices mistakenly believe TDD is all about triangulation. This isn't true, although I consider it an important technique because:
+Usually, when TDD is showcased on simple examples, triangulation is the primary technique used, so many novices mistakenly believe TDD is all about triangulation. 
+
+I consider it an important technique because:
 
 1. Many TDD practitioners use it and demonstrate it, so I assume you will see it sooner or later and most likely have questions regarding it.
-1. It allows us to take tiny steps in arriving at the right implementation (tiniest than any you have seen so far in this book) and I find it very useful when I'm uncertain how the correct implementation and design should look like.
+1. It allows us to arrive at the right implementation by taking really tiny steps (tiniest than any you have seen so far in this book) and I find it very useful when I'm uncertain on how the correct implementation and design should look like.
 
 ### Example - addition of numbers
 
 Before I show you a more advanced example of triangulation, I would like to get back to our toy example of adding two integer numbers. This will allow us to see how triangulation differs from the other two techniques mentioned earlier.
 
-We will use the xUnit.net's feature of parameterized Statements, i.e. theories - this will allow us to give many examples of the desired functionality without duplicating the code.
+For writing the examples, we will use the xUnit.net's feature of parameterized Statements, i.e. theories - this will allow us to give many examples of the desired functionality without duplicating the code.
 
-The first Statement looks like this:
+The first example looks like this:
 
 ```csharp
 [Theory]
 [InlineData(0,0,0)]
 public void ShouldAddTwoNumbersTogether(
-  int int1,
-  int int2,
-  int expectedResult)
+  int addend1,
+  int addend2,
+  int expectedSum)
 {
   //GIVEN
-  var sum = new Sum();
+  var addition = new Addition();
 
   //WHEN
-  var result = sum.Of(int1, int2);
+  var sum = addition.Of(addend1, addend2);
 
   //THEN
-  Assert.Equal(expectedResult, result);
+  Assert.Equal(expectedSum, sum);
 }
 ```
 
-Note that we parameterized not only the input values, but also the expected result. The first example specifies that `0 + 0 = 0`.
+Note that we parameterized not only the input values, but also the expected result (`expectedSum`). The first example specifies that `0 + 0 = 0`.
 
 The implementation, similarly to *fake it ('till you make it)* is, for now, to just return a constant:
 
 ```csharp
-public class Sum
+public class Addition
 {
   public int Of(int a, int b)
   {
@@ -199,27 +219,27 @@ public class Sum
 }
 ```
 
-Now, contrary to *fake it...* technique, we don't try to remove duplication between the Statement and the code. Instead, we add another example of the same rule. What do I mean by "the same rule"? Well, we need to consider our axis of variability. In addition, there are two things that can vary - either the first argument of addition, or the second argument. For the second example, we need to keep one of them unchanged while changing the other. Let's say that we decide to keep the second input value the same (which is 0) and change the first value to 1. So this:
+Now, contrary to *fake it...* technique, we don't try to remove duplication between the Statement and the code. Instead, we add another example of the same rule. What do I mean by "the same rule"? Well, we need to consider our axes of variability. In addition, there are two things that can vary - either the first addend, or the second - thus, we have two axes of variability. For our second example, we need to keep one of them unchanged while changing the other. Let's say that we decide to keep the second input value the same as in previous example (which is 0) and change the first value to 1. So this single example:
 
 ```csharp
 [Theory]
 [InlineData(0,0,0)]
 ```
 
-Becomes:
+Becomes a set of two examples:
 
 ```csharp
 [Theory]
 [InlineData(0,0,0)]
-[InlineData(1,0,1)]
+[InlineData(1,0,1)] //NEW!
 ```
 
-Again, not that the second input value stays the same in both examples and the first one varies. The expecied result needs to be different as well, obviously.
+Again, note that the second input value stays the same in both examples and the first one varies. The expected result needs to be different as well, obviously.
 
-As for the implementation, we still try to make the Statement true by making as dumb implementation as possible:
+As for the implementation, we still try to make the Statement true by using as dumb implementation as possible:
 
 ```csharp
-public class Sum
+public class Addition
 {
   public int Of(int a, int b)
   {
@@ -229,7 +249,7 @@ public class Sum
 }
 ```
 
-By this time, we may not yet have an idea on how to generalize the implementation, so let's add the third example:
+We already have two examples, so if we see a repeating pattern, we may try to generalize it. Let's assume, however, that we don't have an idea on how to generalize the implementation yet, so let's add a third example:
 
 ```csharp
 [Theory]
@@ -238,10 +258,10 @@ By this time, we may not yet have an idea on how to generalize the implementatio
 [InlineData(2,0,2)]
 ```
 
-And the implementation would be:
+And the implementation is expanded to:
 
 ```csharp
-public class Sum
+public class Addition
 {
   public int Of(int a, int b)
   {
@@ -252,52 +272,52 @@ public class Sum
 }
 ```
 
-Now, looking at this code, we can notice a pattern - for every input values so far, we return the value of the first one: for 1 we return 1, for 2 we return 2, for 0 we return 0. Thus, we can generalize this implementation. Thus, we can generalize this implementation. Let's change only the part related to the number 2 to see whether the direction is right:
+Now, looking at this code, we can notice a pattern - for every input values so far, we return the value of the first one: for 1 we return 1, for 2 we return 2, for 0 we return 0. Thus, we can generalize this implementation. Let's generalize only the part related to the handling number 2 to see whether the direction is right:
 
 ```csharp
-public class Sum
+public class Addition
 {
   public int Of(int a, int b)
   {
-    if(a == 2) return a;
+    if(a == 2) return a; //changed from 2 to a
     if(a == 1) return 1;
     return 0;
   }
 }
 ```
 
-The examples are still true, so time to change the second `if` statement:
+The examples should still be true at this point, so we haven't broken the existing code. Time to change the second `if` statement:
 
 ```csharp
-public class Sum
+public class Addition
 {
   public int Of(int a, int b)
   {
     if(a == 2) return a;
-    if(a == 1) return a;
+    if(a == 1) return a; //changed from 1 to a
     return 0;
   }
 }
 ```
 
-We still have the green bar, so the next step would be to change the `return 0`:
+We still have the green bar, so the next step would be to generalize the `return 0` part to `return a`:
 
 ```csharp
-public class Sum
+public class Addition
 {
   public int Of(int a, int b)
   {
     if(a == 2) return a;
     if(a == 1) return a;
-    return a;
+    return a; //changed from 0 to a
   }
 }
 ```
 
-Triangulation doesn't force us to take as tiny steps as in this case, however, I wanted to show you that it makes it possible. The ability to take smaller steps when needed is something I value a lot when I use TDD. Anyway, we can notice that each of the conditions ends with exactly the same result, so we don't need the conditions at all. We can remove them and leave only:
+The examples should still be true. By the way, triangulation doesn't force us to take as tiny steps as in this case, however, I wanted to show you that it makes it possible. The ability to take smaller steps when needed is something I value a lot when I use TDD. Anyway, we can notice that each of the conditions ends with exactly the same result, so we don't need the conditions at all. We can remove them and leave only:
 
 ```csharp
-public class Sum
+public class Addition
 {
   public int Of(int a, int b)
   {
@@ -306,7 +326,7 @@ public class Sum
 }
 ```
 
-Thus, we have generalized the first axis of variability, which is the first input argument. Time to vary the second one, by leaving the first value unchanged. To the following existing examples:
+Thus, we have generalized the first axis of variability, which is the first addend. Time to vary the second one, by leaving the first addend unchanged. To the following existing examples:
 
 ```csharp
 [Theory]
@@ -321,11 +341,11 @@ We add the following one:
 [InlineData(2,1,3)] //2+1=3
 ```
 
-Note that we already used the value of 2 for the first input in one of the previous examples, so this time we decide to freeze it and vary the second input, which was always 0 up to now. The implementation would be something like this:
+Note that we already used the value of 2 for the first addend in one of the previous examples, so this time we decide to freeze it and vary the second addend, which has so far always been 0. The implementation would be something like this:
 
 
 ```csharp
-public class Sum
+public class Addition
 {
   public int Of(int a, int b)
   {
@@ -341,7 +361,7 @@ public class Sum
 }
 ```
 
-We already have two examples for the variation of the second input, so we could generalize. Let's say, however, we don't see the pattern yet. We add another example for a different value of second input:
+We already have two examples for the variation of the second addend, so we could generalize. Let's say, however, we don't see the pattern yet. We add another example for a different value of second addend:
 
 ```csharp
 [Theory]
@@ -355,7 +375,7 @@ We already have two examples for the variation of the second input, so we could 
 So, we added 2+2=4. Again, the implementation should be as naive as possible:
 
 ```csharp
-public class Sum
+public class Addition
 {
   public int Of(int a, int b)
   {
@@ -375,33 +395,33 @@ public class Sum
 }
 ```
 
-Again, we can clearly see the pattern. Whatever is the value of `b` we pass to the `Of()` method, it gets added to `a`. Let's try to generalize, this time using a little bigger step:
+Now we can clearly see the pattern. Whatever value of `b` we pass to the `Of()` method, it gets added to `a`. Let's try to generalize, this time using a little bigger step:
 
 ```csharp
-public class Sum
+public class Addition
 {
   public int Of(int a, int b)
   {
     if(b == 1)
     {
-      return a + b;
+      return a + b; //changed from 1 to b
     }
     else if(b == 2)
     {
-      return a + b;
+      return a + b; //changed from 2 to b
     }
     else
     {
-      return a + b;
+      return a + b; //added "+ b"
     }
   }
 }
 ```
 
-We can see that the result for each branch is exactly the same: `a+b`, so we can remove the conditions altogether and get:
+Again, this step was bigger, because we modified three places in a single change. Remember triangulation allows us to choose the size of the step, so this time I chose a bigger one because I felt more confident. Anyway, we can see that the result for each branch is exactly the same: `a + b`, so we can remove the conditions altogether and get:
 
 ```csharp
-public class Sum
+public class Addition
 {
   public int Of(int a, int b)
   {
@@ -410,7 +430,9 @@ public class Sum
 }
 ```
 
-and there we go - we have successfully triangulated the sum function. Now, I understand that it must have felt extremely over-the-top for you to derive an obvious addition this way. Remember I did this exercise only to show you the mechanics.
+and there we go - we have successfully triangulated the addition function. Now, I understand that it must have felt extremely over-the-top for you to derive an obvious addition this way. Remember I did this exercise only to show you the mechanics, not to provide a solid case for triangulation usefulness.
+
+TODO TODO TODO TODO TODO TODO TODO TODO 
 
 # Example 2 - LED display
 
