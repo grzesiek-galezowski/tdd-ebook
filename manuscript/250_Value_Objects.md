@@ -137,7 +137,7 @@ In the following chapters, I will further explore this example of product name t
 
 [^goosvalues]: S. Freeman, N. Pryce, Growing Object-Oriented Software Guided by Tests, Addison-Wesley Professional, 2009
 
-[^csharpoperatorsoverride]: and, for C#, overriding equality operators (`==` and `!=`) is probably a good idea as well, not to mention `GetHashCode()` (See https://msdn.microsoft.com/en-us/library/vstudio/7h9bszxx(v=vs.100).aspx)
+[^csharpoperatorsoverride]: and, for C#, overriding equality operators (`==` and `!=`) is probably a good idea as well, not to mention `GetHashCode()` (See https://msdn.microsoft.com/en-us/library/7h9bszxx.aspx)
 
 [^everydecisionistradeoff]: All engineering decisions are trade offs anyway, so I should really say "some of them make better trade-offs in our context, and some make worse".
 

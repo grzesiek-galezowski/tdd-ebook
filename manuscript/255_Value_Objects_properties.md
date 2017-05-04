@@ -334,7 +334,7 @@ One thing to note about the implementation of `ProductName` is that it implement
 public bool Equals(ProductName other);
 ```
 
-while the one inherited from `object` accepts an `object` as a parameter. The use and existence of `IEquatable<T>` interface is mostly C#-specific, so I won't go into the details here, but you can always [look it up in the documentation](https://msdn.microsoft.com/en-us/library/vstudio/ms131187%28v=vs.100%29.aspx). 
+while the one inherited from `object` accepts an `object` as a parameter. The use and existence of `IEquatable<T>` interface is mostly C#-specific, so I won't go into the details here, but you can always [look it up in the documentation](https://msdn.microsoft.com/en-us/library/ms131187.aspx). 
 
 When we override `Equals()`, the `GetHashCode()` method needs to be overridden as well. The rule is that all objects that are considered equal should return the same hash code and all objects considered not equal should return different hash codes. The reason is that hash codes are used to intentify objects in hash tables or hash sets - these data structures won't work properly with values if `GetHashCode()` is not properly implemented. That would be too bad, because values are often used as keys in various hash-based dictionaries.
 
