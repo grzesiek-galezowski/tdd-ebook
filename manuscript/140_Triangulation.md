@@ -617,9 +617,7 @@ Now, if we look closer at the expression:
 ((input == "A") ? "-" : ".")
 ```
 
-TODO TODO TODO TODO TODO TODO TODO TODO 
-
-We can note that its responsibility is to determine whether the value of the current segment based on the `input`. We can use this knowledge to extract it into a method with an intent-revealing name:
+We may note that its responsibility is to determine whether the value of the current segment based on the `input`. We can use this knowledge to extract it into a method with an intent-revealing name. The method body is:
 
 ```csharp
 public string DetermineSegmentValue(
@@ -631,7 +629,7 @@ public string DetermineSegmentValue(
 }
 ```
 
-After the extraction, our `ConvertToLedArt` method becomes:
+After this extraction, our `ConvertToLedArt` method becomes:
 
 ```csharp
 public string[] ConvertToLedArt(string input)
@@ -646,7 +644,11 @@ public string[] ConvertToLedArt(string input)
 }
 ```
 
-When we look at the code of the `DetermineSegmentValue()` method:
+And we're done triangulating the `A` segment. 
+
+#### Additional conclusions from the LED display example
+
+The fact that I'm done triangulating along one axis of variability does not mean I can't do triangulation along other axes. For example, when we look again at the code of the `DetermineSegmentValue()` method:
 
 ```csharp
 public string DetermineSegmentValue(
@@ -658,7 +660,7 @@ public string DetermineSegmentValue(
 }
 ```
 
-We can clearly see that the method of detecting a token by doing a direct string comparison (it will fail if I pass "AB"), so we probably need to triangulate along this axis to arrive at the implementation:
+We can clearly see that the method is detecting a token by doing a direct string comparison: `input == turnOnToken`. This will fail e.g. if I pass `"AB"`, so we probably need to triangulate along this axis to arrive at the correct implementation. I won't show the steps here, but the final result of this triangulation would be something like:
 
 
 ```csharp
@@ -671,7 +673,7 @@ public string DetermineSegmentValue(
 }
 ```
 
-And after we do it, the `DetermineSegmentValue` method will be something we will be able to use to implement lighting other segments - no need to discover it again using triangulation for every segment. So, assuming this method is in its final form, when I write an example for the B segment, I will make it true by using the `DetermineSegmentValue()` method instead of putting an `if`:
+And after we do it, the `DetermineSegmentValue` method will be something we will be able to use to implement lighting other segments - no need to discover it again using triangulation for every segment. So, assuming this method is in its final form, when I write an example for the B segment, I will make it true by using the `DetermineSegmentValue()` method right from the start instead of putting an `if` first and then generalizing. The implementation will the look like this:
 
 ```csharp
 public string[] ConvertToLedArt(string input)
@@ -693,10 +695,14 @@ The two lessons from this are:
 1. When I stop triangulating along one axis, I may still need to triangulate along others.
 1. Triangulation allows me to take smaller steps when we *need* and when I don't, I use another approach. There are many things I don't triangulate.
 
-
-TODO rewrite the paragraph below:
-Summing up this example, I hope it was a situation where the result of triangulation was not apparent at the beginning and we really arrived at more generic code by eliminating duplication. I'd like to stop here, leaving the rest of this exercise for the reader.
+I hope that, by showing you this example, I made a more compelling case for triangulation. I'd like to stop here, leaving the rest of this exercise for the reader.
 
 ## Summary
 
-Like I mentioned, triangulation is most useful when we have no idea how the internal design of a piece of functionality should look like (e.g. even if there are workflows, they cannot be easily derived from your knowledge of the domain) and we are not sure about along which axes our design needs to provide generality, but still are able to give some examples of the observable behavior of that functionality given certain inputs. These are usually situations where we need to slow down and take tiny steps that slowly bring us closer to more generic design and correct functionality -- and that's what triangulation is for!
+In this lengthy chapter, I tried to demonstrate three techniques for going from a false Statement to a true one:
+
+1. Type the obvious implementation
+1. Fake it (`til you make it)
+1. Triangulate
+
+I hope this was an easy-to-digest introduction and if you want to know more, be sure to check Kent Beck's book, where he uses these techniques extensively on several small exercises.
