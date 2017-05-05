@@ -1,3 +1,15 @@
+# 05-05-2017
+
+After a long work, the triangulation chapter - the last chapter of part 1 is now refactored and partly rewritten.
+
+For starters, I renamed the chapter from Triangulation to "Driving the implementation from Specification", because all three techniques shown there are classic and equally important, even though I have my favourites.
+
+The second big change is a complete rewrite of the triangulation part of this chapter. I replaced the summing elements throughout a list example with two other examples - one very basic and the other a bit more advanced. The basic example is about calculating the sum of two integers, which is exactly the same example that was used to describe two other techniques. This way, readers can compare how all three techniques apply to the same coding problem to examine the differences in the mechanics. The advanced example is based on a a LED display kata from Corey Haines, although with modified rules and goal. Of course, I'll be more than happy to know your thoughts and suggestions.
+
+As for my next steps - now that I finished Part 1, I think I will not review Part 2 as thoroughly yet. I will probably fix several outstanding issues that were raised for some parts of Part 2 and then finish the chapters on value objects that I started before the big review of Part 1.
+
+Happy reading and thank you to all those who support me!!
+
 # 15-03-2017
 
 This version includes some fixes to the boundary chapter - the one that was most recently reviewed. Thanks to Łukasz Maternia for spotting some bugs and an area for improvement. This led me to change two examples in the boundaries and ranges sections.
