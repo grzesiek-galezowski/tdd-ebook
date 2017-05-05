@@ -178,7 +178,7 @@ I consider it an important technique because:
 1. Many TDD practitioners use it and demonstrate it, so I assume you will see it sooner or later and most likely have questions regarding it.
 1. It allows us to arrive at the right implementation by taking really tiny steps (tiniest than any you have seen so far in this book) and I find it very useful when I'm uncertain on how the correct implementation and design should look like.
 
-### Example - addition of numbers
+### Example 1 - addition of numbers
 
 Before I show you a more advanced example of triangulation, I would like to get back to our toy example of adding two integer numbers. This will allow us to see how triangulation differs from the other two techniques mentioned earlier.
 
@@ -432,19 +432,17 @@ public class Addition
 
 and there we go - we have successfully triangulated the addition function. Now, I understand that it must have felt extremely over-the-top for you to derive an obvious addition this way. Remember I did this exercise only to show you the mechanics, not to provide a solid case for triangulation usefulness.
 
-TODO TODO TODO TODO TODO TODO TODO TODO 
+### Example 2 - LED display
 
-# Example 2 - LED display
-
-I don't blame you if the first example did little to convince you that triangulation can be useful. After all, that was calculating a sum of two integers! The next example is going to be something less obvious. I would like to warn you, however, that I will take my time to describe the problem and to show you part of the solution, so if you have enough of trisangulation already, just skip this example and get back to it later.
+I don't blame you if the first example did little to convince you that triangulation can be useful. After all, that was calculating a sum of two integers! The next example is going to be something less obvious. I would like to warn you, however, that I will take my time to describe the problem and will show you only part of the solution, so if you have enough of triangulation already, just skip this example and get back to it later.
 
 Now that we're through with the disclaimer, here goes the description.
 
-Imagine we need to write a class that produced a 7-segment LED display ASCII art. In real life, such displays are used to display numbers:
+Imagine we need to write a class that produces a 7-segment LED display ASCII art. In real life, such displays are used to display digits:
 
 ![A 7-segment LED display mockup](images/7SegmentDisplay.PNG)
 
-An example of an ASCII art that is expected from us looks like this:
+An example of an ASCII art that is expected from our class looks like this:
 
 ```
 .-.
@@ -494,7 +492,7 @@ So to achieve the described earlier output where only the upper segment is lit, 
 
 The last thing I need to say before we begin is that for the sake of this exercise, we focus only on the valid input (e.g. we assume we won't get inputs such as "AAAA", or "abc" or "ZXVN"). Of course, in a real projects invalid input cases should be specified as well.
 
-Time to start with the first Statement. For starters, I'm going to specify the case of empty input that results in all segments turned off:
+Time for the first Statement. For starters, I'm going to specify the case of empty input that results in all segments turned off:
 
 ```csharp
 [Theory]
@@ -510,17 +508,17 @@ public void ShouldConvertInputToAsciiArtLedDisplay(
 )
 {
   //GIVEN
-  var asciiArt = new LedAsciiArts();
+  var asciiArts = new LedAsciiArts();
 
   //WHEN
-  var asciiArtString = asciiArt.ConvertToLedArt(input);
+  var asciiArtString = asciiArts.ConvertToLedArt(input);
 
   //THEN
   Assert.Equal(expectedOutput, asciiArtString);
 }
 ```
 
-Again, as I described in the previous example, we do the easiest thing just to make this example true. In our case, this would be:
+Again, as I described in the previous example, on the production code side, we do the easiest thing just to make this example true. In our case, this would be:
 
 ```csharp
 public string[] ConvertToLedArt(string input)
@@ -618,6 +616,8 @@ Now, if we look closer at the expression:
 ```csharp
 ((input == "A") ? "-" : ".")
 ```
+
+TODO TODO TODO TODO TODO TODO TODO TODO 
 
 We can note that its responsibility is to determine whether the value of the current segment based on the `input`. We can use this knowledge to extract it into a method with an intent-revealing name:
 
