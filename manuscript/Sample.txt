@@ -20,6 +20,9 @@
 190_Why_do_we_need_composability.md
 200_What_does_it_mean_to_compose_objects.md
 210_How_are_objects_composed.md
+211_When_are_objects_composed.md
+212_How_are_the_connections_made.md
+213_Where_are_objects_composed.md
 220_Designing_for_composabiity_interfaces.md
 230_Designing_for_composabiity_protocols.md
 235_Classes.md

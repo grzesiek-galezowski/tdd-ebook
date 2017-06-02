@@ -2,8 +2,7 @@
 
 It might seem stupid to ask this question here -- if you have managed to stay with me this long, then you're probably motivated enough not to need a justification? Well, anyway, it's still worth discussing it a little. Hopefully, you'll learn as much reading this back-to-basics chapter as I did writing it.
 
-Pre-object-oriented approaches
-------------------------------
+## Pre-object-oriented approaches
 
 Back in the days of procedural programming[^skipfunc], when we wanted to execute a different code based on some factor, it was usually achieved using an 'if' statement. For example, if our application was in need to be able to use different kinds of alarms, like a loud alarm (that plays a loud sound) and a silent alarm (that does not play any sound, but instead silently contacts the police) interchangeably, then usually, we could achieve this using a conditional like in the following function:
 
@@ -60,13 +59,12 @@ So, at least conceptually, as soon as we know the alarm kind, we already know wh
 
 Unfortunately, procedural programming does not let's bind behaviors with data. As a matter of fact, the whole paradigm of procedural programming is about separating behaviors and data! Well, honestly, they had some answers to those concerns, but these answers were mostly awkward (for those of you that still remember C language: I'm talking about macros and function pointers). So, as data and behaviors are separated, we need to query the data each time we want to pick a behavior based on it. That's why we have the duplication.
 
-Object-oriented programming to the rescue!
-------------------------------------------
+## Object-oriented programming to the rescue!
 
 On the other hand, object-oriented programming has for a long time made available two mechanisms that enable what we didn't have in procedural languages:
 
-1.  Classes -- that allow binding behavior together with data.
-2.  Polymorphism -- allows executing behavior without knowing the exact class that holds them, but knowing only a set of behaviors that it supports. This knowledge is obtained by having an abstract type (interface or an abstract class) define this set of behaviors, with no real implementation. Then we can make other classes that provide their own implementation of the behaviors that are declared to be supported by the abstract type. Finally, we can use the instances of those classes where an instance of the abstract type is expected. In case of statically-typed languages, this requires implementing an interface or inheriting from an abstract class.
+1. Classes -- that allow binding behavior together with data.
+1. Polymorphism -- allows executing behavior without knowing the exact class that holds them, but knowing only a set of behaviors that it supports. This knowledge is obtained by having an abstract type (interface or an abstract class) define this set of behaviors, with no real implementation. Then we can make other classes that provide their own implementation of the behaviors that are declared to be supported by the abstract type. Finally, we can use the instances of those classes where an instance of the abstract type is expected. In case of statically-typed languages, this requires implementing an interface or inheriting from an abstract class.
 
 So, in case of our alarms, we could make an interface with the following
 signature:
@@ -130,8 +128,7 @@ Thanks to this, I create the alarm once, and then I can take it and pass it to t
 
 This allows writing a lot of classes that have no knowledge whatsoever about the real class of the alarm they are dealing with, yet are able to use the alarm just fine only by knowing a common abstract type -- `Alarm`. If we are able to do that, we arrive at a situation where we can add more alarms implementing `Alarm` and watch existing objects that are already using `Alarm` work with these new alarms without any change in their source code! There is one condition, however -- the **creation of the alarm instances must be moved out of the classes that use them**. That's because, as we already observed, to create an alarm using a `new` operator, we have to know the exact type of the alarm we are creating. So whoever creates an instance of `LoudAlarm` or `SilentAlarm`, loses its uniformity, since it is not able to depend solely on the `Alarm` interface.
 
-The power of composition
-------------------------
+## The power of composition
 
 Moving creation of alarm instances away from the classes that use those alarms brings up an interesting problem -- if an object does not create the objects it uses, then who does it? A solution is to make some special places in the code that are only responsible for composing a system from context-independent objects[^moreonindependence]. We saw this already as Johnny was explaining composability to Benjamin. He used the following example:
 
@@ -148,9 +145,9 @@ new SqlRepository(
 
 We can do the same with our alarms. Let's say that we have a secure area that has three buildings with different alarm policies:
 
--   Office building -- the alarm should silently notify guards during the day (to keep office staff from panicking) and loud during the night, when guards are on patrol.
--   Storage building -- as it is quite far and the workers are few, we want to trigger loud and silent alarms at the same time.
--   Guards building -- as the guards are there, no need to notify them. However, a silent alarm should call police for help instead, and a loud alarm is desired as well.
+- Office building -- the alarm should silently notify guards during the day (to keep office staff from panicking) and loud during the night, when guards are on patrol.
+- Storage building -- as it is quite far and the workers are few, we want to trigger loud and silent alarms at the same time.
+- Guards building -- as the guards are there, no need to notify them. However, a silent alarm should call police for help instead, and a loud alarm is desired as well.
 
 Note that besides just triggering loud or silent alarm, we have a requirement for a combination ("loud and silent alarms at the same time") and a conditional ("silent during the day and loud during the night"). we could just hardcode some `for`s and `if-else`s in our code, but instead, let's factor out these two operations (combination and choice) into separate classes implementing the alarm interface.
 
@@ -161,7 +158,7 @@ public class DayNightSwitchedAlarm : Alarm
 {
   private readonly Alarm _dayAlarm;
   private readonly Alarm _nightAlarm;
-  
+
   public DayNightSwitchedAlarm(
     Alarm dayAlarm,
     Alarm nightAlarm)
@@ -169,7 +166,7 @@ public class DayNightSwitchedAlarm : Alarm
     _dayAlarm = dayAlarm;
     _nightAlarm = nightAlarm;
   }
-  
+
   public void Trigger()
   {
     if(/* is day */)
@@ -199,7 +196,7 @@ public class HybridAlarm : Alarm
 {
   private readonly Alarm _alarm1;
   private readonly Alarm _alarm2;
-  
+
   public HybridAlarm(
     Alarm alarm1,
     Alarm alarm2)
@@ -207,7 +204,7 @@ public class HybridAlarm : Alarm
     _alarm1 = alarm1;
     _alarm2 = alarm2;
   }
-  
+
   public void Trigger()
   {
     _alarm1.Trigger();
@@ -303,6 +300,7 @@ public class NoAlarm : Alarm
   }
 }
 ```
+
 and passing it as the alarm to guards building:
 
 ```csharp
@@ -315,8 +313,7 @@ Noticed something funny about the last few examples? If not, here goes an explan
 
 This ability to change the behavior of our application just by changing the way objects are composed together is extremely powerful (although you will always be able to achieve it only to certain extent), especially in evolutionary, incremental design, where we want to evolve some pieces of code with as little as possible other pieces of code having to realize that the evolution takes place. This ability can be achieved only if our system consists of composable objects, thus the need for composability -- an answer to a question raised at the beginning of this chapter.
 
-Summary -- are you still with me?
---------------------------------
+## Summary -- are you still with me?
 
 We started with what seemed to be a repetition from basic object-oriented programming course, using a basic example. It was necessary though to make a fluent transition to the benefits of composability we eventually introduced at the end. I hope you did not get overwhelmed and can understand now why I am putting so much stress on composability.
 

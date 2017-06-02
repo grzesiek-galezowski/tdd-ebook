@@ -6,7 +6,6 @@ Mock objects were made with specific goal in mind. My hope is that when you unde
 
 In this chapter, we will explore the qualities of object-oriented design which make mock objects a viable tool.
 
-Composability... again!
------------------------
+## Composability... again!
 
 In the two previous chapters, we followed Johnny and Benjamin in discovering the benefits of and prerequisites for composability of objects. Composability is the number one quality of the design we're after. After reading Johhny and Benjamin's story, you might have some questions regarding composability. Hopefully, they are among the ones answered in the next few chapters. Ready?
