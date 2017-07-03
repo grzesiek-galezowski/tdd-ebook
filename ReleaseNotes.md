@@ -1,3 +1,13 @@
+# 03-07-2017
+
+Hi,
+
+The main dish of this release is a fix for bug "Is BroadcastingObserver really more flexible? #93". I took this opportunity to do a slight face-lift of the impacted chapter as well as split the object composition chapter into three (it was a really long one) along with style corrections. The bulk of the content is unchanged, so if you already read these chapters and didn't have issues with them, there's probably not a great need to re-read it. 
+
+My next step will be going back to the value objects chapters that I left half-finished and bring them into a production-ready stage. 
+
+As usual, happy reading and thanks for your support.
+
 # 05-05-2017
 
 After a long work, the triangulation chapter - the last chapter of part 1 is now refactored and partly rewritten.
