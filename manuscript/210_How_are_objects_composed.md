@@ -32,5 +32,3 @@ This is a piece of code that creates two objects and connects them together, the
 1. Where are objects composed? Answer: at application entry point (`Main()` method)
 
 Depending on circumstances, we may have different sets of answers. Also, to avoid rethinking this topic each time we create an application, I like to have a set of default answers to these questions. I'd like to demonstrate these answers by tackling each of the three questions in-depth, one by one, in the coming chapters.
-
-

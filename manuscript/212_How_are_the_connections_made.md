@@ -41,7 +41,7 @@ public void DoSomething()
 }
 ```
 
-### Advantage: "what you hide, you can change" 
+### Advantage: "what you hide, you can change"
 
 Composing using constructors has one significant advantage. Let's look again at how `Sender` is created:
 
