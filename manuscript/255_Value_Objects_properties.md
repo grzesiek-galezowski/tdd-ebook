@@ -140,14 +140,14 @@ I met a lot developers that find using factory methods somehow unfamiliar, but t
 #### Ensuring consistent initialization of objects
 
 In case where we have different ways of initializing an object that share a common part (i.e. whichever way we choose, part of the initialization must always be done the same), having several constructors that delegate to one common seems like a good idea. For example, we can have two constructors, one delegating to the other, that holds a common initialization logic:
-  
+
 ```csharp
 // common initialization logic
 public ProductName(string value)
-{ 
+{
   _value = value;
 }
-  
+
 //another constructo that uses the common initialization
 public ProductName(string model, string onfiguration)
  : this(model + " " + configuration) //delegation to "common" constructor
@@ -161,10 +161,10 @@ The issue with this approach is this binding between constructors is not enforce
 
 ```csharp
 public ProductName(string value)
-{ 
+{
   _value = value;
 }
-  
+
 public ProductName(string model, string onfiguration)
  //oops, no delegation to the other constructor
 {
@@ -173,7 +173,7 @@ public ProductName(string model, string onfiguration)
 
 which leaves room for mistakes - we might forget to initialize all the fields all the time and allow creating objects with invalid state.
 
-I argue that using several static factory methods while leaving just a single constructor is safer in that it enforces every object creation to pass through this single constructor. This constructor can then ensure all fields of the object are properly initialized. There is no way in such case that we can bypass this constructor in any of the static factory methods, e.g.:  
+I argue that using several static factory methods while leaving just a single constructor is safer in that it enforces every object creation to pass through this single constructor. This constructor can then ensure all fields of the object are properly initialized. There is no way in such case that we can bypass this constructor in any of the static factory methods, e.g.:
 
 ```csharp
 public ProductName CombinedOf(string model, string configuration)
@@ -184,10 +184,10 @@ public ProductName CombinedOf(string model, string configuration)
 }
 ```
 
-What I wrote above might seem an unnecessary complication as the example of product names is very simple and we are unlikely to make a mistake like the one I described above, however:
+What I wrote above might seem an unnecessary complication as the example of product names is trivial and we are unlikely to make a mistake like the one I described above, however:
 
-1. There are more complex cases when we can indeed forget to initialize some fields in multiple constructors. 
-2. It is always better to be protected by the compiler than not when the price for the protection is considerably low. At the very least, when something happens, we'll have one place less to search for bugs.
+1. There are more complex cases when we can indeed forget to initialize some fields in multiple constructors.
+1. It is always better to be protected by the compiler than not when the price for the protection is considerably low. At the very least, when something happens, we'll have one place less to search for bugs.
 
 #### Better place for input validation
 

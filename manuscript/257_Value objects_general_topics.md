@@ -1,20 +1,30 @@
 # Aspects of value objects design
 
-There are few aspects of design of value objects that I still need to talk about.
+There are few aspects of design of value objects that I still need to mention to give you a full picture.
 
 ## Immutability
 
-I already said that value objects are usually immutable. Some say immutability is the core part of something being a value (e.g. Kent Beck goes as far as to say that 1 is always 1 and will never become 2), while others don't consider it as hard constraint. One way or another, immutability makes an awful lot of sense for value objects. Allow me to outline just three reasons I think immutability is a key constraint for value objects.
+I mentioned before that value objects are usually immutable. Some say immutability is the core part of something being a value (e.g. Kent Beck goes as far as to say that 1 is always 1 and will never become 2), while others don't consider it as hard constraint. One way or another, designing value objects as immutable has served me exceptionally well to the point that I don't even consider writing value object classes that are mutable. Allow me to describe three of the reasons I consider immutability a key constraint for value objects.
 
 ### Accidental change of hash code
 
-Many times, values are used as keys in hash maps (.e.g .NET's `Dictionary<K,V>` is essentially a hash map). Not that many people are aware of how hash maps work. the thing is that we act as if we were indexing something using an object, but the truth is, we are using hash codes in such cases. Let's imagine we have a dictionary indexed by instances of some elusive type, called `ValueObject`:
+Many times, values are used as keys in hash maps (.e.g .NET's `Dictionary<K,V>` is essentially a hash map). Not that many people are aware of how hash maps work. the thing is that we act as if we were indexing something using an object, but most of the time, when we put something into a hash map using an object as a key, it uses the pair: hash code + key object itself:
+
+1. hash codes of the keys are used to put values into "buckets". This is the first level of indexing, but often insufficient, as several keys might generate the same hash code.
+1. in a specific "bucket", the key itself is stored.
+
+Every time we request a value by key, the hash map does the following:
+
+1. It retrieves the hash code of the passed key to determine the right "bucket".
+1. When the "bucket" is found, it compares the key object itself to the keys stored in that "bucket" to find the requested value.
+
+Let's imagine we have a dictionary indexed with instances of a type, called `ValueObject`:
 
 ```csharp
-Dictionary<ValueObject, AnObject> _objects; 
+Dictionary<ValueObject, AnObject> _objects;
 ```
 
- and that we are allowed to change the state of its object, e.g. by using a method `SetName()`. Now, it is a shame to admit, but there was a time when I thought that doing this:
+ and that we are allowed to change the state of its object, e.g. by using a method `SetName()`. I shamefully admit that there was a time when I thought that doing this:
 
 ```csharp
 ValueObject val = ValueObject.With("name");
@@ -26,11 +36,13 @@ val.SetName("name2");
 var objectIAddedTwoLinesAgo = _objects[val];
 ```
 
-would give me access to the original object I put into the dictionary with `val` as a key. The impression was caused by the code `_objects[val] = new SomeObject();` looking as if I indexed the dictionary with an object, where in reality, the dictionary was merely taking the `val` to calculate its hash code and use this as a real key. 
+would give me access to the original object I put into the dictionary with `val` as a key. The impression was caused by the code `_objects[val] = new SomeObject();` looking as if I indexed the dictionary with an object only, where in reality, the dictionary was in the first place taking the `val` to calculate its hash code and use this to find the right "bucket".
 
-This is the reason why the above code would throw an exception, because by changing the state of the `val` with the statement: `val.SetName("name2");`, I also changed its calculated hash code, so the second time I did `_objects[val]`, I was accessing an entirely different index of the dictionary than when I did it the first time.
+This is the reason why the above code would throw an exception, because by changing the state of the `val` with the statement: `val.SetName("name2");`, I also changed its calculated hash code, so the second time I did `_objects[val]`, I was accessing an entirely different "bucket" of the dictionary than when I did it the first time.
 
-As it is quite common situation that value objects end up as keys inside dictionaries, it is better to leave them immutable to avoid nasty surprises.
+As I find it a quite common situation that value objects end up as keys inside dictionaries, I'd rather leave them immutable to avoid nasty surprises.
+
+//TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
 
 ### Accidental modification by foreign code
 
