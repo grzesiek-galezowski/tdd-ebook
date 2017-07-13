@@ -544,14 +544,13 @@ to obtain different behavior. Note that we have invented something that has thes
  
 All of these points suggest that we have created a *Domain-Specific Language*[^fowlerdsl], which, by the way, is a *higher-level language*, meaning we describe our software on a higher level of abstraction. 
 
-## The significance of higher-level language
+## The significance of a higher-level language
 
-So.. why do we need a higher-level language to describe the behavior of our application? After all, expressions, statements, loops and conditions (and objects and polymorphism) are our daily bread and butter. Why invent something that moves us away from this kind of programming into something "domain-specific"?
+So... why do we need a higher-level language to describe the behavior of our application? After all, expressions, statements, loops and conditions (and objects and polymorphism) are our daily bread and butter. Why invent something that moves us away from this kind of programming into something "domain-specific"?
 
 My main answer is: to deal with with complexity more effectively. 
 
-
-What't complexity? For our purpose we can approximate it as a number of different decisions our application needs to make. As we add new features and fix errors or implement missed requirements, the complexity of our software grows. What can we do when it grows so larger than we are able to manage? We have the following choices:
+What's complexity? For our purpose we can approximately define it as a number of different decisions our application needs to make. As we add new features and fix errors or implement missed requirements, the complexity of our software grows. What can we do when it grows larger than we are able to manage? We have the following choices:
 
  1. Remove some decisions -- i.e. remove features from our application. This is very cool when we *can* do this, but there are times when this might be unacceptable from the business perspective.
  1. Optimize away redundant decisions -- this is about making sure that each decision is made once in the code base -- I already showed you some examples how polymorphism can help with that.    
