@@ -202,7 +202,7 @@ and when we want to know the concrete amount in a given currency:
 
 ```csharp
 //doesn't matter which currency it is.
-decimal amountOfDollarsOnMyAccount = mySavings.InDollars();
+decimal amountOfDollarsOnMyAccount = mySavings.AmmountOfDollars();
 ```
 
 other than that, we are allowed to mix different currencies whenever and wherever we like[^wecoulduseextensionmethods]:
@@ -290,7 +290,7 @@ AbsoluteFilePath filePath = dirPath + fileName;
 
 Of course, we create conversion methods only where a conversion makes sense, so we would not add a conversion method to an `AbsoluteDirectoryPath` that would combine it with another `AbsoluteDirectoryPath`.
 
-# Delegated variability
+### Delegated variability
 
 Finally, we can achieve variability by delegating the variable behavior to an interface and have a value object accept that interface implementation as a method parameter. An example of this would be the `Product` class from the previous chapter that had the following method declared:
 
@@ -298,7 +298,7 @@ Finally, we can achieve variability by delegating the variable behavior to an in
 public string ToString(Format format);
 ```
 
-where `Format` was an interface and we passed different implementations of this interface to this method, e.g. `ScreenFormat` or `ReportingFormat`. Note that having the `Format` as a method parameter instead of e.g. a constructor parameter allows us to uphold the value semantics, because `Format` is not part of the object, so we don't need to solve dillemas such as "is the name 'laptop' formatted for screen equal to 'laptop' formatted for report?"
+where `Format` was an interface and we passed different implementations of this interface to this method, e.g. `ScreenFormat` or `ReportingFormat`. Note that having the `Format` as a method parameter instead of e.g. a constructor parameter allows us to uphold the value semantics, because `Format` is not part of the object but rather a "guest helper" object. Thanks to this, so we don't need to answer questions such as "is the name 'laptop' formatted for screen equal to 'laptop' formatted for a report?"
 
 ### Summing up the implicit vs explicit vs delegated discussion
 
@@ -308,17 +308,11 @@ If we choose the implicit path, we can treat all variations the same, since they
 
 I must say I find delegated variability a rare case (formatting the conversion to string is a typical example) and throughout my entire career I had maybe one or two situations where I had to resort to it. However, some libraries use this approach and in your particular domain or type of applications it may be much more typical case.
 
-//TODO //TODO //TODO //TODO //TODO //TODO //TODO 
-
 ## Special values
 
-Some value types has values that are so specific asto have their own name. For example, a string value consisting of `""` is called an empty string. A XXXXXXXX (TODO put a maximum 32 bit integer here) is called "maximum 32 bit integer value". 
+Some value types have values that are so specific that they have their own names. For example, a string value consisting of `""` is called "an empty string". A 2,147,483,647 is called "a maximum 32 bit integer value". These special values make their way into a value object design. For example, in C#, we have `Int32.MaxValue` and `Int32.MinValue` which are constants representing a maximum and minimum value of 32 bit integer and `string.Empty` representing an empty string. In Java, we have things like `Duration.ZERO` to represent a zero duration or `DayOfWeek.MONDAY` to represent a specific day of week. 
 
-For example, in C#, we have `Int32.Max` and `Int32.Min` which are constants representing a maximum and minimum value of 32 bit integer. `string.Empty` representing an empty string.
-
-In Java, we have things like `Duration.ZERO` to represent a zero duration or `DayOfWeek.MONDAY` to represent a specific day of week.
-
-For such values, is makes a lot of sense to make them globally accessible from the value object classes, as is done in all the above examples from C# and Java library. This is because they are immutable, so the global accessibility does not cause any hurt. For example, we can imagine `string.Empty` implemented like this:
+For such values, the common practice I see is making them globally accessible from the value object classes, as is done in all the above examples from C# and Java. This is because they are immutable, so the global accessibility does not cause any hurt. For example, we can imagine `string.Empty` implemented like this:
 
 ```csharp
 public class string
@@ -329,7 +323,7 @@ public class string
 }
 ```
 
-The additional `const` modifier ensures no one will assign any new value to the `Empty` field. By the way, we can use `const` only for types that have literal values, like a string. For many others, we will have to use a `static readonly` (or `final static` in case of Java) modifier. To demonstrate it, let's go back to the money example from this chapter and imagine we want to have a special value called `None` to symbolize no money in any currency. As our `Money` type has no literals, we cannot use the `const` modifier, so instead we have to do this:
+The additional `const` modifier ensures no one will assign any new value to the `Empty` field. By the way, we can use `const` only for types that have literal values, like a string or an `int`. For our custom value objects, we will have to use a `static readonly` modifier (or `static final` in case of Java). To demonstrate it, let's go back to the money example from this chapter and imagine we want to have a special value called `None` to symbolize no money in any currency. As our `Money` type has no literals, we cannot use the `const` modifier, so instead we have to do this:
 
 ```csharp
 public class Money
@@ -354,32 +348,29 @@ if(accountBalance == Money.None)
 
 ## Value types and Tell Don't Ask
 
-When talking about the web of objects metaphor, I stressed that objects should be told what to do, not asked for information. I also said that if a responsibility is too big for a single object to handle, it does not try to achieve it alone, but rather distribute the work further to other objects by sending messages to them. I said that preferrably (TODO check spelling) we would like to have mostly `void` methods that accept their context as arguments.
+When talking about the "web of objects" metaphor, I stressed that objects should be told what to do, not asked for information. I also said that if a responsibility is too big for a single object to handle, it shouldn't try to achieve it alone, but rather delegate the work further to other objects by sending messages to them. I mentioned that preferably we would like to have mostly `void` methods that accept their context as arguments.
 
 What about values? Does that metaphor apply to them? And if so, then how? And what about Tell Don't Ask?
 
-First of all, values do not belong to the web of objects metaphor, alhough in almost all object-oriented languages, values are implemented using the same mechanism as objects - a class[^csharpstructs]. Values can be passed between objects in messages, but we don't talk about values sending messages.
+First of all, values don't appear explicitly in the web of objects metaphor, at least they're not "nodes" in this web. Alhough in almost all object-oriented languages, values are implemented using the same mechanism as objects - classes[^csharpstructs], I treat them as somewhat different kind of construct with their own set of rules and constraints. Values can be passed between objects in messages, but we don't talk about values sending messages by themselves.
 
-A conclusion from this is that values cannot be composed of objects. Values can be composed of values (as our `Path` type had a `string` inside), which ensures their immutability. Also, they can occasionally can objects as parameters of their methods (remember the `ProductName` class from previous chapters? I had a method `ToString()` accepting a `Format` interface), but this is more of an exception than a rule.
+A conclusion from this is that values should not be composed of objects (understood as nodes in the "web"). Values should be composed of other values (as our `Path` type had a `string` inside), which ensures their immutability. Also, they can occasionally can objects as parameters of their methods (like the `ProductName` class from previous chapter that had a method `ToString()` accepting a `Format` interface), but this is more of an exception than a rule. Sometimes, I need to use a collection inside a value object. Collections in Java and C# are not typically treated as values, so this is kind of exception. Still, when I use collections inside value objects, I tend to use the immutable ones, like [ImmutableList](https://msdn.microsoft.com/en-us/library/dn467185(v=vs.111).aspx).
 
-If the above statements about values are true, then it means values simply cannot be expected to conform to Tell Don't Ask. Sure, we want them to be encapsulate domain concepts, to provide higher-level interface etc., so we do **not** want values to become plain data structures like the ones we know from C, but the nature of values is to transfer pieces of data. 
+If the above statements about values are true, then it means values simply cannot be expected to conform to Tell Don't Ask. Sure, we want them to be encapsulate domain concepts, to provide higher-level interface etc., so we struggle very hard for the value objects not to become plain data structures like the ones we know from C, but the nature of values is rather as "intelligent pieces of data" rather than "abstract sets of behaviors". 
 
-As such, we expect values to contain a lot of query methods (although, as I said, we strive for something more abstract and more useful than mere "getter" methods most of the time). For example, you might like the idea of having a set of path-related classes (like `AbsoluteFilePath`), but in the end, you will have to somehow interact with a host of third party APIs that don't know anything about those classes. Then, a `ToString()` method that just returns internally held value will come in handy.
-
-
-
+As such, we expect values to contain query methods (although, as I said, we strive for something more abstract and more useful than mere "getter" methods most of the time). For example, you might like the idea of having a set of path-related classes (like `AbsoluteFilePath`), but in the end, you will have to somehow interact with a host of third party APIs that don't know anything about those classes. Then, a `ToString()` method that just returns internally held value will come in handy.
 
 ## Summary
 
-
+This concludes my writing on value objects. I never thought there would be so much to discuss as to how I believe they should be designed. For readers interested in seeing a state-of-the-art case study of value objects, I recommend looking at [Noda Time](http://nodatime.org/)/[Joda Time](http://www.joda.org/joda-time/) library (or [Java 8 new time and date API](http://www.oracle.com/technetwork/articles/java/jf14-date-time-2125367.html)).  
 
 [^functionallanguages]: This is one of the reasons why functional languages, where data is immutable by default, gain a lot of attention in domains where doing many things in parallel is necessary.
 
 [^wecoulduseextensionmethods]: I could use extension methods to make the example even more idiomatic, e.g. to be able to write `5.Dollars()`, but I don't want to go to far in the land of idioms specific to any language, because my goal is an audience wider than just C# programmers.  
 
-[^atmafilesystem]: this example uses a library called Atma Filesystem: TODO hyperlink to nuget
+[^atmafilesystem]: this example uses a library called Atma Filesystem: https://www.nuget.org/packages/AtmaFilesystem/
 
-[^atmafilesystem2]: for reference, please take a look at TODO hyperlink
+[^atmafilesystem2]: for reference, please take a look at https://www.nuget.org/packages/AtmaFilesystem/
 
 [^tddbyexample]: This example is loosely based on Kent Beck's book Test-Driven Development By Example. based on  TODO add reference to Kent's book
 
@@ -388,9 +379,3 @@ As such, we expect values to contain a lot of query methods (although, as I said
 [^naivemoneyexample]: I am aware that this example looks a bit naive - after all, adding money in several currencies would imply they need to be converted to a single currency and the exchange rates would then apply, which could make us lose money. Kent Beck acknowledged and solved this problem in his book Test-Driven Development By Example - be sure to take a look what he came up with if you're interested. 
 
 [^javahaspath]: This is what Java did. I don't declare that Java designers made a bad decision - a single `Path` class is probably much more versatile. The only thing I'm saying is that this design is not optimal for our particular scenario. 
-
-TODO check whether the currencies are written uppercase in Kent's book
-
-
-
- 
