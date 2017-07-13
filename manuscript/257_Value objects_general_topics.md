@@ -168,9 +168,9 @@ AbsoluteFilePath newPath = oldPath + FileName.Value("file.txt");
 
 So, again, any time we want to have a value based on a previous value, instead of modifying the previous object, we create a new object with desired state.
 
-## Implicit vs explicit handling of variability
+## Handling of variability
 
-As in ordinary objects, there can be some variability in values. For example, money can be dollars, pounds, zlotys (Polish money), euros etc. Another example of something that can be modelled as a value are paths (you know, `C:\Directory\file.txt` or `/usr/bin/sh`) - here, we can have absolute paths, relative paths, paths to files and paths pointing to directories, we can have unix paths and Windows paths.
+As in ordinary objects, there can be some variability in the world of values. For example, money can be dollars, pounds, zlotys (Polish money), euros etc. Another example of something that can be modelled as a value are paths (you know, `C:\Directory\file.txt` or `/usr/bin/sh`) - here, we can have absolute paths, relative paths, paths to files and paths pointing to directories, we can have unix paths and Windows paths.
 
 Contrary to ordinary objects, however, where we solved variability by using interfaces and different implementations (e.g. we had `Alarm` interface with implementing classes like `LoudAlarm` or `SilentAlarm`), in values we do it differenly. This is because the variability of values is not behavioral. For example:
 

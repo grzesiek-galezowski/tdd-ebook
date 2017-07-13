@@ -29,8 +29,8 @@
 240_Refactoring_Object_Composition.md
 250_Value_Objects.md
 255_Value_Objects_properties.md
-End.md
 257_Value objects_general_topics.md
+End.md
 260_Object_oriented_primer_summary.md
 270_Mock_Objects.md
 990_Further_reading.md
