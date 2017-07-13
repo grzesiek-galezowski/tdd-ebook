@@ -8,47 +8,58 @@ I mentioned before that value objects are usually immutable. Some say immutabili
 
 ### Accidental change of hash code
 
-Many times, values are used as keys in hash maps (.e.g .NET's `Dictionary<K,V>` is essentially a hash map). Not that many people are aware of how hash maps work. the thing is that we act as if we were indexing something using an object, but most of the time, when we put something into a hash map using an object as a key, it uses the pair: hash code + key object itself:
-
-1. hash codes of the keys are used to put values into "buckets". This is the first level of indexing, but often insufficient, as several keys might generate the same hash code.
-1. in a specific "bucket", the key itself is stored.
-
-Every time we request a value by key, the hash map does the following:
-
-1. It retrieves the hash code of the passed key to determine the right "bucket".
-1. When the "bucket" is found, it compares the key object itself to the keys stored in that "bucket" to find the requested value.
-
-Let's imagine we have a dictionary indexed with instances of a type, called `ValueObject`:
+Many times, values are used as keys in hash maps (.e.g .NET's `Dictionary<K,V>` is essentially a hash map). Let's imagine we have a dictionary indexed with instances of a type called `KeyObject`:
 
 ```csharp
-Dictionary<ValueObject, AnObject> _objects;
+Dictionary<KeyObject, AnObject> _objects;
 ```
 
- and that we are allowed to change the state of its object, e.g. by using a method `SetName()`. I shamefully admit that there was a time when I thought that doing this:
+When we use a `KeyObject` to insert a value into a dictionary:
 
 ```csharp
-ValueObject val = ValueObject.With("name");
-_objects[val] = new SomeObject();
-
-// we are mutating the state:
-val.SetName("name2");
-
-var objectIAddedTwoLinesAgo = _objects[val];
+KeyObject key = ...
+_objects[key] = anObject;
 ```
 
-would give me access to the original object I put into the dictionary with `val` as a key. The impression was caused by the code `_objects[val] = new SomeObject();` looking as if I indexed the dictionary with an object only, where in reality, the dictionary was in the first place taking the `val` to calculate its hash code and use this to find the right "bucket".
+then its hash code is calculated and stored separately from the original key.
 
-This is the reason why the above code would throw an exception, because by changing the state of the `val` with the statement: `val.SetName("name2");`, I also changed its calculated hash code, so the second time I did `_objects[val]`, I was accessing an entirely different "bucket" of the dictionary than when I did it the first time.
+When we read from the dictionary using the same key:
 
-As I find it a quite common situation that value objects end up as keys inside dictionaries, I'd rather leave them immutable to avoid nasty surprises.
+```csharp
+AnObject anObject = _objects[key];
+```
 
-//TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+then its hash code is calculated again and only when the hash codes match are the key objects compared for equality. 
+
+Thus, in order to successfully retrieve an object from a dictionary with a key, the key must meet the following conditions in regard to the key we previously used to put the object in:
+
+1. The `GetHashCode()` method of the key used to retrieve the object must return the same hash code as that of the key used to insert the object,
+1. The `Equals()` method must indicate that both the key used to insert the object and the key used to retrieve it are equal.
+
+The bottom line is: if any of the two conditions is not met, we cannot expect to get the item we inserted.
+
+I mentioned in the previous chapter that hash code of a value object is calculated based on its state. A conclusion from this is that each time we change the state of a value object, its hash code changes as well. So, let's assume our `KeyObject` allows changing this state, e.g. by using a method `SetName()`. Thus, we can do the following:
+
+```csharp
+KeyObject key = KeyObject.With("name");
+_objects[key] = new AnObject();
+
+// we mutate the state:
+key.SetName("name2");
+
+//do we get the inserted object or not?
+var objectIInsertedTwoLinesAgo = _objects[key];
+```
+
+which would throw a `KeyNotFoundException` (this is the dictionary's behavior when it does not hold the requested key), as the hash code when retrieving the item is different than it was when inserting it. By changing the state of the `key` with the statement: `key.SetName("name2");`, I also changed its calculated hash code, so when I asked for the previously inserted object with `_objects[val]`, I was accessing an entirely different place in the dictionary than the one where my object was stored.
+
+As I find it a quite common situation that value objects end up as keys inside dictionaries, I'd rather leave them immutable to avoid nasty surprises. 
 
 ### Accidental modification by foreign code
 
 If you have ever programmed in Java, you have to remember its `Date` class, that did behave like a value, but was mutable (with methods like `setMonth()`, `setTime()`, `setHours()` etc.). 
 
-Now, value objects are different from normal objects in that they tend to be passed a lot to many subroutines or accessed from getters. Many Java programmers did this kind of error when allowing access to a `Date` field:
+Now, value objects are different from normal objects in that they tend to be passed a lot throughout an application. Many Java programmers did this kind of error when allowing access to a field of type `Date`:
 
 ```java
 public class ObjectWithDate {
@@ -64,16 +75,18 @@ public class ObjectWithDate {
 }
 ```
 
-It was so funny, because every user of such objects could modify the internal data like this:
+This led to unpredicted situations as every user of such objects could accidentally modify date held by such object like this:
 
 ```java
 ObjectWithDate o = new ObjectWithDate();
 
-o.getDate().setTime(10000);
+date = o.getDate();
+date.setTime(date.getTime() + 10000); //oops!
 
+return date;
 ```
 
-The reason this was happening was that the method `getDate()` returned a reference to a mutable object, so by calling the getter, we would get access to internal field. 
+The reason this was happening was that the method `getDate()` returned a reference to a mutable object, so by calling the getter, we would get access to internal field. This wouldn't be an issue if the field was immutable - but it wasn't.
 
 As it was most of the time against the intention of the developers, it forced them to manually creating a copy each time they were returning a date:
 
@@ -83,9 +96,9 @@ public Date getDate() {
 }
 ```
 
-which was easy to forget and may have introduced a performance penalty on cloning objects each time, even when the code that was calling the getter had no intention of modifying the date.
+which many of us tended to forget and which may have introduced a performance penalty because the objects were cloned every time, even when the code that was calling the `getDate()` had no intention of modifying the date.
 
-And that's not all, folks - after all, I said to avoid getters, so we should not have this problem, right? Well, no, because the same applies when our class passes the date somewhere like this:
+Even when we follow the suggestion of avoiding getters, the same applies when our class passes the date somewhere like in this `dumptInto()` method`:
 
 ```java
 public void dumpInto(Destination destination) {
@@ -93,13 +106,17 @@ public void dumpInto(Destination destination) {
 }
 ```
 
-In case of this `dumpInto()` method, the `Destination` is allowed to modify the date it receives anyway it likes, which, again, was usually against developers' intention.
+Here, the `destination` is allowed to modify the date it receives anyway it likes, which, again, is usually against developers' intentions.
 
-I saw many, many issues in production code caused by the mutability of Java `Date` type alone. That's one of the reasons the new time library in Java 8 (`java.time`) contains immutable types for time and date. When a type is immutable, you can safely return its instance or pass it somewhere without having to worry that someone will overwrite your local state against your intention.
+I saw many, many issues in production code caused by the mutability of Java `Date` type alone. That's one of the reasons the new time library in Java 8 (`java.time`) contains immutable types for time and date. When a type is immutable, you can safely return its instance or pass it somewhere without having to worry that someone will overwrite your local state against your will.
 
 ### Thread safety
 
-Mutable values cause issues when they are shared by threads, because such objects can be changed by few threads at the same time, which can cause data corruption. I stressed a few times already that value objects tend to be created many times in many places and passed along inside methods or returned as results a lot. Thus, this is a real danger. Sure, we could lock each method such a mutable value object, but then, the performance penalty could be severe.
+Mutable values cause issues when they are shared by threads, because such objects can be changed by several threads at the same time, which can cause data corruption. I stressed a few times already that value objects tend to be created many times in many places and passed along inside methods or returned as results a lot - this seems to be their nature. Thus, this is a real danger. 
+
+Imagine our code took hold of a value object of type `Credentials`, containing username and password. In addition, `Credentials` objects are mutable. If so, one thread may modify TODO TODO TODO
+
+TODO TODO TODO code example 
 
 On the other hand, when an object is immutable, there are no multithreading concerns. After all, no one is able to modify the state of an object, so there is no possibility for concurrent modifications causing data corruption. This is one of the reasons why functional languages, where data is immutable by default, gain a lot of attention in domains where running many threads is necessary.
 
