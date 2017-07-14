@@ -1,10 +1,10 @@
 # Aspects of value objects design
 
-There are few aspects of design of value objects that I still need to mention to give you a full picture.
+In the last chapter, we examined the anatomy of a value object. Still, there are several more aspects of value objects design that I still need to mention to give you a full picture.
 
 ## Immutability
 
-I mentioned before that value objects are usually immutable. Some say immutability is the core part of something being a value (e.g. Kent Beck goes as far as to say that 1 is always 1 and will never become 2), while others don't consider it as hard constraint. One way or another, designing value objects as immutable has served me exceptionally well to the point that I don't even consider writing value object classes that are mutable. Allow me to describe three of the reasons I consider immutability a key constraint for value objects.
+I mentioned before that value objects are usually immutable. Some say immutability is the core part of something being a value (e.g. Kent Beck goes as far as to say that 1 is always 1 and will never become 2), while others don't consider it as a hard constraint. One way or another, designing value objects as immutable has served me exceptionally well to the point that I don't even consider writing value object classes that are mutable. Allow me to describe three of the reasons I consider immutability a key constraint for value objects.
 
 ### Accidental change of hash code
 
@@ -31,14 +31,14 @@ AnObject anObject = _objects[key];
 
 then its hash code is calculated again and only when the hash codes match are the key objects compared for equality. 
 
-Thus, in order to successfully retrieve an object from a dictionary with a key, the key must meet the following conditions in regard to the key we previously used to put the object in:
+Thus, in order to successfully retrieve an object from a dictionary with a key, this key object must meet the following conditions in regard to the key we previously used to put the object in:
 
-1. The `GetHashCode()` method of the key used to retrieve the object must return the same hash code as that of the key used to insert the object,
+1. The `GetHashCode()` method of the key used to retrieve the object must return the same hash code as that of the key used to insert the object did during the insertion,
 1. The `Equals()` method must indicate that both the key used to insert the object and the key used to retrieve it are equal.
 
 The bottom line is: if any of the two conditions is not met, we cannot expect to get the item we inserted.
 
-I mentioned in the previous chapter that hash code of a value object is calculated based on its state. A conclusion from this is that each time we change the state of a value object, its hash code changes as well. So, let's assume our `KeyObject` allows changing this state, e.g. by using a method `SetName()`. Thus, we can do the following:
+I mentioned in the previous chapter that hash code of a value object is calculated based on its state. A conclusion from this is that each time we change the state of a value object, its hash code changes as well. So, let's assume our `KeyObject` allows changing its state, e.g. by using a method `SetName()`. Thus, we can do the following:
 
 ```csharp
 KeyObject key = KeyObject.With("name");
@@ -51,9 +51,11 @@ key.SetName("name2");
 var objectIInsertedTwoLinesAgo = _objects[key];
 ```
 
-which would throw a `KeyNotFoundException` (this is the dictionary's behavior when it does not hold the requested key), as the hash code when retrieving the item is different than it was when inserting it. By changing the state of the `key` with the statement: `key.SetName("name2");`, I also changed its calculated hash code, so when I asked for the previously inserted object with `_objects[val]`, I was accessing an entirely different place in the dictionary than the one where my object was stored.
+This will throw a `KeyNotFoundException` (this is the dictionary's behavior when it is indexed with a key it does not contain), as the hash code when retrieving the item is different than it was when inserting it. By changing the state of the `key` with the statement: `key.SetName("name2");`, I also changed its calculated hash code, so when I asked for the previously inserted object with `_objects[val]`, I tried to access an entirely different place in the dictionary than the one where my object is stored.
 
 As I find it a quite common situation that value objects end up as keys inside dictionaries, I'd rather leave them immutable to avoid nasty surprises. 
+
+//TODO TODO TODOTODO
 
 ### Accidental modification by foreign code
 
@@ -362,7 +364,7 @@ As such, we expect values to contain query methods (although, as I said, we stri
 
 ## Summary
 
-This concludes my writing on value objects. I never thought there would be so much to discuss as to how I believe they should be designed. For readers interested in seeing a state-of-the-art case study of value objects, I recommend looking at [Noda Time](http://nodatime.org/)/[Joda Time](http://www.joda.org/joda-time/) library (or [Java 8 new time and date API](http://www.oracle.com/technetwork/articles/java/jf14-date-time-2125367.html)).  
+This concludes my writing on value objects. I never thought there would be so much to discuss as to how I believe they should be designed. For readers interested in seeing a state-of-the-art case study of value objects, I recommend looking at [Noda Time](http://nodatime.org) (for C#) and [Joda Time](http://www.joda.org/joda-time) (for Java) library (or [Java 8 new time and date API](http://www.oracle.com/technetwork/articles/java/jf14-date-time-2125367.html)).  
 
 [^functionallanguages]: This is one of the reasons why functional languages, where data is immutable by default, gain a lot of attention in domains where doing many things in parallel is necessary.
 
