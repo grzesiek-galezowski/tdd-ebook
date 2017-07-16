@@ -55,13 +55,11 @@ This will throw a `KeyNotFoundException` (this is the dictionary's behavior when
 
 As I find it a quite common situation that value objects end up as keys inside dictionaries, I'd rather leave them immutable to avoid nasty surprises. 
 
-//TODO TODO TODOTODO
-
 ### Accidental modification by foreign code
 
-If you have ever programmed in Java, you have to remember its `Date` class, that did behave like a value, but was mutable (with methods like `setMonth()`, `setTime()`, `setHours()` etc.). 
+I bet many who code or coded in Java know its `Date` class. `Date` behaves like a value (it has overloaded equality and hash code generation), but is mutable (with methods like `setMonth()`, `setTime()`, `setHours()` etc.). 
 
-Now, value objects are different from normal objects in that they tend to be passed a lot throughout an application. Many Java programmers did this kind of error when allowing access to a field of type `Date`:
+Typically, value objects tend to be passed a lot throughout an application and used in calculations. Many Java programmers at least once exposed a `Date` value using a getter:
 
 ```java
 public class ObjectWithDate {
@@ -76,21 +74,28 @@ public class ObjectWithDate {
   }
 }
 ```
-
-This led to unpredicted situations as every user of such objects could accidentally modify date held by such object like this:
+The `getDate()` method allows users of the `ObjectWithDate` class to access the date. But remember, a date object is mutable and a getter returns a reference! Everyone who calls the getter gains access to the internally stored instance of `Date` and can modify it like this:
 
 ```java
 ObjectWithDate o = new ObjectWithDate();
 
-date = o.getDate();
-date.setTime(date.getTime() + 10000); //oops!
+o.getDate().setTime(date.getTime() + 10000); //oops!
 
 return date;
 ```
 
-The reason this was happening was that the method `getDate()` returned a reference to a mutable object, so by calling the getter, we would get access to internal field. This wouldn't be an issue if the field was immutable - but it wasn't.
+Of course, no one would do it in the same line like on the snippet above, but usually, this date was accessed, assigned to a variable and passed through several methods, one of which did something like this:
 
-As it was most of the time against the intention of the developers, it forced them to manually creating a copy each time they were returning a date:
+```java
+public void DoSomething(Date date) {
+  date.setTime(date.getTime() + 10000); //oops!
+  this.nextUpdateTime = date;
+}
+```
+
+This led to unpredicted situations as the date objects were accidentally modified far, far away from the place they were retrieved.
+
+As most of the time it wasn't the intention, the problem of date mutability forced us to manually create a copy each time their code returned a date:
 
 ```java
 public Date getDate() {
@@ -98,19 +103,21 @@ public Date getDate() {
 }
 ```
 
-which many of us tended to forget and which may have introduced a performance penalty because the objects were cloned every time, even when the code that was calling the `getDate()` had no intention of modifying the date.
+which many of us tended to forget. This cloning approach, by the way, may have introduced a performance penalty because the objects were cloned every time, even when the code that was calling the `getDate()` had no intention of modifying the date[^dateoptimization].
 
-Even when we follow the suggestion of avoiding getters, the same applies when our class passes the date somewhere like in this `dumptInto()` method`:
+Even when we follow the suggestion of avoiding getters, the same applies when our class passes the date somewhere. Look at the body of a method, called `dumptInto()`:
 
 ```java
 public void dumpInto(Destination destination) {
-  return destination.write(_date);
+  destination.write(this.date); //passing reference to mutable object
 }
 ```
 
 Here, the `destination` is allowed to modify the date it receives anyway it likes, which, again, is usually against developers' intentions.
 
 I saw many, many issues in production code caused by the mutability of Java `Date` type alone. That's one of the reasons the new time library in Java 8 (`java.time`) contains immutable types for time and date. When a type is immutable, you can safely return its instance or pass it somewhere without having to worry that someone will overwrite your local state against your will.
+
+//TODO TODO
 
 ### Thread safety
 
@@ -381,3 +388,5 @@ This concludes my writing on value objects. I never thought there would be so mu
 [^naivemoneyexample]: I am aware that this example looks a bit naive - after all, adding money in several currencies would imply they need to be converted to a single currency and the exchange rates would then apply, which could make us lose money. Kent Beck acknowledged and solved this problem in his book Test-Driven Development By Example - be sure to take a look what he came up with if you're interested. 
 
 [^javahaspath]: This is what Java did. I don't declare that Java designers made a bad decision - a single `Path` class is probably much more versatile. The only thing I'm saying is that this design is not optimal for our particular scenario. 
+
+[^dateoptimization]: Unless Java optimizes it somehow, e.g. by using copy-on-write approach.

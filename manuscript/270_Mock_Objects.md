@@ -154,3 +154,19 @@ Now, wasn't this a painless introduction to mock objects! In the next chapters, 
 
 [^noexception]: By the way, note that this protocol we are specifying is very naive, since we assume that sending data through destination will never throw any exception.
  
+
+//TODO TODO TODO
+
+# Need-Driven Development
+
+# Responsibility-Driven Design
+
+# Guidance of test smells
+
+# Constrained non-determinism and mocks
+
+# Programming by intention
+
+# Stub queries, mock commands
+
+
