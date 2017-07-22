@@ -1,3 +1,7 @@
+# 22-07-2017
+
+Hi, a new version is available and it contains polished and reviewed version of a new chapter that up to this moment was in a "preview" state. Namely - Aspects of value objects design. This concludes the set of chapters devoted to value objects. Enjoy!
+
 # 03-07-2017
 
 Hi,
