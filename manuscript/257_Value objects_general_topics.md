@@ -321,7 +321,7 @@ I must say I find delegated variability a rare case (formatting the conversion t
 
 ## Special values
 
-Some value types have values that are so specific that they have their own names. For example, a string value consisting of `""` is called "an empty string". A `2,147,483,647` is called "a maximum 32 bit integer value". These special values make their way into value objects design. For example, in C#, we have `Int32.MaxValue` and `Int32.MinValue` which are constants representing a maximum and minimum value of 32 bit integer and `string.Empty` representing an empty string. In Java, we have things like `Duration.ZERO` to represent a zero duration or `DayOfWeek.MONDAY` to represent a specific day of week.
+Some value types have values that are so specific that they have their own names. For example, a string value consisting of `""` is called "an empty string". `2,147,483,647` is called "a maximum 32 bit integer value". These special values make their way into value objects design. For example, in C#, we have `Int32.MaxValue` and `Int32.MinValue` which are constants representing a maximum and minimum value of 32 bit integer and `string.Empty` representing an empty string. In Java, we have things like `Duration.ZERO` to represent a zero duration or `DayOfWeek.MONDAY` to represent a specific day of week.
 
 For such values, the common practice I've seen is making them globally accessible from the value object classes, as is done in all the above examples from C# and Java. This is because values are immutable, so the global accessibility doesn't hurt. For example, we can imagine `string.Empty` implemented like this:
 
