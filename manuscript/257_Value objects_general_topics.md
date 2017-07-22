@@ -393,4 +393,4 @@ This concludes my writing on value objects. I never thought there would be so mu
 
 [^dateoptimization]: Unless Java optimizes it somehow, e.g. by using copy-on-write approach.
 
-[^pathscomplex]: frankly, as in the case of money, the vision of paths I described here is a bit naive. Still, this naive view may be exactly what we need in our particular case.
+[^pathscomplex]: frankly, as in the case of money, the vision of paths I described here is a bit naive. Still, this naive view may be all what we need in our particular case.
