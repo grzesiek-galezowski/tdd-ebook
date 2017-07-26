@@ -93,7 +93,7 @@ public void DoSomething(Date date) {
 }
 ```
 
-This led to unpredicted situations as the date objects were accidentally modified far, far away from the place they were retrieved.
+This led to unpredicted situations as the date objects were accidentally modified far, far away from the place they were retrieved[^aliasingbug].
 
 As most of the time it wasn't the intention, the problem of date mutability forced us to manually create a copy each time their code returned a date:
 
@@ -394,3 +394,5 @@ This concludes my writing on value objects. I never thought there would be so mu
 [^dateoptimization]: Unless Java optimizes it somehow, e.g. by using copy-on-write approach.
 
 [^pathscomplex]: frankly, as in the case of money, the vision of paths I described here is a bit naive. Still, this naive view may be all what we need in our particular case.
+
+[^aliasingbug]: This is sometimes called "aliasing bug": https://martinfowler.com/bliki/AliasingBug.html
