@@ -1,6 +1,4 @@
-﻿# An object-oriented approach summary
-
-## Where are we now?
+﻿-# Part 3: Mock Objects and TDD in Object-Oriented World
 
 So far, we've talked a lot about the object-oriented world, consisting of objects that exhibit the following properties:
 
@@ -20,14 +18,14 @@ There are times when choosing whether something should be an object or a value p
 
 This joint world is the world we are going to fit mock objects and other TDD practices into in the next part.
 
-## So, tell me again, why are we here?
-
-I know we put TDD aside for such a long time. Believe me that this is because I consider understanding the concepts from all the chapters of part 2 crucial to getting mocks right.
+I know we put TDD aside for such a long time. Believe me that this is because I consider understanding the concepts from part 2 crucial to getting mocks right.
 
 Mock objects are not a new tool, however, there is still a lot of misunderstanding of what their nature is and where and how they fit best into the TDD approach. Some opinions went as far as to say that there are two styles of TDD: one that uses mocks (called "mockist TDD" or "London style TDD") and another without them (called "cassic TDD" or "Chicago style TDD"). Personally, I don't support this division. I like very much what Nat Pryce said about it[^differenttddtools]:
 
 > (...) I argue that there are not different kinds of TDD. There are different design conventions, and you pick the testing techniques and tools most appropriate for the conventions you're working in.
 
-The explanation of the "design conventions" that mocks were born from required putting you through so many pages about a specific view on object-oriented design. This is the view that mock objects as a tool and as a technique were chosen to support. Talking about mock objects out of the context of this view would not make too much sense for me.
+The explanation of the "design conventions" that mocks were born from required putting you through so many pages about a specific view on object-oriented design. This is the view that mock objects as a tool and as a technique were chosen to support. Talking about mock objects out of the context of this view would make me feel like I'm painting a false picture.
 
-[^differenttddtools]: TODO add reference and change it into a url instead of footnote. 
+After reading part 3, you will understand how mocks fit into test-driving object-oriented code, how to make Statements using mocks maintainable and how some of the practices I introduced in the chapters of part 1 apply to mocks. You will also be able to test-drive simple object-oriented systems.
+
+[^differenttddtools]: TODO add reference and change it into a url instead of footnote.

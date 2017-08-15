@@ -157,16 +157,3 @@ Now, wasn't this a painless introduction to mock objects! In the next chapters, 
 
 //TODO TODO TODO
 
-# Need-Driven Development
-
-# Responsibility-Driven Design
-
-# Guidance of test smells
-
-# Constrained non-determinism and mocks
-
-# Programming by intention
-
-# Stub queries, mock commands
-
-

@@ -1,3 +1,32 @@
+# Mock objects as a design tool
+
+## Programming by intention
+
+## Responsibility-Driven Design
+
+# Guidance of test smells
+
+## Long Statements
+
+## Lots of stubbing
+
+## Specifying private members
+
+# Constrained non-determinism in OO world
+
+## Passive vs active roles
+
+
+
+# Maintainable mock-based Statements
+
+## Setup and teardown
+
+# Refactoring mock code
+
+
+
+
 # Further Reading {#FurtherReading}
 
 ## Motivation -- the first step to learning TDD
