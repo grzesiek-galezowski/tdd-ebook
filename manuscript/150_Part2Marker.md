@@ -1,4 +1,4 @@
--# Part 2: The Object-Oriented World
+-# Part 2: Object-Oriented World
 
 Most of the examples in the previous part were about a single object that did not have dependencies on other objects (with an exception of some values -- strings, integers, enums etc.). This is not how most OO systems are built. In this part, we are finally going to look at scenarios where multiple objects work together as a system.
 
@@ -16,6 +16,5 @@ W> I want to make it very clear that by omitting tests in these chapters I am no
 W>
 W> Don't worry. After I've layed the groundwork for mock objects, I'll re-introduce TDD in part 3 and write lots of tests. Please trust me and be patient.
 
-After reading part 2, you will understand an opinionated approach to object-oriented design that is based on the idea of object-oriented system being a web of nodes (objects) that pass messages to each other.
+After reading part 2, you will understand an opinionated approach to object-oriented design that is based on the idea of object-oriented system being a web of nodes (objects) that pass messages to each other. This will give us a good starting point for introducing mock objects and mock-based TDD in part 3.
 
-you will understand how mocks fit into test-driving object-oriented code, how to make Statements using mocks maintainable and how some of the practices I introduced in the chapters of part 1 apply to mocks. You will also be able to test-drive simple object-oriented systems.

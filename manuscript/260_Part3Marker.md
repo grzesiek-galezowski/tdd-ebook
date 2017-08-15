@@ -1,4 +1,4 @@
-﻿-# Part 3: Mock Objects and TDD in Object-Oriented World
+﻿-# Part 3: TDD in Object-Oriented World
 
 So far, we've talked a lot about the object-oriented world, consisting of objects that exhibit the following properties:
 
