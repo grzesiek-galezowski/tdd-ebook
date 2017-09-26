@@ -1,14 +1,14 @@
 # Mock Objects as a testing tool
 
-Remember the beginning of this book, where I introduced mock objects and said that I lied to you about their true purpose and nature? Now that we have a lot more knowledge about the view on object-oriented design, we can truly understand where mocks come from and what thay are for.
+Remember the beginning of this book, where I introduced mock objects and mentioned that I had lied to you about their true purpose and nature? Now that we have a lot more knowledge on object-oriented design (at least a specific, opinionated view on it), we can truly understand where mocks come from and what thay are for.
 
-In this chapter, I will not yet say anything about the role of mock objects in test-driving object-oriented code, just justify their place in the context of testing objects.
+In this chapter, I won't say anything about the role of mock objects in test-driving object-oriented code yet. For now, I want to focus on justifying their place in the context of testing objects.
 
 ## A backing example
 
-Believe me I tried to write this chapter without leaning on any particular example, but the outcome was so dry and abstract, that I decided it could really use a backing example.
+Believe me I tried to write this chapter without leaning on any particular example, but the outcome was so dry and abstract, that I decided it could really use one.
 
-So for the needs of this chapter, I will use a single class, called `DataDispatch`, which has the responsibility of sending data to a destination (modeled using a `Destination` interface) which needs to be opened before the sending operation and closed after sending. Its design is very naive, but that's the purpose - to not let the example itself get in the way of explaining mock objects.
+So for the needs of this chapter, I will use a single class, called `DataDispatch`, which has the responsibility of sending data to a destination (modeled using a `Destination` interface). The `Destination` needs to be opened before the data is sent and closed after. Its design is very naive, but that's the purpose - to not let the example itself get in the way of explaining the mechanics of mock objects.
 
 Anyway, the `DataDispatch` class is defined like this:
 
@@ -42,11 +42,21 @@ public interface Destination
 }
 ```
  
-Now we are ready to introduce mocks! Let's go!
+Finally, we are ready to introduce mocks! Let's go!
 
 ## Specifying protocols
 
-I hope in previous chapters, I succeeded in making my point that protocols are very important. Our goal is to design them so that we can reuse them in different contexts. Thus, it makes a lot of sense to specify (remember, that's the word we are using for "test") whether an object adheres to its part of the protocol. For example, our `DataDispatch` must first open a destination, then send the data and at last, close the connection. If we rely on these calls being made in this order when we write our implementations of the `Destination` interface, we'd better specify what calls they expect to receive from `DataDispatch` and in which order, using executable Statements.
+I hope that in part 2, I succeeded in explaining why protocols play a big part in my thinking about object-oriented design. My goal is to design these protocols so that they can be used in many contexts. Thus, if I consider protocols important, I see a lot of sense in specifying (remember, that's the word we are using for "test") these protocols, both from the perspective of sender and recipient of the messages. For example, when we look at the protocol between `DataDispatch` and `Destination`, our `DataDispatch` must:
+
+1. open a destination
+2. then send the data 
+3. and at last, close the destination.
+
+TODO rewrite it - there are two protocols: DataDispatch as a recipient (the protocol and interface it offers) and DataDispatch as a sender (the protocol and interface that it expects).
+
+If so, we need to document this order in our executable Specification. TODO 
+
+If we rely on these calls being made in this order when we write our implementations of the `Destination` interface, we'd better specify what calls they expect to receive from `DataDispatch` and in which order, using executable Statements.
 
 Remember from the previous chapters when I describe how we strive for context-independence when designing objects? This is true, however, it's impossible most of the time to attain complete context-independence. In case of `DataDispatch`, it knows very little of its context, which is a `Destination`, but nevertheless, it needs to know *something* about it. Thus, when writing a Statement, we need to pass an object of a class implementing `Destination` into `DataDispatch`. But which context should we use? 
 

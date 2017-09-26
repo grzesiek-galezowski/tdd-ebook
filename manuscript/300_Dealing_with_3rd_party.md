@@ -1,8 +1,20 @@
 ﻿# Mock objects as a design tool
 
+## Outside-in development
+
 ## Programming by intention
 
 ## Responsibility-Driven Design
+
+## Specifying factories
+
+# What not to mock?
+
+## Internals
+
+## How to use value objects in Statements?
+
+## How to specify value objects?
 
 # Guidance of test smells
 
@@ -24,15 +36,24 @@
 
 ### Mocking asynchronous tasks
 
-# Constrained non-determinism in OO world
+### Mocking databases
 
-## Passive vs active roles
+# Revisiting topics from chapter 1
+
+## Constrained non-determinism in OO world
+
+### Passive vs active roles
+
+## Behavioral boundaries
+
+## Triangulation
 
 # Maintainable mock-based Statements
 
 ## Setup and teardown
 
 # Refactoring mock code
+
 
 -# Part 4: Application architecture
 
@@ -72,6 +93,16 @@ They include port-specific setup and assertions.
 
 Create a new fake adapter per each call.
 
+### Using fakes
+
+For threads and e.g. databases - simpler objects with partially defined behavior
+
 ## Actors
+
+Where do assertions go? into the actors or context?
+
+How to manage per-actor context (e.g. each actor has its own sent & received messages stored)
+
+These are not actors as in actor model
 
 ## Data builders

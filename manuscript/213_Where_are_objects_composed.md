@@ -10,7 +10,7 @@ Why is that? Because, we are trying to be true to the principle of "separating o
 
 Anyway, if an object cannot both use and create another object, we have to make special objects just for creating other objects (there are some design patterns for how to design such objects, but the most popular and useful is a **factory**) or defer the creation up to the application entry point (there is also a pattern for this, called **composition root**).
 
-So, we have two cases to consider. I'll start with the second one - composition root.
+So, we have two cases to consider. I'll start with the second one -- composition root.
 
 ## Composition Root
 
@@ -376,7 +376,7 @@ which returns any instance of a real class that implements `IList<int>` (say, `L
 
 ```csharp
 public IList<int> /* return type is interface */ 
-CreateContainerForData() 
+CreateContainerForData()
 {
   return new List<int>(); /* instance of concrete class */
 }
@@ -394,16 +394,21 @@ public class Version1ProtocolMessageFactory
 {
   public Message NewInstanceFrom(MessageData rawData)
   {
-    switch(rawData.MessageType)
+    if(rawData.IsSessionInit())
     {
-      case Messages.SessionInit:
-        return new SessionInit(rawData);
-      case Messages.SessionEnd:
-        return new SessionEnd(rawData);
-      case Messages.SessionPayload:
-        return new SessionPayload(rawData);
-      default:
-        throw new UnknownMessageException(rawData);
+      return new SessionInit(rawData);
+    }
+    else if(rawData.IsSessionEnd())
+    {
+      return new SessionEnd(rawData);
+    }
+    else if(rawData.IsSessionPayload())
+    {
+      return new SessionPayload(rawData);
+    }
+    else
+    {
+      throw new UnknownMessageException(rawData);
     }
   }
 }
@@ -425,18 +430,26 @@ public class Version1ProtocolMessageFactory
 {
   public Message NewInstanceFrom(MessageData rawData)
   {
-    switch(rawData.MessageType)
+    if(rawData.IsSessionInit())
     {
-      case Messages.SessionInit:
-        return new SessionInit(rawData);
-      case Messages.SessionEnd:
-        return new SessionEnd(rawData);
-      case Messages.SessionPayload:
-        return new SessionPayload(rawData);
-      case Messages.SessionRefresh: //new message type!
-        return new SessionRefresh(rawData);
-      default:
-        throw new UnknownMessageException(rawData);
+      return new SessionInit(rawData);
+    }
+    else if(rawData.IsSessionEnd())
+    {
+      return new SessionEnd(rawData);
+    }
+    else if(rawData.IsSessionPayload())
+    {
+      return new SessionPayload(rawData);
+    }
+    else if(rawData.IsSessionRefresh())
+    {
+      //new message type!
+      return new SessionRefresh(rawData);
+    }
+    else
+    {
+      throw new UnknownMessageException(rawData);
     }
   }
 }
@@ -444,38 +457,58 @@ public class Version1ProtocolMessageFactory
 
 and the rest of the code could remain untouched.
 
-Using the factory to hide the real type of message returned makes maintaining the code easier, because there is less code places impacted by adding new types of messages to the system or removing existing ones (in our example -- in case when we do not need to initiate a session anymore) [^encapsulatewhatvaries] -- the factory hides that and the rest of the application is coded against the general scenario.
+Using the factory to hide the real type of message returned makes maintaining the code easier, because there are fewer places in the code impacted by adding new types of messages to the system or removing existing ones (in our example -- in case when we do not need to initiate a session anymore) [^encapsulatewhatvaries] -- the factory hides that and the rest of the application is coded against the general scenario.
 
 The above example demonstrated how a factory can hide that many classes can play the same role (i.e. different messages could play the role of a `Message`), but we can as well use factories to hide that the same class plays many roles. An object of the same class can be returned from different factory method, each time as a different interface and clients cannot access the methods it implements from other interfaces.
 
 ### Factories are themselves polymorphic (encapsulation of rule)
 
-Another benefit of factories over inline constructors is that if a factory is received as interface, we can use another factory that implements the same interface in its place. This allows replacing the rule used to create objects with another one, by replacing one factory implementation with another.
+Another benefit of factories over inline constructor calls is that if a factory is received an object that can be passed as interface, which allows us to use use another factory that implements the same interface in its place via polymorphism. This allows replacing the rule used to create objects with another one, by replacing one factory implementation with another.
 
-In the example from the previous section, we examined a situation where we extended the functionality of an existing factory with a `SessionRefresh` message. This was done with assumption that we don't need the previous version of the factory. But consider a situation where we need both versions of the behavior and want to be able to use the old version sometimes, and other times the new one. The "version 1" of the factory (the old one) would look like this:
+Let's get back to the example from the previous section, where we had a `Version1ProtocolMessageFactory` that could create different kinds of messages based on some flags being set on raw data (e.g. `IsSessionInit()`, `IsSessionEnd()` etc.). Imagine we decided that having so many flags is too cumbersome as we need to deal with a situation where two or more flags are set to true (e.g. a message can indicate that it's both a session initialization and a session end). Thus, a new version of the protocol was conceived -- a version 2. This version, instead of using several flags, uses an enum (called `MessageTypes`) to specify message type:
 
 ```csharp
-public class Version1ProtocolMessageFactory
-  : MessageFactory
+public enum MessageTypes
 {
-  public Message NewInstanceFrom(MessageData rawData)
-  {
-    switch(rawData.MessageType)
-    {
-      case Messages.SessionInit:
-        return new SessionInit(rawData);
-      case Messages.SessionEnd:
-        return new SessionEnd(rawData);
-      case Messages.SessionPayload:
-        return new SessionPayload(rawData);
-      default:
-        throw new UnknownMessageException(rawData);
-    }
-  }
+  SessionInit,
+  SessionEnd,
+  SessionPayload,
+  SessionRefresh
 }
 ```
 
-and the "version 2" (the new one) would be:
+thus, instead of querying different flags, version 2 allows querying a single value that defines the message type.
+
+Unfortunately, to sustain backward compatibility with some clients, both versions of the protocol need to be supported, each version hosted on a separate endpoint. The idea is that when all clients migrate to the new version, the old one will be retired.
+
+Before introducing version 2, the composition root had code that looked like this:
+
+```csharp
+var controller = new ApiController(new Version1ProtocolMessageFactory());
+//...
+controller.HostApi(); //start listening to messages
+```
+
+where `ApiController` has a constructor accepting the `MessageFactory` interface:
+
+```csharp
+public ApiController(MessageFactory messageFactory)
+{
+  _messageFactory = messageFactory;
+}
+```
+
+and some general message handling code:
+
+```csharp
+var message = _messageFactory.NewInstanceFrom(rawData);
+message.ValidateUsing(_primitiveValidations);
+message.ApplyTo(_sessions);
+```
+
+This logic needs to remain the same in both versions of the protocol. How do we achieve this without duplicating this code for each version?
+
+The solution is to create another message factory, i.e. another class implementing the `MessageFactory` interface. Let's call it `Version2ProtocolMessageFactory` and implement it like this:
 
 ```csharp
 //note that now it is a version 2 protocol factory
@@ -484,15 +517,15 @@ public class Version2ProtocolMessageFactory
 {
   public Message NewInstanceFrom(MessageData rawData)
   {
-    switch(rawData.MessageType)
+    switch(rawData.GetMessageType())
     {
-      case Messages.SessionInit:
+      case MessageTypes.SessionInit:
         return new SessionInit(rawData);
-      case Messages.SessionEnd:
+      case MessageTypes.SessionEnd:
         return new SessionEnd(rawData);
-      case Messages.SessionPayload:
+      case MessageTypes.SessionPayload:
         return new SessionPayload(rawData);
-      case Messages.SessionRefresh: //new message type!
+      case MessageTypes.SessionRefresh:
         return new SessionRefresh(rawData);
       default:
         throw new UnknownMessageException(rawData);
@@ -501,56 +534,33 @@ public class Version2ProtocolMessageFactory
 }
 ```
 
-As there is some duplication between these two factories, we can even go as far as to use a "version 1" factory to implement a "version 2" factory:
+Note that this factory can return objects of the same classes as version 1 factory, but it makes the decision using the value obtained from `GetMessageType()` method instead of relying on the flags.
+
+Having this factory enables us to create an `ApiController` instance working with either the version 1 protocol:
 
 ```csharp
-public class Version2ProtocolMessageFactory
-  : MessageFactory
-{
-  MessageFactory _wrappedFactory;
-
-  public Version2ProtocolMessageFactory(
-    MessageFactory wrappedFactory)
-  {
-    _wrappedFactory = wrappedFactory;
-  }
-
-  public Message NewInstanceFrom(MessageData rawData)
-  {
-    switch(rawData.MessageType)
-    {
-      case Messages.SessionRefresh: //new message type!
-        return new SessionRefresh(rawData);
-      default:
-        return _wrappedFactory.NewInstanceFrom(rawData);
-    }
-  }
-}
+new ApiController(new Version1ProtocolMessageFactory());
 ```
 
-Anyway, depending on what the user chooses in the configuration, we give them either a version 1 protocol support which does not support refreshing sessions, or a version 2 protocol support that does. Assuming the configuration is only read once during the application start, we may have the following code in our composition root:
+or the version 2 protocol:
 
 ```csharp
-MessageFactory messageFactory = configuration.Version == 1 ?
-  new Version1ProtocolMessageFactory() : 
-  new Version2ProtocolMessageFactory() ;
-
-var messageProcessing = new MessageProcessing(messageFactory);
+new ApiController(new Version2ProtocolMessageFactory());
 ```
 
-or, in case we used a "version 1" factory to implement "version 2":
+and, since for the time being we need to support both versions, our composition root will have this code somewhere:
 
 ```csharp
-var v1Factory = new Version1ProtocolMessageFactory();
-MessageFactory messageFactory = configuration.Version == 1 ?
-  v1Factory : new Version2ProtocolMessageFactory(v1Factory) ;
-
-var messageProcessing = new MessageProcessing(messageFactory);
+var v1Controller = new ApiController(new Version1ProtocolMessageFactory());
+var v2Controller = new ApiController(new Version2ProtocolMessageFactory());
+//...
+v1Controller.HostApi(); //start listening to messages
+v2Controller.HostApi(); //start listening to messages
 ```
 
-The above code composes a `MessageProcessing` instance with either a `Version1ProtocolMessageFactory` or a `Version2ProtocolMessageFactory`, depending on the configuration.
+Note that the `ApiController` class itself did not need to change. As it depends on the `MessageFactory` interface, all we had to do was supplying a different factory object that made its decision in a different way.
 
-This example shows something I like calling "encapsulation of rule". The logic inside the factory is a rule on how, when and which objects to create. Thus, if we make our factory implement an interface and have other objects depend on this interface, we will be able to switch the rules of object creation without having to modify these objects.
+This example shows something I like calling "encapsulation of rule". The logic inside the factory is a rule on how, when and which objects to create. Thus, if we make our factory implement an interface and have other objects depend on this interface only, we will be able to switch the rules of object creation by providing another factory without having to modify these objects (as in our case where we did not need to modify the `ApiController` class).
 
 ### Factories can hide some of the created object dependencies (encapsulation of global context)
 
