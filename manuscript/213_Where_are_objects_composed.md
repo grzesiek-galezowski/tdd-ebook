@@ -484,15 +484,15 @@ Unfortunately, to sustain backward compatibility with some clients, both version
 Before introducing version 2, the composition root had code that looked like this:
 
 ```csharp
-var controller = new ApiController(new Version1ProtocolMessageFactory());
+var controller = new MessagingApi(new Version1ProtocolMessageFactory());
 //...
 controller.HostApi(); //start listening to messages
 ```
 
-where `ApiController` has a constructor accepting the `MessageFactory` interface:
+where `MessagingApi` has a constructor accepting the `MessageFactory` interface:
 
 ```csharp
-public ApiController(MessageFactory messageFactory)
+public MessagingApi(MessageFactory messageFactory)
 {
   _messageFactory = messageFactory;
 }
@@ -536,31 +536,31 @@ public class Version2ProtocolMessageFactory
 
 Note that this factory can return objects of the same classes as version 1 factory, but it makes the decision using the value obtained from `GetMessageType()` method instead of relying on the flags.
 
-Having this factory enables us to create an `ApiController` instance working with either the version 1 protocol:
+Having this factory enables us to create an `MessagingApi` instance working with either the version 1 protocol:
 
 ```csharp
-new ApiController(new Version1ProtocolMessageFactory());
+new MessagingApi(new Version1ProtocolMessageFactory());
 ```
 
 or the version 2 protocol:
 
 ```csharp
-new ApiController(new Version2ProtocolMessageFactory());
+new MessagingApi(new Version2ProtocolMessageFactory());
 ```
 
-and, since for the time being we need to support both versions, our composition root will have this code somewhere:
+and, since for the time being we need to support both versions, our composition root will have this code somewhere[^skippingports]:
 
 ```csharp
-var v1Controller = new ApiController(new Version1ProtocolMessageFactory());
-var v2Controller = new ApiController(new Version2ProtocolMessageFactory());
+var v1Controller = new MessagingApi(new Version1ProtocolMessageFactory());
+var v2Controller = new MessagingApi(new Version2ProtocolMessageFactory());
 //...
 v1Controller.HostApi(); //start listening to messages
 v2Controller.HostApi(); //start listening to messages
 ```
 
-Note that the `ApiController` class itself did not need to change. As it depends on the `MessageFactory` interface, all we had to do was supplying a different factory object that made its decision in a different way.
+Note that the `MessagingApi` class itself did not need to change. As it depends on the `MessageFactory` interface, all we had to do was supplying a different factory object that made its decision in a different way.
 
-This example shows something I like calling "encapsulation of rule". The logic inside the factory is a rule on how, when and which objects to create. Thus, if we make our factory implement an interface and have other objects depend on this interface only, we will be able to switch the rules of object creation by providing another factory without having to modify these objects (as in our case where we did not need to modify the `ApiController` class).
+This example shows something I like calling "encapsulation of rule". The logic inside the factory is a rule on how, when and which objects to create. Thus, if we make our factory implement an interface and have other objects depend on this interface only, we will be able to switch the rules of object creation by providing another factory without having to modify these objects (as in our case where we did not need to modify the `MessagingApi` class).
 
 ### Factories can hide some of the created object dependencies (encapsulation of global context)
 
@@ -844,3 +844,5 @@ The rules outlined here apply to the most of the objects in our application. Wai
 [^messageotherchangecase]: although it does need to change when the rule "first validate, then apply to sessions" changes
 
 [^simplerbutnotflexible]: There are simple ways, yet none is as flexible as using factories.
+
+[^skippingports]: The two versions of the API would probably be hosted on different URLs or on different ports. In real-world scenario, these different values would probably need to be passed as constructor parameters as well.
