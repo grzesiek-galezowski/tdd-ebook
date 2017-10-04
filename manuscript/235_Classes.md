@@ -2,9 +2,9 @@
 
 We already covered interfaces and protocols. In our quest for composability, We need to look at classes as well. Classes:
 
-*  implement interfaces (i.e. play roles)
-*  communicate through interfaces to other services
-*  follow protocols in this communication
+* implement interfaces (i.e. play roles)
+* communicate through interfaces to other services
+* follow protocols in this communication
 
 So in a way, what is "inside" a class is a byproduct of how objects of this class acts on the "outside". Still, it does not mean there is nothing to say about classes themselves that contributes to better composability.
 
@@ -100,8 +100,8 @@ The looping, which is a separate responsibility, is now handled by a different c
 
 The above example begs some questions:
 
-1.  Can we reach a point where we have separated all responsibilities?
-2.  If we can, how can we be sure we have reached it?
+1. Can we reach a point where we have separated all responsibilities?
+2. If we can, how can we be sure we have reached it?
 
 The answer to the first question is: probably no. While some reasons to change are common sense, and others can be drawn from our experience as developers or knowledge about the domain of the problem, there are always some that are unexpected and until they surface, we cannot foresee them. Thus, the answer for the second question is: "there is no way". Which does not mean we should not try to separate the different reasons we see -- quite the contrary. We just don't get overzealous trying to predict every possible change.
 
@@ -111,7 +111,7 @@ Likewise, a simplest software program that prints "hello world" on the screen ma
 
 ### The mutual relationship between Single Responsibility Principle and composability
 
-The reason I am writing all this is that responsibilities are the real granules of composability. The composability of objects that I have talked about a lot already is a mean to achieve composability of responsibilities. So, this is what our real goal is. If we have two collaborating objects, each having a single responsibility, we can easily replace the way our application achieves one of these responsibilities without touching the other. Thus, objects conforming to SRP are the most comfortably composable and the right size.[^notrdd].
+The reason I am writing all this is that responsibilities[^rddandsrp] are the real granules of composability. The composability of objects that I have talked about a lot already is a mean to achieve composability of responsibilities. So, this is what our real goal is. If we have two collaborating objects, each having a single responsibility, we can easily replace the way our application achieves one of these responsibilities without touching the other. Thus, objects conforming to SRP are the most comfortably composable and the right size.[^notrdd].
 
 A good example from another playground where single responsibility goes hand in hand with composability is UNIX. UNIX is famous for its collection of single-purpose command-line tools, like `ls`, `grep`, `ps`, `sed` etc. The single-purposeness of these utilities along with the ability of UNIX commandline to pass output stream of one command to the input stream of another by using the `|` (pipe) operator. For example, we may combine three commands: `ls` (lists contents of directory), `sort` (sorts passed input) and `more` (allows comfortably viewing on the screen input that takes more than one screen) into a pipeline:
 
@@ -251,3 +251,4 @@ In this chapter, I tried to give you some advice on designing classes that does 
 
 [^smtp]: SMTP stands for Simple Mail Transfer Protocol and is a standard protocol for sending and receiving e-mail. You can read more on [Wikipedia](http://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol). 
 
+[^rddandsrp]: Note that I'm writing about responsibility in terms of single responsibility principle. In responsibility-driven design, responsibility means something different. See [Rebecca Wirfs-Brock's clarification](http://www.wirfs-brock.com/PDFs/PrinciplesInPractice.pdf).

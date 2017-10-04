@@ -16,12 +16,12 @@ Anyway, the `DataDispatch` class is defined like this:
 public class DataDispatch
 {
   Destination _destination;
-  
+
   public DataDispatch(Destination destination)
   {
     _destination = destination;
   }
-  
+
   public void Dispatch(byte[] data)
   {
     _destination.Open();
@@ -41,15 +41,26 @@ public interface Destination
   void Close();
 }
 ```
- 
+
+Note that when we look at the `DataDispatch` class, there are two parts of the protocol. The first one is between `DataDispatch` and the code that uses it, i.e. the one that calls the `Dispatch()` method.
+
+TODO describe the protocol
+
+The second part between `DataDispatch` and `Destination` (indirectly, between `DataDispatch` and its creator, because it chooses the implementation to connect with `DataDispatch`). TODO 
+
+Both these parts of protocol (protocols?) form a responsibility of a class in terms of roles and responsibilities.
+
+
 Finally, we are ready to introduce mocks! Let's go!
 
 ## Specifying protocols
 
-I hope that in part 2, I succeeded in explaining why protocols play a big part in my thinking about object-oriented design. My goal is to design these protocols so that they can be used in many contexts. Thus, if I consider protocols important, I see a lot of sense in specifying (remember, that's the word we are using for "test") these protocols, both from the perspective of sender and recipient of the messages. For example, when we look at the protocol between `DataDispatch` and `Destination`, our `DataDispatch` must:
+I hope that in part 2, I succeeded in explaining why protocols play a big part in my thinking about object-oriented design. My goal is to design these protocols so that they can be used in many contexts. Thus, if I consider protocols important, I see a lot of sense in specifying (remember, that's the word we are using for "testing") these protocols, both from the perspective of sender and recipient of the messages.
 
-1. open a destination
-2. then send the data 
+Let's look at the protocol between `DataDispatch` and `Destination`, our `DataDispatch` must:
+
+1. open a destination,
+2. then send the data,
 3. and at last, close the destination.
 
 TODO rewrite it - there are two protocols: DataDispatch as a recipient (the protocol and interface it offers) and DataDispatch as a sender (the protocol and interface that it expects).
