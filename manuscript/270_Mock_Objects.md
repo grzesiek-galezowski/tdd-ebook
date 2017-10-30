@@ -1,6 +1,6 @@
 # Mock Objects as a testing tool
 
-Remember the beginning of this book, where I introduced mock objects and mentioned that I had lied to you about their true purpose and nature? Now that we have a lot more knowledge on object-oriented design (at least a specific, opinionated view on it), we can truly understand where mocks come from and what thay are for.
+Remember one of the first chapters of this book, where I introduced mock objects and mentioned that I had lied to you about their true purpose and nature? Now that we have a lot more knowledge on object-oriented design (at least a specific, opinionated view on it), we can truly understand where mocks come from and what thay are for.
 
 In this chapter, I won't say anything about the role of mock objects in test-driving object-oriented code yet. For now, I want to focus on justifying their place in the context of testing objects.
 
@@ -8,9 +8,7 @@ In this chapter, I won't say anything about the role of mock objects in test-dri
 
 Believe me I tried to write this chapter without leaning on any particular example, but the outcome was so dry and abstract, that I decided it could really use one.
 
-So for the needs of this chapter, I will use a single class, called `DataDispatch`, which has the responsibility of sending data to a destination (modeled using a `Destination` interface). The `Destination` needs to be opened before the data is sent and closed after. Its design is very naive, but that's the purpose - to not let the example itself get in the way of explaining the mechanics of mock objects.
-
-Anyway, the `DataDispatch` class is defined like this:
+So, for the need of this chapter, I will use a single class, called `DataDispatch`, which has the responsibility of sending received data to a destination (represented by a `Destination` interface). The `Destination` needs to be opened before the data is sent and closed after. `DataDispatch` has the responsibility of handling this:
 
 ```csharp
 public class DataDispatch
@@ -25,13 +23,19 @@ public class DataDispatch
   public void Dispatch(byte[] data)
   {
     _destination.Open();
-    _destination.Send(data);
-    _destination.Close();
+    try
+    {
+      _destination.Send(data);
+    }
+    finally
+    {
+      _destination.Close();
+    }
   }
 }
 ```
 
-And the `Destination` interface is defined like this:
+The `Destination` interface is defined like this:
 
 ```csharp
 public interface Destination
@@ -42,11 +46,29 @@ public interface Destination
 }
 ```
 
-Note that when we look at the `DataDispatch` class, there are two parts of the protocol. The first one is between `DataDispatch` and the code that uses it, i.e. the one that calls the `Dispatch()` method.
+Note that when we look at the `DataDispatch` class, there are two protocols it has to follow. The first one is between `DataDispatch` and the code that uses it, i.e. the one that calls the `Dispatch()` method. Someone, somewhere, has to do the following:
 
-TODO describe the protocol
+```csharp
+dataDispatch.Send(messageInBytes);
+```
 
-The second part between `DataDispatch` and `Destination` (indirectly, between `DataDispatch` and its creator, because it chooses the implementation to connect with `DataDispatch`). TODO 
+or there would be no reason for `DataDispatch` to exist. Note that `DataDispatch` itself does not require too much form its users - it just passes the received byte array further to the `Destination`. Also, it rethrows any exception raised by a destination, so its user must be prepared to handle the exception. The rest of the story is a responsibility of a particular destination object.
+
+The second protocol is between `DataDispatch` and `Destination`. Here, `DataDispatch` is required to invoke the methods of a `Destination` in the correct order:
+
+1. Open the destination,
+1. Send the data,
+1. Close the destination.
+
+Whatever actual implementation of `Destination` interface is passed to `DataDispatch`, it will operate on the assumption that this indeed is the order in which the methods will be called. Also, `DataDispatch`is required to close the destination in case of error while sending data (hence the `finally` block wrapping the `Close()` method invocation).
+
+Summing it up, there are two "conversations" a `DataDispatch` object is involved in....... A working `DataDispatch` object is involved
+
+
+//TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+
+ (indirectly, between `DataDispatch` and its creator, because the one who creates a `DataDispatch` instance picks an implementation to pass through its constructor).
+
 
 Both these parts of protocol (protocols?) form a responsibility of a class in terms of roles and responsibilities.
 
@@ -114,10 +136,10 @@ ShouldSendDataToOpenedDestinationThenCloseWhenAskedToDispatch()
   var destination = Substitute.For<Destination>;
   var dispatch = new DataDispatch(destination);
   var data = Any.Array<byte>();
-  
+
   //WHEN
   dispatch.ApplyTo(data);
-  
+
   //THEN
   Received.InOrder(() =>
   {
