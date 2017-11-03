@@ -62,57 +62,65 @@ The second protocol is between `DataDispatch` and `Destination`. Here, `DataDisp
 
 Whatever actual implementation of `Destination` interface is passed to `DataDispatch`, it will operate on the assumption that this indeed is the order in which the methods will be called. Also, `DataDispatch`is required to close the destination in case of error while sending data (hence the `finally` block wrapping the `Close()` method invocation).
 
-Summing it up, there are two "conversations" a `DataDispatch` object is involved in....... A working `DataDispatch` object is involved
+Summing it up, there are two "conversations" a `DataDispatch` object is involved in when fulfilling its responsibilities - one with its user and one with a dependency passed by its creator. We cannot specify these two conversations separately as the outcome of each of these two conversations depends on the other. Thus, we have to specify the `DataDispatch` class, as it is involved in both of these conversations at the same time.
+
+The conclusion is that the environment we need is comprised of three roles:
+
+```
+User <-> DataDispatch <-> Destination
+```
+
+Where `DataDispatch` is the concrete, specified class and the rest is its context. The behaviors of `DataDispatch` defined in terms of this context are:
+
+1. Dispatching valid data:
+  ```gherkin
+  GIVEN User wants to dispatch a piece of data
+  AND a DataDispatch instance connected to a Destination that accepts such data
+  WHEN the User dispatches the data via the DataDispatch instance
+  THEN the DataDispatch object should open the destination, then send the data, then close the destination
+  ```
+1. Dispatching invalid data:
+  ```gherkin
+  GIVEN User wants to dispatch some data
+  AND a DataDispatch instance connected to a Destination that rejects such data
+  WHEN the User dispatches the data via the DataDispatch instance
+  THEN the DataDispatch object should report to the User that data is invalid
+  AND close the connection anyway
+  ```
 
 
-//TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+Now, we have to fill this context somehow.
 
- (indirectly, between `DataDispatch` and its creator, because the one who creates a `DataDispatch` instance picks an implementation to pass through its constructor).
+For the remainder of this chapter let's assume calls order behavior TODO TODO
 
+Who is going to be the user of the `DataDispatch` class? For this question, I have an easy answer - the Statement body is going to be the user. This means that our environment looks like this now:
 
-Both these parts of protocol (protocols?) form a responsibility of a class in terms of roles and responsibilities.
+```
+Statement body <-> DataDispatch <-> Destination
+```
 
-
-Finally, we are ready to introduce mocks! Let's go!
-
-## Specifying protocols
-
-I hope that in part 2, I succeeded in explaining why protocols play a big part in my thinking about object-oriented design. My goal is to design these protocols so that they can be used in many contexts. Thus, if I consider protocols important, I see a lot of sense in specifying (remember, that's the word we are using for "testing") these protocols, both from the perspective of sender and recipient of the messages.
-
-Let's look at the protocol between `DataDispatch` and `Destination`, our `DataDispatch` must:
-
-1. open a destination,
-2. then send the data,
-3. and at last, close the destination.
-
-TODO rewrite it - there are two protocols: DataDispatch as a recipient (the protocol and interface it offers) and DataDispatch as a sender (the protocol and interface that it expects).
-
-If so, we need to document this order in our executable Specification. TODO 
-
-If we rely on these calls being made in this order when we write our implementations of the `Destination` interface, we'd better specify what calls they expect to receive from `DataDispatch` and in which order, using executable Statements.
-
-Remember from the previous chapters when I describe how we strive for context-independence when designing objects? This is true, however, it's impossible most of the time to attain complete context-independence. In case of `DataDispatch`, it knows very little of its context, which is a `Destination`, but nevertheless, it needs to know *something* about it. Thus, when writing a Statement, we need to pass an object of a class implementing `Destination` into `DataDispatch`. But which context should we use? 
+Remember from the previous chapters when I describe how we strive for context-independence when designing objects? This is true, however, it's impossible most of the time to attain complete context-independence. In case of `DataDispatch`, it knows very little of its context, which is a `Destination`, but nevertheless, it needs to know *something* about it. Thus, when writing a Statement, we need to pass an object of a class implementing `Destination` into `DataDispatch`. But which context should we use?
 
 In other words, we can express our problem with the following, unfinished Statement (I marked all the unknowns with a double question mark: `??`):
 
 ```csharp
-[Fact] public void 
+[Fact] public void
 ShouldSendDataToOpenedDestinationThenCloseWhenAskedToDispatch()
 {
   //GIVEN
   var destination = ??;
   var dispatch = new DataDispatch(destination);
   var data = Any.Array<byte>();
-  
+
   //WHEN
   dispatch.ApplyTo(data);
-  
+
   //THEN
   ??
 }
 ```
 
-As you see, we need to pass a `Destination` to a `DataDispatch`, but we don't know what that destination should be. Likewise, we have no good idea of how to specify the expected calls and their orders.
+As you see, we need to pass a `Destination` to a `DataDispatch`, but we don't know what that destination should be. Likewise, we have no good idea of how to specify the expected calls and their order.
 
 From the perspective of `DataDispatch`, it is designed to work with different destinations, so no context is more appropriate than other. This means that we can pick and choose the one we like. Ideally, we'd like to pass a context that best fulfills the following requirements:
 
