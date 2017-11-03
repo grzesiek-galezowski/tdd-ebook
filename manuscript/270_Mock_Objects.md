@@ -73,6 +73,7 @@ User <-> DataDispatch <-> Destination
 Where `DataDispatch` is the concrete, specified class and the rest is its context. The behaviors of `DataDispatch` defined in terms of this context are:
 
 1. Dispatching valid data:
+  
   ```gherkin
   GIVEN User wants to dispatch a piece of data
   AND a DataDispatch instance connected to a Destination that accepts such data
@@ -80,6 +81,7 @@ Where `DataDispatch` is the concrete, specified class and the rest is its contex
   THEN the DataDispatch object should open the destination, then send the data, then close the destination
   ```
 1. Dispatching invalid data:
+  
   ```gherkin
   GIVEN User wants to dispatch some data
   AND a DataDispatch instance connected to a Destination that rejects such data
