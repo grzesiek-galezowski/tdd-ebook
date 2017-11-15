@@ -54,14 +54,17 @@
 
 # Refactoring mock code
 
+until you pop it out through the constructor, it's object's private business.
+
+mocks rely on the boundaries being stable. If wrong on this, tests need to be rewritten, but the feedbak from tests allows stabilizing the boundaries further. And there are not that many tests to change as we test small pieces of code.
 
 -# Part 4: Application architecture
 
-# On stable boundaries
+# On stable/architectural boundaries
 
 # Ports and adapters
 
-## Physical splitting of layers
+## Physical separation of layers
 
 ### "Screaming" architecture
 
@@ -83,7 +86,12 @@ Services, entities, interactors, domain etc. - how does it match?
 
 ## Adapting screenplay pattern
 
+code in terms of intention (when knowing more about intention)
+refactor the domain-specific API (when knowing more about underlying technology)
+
 ## Driver
+
+reusing the composition root
 
 ### Separate start method
 
@@ -106,3 +114,5 @@ How to manage per-actor context (e.g. each actor has its own sent & received mes
 These are not actors as in actor model
 
 ## Data builders
+
+nesting builders, builders as immutable objects.

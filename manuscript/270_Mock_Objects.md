@@ -1,19 +1,19 @@
 # Mock Objects as a testing tool
 
-Remember one of the first chapters of this book, where I introduced mock objects and mentioned that I had lied to you about their true purpose and nature? Now that we have a lot more knowledge on object-oriented design (at least a specific, opinionated view on it), we can truly understand where mocks come from and what thay are for.
+Remember one of the first chapters of this book, where I introduced mock objects and mentioned that I had lied to you about their true purpose and nature? Now that we have a lot more knowledge on object-oriented design (at least on a specific, opinionated view on it), we can truly understand where mocks come from and what thay are for.
 
-In this chapter, I won't say anything about the role of mock objects in test-driving object-oriented code yet. For now, I want to focus on justifying their place in the context of testing objects.
+In this chapter, I won't say anything about the role of mock objects in test-driving object-oriented code yet. For now, I want to focus on justifying their place in the context of testing objects written in the style that I described in part 2.
 
 ## A backing example
 
-For the need of this chapter, I will use a simple example. Before I describe it, I need you to know that I don't consider this example a showcase for mock objects. Mocks shine where there are domain-driven interactions between objects and this example will not be like that. I picked this example because this is something you should understand easily and should be enough to discuss some mechanics of mock objects. In the next chapter, I will use the same example as an illustration, but after that, I'm dropping it and going into more interesting stuff.
+For the need of this chapter, I will use one toy example. Before I describe it, I need you to know that I don't consider this example a showcase for mock objects. Mocks shine where there are domain-driven interactions between objects and this example is not like that - the interactions here are more implementation-driven. Still, I decided to use it anyway because I consider it something something easy to understand and good enough to discuss some mechanics of mock objects. In the next chapter, I will use the same example as an illustration, but after that, I'm dropping it and going into more interesting stuff.
 
- Our example is a single class, called `DataDispatch`, which has the responsibility of sending received data to a channel (represented by a `Channel` interface). The `Channel` needs to be opened before the data is sent and closed after. `DataDispatch` implements this requirement. Here is the full code for the `DataDispatch` class:
+The example is a single class, called `DataDispatch`, which is responsible for sending received data to a channel (represented by a `Channel` interface). The `Channel` needs to be opened before the data is sent and closed after. `DataDispatch` implements this requirement. Here is the full code for the `DataDispatch` class:
 
 ```csharp
 public class DataDispatch
 {
-  Channel _channel;
+  private Channel _channel;
 
   public DataDispatch(Channel channel)
   {
@@ -35,9 +35,13 @@ public class DataDispatch
 }
 ```
 
+The rest of this chapter will focus on dissecting the behaviors of `DataDispatch` and their context.
+
+I will start describing this context by looking at interfac used by `DataDispatch`.
+
 ## Interfaces
 
-As shown above, `DataDispatch` depends on a single interface called `Channel`. Here is the full interface definition:
+As shown above, `DataDispatch` depends on a single interface called `Channel`. Here is the full definition of this interface:
 
 ```csharp
 public interface Channel
@@ -48,58 +52,70 @@ public interface Channel
 }
 ```
 
+An implementation of `Channel` is passed into the constructor of `DataDispatch`. In other words, `DataDispatch` can be composed with anything that implements `Channel` interface. At least from compiler point of view. This is because, as I mentioned in the last part, for two composed objects to be able to work together successfully, interfaces are not enough. They also have to establish and follow a protocol.
+
 ## Protocols
 
-Note that when we look at the `DataDispatch` class, there are two protocols it has to follow. The first one is between `DataDispatch` and the code that uses it, i.e. the one that calls the `Dispatch()` method. Someone, somewhere, has to do the following:
+Note that when we look at the `DataDispatch` class, there are two protocols it has to follow. I will describe them one by one.
+
+### Protocol between `DataDispatch` and its user
+
+The first protocol is between `DataDispatch` and the code that uses it, i.e. the one that calls the `Dispatch()` method. Someone, somewhere, has to do the following:
 
 ```csharp
 dataDispatch.Send(messageInBytes);
 ```
 
-or there would be no reason for `DataDispatch` to exist. Note that `DataDispatch` itself does not require too much form its users - it just passes the received byte array further to the `Channel`. Also, it rethrows any exception raised by a channel, so its user must be prepared to handle the exception. The rest of the story is a responsibility of a particular channel object.
+or there would be no reason for `DataDispatch` to exist. Looking further into this protocol, we can note that `DataDispatch` does not require too much from its users -- it doesn't have any kind of return value. The only feedback it gives to the code that uses it is rethrowing any exception raised by a channel, so the user code must be prepared to handle the exception. Note that `DataDispatch` neither knows nor defines the kinds of exceptions that can be thrown. This is a responsibility of a particular channel implementation. The same goes for deciding under which condition should an exception be thrown.
 
-The second protocol is between `DataDispatch` and `Channel`. Here, `DataDispatch` is required to invoke the methods of a `Channel` in the correct order:
+### Protocol between `DataDispatch` and `Channel`
 
-1. Open the channel,
-1. Send the data,
-1. Close the channel.
+The second protocol is between `DataDispatch` and `Channel`. Here, `DataDispatch` will work with any implementation of `Channel` the allows it to invoke the methods of a `Channel` specified number of times in a specified order:
 
-Whatever actual implementation of `Channel` interface is passed to `DataDispatch`, it will operate on the assumption that this indeed is the order in which the methods will be called. Also, `DataDispatch`is required to close the channel in case of error while sending data (hence the `finally` block wrapping the `Close()` method invocation).
+1. Open the channel -- once,
+1. Send the data -- once,
+1. Close the channel -- once.
 
-Summing it up, there are two "conversations" a `DataDispatch` object is involved in when fulfilling its responsibilities - one with its user and one with a dependency passed by its creator. We cannot specify these two conversations separately as the outcome of each of these two conversations depends on the other. Thus, we have to specify the `DataDispatch` class, as it is involved in both of these conversations at the same time.
+Whatever actual implementation of `Channel` interface is passed to `DataDispatch`, it will operate on the assumption that this indeed is the count and order in which the methods will be called. Also, `DataDispatch` assumes it is required to close the channel in case of error while sending data (hence the `finally` block wrapping the `Close()` method invocation).
+
+### Two conversations
+
+Summing it up, there are two "conversations" a `DataDispatch` object is involved in when fulfilling its responsibilities -- one with its user and one with a dependency passed by its creator. We cannot specify these two conversations separately as the outcome of each of these two conversations depends on the other. Thus, we have to specify the `DataDispatch` class, as it is involved in both of these conversations at the same time.
 
 ## Roles
 
-The conclusion is that the environment we need is comprised of three roles (arrows show the direction of dependencies):
+Our conclusion from the last section is that the environment environment in which behaviors of `DataDispatch` take place is comprised of three roles (arrows show the direction of dependencies, or "who sends messages to whom"):
 
 ```text
 User -> DataDispatch -> Channel
 ```
 
-Where `DataDispatch` is the concrete, specified class and the rest is its context.
+Where `DataDispatch` is the specified class and the rest is its context (`Channel` being the part of the context `DataDispatch` depends on. As much as I adore context-independence, most classes need to depend on some kind of context, even if to a minimal degree).
+
+Let's use this environment to define the behaviors of `DataDispatch` we need to specify.
 
 ## Behaviors
 
 The behaviors of `DataDispatch` defined in terms of this context are:
 
 1. Dispatching valid data:
-  
+
   ```text
   GIVEN User wants to dispatch a piece of data
-  AND a DataDispatch instance connected to a Channel
+  AND a DataDispatch instance is connected to a Channel
     that accepts such data
   WHEN the User dispatches the data via the DataDispatch instance
   THEN the DataDispatch object should
     open the channel,
-    then send the data,
+    then send the User data through the channel,
     then close the channel
   ```
 
 1. Dispatching invalid data:
 
   ```text
-  GIVEN User wants to dispatch some data
-  AND a DataDispatch instance connected to a Channel
+  GIVEN User wants to dispatch a piece of data
+  AND a DataDispatch instance is connected to a Channel
     that rejects such data
   WHEN the User dispatches the data via the DataDispatch instance
   THEN the DataDispatch object should report to the User
@@ -107,33 +123,46 @@ The behaviors of `DataDispatch` defined in terms of this context are:
   AND close the connection anyway
   ```
 
-For the remainder of this chapter I will focus on the first behavior as our goal is not to create a complete Specification of DataDispatch class, but rather to make a case for mock objects as a testing tool.
+For the remainder of this chapter I will focus on the first behavior as our goal for now is not to create a complete Specification of DataDispatch class, but rather to observe some mechanics of mock objects as a testing tool.
 
 ## Filling in the roles
 
-As mentioned before, the whole context of the specified behavior looks like this:
+As mentioned before, the environment in which the behavior takes place looks like this:
 
 ```text
-User <-> DataDispatch <-> Channel
+User -> DataDispatch -> Channel
 ```
 
-Now we need to fill in the roles. First of all - the role of DataDispatch will befilled by the concrete class `DataDispatch` - after all, this is the class that we specify. Next, who is going to be the user of the `DataDispatch` class? For this question, I have an easy answer - the Statement body is going to be the user. This means that our environment looks like this now:
+Now we need to say who will play these roles. I marked the ones we don't have filled yet with question marks (`?`):
 
 ```text
-Statement body -> DataDispatch (concrete class) -> Channel
+User? -> DataDispatch? -> Channel?
 ```
 
-//todo rewrite this paragraph::
-Now, the last element is to decide who is going to play the role of channel. But which context should we use?
+Let's start with the role of DataDispatch. Probably not surprisingly, it will be filled by the concrete class `DataDispatch` -- after all, this is the class that we specify.
 
-In other words, we can express our problem with the following, unfinished Statement (I marked all the current unknowns with a double question mark: `??`):
+Our environment looks like this now:
+
+```text
+User? -> DataDispatch (concrete class) -> Channel?
+```
+
+Next, who is going to be the user of the `DataDispatch` class? For this question, I have an easy answer -- the Statement body is going to be the user -- it will interact with `DataDispatch` to trigger the specified behaviors. This means that our environment looks like this now:
+
+//TODO
+
+```text
+Statement body -> DataDispatch (concrete class) -> Channel?
+```
+
+Now, the last element is to decide who is going to play the role of channel. In other words, we can express our problem with the following, unfinished Statement (I marked all the current unknowns with a double question mark: `??`):
 
 ```csharp
 [Fact] public void
-ShouldSendDataToOpenedChannelThenCloseWhenAskedToDispatch()
+ShouldSendDataToOpenChannelThenCloseWhenAskedToDispatch()
 {
   //GIVEN
-  var channel = ??; //what is it going to be?
+  Channel channel = ??; //what is it going to be?
   var dispatch = new DataDispatch(channel);
   var data = Any.Array<byte>();
 
@@ -141,35 +170,35 @@ ShouldSendDataToOpenedChannelThenCloseWhenAskedToDispatch()
   dispatch.ApplyTo(data);
 
   //THEN
-  ?? //how to verify DataDispatch behavior?
+  ?? //how to specify DataDispatch behavior?
 }
 ```
 
 As you see, we need to pass an implementation of `Channel` to a `DataDispatch`, but we don't know what that channel should be. Likewise, we have no good idea of how to specify the expected calls and their order.
 
-From the perspective of `DataDispatch`, it is designed to work with everything that implements the `Channel` interface and follows the protocol, so no particular implementation is more appropriate than other. This means that we can pick and choose the one we like best. Which one do we like best? The one that makes writing the specification easiest, of course. Ideally, we'd like to pass a channel that best fulfills the following requirements:
+From the perspective of `DataDispatch`, it is designed to work with everything that implements the `Channel` interface and follows the protocol, so there is no single "privileged" implementation that is more appropriate than others. This means that we can pretty much pick and choose the one we like best. Which one do we like best? The one that makes writing the specification easiest, of course. Ideally, we'd like to pass a channel that best fulfills the following requirements:
 
-1. Adds as little side effects of its own as possible. If a channel implementation added side effects, we would never be sure whether we are specifying the behavior of `DataDispatch` or maybe the behavior of the particular `Channel` implementation that is used in the Statement. This is a requirement of trust - we want to trust our specifications that they are specifying what they say they do.
-1. Is easy to control - so that we can easily make it trigger different behaviors in the object we are specifying. Also, we want to be able to easily verify how the specified object interacts with it. This is a requirement of convenience.
-1. Is quick to create and easy to maintain - because we want to focus on the behaviors we specify, not on maintaining or creating helper context. Also, we don't want to write special Statements for the behaviors Statement-specific implementation. This is a requirement of low friction.
+1. Adds as little side effects of its own as possible. If a channel implementation added side effects, we would never be sure whether the behavior we observe when executing our Specification is the behavior of `DataDispatch` or maybe the behavior of the particular `Channel` implementation that is used in the Statement. This is a requirement of trust -- we want to trust our specifications that they are specifying what they say they do.
+1. Is easy to control -- so that we can easily make it trigger different behaviors in the object we are specifying. Also, we want to be able to easily verify how the specified object interacts with it. This is a requirement of convenience.
+1. Is quick to create and easy to maintain -- because we want to focus on the behaviors we specify, not on maintaining or creating helper classes. This is a requirement of low friction.
 
-There is a tool that fulfills these three requirements and it's called a mock object. This makes our context of specified behavior look like this:
+There is a tool that fulfills these three requirements better than others I know of and it's called a mock object. So let's use a mock in place of `Channel`! This makes our environment of the specified behavior look like this:
 
 ```text
 Statement body -> DataDispatch (concrete class) -> Mock Channel
 ```
 
-Note that the only part of this context that is real production code is the `DataDispatch`. The rest of the context is Statement-specific.
+Note that the only part of this environment that comes from production code is the `DataDispatch`. The rest of the context is Statement-specific.
 
 ## Using a mock channel
 
-I hope you remember the NSubstitute library for creating mock objects that we introduced way back at the beginning of the book. We can use it now to quickly create an implementation of `Channel` that behaves the way we like, allows easy verification of protocol and between `Dispatch` and `Channel` and introduces as minimal number of side effects as possible.
+I hope you remember the NSubstitute library for creating mock objects that I introduced way back at the beginning of the book. We can use it now to quickly create an implementation of `Channel` that behaves the way we like, allows easy verification of protocol and between `Dispatch` and `Channel` and introduces as minimal number of side effects as possible.
 
-Filling the gap, this is what we get:
+By using this mock to fill the gaps in our Statement, this is what we get:
 
 ```csharp
 [Fact] public void 
-ShouldSendDataToOpenedChannelThenCloseWhenAskedToDispatch()
+ShouldSendDataToOpenChannelThenCloseWhenAskedToDispatch()
 {
   //GIVEN
   var channel = Substitute.For<Channel>;
@@ -189,6 +218,11 @@ ShouldSendDataToOpenedChannelThenCloseWhenAskedToDispatch()
 }
 ```
 
+previously, this Statement was incomplete, because we lacked the answer to two questions:
+
+1. Where to get the channel from?
+1. How to verify `DataDispatch` behavior?
+
 I answered the question of "where to get the channel from?" by creating it as a mock:
 
 ```csharp
@@ -206,7 +240,7 @@ Received.InOrder(() =>
 };
 ```
 
-If rearranged the order of messages sent to `Channel` in the implementation of the `ApplyTo()` method from this one:
+This syntax means that if I rearrange the order of messages sent to `Channel` in the implementation of the `ApplyTo()` method from this one:
 
 ```csharp
 public void Dispatch(byte[] data)
@@ -234,8 +268,8 @@ The Statement will turn false (i.e. will fail).
 
 What we did in the above example was to put our `DataDispatch` in a context that was most trustworthy, convenient and frictionless for us to use in our Statement.
 
-Some say that specifying object interactions in context of mocks is "specifying in isolation" and that providing such mock context is "isolating". I don't like this point of view very much. From the point of view of a specified object, mocks are just another context - they are neither better, nor worse, they are neither more nor less real than other contexts we want to put our `Dispatch` in. Sure, this is not the context in which it runs in production, but we may have other situations than mere production work - e.g. we may have a special context for demos, where we count sent packets and show the throughput on a GUI screen. We may also have a debugging context that in each method, before passing the control to a production code, writes a trace message to a log.
+Some say that specifying object interactions in context of mocks is "specifying in isolation" and that providing such mock dependencies is "isolating". I don't identify with this point of view very much. From the point of view of a specified class, mocks are yet another context -- they are neither better, nor worse, they are neither more nor less real than other contexts we want to put our `Dispatch` in. Sure, this is not the context in which it runs in production, but we may have other situations than mere production work -- e.g. we may have a special context for demos, where we count sent packets and show the throughput on a GUI screen. We may also have a debugging context that in each method, before passing the control to a production code, writes a trace message to a log.
 
 ## Summary
 
-The goal of this chapter was only to show you how mock objects fit into testing a "tell don't ask" -- style, focusing on responsibilities, behaviors, interfaces and protocols of objects. This example was meant as something you could easily understand, not as a showcase for TDD using mocks. For one more chapter, we will work on this toy example and then I will try to show you how I apply mock objects in real-life code.
+The goal of this chapter was only to show you how mock objects fit into testing code written in a "tell don't ask" style, focusing on responsibilities, behaviors, interfaces and protocols of objects. This example was meant as something you could easily understand, not as a showcase for TDD using mocks. For one more chapter, we will work on this toy example and then I will try to show you how I apply mock objects in more interesting cases.
