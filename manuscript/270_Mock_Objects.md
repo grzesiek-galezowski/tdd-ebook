@@ -149,13 +149,11 @@ User? -> DataDispatch (concrete class) -> Channel?
 
 Next, who is going to be the user of the `DataDispatch` class? For this question, I have an easy answer -- the Statement body is going to be the user -- it will interact with `DataDispatch` to trigger the specified behaviors. This means that our environment looks like this now:
 
-//TODO
-
 ```text
 Statement body -> DataDispatch (concrete class) -> Channel?
 ```
 
-Now, the last element is to decide who is going to play the role of channel. In other words, we can express our problem with the following, unfinished Statement (I marked all the current unknowns with a double question mark: `??`):
+Now, the last element is to decide who is going to play the role of channel. We can express this problem with the following, unfinished Statement (I marked all the current unknowns with a double question mark: `??`):
 
 ```csharp
 [Fact] public void
@@ -174,34 +172,40 @@ ShouldSendDataToOpenChannelThenCloseWhenAskedToDispatch()
 }
 ```
 
-As you see, we need to pass an implementation of `Channel` to a `DataDispatch`, but we don't know what that channel should be. Likewise, we have no good idea of how to specify the expected calls and their order.
+As you see, we need to pass an implementation of `Channel` to a `DataDispatch`, but we don't know what this channel should be. Likewise, we have no good idea of how to specify the expected calls and their order.
 
 From the perspective of `DataDispatch`, it is designed to work with everything that implements the `Channel` interface and follows the protocol, so there is no single "privileged" implementation that is more appropriate than others. This means that we can pretty much pick and choose the one we like best. Which one do we like best? The one that makes writing the specification easiest, of course. Ideally, we'd like to pass a channel that best fulfills the following requirements:
 
-1. Adds as little side effects of its own as possible. If a channel implementation added side effects, we would never be sure whether the behavior we observe when executing our Specification is the behavior of `DataDispatch` or maybe the behavior of the particular `Channel` implementation that is used in the Statement. This is a requirement of trust -- we want to trust our specifications that they are specifying what they say they do.
-1. Is easy to control -- so that we can easily make it trigger different behaviors in the object we are specifying. Also, we want to be able to easily verify how the specified object interacts with it. This is a requirement of convenience.
+1. Adds as little side effects of its own as possible. If a channel implementation used in a Statement added side effects, we would never be sure whether the behavior we observe when executing our Specification is the behavior of `DataDispatch` or maybe the behavior of the particular `Channel` implementation that is used in this Statement. This is a requirement of trust -- we want to trust our Specification that it specifies what it says it does.
+1. Is easy to control -- so that we can easily make it trigger different conditions in the object we are specifying. Also, we want to be able to easily verify how the specified object interacts with it. This is a requirement of convenience.
 1. Is quick to create and easy to maintain -- because we want to focus on the behaviors we specify, not on maintaining or creating helper classes. This is a requirement of low friction.
 
-There is a tool that fulfills these three requirements better than others I know of and it's called a mock object. So let's use a mock in place of `Channel`! This makes our environment of the specified behavior look like this:
+There is a tool that fulfills these three requirements better than others I know of and it's called a mock object. Here's how it fulfills the mentioned requirements:
+
+1. Mocks add almost no side effects of its own. They have some hardcoded default behaviors (e.g. when a method returning `int` is called on a mock, it returns `0`), but these behaviors are as default and meaningless as they can possibly be. This allows us to put more trust in our Specification.
+1. Mocks are easy to control - every mocking library comes provided with an API for defining pre-canned method call results and for verification of received calls. Having such API provides convenience, at least form my point of view.
+1. Mocks can be trivial to maintain. While you can write your own mocks (i.e. your own implementation of an interface that allows setting up and verifying calls), mos of us use libraries that generate them, typically using a reflection feature of a programming language (in our case, C#). Typically, mock libraries free us from having to maintain mock implementations, lowering the friction of writing and maintaining our executable Statements.
+
+ So let's use a mock in place of `Channel`! This makes our environment of the specified behavior look like this:
 
 ```text
 Statement body -> DataDispatch (concrete class) -> Mock Channel
 ```
 
-Note that the only part of this environment that comes from production code is the `DataDispatch`. The rest of the context is Statement-specific.
+Note that the only part of this environment that comes from production code is the `DataDispatch`, while its context is Statement-specific.
 
 ## Using a mock channel
 
 I hope you remember the NSubstitute library for creating mock objects that I introduced way back at the beginning of the book. We can use it now to quickly create an implementation of `Channel` that behaves the way we like, allows easy verification of protocol and between `Dispatch` and `Channel` and introduces as minimal number of side effects as possible.
 
-By using this mock to fill the gaps in our Statement, this is what we get:
+By using this mock to fill the gaps in our Statement, this is what we end up with:
 
 ```csharp
-[Fact] public void 
+[Fact] public void
 ShouldSendDataToOpenChannelThenCloseWhenAskedToDispatch()
 {
   //GIVEN
-  var channel = Substitute.For<Channel>;
+  var channel = Substitute.For<Channel>();
   var dispatch = new DataDispatch(channel);
   var data = Any.Array<byte>();
 
@@ -218,7 +222,7 @@ ShouldSendDataToOpenChannelThenCloseWhenAskedToDispatch()
 }
 ```
 
-previously, this Statement was incomplete, because we lacked the answer to two questions:
+previously, this Statement was incomplete, because we lacked the answer to the following two questions:
 
 1. Where to get the channel from?
 1. How to verify `DataDispatch` behavior?
@@ -226,7 +230,7 @@ previously, this Statement was incomplete, because we lacked the answer to two q
 I answered the question of "where to get the channel from?" by creating it as a mock:
 
 ```csharp
-var channel = Substitute.For<Channel>;
+var channel = Substitute.For<Channel>();
 ```
 
 Then the second question: "how to verify DataDispatch behavior?" was answered by using the NSubstitute API for verifying that the mock received three calls (or three messages) in a specific order:
@@ -240,7 +244,7 @@ Received.InOrder(() =>
 };
 ```
 
-This syntax means that if I rearrange the order of messages sent to `Channel` in the implementation of the `ApplyTo()` method from this one:
+The consequence is that if I rearrange the order of the messages sent to `Channel` in the implementation of the `ApplyTo()` method from this one:
 
 ```csharp
 public void Dispatch(byte[] data)
@@ -256,7 +260,7 @@ to this one (note the changed call order):
 ```csharp
 public void Dispatch(byte[] data)
 {
-  _channel.Send(data);
+  _channel.Send(data); //before Open()!
   _channel.Open();
   _channel.Close();
 }
@@ -268,8 +272,8 @@ The Statement will turn false (i.e. will fail).
 
 What we did in the above example was to put our `DataDispatch` in a context that was most trustworthy, convenient and frictionless for us to use in our Statement.
 
-Some say that specifying object interactions in context of mocks is "specifying in isolation" and that providing such mock dependencies is "isolating". I don't identify with this point of view very much. From the point of view of a specified class, mocks are yet another context -- they are neither better, nor worse, they are neither more nor less real than other contexts we want to put our `Dispatch` in. Sure, this is not the context in which it runs in production, but we may have other situations than mere production work -- e.g. we may have a special context for demos, where we count sent packets and show the throughput on a GUI screen. We may also have a debugging context that in each method, before passing the control to a production code, writes a trace message to a log.
+Some say that specifying object interactions in context of mocks is "specifying in isolation" and that providing such mock dependencies is "isolating" the class from its "real" dependencies. I don't identify with this point of view very much. From the point of view of a specified class, mocks are yet another context -- they are neither better, nor worse, they are neither more nor less real than other contexts we want to put our `Dispatch` in. Sure, this is not the context in which it runs in production, but we may have other situations than mere production work -- e.g. we may have a special context for demos, where we count sent packets and show the throughput on a GUI screen. We may also have a debugging context that in each method, before passing the control to a production code, writes a trace message to a log.
 
 ## Summary
 
-The goal of this chapter was only to show you how mock objects fit into testing code written in a "tell don't ask" style, focusing on responsibilities, behaviors, interfaces and protocols of objects. This example was meant as something you could easily understand, not as a showcase for TDD using mocks. For one more chapter, we will work on this toy example and then I will try to show you how I apply mock objects in more interesting cases.
+The goal of this chapter was only to show you how mock objects fit into testing code written in a "tell don't ask" style, focusing on roles, responsibilities, behaviors, interfaces and protocols of objects. This example was meant as something you could easily understand, not as a showcase for TDD using mocks. For one more chapter, we will work on this toy example and then I will try to show you how I apply mock objects in more interesting cases.
