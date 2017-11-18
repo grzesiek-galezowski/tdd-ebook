@@ -1,3 +1,7 @@
+# 18-11-2017
+
+Hi, today's update brings to you a cosmetically revised version of factories chapter (the most changes were made to "Factories are themselves polymorphic (encapsulation of rule)" section, where the existing example was changed to one I consider better) as well as a new chapter on mock objects. You may also note that I changed the numbering of parts. Part 2 is entirely devoted to object oriented design primer and object-oriented TDD was moved to newsly created chapter 3. There are also some placeholders as I have lots of ideas for new chapters. Everything will come, in time. Looking at all the hype around functional programming, I can only hope that OO doesn't become obsolete before I finish the book :-D.
+
 # 22-07-2017
 
 Hi, a new version is available and it contains polished and reviewed version of a new chapter that up to this moment was in a "preview" state. Namely - Aspects of value objects design. This concludes the set of chapters devoted to value objects. Enjoy!
