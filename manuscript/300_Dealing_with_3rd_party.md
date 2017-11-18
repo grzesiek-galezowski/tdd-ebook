@@ -2,6 +2,10 @@
 
 ## Outside-in development
 
+## Worked example
+
+Johhny and Benjamin, creating subscription, subscription is validated (as few fields as possible) when a subscription is created, a notification is sent. Use command pattern, collecting parameter, maybe observer. Note that until we do something with this subscription, there is no need to store it. Second example - scheduled expiry.
+
 ## Programming by intention
 
 ## Responsibility-Driven Design
