@@ -31,7 +31,7 @@
 255_Value_Objects_properties.md
 257_Value objects_general_topics.md
 260_Part3Marker.md
-End.md
 270_Mock_Objects.md
+End.md
 300_Dealing_with_3rd_party.md
 990_Further_reading.md
