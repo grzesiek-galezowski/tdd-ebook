@@ -272,7 +272,6 @@ The Statement will turn false (i.e. will fail).
 
 What we did in the above example was to put our `DataDispatch` in a context that was most trustworthy, convenient and frictionless for us to use in our Statement.
 
-Some say that specifying object interactions in context of mocks is "specifying in isolation" and that providing such mock dependencies is "isolating" the class from its "real" dependencies. I don't identify with this point of view very much. From the point of view of a specified class, mocks are yet another context -- they are neither better, nor worse, they are neither more nor less real than other contexts we want to put our `Dispatch` in. Sure, this is not the context in which it runs in production, but we may have other situations than mere production work -- e.g. we may have a special context for demos, where we count sent packets and show the throughput on a GUI screen. We may also have a debugging context that in each method, before passing the control to a production code, writes a trace message to a log.
 
 ## Summary
 
