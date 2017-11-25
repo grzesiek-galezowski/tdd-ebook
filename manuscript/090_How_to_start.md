@@ -16,23 +16,23 @@ Note that before writing any code, there are at least two questions that can be 
 
 I have seen many people not really caring about how their Statements are named. This is a symptom of treating the Specification as garbage or leftovers -- I consider this approach dangerous, because I have seen it lead to Specifications that are hard to maintain and that look more like lumps of code put together accidentally in a haste than a kind of "living documentation". Imagine that your Specification consists of Statements named like this:
 
--   `TrySendPacket()`
--   `TrySendPacket2()`
--   `testSendingManyPackets()`
--   `testWrongPacketOrder1()`
--   `testWrongPacketOrder2()`
+- `TrySendPacket()`
+- `TrySendPacket2()`
+- `testSendingManyPackets()`
+- `testWrongPacketOrder1()`
+- `testWrongPacketOrder2()`
 
 and try for yourself how difficult it is to answer the following questions:
 
-1.  How do you know what situation each Statement describes?
-2.  How do you know whether the Statement describes a single situation, or several at the same time?
-3.  How do you know whether the assertions inside those Statements are really the right ones assuming each Statement was written by someone else or a long time ago?
-4.  How do you know whether the Statement should stay or be removed from the Specification when you modify the functionality described by this Statement?
-5.  If your changes in production code make a Statement turn false, how do you know whether the Statement is no longer correct or the production code is wrong?
-6.  How do you know whether you will not introduce a duplicate Statement for a behavior when adding to a Specification that was originally created by another team member?
-7.  How do you estimate, by looking at the runner tool report, whether the fix for a failing Statement will be easy or not?
-8.  What do you answer new developers in your team when they ask you "what is this Statement for?"
-9.  How do you know when your Specification is complete if you can't tell from the Statement names what behaviors you already have covered and what not?
+1. How do you know what situation each Statement describes?
+1. How do you know whether the Statement describes a single situation, or several at the same time?
+1. How do you know whether the assertions inside those Statements are really the right ones assuming each Statement was written by someone else or a long time ago?
+1. How do you know whether the Statement should stay or be removed from the Specification when you modify the functionality described by this Statement?
+1. If your changes in production code make a Statement turn false, how do you know whether the Statement is no longer correct or the production code is wrong?
+1. How do you know whether you will not introduce a duplicate Statement for a behavior when adding to a Specification that was originally created by another team member?
+1. How do you estimate, by looking at the runner tool report, whether the fix for a failing Statement will be easy or not?
+1. What do you answer new developers in your team when they ask you "what is this Statement for?"
+1. How do you know when your Specification is complete if you can't tell from the Statement names what behaviors you already have covered and what not?
 
 ### What does a good name contain?
 
@@ -44,8 +44,8 @@ notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort()
 
 Note a few things about the name of the Statement:
 
-1.  It describes a behavior of an instance of a specific class. Note that it doesn't contain the name of the method that triggers the behavior, because what is specified is not a single method, but the behavior itself (this will be covered in more detail in the coming chapters). The Statement name simply tells what an instance does ("notifies listeners that server is unavailable") under certain circumstances ("when cannot connect to its monitoring port"). It is important for me because I can derive such a description from thinking about the responsibilities of a class without the need to know any of its method signatures or the code that's inside the class. Hence, this is something I can come up with before implementing -- I just need to know why I created this class and build on this knowledge.
-2.  The name is relatively long. Really, really, **really** don't worry about it. As long as you are describing a single behavior, I'd say it's fine. I've seen people hesitate to give long names to Statements, because they tried to apply the same rules to those names as to the names of methods in production code. In production code, a long method name can be a sign that the method has too many responsibilities or that insufficient abstraction level is used to describe a functionality and that the name may needlessly reveal implementation details. My opinion is that these two reasons don't apply as much to Statements. In case of Statements, the methods are not invoked by anyone besides the automatic test runner, so they will not obfuscate any code that would need to call them with their long names. In addition, the Statements names need not be as abstract as production code method names - they can reveal more. 
+1. It describes a behavior of an instance of a specific class. Note that it doesn't contain the name of the method that triggers the behavior, because what is specified is not a single method, but the behavior itself (this will be covered in more detail in the coming chapters). The Statement name simply tells what an instance does ("notifies listeners that server is unavailable") under certain circumstances ("when cannot connect to its monitoring port"). It is important for me because I can derive such a description from thinking about the responsibilities of a class without the need to know any of its method signatures or the code that's inside the class. Hence, this is something I can come up with before implementing -- I just need to know why I created this class and build on this knowledge.
+1. The name is relatively long. Really, really, **really** don't worry about it. As long as you are describing a single behavior, I'd say it's fine. I've seen people hesitate to give long names to Statements, because they tried to apply the same rules to those names as to the names of methods in production code. In production code, a long method name can be a sign that the method has too many responsibilities or that insufficient abstraction level is used to describe a functionality and that the name may needlessly reveal implementation details. My opinion is that these two reasons don't apply as much to Statements. In case of Statements, the methods are not invoked by anyone besides the automatic test runner, so they will not obfuscate any code that would need to call them with their long names. In addition, the Statements names need not be as abstract as production code method names - they can reveal more. 
 
     Alternatively, we could put all the information in a comment instead of the Statement name and leave the name short, like this:
 
@@ -66,7 +66,7 @@ Note a few things about the name of the Statement:
 
     because in such case, a lot of information about the Statement that fails is available from the test runner report.
 
-3.  Using a name that describes a single behavior allows me to find out quickly why the Statement turned false. Let's say a Statement is true when I start refactoring, but at one point it turns false and the report in the runner looks like this: `TrySendingHttpRequest: FAILED` -- it only tells me that an attempt was made to send a HTTP request, but, for instance, doesn't tell me whether the object I specified in that Statement is some kind of sender that should try to send this request under some circumstances, or if it is a receiver that should handle such a request properly. To learn what went wrong, I have to go open the source code of the Statement. On the other hand, when I have a Statement named `ShouldRespondWithAnAckWheneverItReceivesAnHttpRequest`, then if it turns false, I know what's broken -- the object no longer responds with an ACK to an HTTP request. This may be enough to identify which part of the code is at fault and which of my changes made the Statement false.
+3. Using a name that describes a single behavior allows me to find out quickly why the Statement turned false. Let's say a Statement is true when I start refactoring, but at one point it turns false and the report in the runner looks like this: `TrySendingHttpRequest: FAILED` -- it only tells me that an attempt was made to send a HTTP request, but, for instance, doesn't tell me whether the object I specified in that Statement is some kind of sender that should try to send this request under some circumstances, or if it is a receiver that should handle such a request properly. To learn what went wrong, I have to go open the source code of the Statement. On the other hand, when I have a Statement named `ShouldRespondWithAnAckWheneverItReceivesAnHttpRequest`, then if it turns false, I know what's broken -- the object no longer responds with an ACK to an HTTP request. This may be enough to identify which part of the code is at fault and which of my changes made the Statement false.
 
 ### My favourite convention
 
@@ -100,10 +100,10 @@ Note that this name is not written from the perspective of a single object, but 
 
 When I find myself having trouble with naming like this, I suspect one of the following may be the case:
 
-1.  I am not specifying a behavior of a class, but rather the outcome of a method.
-2.  I am specifying more than one behavior.
-3.  The behavior is too complicated and hence I need to change my design (more on this later).
-4.  I am naming the behavior of an abstraction that is too low-level, putting too many details in the name. I usually only come to this conclusion when all the previous points fail me.
+1. I am not specifying a behavior of a class, but rather the outcome of a method.
+1. I am specifying more than one behavior.
+1. The behavior is too complicated and hence I need to change my design (more on this later).
+1. I am naming the behavior of an abstraction that is too low-level, putting too many details in the name. I usually only come to this conclusion when all the previous points fail me.
 
 ### Can't the name really become too long?
 
@@ -113,10 +113,10 @@ A few paragraphs ago, I mentioned you shouldn't worry about the length of Statem
 
 This technique can be used as an extension to the previous one (i.e. starting with a good name), by inserting one more question to the question sequence we followed the last time:
 
-1.  What is the scope of the behavior I'm trying to specify? Example answer: I'm trying to specify a behavior of a `Calculator` class.
-1.  What is the behavior of a `Calculator` class I'm trying to specify? Example answer: it should display all entered digits that are not leading zeroes.
-1.  **What is the context ("GIVEN") of the behavior, the action ("WHEN") that triggers it and expected reaction ("THEN") of the specified object? Example answer: Given I turn on the calculator, when I enter any digit that's not a 0 followed by any digits, then they should be visible on the display**. 
-1.  How to specify this behavior through code? Example answer: `[Fact] public void ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes() ...` (i.e. a piece of code).
+1. What is the scope of the behavior I'm trying to specify? Example answer: I'm trying to specify a behavior of a `Calculator` class.
+1. What is the behavior of a `Calculator` class I'm trying to specify? Example answer: it should display all entered digits that are not leading zeroes.
+1. **What is the context ("GIVEN") of the behavior, the action ("WHEN") that triggers it and expected reaction ("THEN") of the specified object? Example answer: Given I turn on the calculator, when I enter any digit that's not a 0 followed by any digits, then they should be visible on the display**. 
+1. How to specify this behavior through code? Example answer: `[Fact] public void ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes() ...` (i.e. a piece of code).
 
 Alternatively, it can be used without the naming step, when it's harder to come up with a name than with a GIVEN-WHEN-THEN structure. In other words, a GIVEN-WHEN-THEN structure can be easily derived from a good name and vice versa.
 
@@ -146,7 +146,7 @@ can be translated literally to the following piece of code:
 var user = new User(anyName);
 ```
 
-Note that we don't have the `User` class yet and we don't bother for now with what `anyName` really is. It's OK. 
+Note that we don't have the `User` class yet and we don't bother for now with what `anyName` really is. It's OK.
 
 Then the second line:
 
@@ -191,10 +191,10 @@ ShouldAppearEqualToAnotherUserWithTheSameName()
 
 As we expected, this doesn't compile. Notably, our compiler might point us towards the following gaps:
 
-1.  Variable `anyName` is not declared.
-1.  Object `anotherUserWithTheSameName` is not declared.
-1.  Variable `usersAreEqual` is both not declared and it does not hold the comparison result.
-1.  If this is our first Statement, we might not even have the `User` class defined at all.
+1. Variable `anyName` is not declared.
+1. Object `anotherUserWithTheSameName` is not declared.
+1. Variable `usersAreEqual` is both not declared and it does not hold the comparison result.
+1. If this is our first Statement, we might not even have the `User` class defined at all.
 
 The compiler created a kind of a small TODO list for us, which is nice. Note that while we don't have compiling code, filling the gaps to make it compile boils down to making a few trivial declarations and assignments:
 
