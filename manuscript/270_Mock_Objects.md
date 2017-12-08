@@ -157,7 +157,7 @@ Now, the last element is to decide who is going to play the role of channel. We 
 
 ```csharp
 [Fact] public void
-ShouldSendDataToOpenChannelThenCloseWhenAskedToDispatch()
+ShouldSendDataThroughOpenChannelThenCloseWhenAskedToDispatch()
 {
   //GIVEN
   Channel channel = ??; //what is it going to be?
@@ -202,7 +202,7 @@ By using this mock to fill the gaps in our Statement, this is what we end up wit
 
 ```csharp
 [Fact] public void
-ShouldSendDataToOpenChannelThenCloseWhenAskedToDispatch()
+ShouldSendDataThroughOpenChannelThenCloseWhenAskedToDispatch()
 {
   //GIVEN
   var channel = Substitute.For<Channel>();

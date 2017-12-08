@@ -1,26 +1,27 @@
 # Test-first using mock objects
 
+Now that we saw mocks in action and placed them in the context of our design approach, I'd like to show you how it works in the context of test-first approach. To do that, I'm going to reiterate the example from the last chapter. I already described how this example is not particularly strong in terms of showcasing the power of mock objects, so I won't repeat myself here. In the next chapter, I will give you an example I consider more suited.
 
+## How to start? - with mock objects
 
-todo revise how to start with a failing test
+You probably remember the chapter "How to start?" from part 1 of this book. In that chapter, I described the following ways to kickstart writing a Statement before the actual implementation is in place:
 
-remind of the three/four ways.
+1. Start with a good name.
+1. Start by filling the GIVEN-WHEN-THEN structure with the obvious.
+1. Start from the end.
+1. Start by invoking a method if you have one.
 
-show how each of them works with a mock object (rethink starting from assertions). Use the behaviors from last chapter
-
-examine the way Steve Freeman and Nat Pryce described in mock roles not objects
-
-explain that interface discovery and outside-in will be in the next chapter (probably featuring Johnny and Benjamin).
+Pretty much all of these strategies work equally well with Statements that use mock objects, so I won't be describing them in detail again. In this chapter, I will focus on "Start by invoking a method if you have one" as it's the one I use most often. This is not driven by my choice to use mock objects, but by the development style I most often use. This style is called "outside-in" and all we need to know about it for now is that following it means starting the development form the input of a use case and ending on the output. Many consider this counter-intuitive as it means we will write classes collaborating with other objects before we even have these objects. I will give you a small taste of it (together with a technique called "interface discovery") in this chapter and will expand on these ideas in the next one.
 
 ## Responsibility and Responsibility
 
-Explain that this chapter will use both meanings of the word responsibility and that Rebecca's responsibility wil be renamed to obligation. (btw, what about the previous chapter - does it need something like that?)
+In this chapter, I will be using two concepts that share the same name: Responsibility. On meaning of responsibility was coined by Rebecca Wirfs-Brock (TODO check the surname) to mean: TODO check the term, and the other by Robert C. Martin to mean "a reason to change". I will try to disambiguate (TODO check proper word) by calling the first one "obligation" and the second one "purpose".
 
-## Start by invoking a method if you have one
+## Channel and DataDispatch one more time
 
-This is the basic tool.
+This approach assumes that we already have the class with empty implementation.
 
-Imagine we are in this situation, where we have the `DataDispatch` class, but its implementation is empty - after all, this is what we are going to test-drive. 
+Imagine we are in this situation, where we already have the `DataDispatch` class, but its implementation is empty - after all, this is what we are going to test-drive.
 
 So for now, the `DataDispatch` class looks like this
 
@@ -35,6 +36,8 @@ public class DataDispatch
 ```
 
 Where did we get this class from in this shape? Well, let's assume for now that are in the middle of development and this class is a result of our previous TDD activities (after reading this and the next chapter, you'll hopefully have a better feel on how it happens).
+
+## The first behavior
 
 As we know what class we specify, plus it only has a single method, we may as well write a Statement where we create an object and invoke this method:
 
@@ -55,9 +58,9 @@ ShouldXXXXXXXXXYYY() //TODO give a better name
 
 Note several things:
 
-1. I'm currently using a dummy name and added a TODO item to my list to correct it later, when I define the responsibility of `DataDispatch`.
+1. I'm currently using a dummy name and added a TODO item to my list to correct it later, when I define the purpose of `DataDispatch`.
 1. The `ApplyTo()` method takes an argument, but I didn't provide any. For now, I don't want to think too hard, I just want to brain-dump everything I know.
-1. the `//THEN` section is empty for now. I will define it once I figure out what is the responsibility of this class.
+1. the `//THEN` section is empty for now. I will define it once I figure out what is the purpose of this class.
 1. If you remember the `Channel` interface from the last chapter, well, it doesn't exist yet. I will discover it later.
 
 So I have my brain dump. What do I do? First, I reach for the feedback to my compiler - maybe it can give me some hints on what I am missing?
@@ -209,7 +212,7 @@ public interface Channel
 
 Now we have only two things left on our list - giving the Statement a good name and deciding what the `data` variable should hold. Let's do the latter as it gives more feedback and stops the compiler and prevents evaluating the Statement.
 
-Time to think about how much does the `DataDispatch` need to know about the data. As its responsibility is to manage connection, validation does not fit without breaking the single-purposeness, so we decide that `DataDispatch` will work with any data and someone needs to be responsible for ensuring valid data. We put that on the `Channel` as it depends on the actual implementation of sending what data can be sent and what cannot. Thus, we will define the `data` variable in our Statement as `Any.Array<byte>()`:
+Time to think about how much does the `DataDispatch` need to know about the data. As its purpose is to manage connection, validation does not fit without breaking the single-purposeness, so we decide that `DataDispatch` will work with any data and someone needs to be responsible for ensuring valid data. We put that on the `Channel` as it depends on the actual implementation of sending what data can be sent and what cannot. Thus, we will define the `data` variable in our Statement as `Any.Array<byte>()`:
 
 ```csharp
 [Fact] public void
@@ -233,7 +236,244 @@ ShouldXXXXXXXXXYYY() //TODO give a better name
 }
 ```
 
-The code now compiles, so what we need is to give this Statement a better name.
+The code now compiles, so what we need is to give this Statement a better name. Let's go with `ShouldSendDataThroughOpenChannelThenCloseWhenAskedToDispatch`. This was the last TODO on the Specification side, so let's see the full Statement code:
+
+```csharp
+[Fact] public void
+ShouldSendDataThroughOpenChannelThenCloseWhenAskedToDispatch()
+{
+ //GIVEN
+ var data = Any.Array<byte>();
+ var channel = Substitute.For<Channel>();
+ var dispatch = new DataDispatch(channel);
+
+ //WHEN
+ dispatch.ApplyTo(data);
+
+ //THEN
+ Received.InOrder(() =>
+ {
+  channel.Open();
+  channel.Send(data);
+  channel.Close();
+ });
+}
+```
+
+The Statement now is false, because the implementation throws a `NotImplementedException`. Remember, what we would like to see before we start implementing the right behavior is that the assertions (in this case - mock verifications) fail. So the lines that we would like to see an exception from are these:
+
+```csharp
+Received.InOrder(() =>
+{
+ channel.Open();
+ channel.Send(data);
+ channel.Close();
+});
+```
+
+but instead, we get an exception as early as:
+
+```csharp
+//WHEN
+dispatch.ApplyTo(data);
+```
+
+What do we do? We push the implementation a little bit further, only as much as to see the expected failure. In our case, all we need to do is take the `ApplyTo()` method from the specified class:
+
+```csharp
+public void ApplyTo(byte[] data)
+{
+ throw new NotImplementedException();
+}
+```
+
+and remove the `throw` clause, making it:
+
+```csharp
+public void ApplyTo(byte[] data)
+{
+
+}
+```
+
+This alone is enough to see the mock verification make our Statement false. Now we can just put the correct implementation. Let's start with `DataDispatch` constructor, which currently takes a `Channel` as a parameter, but doesn't do anything with it. What we need to do is to assign the channel to a newly created field (this can be done using a single command in most IDEs). The code becomes:
+
+```csharp
+private readonly Channel _channel;
+
+public DataDispatch(Channel channel)
+{
+ _channel - channel;
+}
+```
+
+Now what we have this channel, we can implement the `ApplyTo()` method:
+
+```csharp
+public void ApplyTo(byte[] data)
+{
+ _channel.Open();
+ _channel.Send(data);
+ _channel.Close();
+}
+```
+
+
+//todo make this an aside
+To tell you the truth, usually before writing the correct implementation, I play a bit, making it wrong in several ways, just to see if I guess correctly the reason why the Statement will turn false and to make sure the error messages are informative enough. For example, I may write only the first line and observe whether the Statement is still false and if the reason is changed. Then I may add the second, but pass something other than `_data` to the `Open()` method (e.g. a `null`) etc. This way, I "test my test", not only for correctness (whether it will fail for the right reason) but also for diagnostics (will it give me enough information when it fails?). Also, this is the way I learn about feedback that I receive from my tools should such a Statement turn false later.
+
+### Second behavior - specifying an error
+
+The first Statement is implemented, so time for the second one. (XXX it comes from TODO list XXX) Our second behavior was that in case the sending failed, the user of `DataDispatch` should receive this error and the connection should be safely closed. Note that the notion of what "closing the connection" means is placed in the `Channel` implementations, because we consciously delegated the implementation details there. The same goes for the meaning of "errors while sending data -- this is also the responsibility of `Channel`. What we need to specify about `DataDispatch` is how it handles the sending errors in regard to its user and its `Channel`.
+
+Let's start writing the Statement by stating the obvious. This time, we'll use the strategy of starting with a good name. I picked the following name to state the expected behavior:
+
+```csharp
+public void
+ShouldRethrowExceptionAndCloseChannelWhenSendingDataFails()
+{
+ //...
+}
+```
+
+Before we start dissecting the name into useful code, let's start by stating the bleedy obvious (note that I'm mixing two strategies now - this is OK, of course). We know that:
+
+1. We need to work with `DataDispatch` again.
+1. We need to pass a mock of `Channel`.
+1. We need to send the `ApplyTo()` message.
+1. We need some kinf of invalid data (although we don't know yet what to do to make it invalid).
+
+Let's write that down in the form of code:
+
+```csharp
+public void
+ShouldRethrowExceptionAndCloseChannelWhenSendingDataFails()
+{
+ //GIVEN
+ var channel = Substitute.For<Channel>();
+ var dataDispatch = new DataDispatch(channel);
+ byte[] invalidData; //doesn't compile
+
+ //WHEN
+ dataDispatch.ApplyTo(invalidData);
+
+ //THEN
+ Assert.True(false);
+}
+```
+
+Now, we know that one aspect of the expected behavior is closing the channel. We know how to write this - we use the `Received()` method of NSubstitute on the channel mock. So let's write that in the `//THEN` section:
+
+```csharp
+ //THEN
+ channel.Received(1).Close();
+ Assert.True(false); //not removing this yet
+}
+```
+
+I used `Received(1)`, because attempting to close the channel several times might cause trouble, so I want to make sure that the `DataDispatch` closes the channel exactly once. Another thing - I am not removing the `Assert.True(false)` yet, as the Statement could become true otherwise (if it compiled, that is). This is not OK, because this Statement does not yet specify correctly the intended scenario. What are we missing? Specifying that an exception resulting from invalid data is rethrown. Normally, I rarely write Statements about rethrown exceptions, but here I have no choice - if we don't somehow catch the exception in our Statement, we won't be able to evaluate whether the channel was closed or not, since the uncaught exception will make our Statement false before that.
+
+To specify that exception should be thrown, we don't need to decide on what the invalid data is yet. We just need to use (TODO verify the assertion) `Assert.Throws<>()` assertion and pass the code that should throw the exception as lambda:
+
+```csharp
+ //WHEN
+Assert.Throws<Exception>(() =>
+  dataDispatch.ApplyTo(invalidData));
+```
+
+OK, now the time has come to decide what actually is invalid data. I will do that by remembering that I pushed the responsibility of detecting valid and invalid data into the `Channel` when I discovered this interface. Then, I will conclude that invalid data is data that is recognized as such by a particular `Channel` implementation. As we use a mock implementation of the `Channel` interface, we will just have to configure it so that it throws an exception given the particular data that we use in our Statement. Thus, the value of the `data` itself is irrevelant as long as it's the one that a `Channel` recognizes as invalid. So first, let's define the `data` as any byte array:
+
+```csharp
+byte[] invalidData = Any.Array<byte>();
+```
+
+Then let's write down the assumption of how the `channel` will behave given this data:
+
+```csharp
+//GIVEN
+...
+var exceptionFromChannel = Any.Exception();
+channel.When(c => c.Send(invalidData)).Throw(exceptionFromChannel);
+```
+
+Note that the place where we configure the mock to throw an exception is the `//GIVEN` section. This is because any mock pre-configuration is our assumption. By pre-canning the method outcome in this case, we say "given that channel for some reason rejects this data".
+
+Now that we have the full Statement code, we can get rid of the `Assert.True(false)` assertion. The full Statement looks like this:
+
+```csharp
+public void
+ShouldRethrowExceptionAndCloseChannelWhenSendingDataFails()
+{
+ //GIVEN
+ var channel = Substitute.For<Channel>();
+ var dataDispatch = new DataDispatch(channel);
+ var data = Any.Array<byte>();
+ var exceptionFromChannel = Any.Exception();
+
+//toooodooo Throw or Throws???????????
+ channel.When(c => c.Send(data)).Throw(exceptionFromChannel);
+
+ //WHEN
+ var exception = Assert.Throws<Exception>(() =>
+  dataDispatch.ApplyTo(invalidData));
+
+ //THEN
+ Assert.Equal(exceptionFromChannel, exception);
+ channel.Received(1).Close();
+}
+```
+
+Now, it looks a bit messy, but given our toolset, this has to do. This Statement will now run and fail on the second assertion. Wait, the second? What about the first one? Well, the first assertion says that an exception should be rethrown, but methods in C# rethrow the exception by default (that's why typically I don't specify that something should rethrow an exception - I do it this time because otherwise it would not let me specify how `DataDispatch` uses a `Channel`). Thus, this behavior is implemented by doing nothing. Should we just acept it? No, we should not. Remember what I wrote in the first part - we need to see each assertion fail at least once. An assertion that passes straight away is something we should be suspicious about. What we need to do now is to temporary break the behavior and see the failure. We can do that (at least) in two ways:
+
+1. By going to the Statement and commenting out the line that configures the `Channel` mock to throw an exception.
+1. By going to the production code and surrounding the `channel.Send(data)` statement with a try-catch block.
+
+Either way is fine with me, so I chose the first way. By commenting the mock configuration in the Statement, I can now observe the assertion fail, because an exception was expected but none came out of the `dataDispatch.ApplyTo()` invocation. Now I'm ready the uncomment this line again, confident that my Statement describes this part of the behavior well and I can focus on the second assertion:
+
+```csharp
+channel.Received(1).Close();
+```
+
+This assertion fails because our current implementation of the `ApplyTo()` method is:
+
+```csharp
+_channel.Open();
+_channel.Send(data);
+_channel.Close();
+```
+
+and an exception throw from the `Send()` method interrupts the processing, instantly exiting the method, so `Close()` is never called. We can change this behavior by using try-finally block to wrap the call to `Send()`:
+
+```csharp
+_channel.Open();
+try
+{
+ _channel.Send(data);
+}
+finally
+{
+ _channel.Close();
+}
+```
+
+This makes our second Statement true and concludes this example.
+
+## Summary
+
+In this chapter, we delved into writing mock-based Statement in a test-first manner. It demonstrated an example of how I would approach developing a class in a test-first way. I consider it important to remember that this is an example of how it can be done, not "the true way" or the right path. There were many situations where I got several TODO items pointed by my compiler or the failing test. Depending on many factors, I might've approached them in a different order. For example, in the second behavior, I could've defined `data` as `Any.Array<byte>()` right from the start (and left a TODO item to check on it later) to get the Statement to compiling state quicker.
+
+Another interesting point was the moment when I discovered the `Channel` interface - I'm aware that I slipped over it by saying something "we can see that the class has too many purposes, then magic happens and then we've got an interface to delegate parts of the logic to". This "magic happens" part is often called "interface discovery" and we will dig a little deeper into it in the next chapter.
+
+You might've noticed that this chapter was longer than the last one and jump to a conclusion that it means that TDD complicates things rather than simplifying them. There were, however, several factors that made this chapter longer:
+
+1. In this chapter, we specified both behaviors (happy path plus error handling), whereas in the last chapter we only specified one (happy path).
+1. In this chapter, we designed and implemented the `DataDispatch` class and discovered the `Channel` interface whereas in the last chapter they were given to us right from the start.
+1. As I assume the test-first way of writing Statements is less familiar to you, I took my time to explain it in more detail.
+1. The through process I described usually takes seconds in writing and maybe several minutes in thinking.
+
+TODO why is this way of test-first usual? let's try to implement the channel.
+
+TODO write that this process usually takes seconds.
 
 TODO why a mock? because real channel does not exist and context independence.??
 
@@ -243,4 +483,7 @@ TODO deciding what we start from is about deciding what can give us the best fee
 
 TODO I often write everything and then generate code.
 
-So, the responsibility that's left in the `DataDispatch` class is to manage the connection. Thus, it is going to open the channel, send the data and then close the channel, even in case of sending errors.
+TODO specifying the negative - quote from Kent Beck.
+"I often optimize for the mistakes that I make or we collectively make"
+
+TODO examine the way Steve Freeman and Nat Pryce described in mock roles not objects

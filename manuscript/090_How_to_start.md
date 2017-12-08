@@ -6,9 +6,9 @@ Whenever I sat down with someone who was about to write code in a Statement-firs
 
 I already said that a Statement is a description of a behavior expressed in code. A thought process leading to creation of such an executable Statement might look like the following sequence of questions:
 
-1.  What is the scope of the behavior I'm trying to specify? Example answer: I'm trying to specify a behavior of a `Calculator` class.
-1.  What is the behavior of a `Calculator` class I'm trying to specify? Example answer: it should display all entered digits that are not leading zeroes.
-1.  How to specify this behavior through code? Example answer: `[Fact] public void ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes() ...` (i.e. a piece of code).
+1. What is the scope of the behavior I'm trying to specify? Example answer: I'm trying to specify a behavior of a `Calculator` class.
+1. What is the behavior of a `Calculator` class I'm trying to specify? Example answer: it should display all entered digits that are not leading zeroes.
+1. How to specify this behavior through code? Example answer: `[Fact] public void ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes() ...` (i.e. a piece of code).
 
 Note that before writing any code, there are at least two questions that can be answered in human language. Many times answering these questions first before starting to write the code of the Statement makes things easier. Even though, this can still be a challenging process. To apply this advice successfully, some knowledge on how to properly name Statements is required. I know not everybody pays attention to naming their Statements, mainly because the Statements are often considered second-level citizens -- as long as they run and "prove the code doesn't contain defects", they are considered sufficient. We will take a look at some examples of bad names and then I'll go into some rules of good naming.
 
