@@ -19,9 +19,7 @@ In this chapter, I will be using two concepts that share the same name: Responsi
 
 ## Channel and DataDispatch one more time
 
-This approach assumes that we already have the class with empty implementation.
-
-Imagine we are in this situation, where we already have the `DataDispatch` class, but its implementation is empty - after all, this is what we are going to test-drive.
+Remember the example from the last chapter? Imagine we are in a situation where we already have the `DataDispatch` class, but its implementation is empty - after all, this is what we are going to test-drive.
 
 So for now, the `DataDispatch` class looks like this
 
@@ -39,7 +37,7 @@ Where did we get this class from in this shape? Well, let's assume for now that 
 
 ## The first behavior
 
-As we know what class we specify, plus it only has a single method, we may as well write a Statement where we create an object and invoke this method:
+As I already know class which behaviors I need to specify, plus it only has a single method (`ApplyTo()`), I may almost blindly write a Statement where I create an object of this class and invoke the method:
 
 ```csharp
 [Fact] public void
@@ -49,7 +47,7 @@ ShouldXXXXXXXXXYYY() //TODO give a better name
  var dispatch = new DataDispatch();
 
  //WHEN
- dispatch.ApplyTo(); //doesn't compile
+ dispatch.ApplyTo(); //TODO doesn't compile
 
  //THEN
  Assert.True(false); //TODO state expectations
@@ -58,14 +56,14 @@ ShouldXXXXXXXXXYYY() //TODO give a better name
 
 Note several things:
 
-1. I'm currently using a dummy name and added a TODO item to my list to correct it later, when I define the purpose of `DataDispatch`.
-1. The `ApplyTo()` method takes an argument, but I didn't provide any. For now, I don't want to think too hard, I just want to brain-dump everything I know.
-1. the `//THEN` section is empty for now. I will define it once I figure out what is the purpose of this class.
-1. If you remember the `Channel` interface from the last chapter, well, it doesn't exist yet. I will discover it later.
+1. I'm currently using a dummy name for the Statement and I added a TODO item to my list to correct it later, when I define the purpose and behaviors of `DataDispatch`.
+1. According to its signature, the `ApplyTo()` method takes an argument, but I didn't provide any in the Statement. For now, I don't want to think too hard, I just want to brain-dump everything I know.
+1. the `//THEN` section is empty for now - it only contains a single assertion that will fail when the execution flow reaches it (this way I protect myself from mistakenly making the Statement true until I state my true expectations). I will define the `//THEN` section once I figure out what is the purpose that I want to give this class.
+1. If you remember the `Channel` interface from the last chapter, well, it doesn't exist yet and let's assume that in this continuum, I don't even know that I need it. I will "discover" it later.
 
-So I have my brain dump. What do I do? First, I reach for the feedback to my compiler - maybe it can give me some hints on what I am missing?
+So I did my brain dump. What do I do now? I don't want to think too hard yet (time will come for that). First, I reach for the feedback to my compiler - maybe it can give me some hints on what I am missing?
 
-Currently, the compiler complains that I send the `ApplyTo` message without any argument. What's the name of the argument? `data`. Thus, let's pass some data. I don't want to decide what it is yet, so I will asume I have a variable called data and just write its name where the argument is expected:
+Currently, the compiler complains that I send the `ApplyTo` message without passing any argument. What's the name of the argument? `data`. Hmm, so let's pass some data. I don't want to decide what it is yet, so I will act as if I had a variable called `data` and just write its name where the argument is expected:
 
 ```csharp
 [Fact] public void
@@ -75,49 +73,66 @@ ShouldXXXXXXXXXYYY() //TODO give a better name
  var dispatch = new DataDispatch();
 
  //WHEN
- dispatch.ApplyTo(data); //still doesn't compile
+ dispatch.ApplyTo(data); //TODO still doesn't compile
 
  //THEN
  Assert.True(false); //TODO state expectations
 }
 ```
 
-The compiler gives me more feedback - it says my `data` variable is not defined anywhere. It might sound funny, but this way I progressed one step further. Now I know I need to define this data. I can use the "quick fix" capability of my IDE to introduce a variable. E.g. in Jetbrains IDEs (IntelliJ IDEA, Resharper, Rider...) this can be done by pressing `ALT` `+` `ENTER` when the cusros is on the name of the variable. The IDE will create the following declaration:
+The compiler gives me more feedback - it says my `data` variable is not defined anywhere. It might sound funny (as if I didn't know!), but this way I progressed one step further. Now I know I need to define this `data`. I can use the "quick fix" capability of my IDE to introduce a variable. E.g. in Jetbrains IDEs (IntelliJ IDEA, Resharper, Rider...) this can be done by pressing `ALT` `+` `ENTER` when the cursor is on the name of the missing variable. The IDE will create the following declaration:
 
 ```csharp
 byte[] data;
 ```
 
-Note that the IDE guessed the type of the variable for us. How did it know? Because the definition of the method already has the type declared.
+Note that the IDE guessed the type of the variable for us. How did it know? Because the definition of the method where I try to pass it  already has the type declared:
 
-Of course, this will still not compile because C# requires variables to be explicitly initialized. Now is the time to turn on thinking and decide what exactly is the obligation of the `ApplyTo()` method. We decide that it should send the data, but can it do it alone? There are at least two things associated with sending the data:
+```csharp
+public void ApplyTo(byte[] data)
+```
 
-1. The raw sending logic (i.e. laying our data, pushing it e.g. through the web socket etc.)
-1. Keeping the integrity of the connection (i.e. disposing of all allocated resources, even in the face of an exception during the sending).
+Of course, the declaration of `data` that my IDE put in the code will still not compile because C\# requires variables to be explicitly initialized, i.e. the code should look like this:
 
-Putting it all in a single class would violate the Single Responsibility Principle. Thus we decide to delegate the first of the mentioned responsibilities to a collaborator that will be used by the `DataDispatch`. We name this collaborator role `Channel`. What we just did is called interface discover and usually it involves much more thinking, but I'll cover this in the next chapter.
+```csharp
+byte[] data = ... /* whatever initialization code*/;
+```
 
-Let's connect this new collaborator to the `DataDispatch`. A `Channel` will receive messages from `DataDispatch` and `DataDispatch` will not work without a `Channel`, so we pass the channel to the constructor of `DataDispatch`. Thus, the following code:
+It looks like I can't continue my brain-dead parade anymore. In order to decide how to define this data, I have to turn on thinking and decide what exactly is the obligation of the `ApplyTo()` method and what does it need the `data` for. After some thinking (how convenient of me to exlude this thought process from the book!) I decide that it should send the data it receives, but should it do it alone? There are at least two things associated with sending the data:
+
+1. The raw sending logic (i.e. laying out the data, pushing it e.g. through a web socket etc.)
+1. Managing the connection lifetime (i.e. deciding when it should be opened and when closed, disposing of all the allocated resources, even in the face of an exception that may be raised during the sending).
+
+I decide to not put the entirety of logic in the `DataDispatch` class, because:
+
+1. It would have more than one purpose (as described earlier) - in other words, it would violate the Single Responsibility Principle.
+1. I am unable to figure out how to write a false Statement for this much logic before the implementation. I always treat it as a sign that I'm trying to use a single class for too much.
+
+Thus, my decision is to divide and conquer, i.e. find `DataDispatch` some collaborators that will help it achieve its goal and delegate parts of the logic there. After some consideration, I decide that the purpose of `DataDispatch` should be managing the connection lifetime. The rest of the logic I decide to delegate to a collaborator role that I named `Channel`. The process of coming out with collaborator roles and delegating some obligations to them is called *interface discovery*. I will cover it in the next chapter.
+
+Anyway, since our `DataDispatch` is goind to delegate some logic to the `Channel`, it has to know it. Thus, let's connect this new collaborator to the `DataDispatch`. A `Channel` will receive messages from `DataDispatch` and `DataDispatch` will not work without a `Channel`, which means I need to pass the channel to `DataDispatch` as a constructor parameter. Thus, the following code:
 
 ```csharp
 //GIVEN
 var dispatch = new DataDispatch();
 ```
 
-becomes
+becomes:
 
 ```csharp
 //GIVEN
-var dispatch = new DataDispatch(channel);
+var dispatch = new DataDispatch(channel); //doesn't compile
 ```
 
-Of course, it won't compile, because the `channel` doesn't exist yet. Again, let's use our IDE to generate this variable. This time, however, the variable will be generated like this:
+Of course, this code doesn't compile, because the `channel` variable isn't declared yet. By showing me the compilation error, the compiler gives me the feedback I need to progress further. Again, let's use our IDE to generate the `channel` variable. This time, however, the result of the generation is:
 
 ```csharp
 Object channel;
 ```
 
-This is because we haven't created the `Channel` type yet and `DataDispatch` doesn't really take a constructor argument yet. These are the items we need to follow up on. First, let's introduce the `Channel` interface by changing `Object channel;` into `Channel channel;`. This will give us a compiler error, as the `Channel` does not yet exist. Thankfully, it's just one IDE click (e.g. in Resharper, I place my cursor at the non-existent type, press `ALT` `+` `ENTER` and pick an option to create such type.). After this step, we should have something like:
+The IDE could not guess the correct type of `channel` (which would be `Channel`) and made it an  `Object`, because, obviously, I haven't created the `Channel` type yet. Furthermore, `DataDispatch` doesn't really take a constructor argument yet, which would raise another compiler error even if I had the `Channel` type. These two errors are what I need to follow up on (again, useful, early feedback).
+
+First, I'll introduce the `Channel` interface by changing the declaration `Object channel;` into `Channel channel;`. This will give me another compiler error, as the `Channel` does not yet exist. Thankfully, creating it is just one IDE click away (e.g. in Resharper, I place my cursor at the non-existent type, press `ALT` `+` `ENTER` and pick an option to create it as an interface.). Doing this will give me:
 
 ```csharp
 public interface Channel
@@ -126,7 +141,7 @@ public interface Channel
 }
 ```
 
-which is enough to pass this compiler error, but then we've got another one - nothing is assigned to the `channel` variable. `Channel` is a role and, as mentioned in the last chapter, we use mocks to play the roles of our collaborators. This makes the following code:
+which is enough to get past this compiler error, but then I get another one - there is nothing assigned to the `channel` variable. Again, I have to turn my thinking on.Luckily, this time I can lean on a simple rule: in my design, `Channel` is a role and, as mentioned in the last chapter, I use mocks to, play the roles of my collaborators. So the conclusion is to use a mock. This makes the following line:
 
 ```csharp
 Channel channel;
@@ -138,7 +153,7 @@ look like this:
 var channel = Substitute.For<Channel>();
 ```
 
-The full code of our Statement is:
+Taking a bird's-eye view on the Statement, I currently have:
 
 ```csharp
 [Fact] public void
@@ -157,7 +172,13 @@ ShouldXXXXXXXXXYYY() //TODO give a better name
 }
 ```
 
-For now, our compiler and TODO list point that we still have three things to do: define data, name our Statement and state our expectations. Let's take the last task. As mentioned, the purpose of `DataDispatch` is to manage the channel state. If so, then the one expecting messages is the `channel`. As you remember from the last chapter, there are two behaviors of `DataDispatch` associated with managing this state - a happy path and the one where we get an exception. As we want to specify only one behavior in each Statement, we take the happy path. This, by the way, will allow us to give the Statement a good name, but remember, we don't want to be distracted from our current task and the task to give our Statement a name is on our TODO list so we don't worry about that. Another thing we don't want to worry about is that we have one more behavior to specify, so we add it to the TODO list as well:
+The compiler and my TODO list point out that I still have three things to do: 
+
+* define `data` variable,
+* name my Statement and
+* state my expectations (the `THEN` section of the Statement)
+
+I can do them in any order I see fit, so I pick the last task from the list. As mentioned, the purpose I gave `DataDispatch` is to manage the channel lifetime. ????If so, then the one expecting messages is the `channel`. As you remember from the last chapter, there are two behaviors of `DataDispatch` associated with managing this lifetime - a happy path and the one where we get an exception. As we want to specify only one behavior in each Statement, we take the happy path. This, by the way, will allow us to give the Statement a good name, but remember, we don't want to be distracted from our current task and the task to give our Statement a name is on our TODO list so we don't worry about that. Another thing we don't want to worry about is that we have one more behavior to specify, so we add it to the TODO list as well:
 
 ```csharp
 //TODO: specify a behavior where sending data

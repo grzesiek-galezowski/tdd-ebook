@@ -10,8 +10,8 @@ From [Wikipedia](https://en.wikipedia.org/wiki/Analysis):
 
 Thus, for TDD to be about analysis, it would have to fulfill two conditions:
 
-1.  It would have to be a process of breaking a complex topic into smaller parts
-2.  It would have to allow gaining a better understanding of such smaller parts
+1. It would have to be a process of breaking a complex topic into smaller parts
+1. It would have to allow gaining a better understanding of such smaller parts
 
 In the story about Johnny, Benjamin and Jane, I included a part where they analyze requirements using concrete examples. Johnny explained that this is a part of process called Acceptance Test-Driven Development. This process, followed by the three characters, fulfilled both mentioned conditions for it to be considered analytical. But what about TDD itself?
 
@@ -21,19 +21,19 @@ But what about the first requirement? What about breaking a complex logic into 
 
 If you go back to Johnny and Benjamin's story, you will note that when talking to a customer and when writing code, they used a TODO list. This list was first filled with whatever scenarios they came up with, but later, they would add smaller units of work. When doing TDD, I do the same, essentially decomposing complex topics into smaller items and putting them on the TODO list (this is one of the practices that serve decomposition. The other one is mocking, but let's leave that for now). Thanks to this, I can focus on one thing at a time, crossing off item after item from the list after it's done. If I learn something new or encounter a new issue that needs our attention, I can add it to the TODO list and get back to it later, for now continuing my work on the current item of focus.
 
-An example TODO list from the middle of an implementation task may look like this (don't read through it, I put it here just to give you a glimpse - you're not supposed to understand what the list items are about):
+An example TODO list from the middle of an implementation task may look like this (don't read through it, I put it here just to give you a glimpse - you're not supposed to understand what the list items are about either):
 
-1.  ~~Create an entry point to the module (top-level abstraction)~~
-2.  ~~Implement main workflow of the module~~
-3.  ~~Implement `Message` interface~~
-4.  ~~Implement `MessageFactory` interface~~
-5.  Implement `ValidationRules` interface
-6.  ~~Implement behavior required from Wrap method in `LocationMessageFactory` class~~
-7.  Implement behavior required from ValidateWith method in `LocationMessage` class for Speed field
-8.  Implement behavior required from ValidateWith method in `LocationMessage` class for Age field
-9.  Implement behavior required from ValidateWith method in `LocationMessage` class for Sender field
+1. ~~Create an entry point to the module (top-level abstraction)~~
+1. ~~Implement main workflow of the module~~
+1. ~~Implement `Message` interface~~
+1. ~~Implement `MessageFactory` interface~~
+1. Implement `ValidationRules` interface
+1. ~~Implement behavior required from Wrap method in `LocationMessageFactory` class~~
+1. Implement behavior required from ValidateWith method in `LocationMessage` class for Speed field
+1. Implement behavior required from ValidateWith method in `LocationMessage` class for Age field
+1. Implement behavior required from ValidateWith method in `LocationMessage` class for Sender field
 
-Note that some of the items are already crossed off as done, while others remain pending and waiting to be addressed. All these items are what the article on Wikipedia calls "smaller parts" - a result of breaking down a bigger topic.
+Note that some of the items are already crossed off as done, while others remain pending and waiting to be addressed. All these items are what the article on Wikipedia calls "smaller parts" - a result of breaking down a bigger topic. 
 
 For me, the arguments that I gave you are enough to think that TDD is about analysis. The next question is: are there any tools we can use to aid and inform this analysis part of TDD? The answer is yes and you already saw both of them in this book, so now we're going to have a closer look.
 
@@ -114,15 +114,21 @@ There are two important questions related to TODO lists: "what exactly should we
 
 ### What to put on a TODO list?
 
-Everything that we need addressed but is out of scope of the current Statement. Those items may be related to implementing unimplemented methods, to add whole functionalities (such items are usually broken further into more fine-grained sub tasks as soon as we start implementing them), they might be reminders to take a better look at something (e.g. "investigate what is this component's policy for logging errors") or questions about the domain that need to get answered. If we tend to get carried away too much in coding and miss our lunch, we can even add a reminder ("TODO: eat lunch!"). I never encountered a case where I needed to share this TODO list with anyone else, so I treat it as my personal sketchbook. I recommend the same to you - the list is yours!
+Everything that we need addressed but is out of scope of the current Statement. Those items may be related to implementing unimplemented methods, to add whole functionalities (such items are usually broken further into more fine-grained sub tasks as soon as we start implementing them), they might be reminders to take a better look at something (e.g. "investigate what is this component's policy for logging errors") or questions about the domain that need to get answered. If we tend to get carried away too much in coding and miss our lunch, we can even add a reminder ("TODO: eat lunch!"). I have never encountered a case where I needed to share this TODO list with anyone else, so I tend to treat it as my personal sketchbook. I recommend the same to you - the list is yours!
 
 ### How to pick items from a TODO list?
 
 Which item to choose from a TODO list when we have several of them? I have no clear rule, although I tend to take into account the following factors:
 
-1.  Risk -- if what I learn by implementing or discussing a particular item from the list can have a big impact on design or behavior of the system, I tend to pick such items first. An example of such item is when I start implementing validation of a request that arrives to my application and want to return different error depending on which part of the request is wrong. Then, during the development, I may discover that more than one part of the request can be wrong at the same time and I have to answer a question: which error code should be returned in such case? Or maybe the return codes should be accumulated for all validations and then returned as a list?
-2.  Difficulty -- depending on my mental condition (how tired I am, how much noise is currently around my desk etc.), I tend to pick items with difficulty that best matches this condition. For example, after finishing an item that requires a lot of thinking and figuring things out, I tend to take on some small and easy items to feel wind blowing in my sails and to rest a little bit. 
-3.  Completeness -- in simplest words, when I finish test-driving an "if" case, I usually pick up the "else" next. For example, after I finish implementing a Statement saying that something should return true for values less than 50, then the next item to pick up is the "greater or equal to 50" case. Usually, when I start test-driving a class, I take items related to this class until I run out of them, then go on to another one.
+1. Risk -- if what I learn by implementing or discussing a particular item from the list can have a big impact on design or behavior of the system, I tend to pick such items first. An example of such item is when I start implementing validation of a request that arrives to my application and want to return different error depending on which part of the request is wrong. Then, during the development, I may discover that more than one part of the request can be wrong at the same time and I have to answer a question: which error code should be returned in such case? Or maybe the return codes should be accumulated for all validations and then returned as a list?
+1. Difficulty -- depending on my mental condition (how tired I am, how much noise is currently around my desk etc.), I tend to pick items with difficulty that best matches this condition. For example, after finishing an item that requires a lot of thinking and figuring things out, I tend to take on some small and easy items to feel wind blowing in my sails and to rest a little bit. 
+1. Completeness -- in simplest words, when I finish test-driving an "if" case, I usually pick up the "else" next. For example, after I finish implementing a Statement saying that something should return true for values less than 50, then the next item to pick up is the "greater or equal to 50" case. Usually, when I start test-driving a class, I take items related to this class until I run out of them, then go on to another one.
+
+Of course, a TODO list is just one source of such TODO items. Typically, when searching for items to do, I examine the following sources of items in the following order:
+
+1. compiler failures,
+1. Statements that are false,
+1. My TODO list.
 
 ### Where to put a TODO list?
 
@@ -130,18 +136,18 @@ I encountered two ways of maintaining a TODO list. The first one is on a sheet
 
 The second alternative is to use a TODO list functionality built-in into an IDE. Most IDEs, such as Visual Studio (and Resharper plugin has its own enhanced version), Xamarin Studio, IntelliJ or eclipse-based IDEs have such functionality. The rules are simple -- I insert special comments (e.q. `//TODO do something`) in the code and a special view in my IDE aggregates them for me, allowing me to navigate to each item later. This is my primary way of maintaining a TODO list, because:
 
-1.  They don't force me to take my hands off my keyboard to add an item to the list.
-2.  I can put a TODO item in a certain place in the code where is makes sense and then navigate back to it later with a click of a mouse. This, apart from other advantages, allows writing shorter notes than if I had to do it on paper. For example, a TODO item saying "TODO: what if it throws an exception?" looks out of place on a sheet of paper, but when added as a comment to my code in the right place, it's sufficient.
-3.  Many TODO lists automatically add items for certain things that happen in the code. E.g. in C\#, when I'm yet to implement a method that was automatically generated the IDE, its body usually consists of a line that throws a `NotImplementedException` exception. Guess what -- `NotImplementedException` occurences are added to the TODO list automatically, so I don't have to manually add items to the TODO list for implementing the methods where they occur.
+1. They don't force me to take my hands off my keyboard to add an item to the list.
+1. I can put a TODO item in a certain place in the code where is makes sense and then navigate back to it later with a click of a mouse. This, apart from other advantages, allows writing shorter notes than if I had to do it on paper. For example, a TODO item saying "TODO: what if it throws an exception?" looks out of place on a sheet of paper, but when added as a comment to my code in the right place, it's sufficient.
+1. Many TODO lists automatically add items for certain things that happen in the code. E.g. in C\#, when I'm yet to implement a method that was automatically generated by the IDE, its body usually consists of a line that throws a `NotImplementedException` exception. Guess what -- `NotImplementedException` occurences are added to the TODO list automatically, so I don't have to manually add items to the TODO list for implementing the methods where they occur.
 
 ![Resharper TODO Explorer docked as a window in Visual Studio 2015 IDE](images/TodoExplorer.PNG)
 
 The TODO list maintained in the source code has one minor drawback - we have to remember to clear the list when we finish working with it or we may end up pushing the TODO items to the source control repository along with the rest of the source code. Such leftover TODO items may accumulate in the code, effectively reducing the ability to navigate through the items that were only added by a specific developer. There are several strategies of dealing with this:
 
 1. For greenfield projects, I found it relatively easy to set up a static analysis check that runs when the code is built and doesn't allow the automatic build to pass unless all TODO items are removed. This helps ensure that whenever a change is pushed to a version control system, it's stripped of the unaddressed TODO items.
-2. In some other cases, it's possible to use a strategy of removing all TODO items from a project before starting working with it. Sometimes it may lead to conflicts between people when TODO items are used for something else than a TDD task list and someone for whatever reason wants them to stay in the code longer. Even though I'm of opinion that such cases of leaving TODO items for longer should be extremely rare at best, however, others may have different opinions.
-3. Most modern IDEs offer support markers other than `//TODO` for placing items on a TODO list, for example, `//BUG`. In such case, I can use the `//BUG` marker to mark just my items and then I can filter other items out based on that marker. Bug markers are commonly not intended to be left in the code, so it's much less risky for them to accumulate. 
-4. As a last resort technique, I can usually define my own markers to be placed on TODO list and, again, use filters to see only the items that were defined by me (plus usually `NotImplementedException`s).
+1. In some other cases, it's possible to use a strategy of removing all TODO items from a project before starting working with it. Sometimes it may lead to conflicts between people when TODO items are used for something else than a TDD task list and someone for whatever reason wants them to stay in the code longer. Even though I'm of opinion that such cases of leaving TODO items for longer should be extremely rare at best, however, others may have different opinions.
+1. Most modern IDEs offer support markers other than `//TODO` for placing items on a TODO list, for example, `//BUG`. In such case, I can use the `//BUG` marker to mark just my items and then I can filter other items out based on that marker. Bug markers are commonly not intended to be left in the code, so it's much less risky for them to accumulate.
+1. As a last resort technique, I can usually define my own markers to be placed on TODO list and, again, use filters to see only the items that were defined by me (plus usually `NotImplementedException`s).
 
 ### TDD process expanded with a TODO list 
 
