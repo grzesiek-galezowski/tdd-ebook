@@ -15,7 +15,14 @@ Pretty much all of these strategies work equally well with Statements that use m
 
 ## Responsibility and Responsibility
 
-In this chapter, I will be using two concepts that share the same name: Responsibility. On meaning of responsibility was coined by Rebecca Wirfs-Brock (TODO check the surname) to mean: TODO check the term, and the other by Robert C. Martin to mean "a reason to change". I will try to disambiguate (TODO check proper word) by calling the first one "obligation" and the second one "purpose".
+In this chapter, I will be using two concepts that, unfortunately, happen to share the same name: responsibility. One meaning of responsibility was [coined by Rebecca Wirfs-Brock](http://www.wirfs-brock.com/PDFs/PrinciplesInPractice.pdf) to mean "an obligation to perform a task or know certain information", and the other by Robert C. Martin to mean "a reason to change". To avoid this ambiguity, I will try calling the first one "obligation" and the second one "purpose" in this chapter.
+
+The relationship between the two can be described by the following sentences: 
+
+1. A class has obligations towards its clients.
+1. The obligations are what the class "promises" to do for its clients.
+1. The class does not have to fulfill the obligations alone. Typically, it does so with help from other objects - its collaborators. Those collaborators, in turn, have have their collaborators.
+1. Each of the collaborators is given a purpose resulting from decomposition of the obligation.
 
 ## Channel and DataDispatch one more time
 
@@ -172,13 +179,27 @@ ShouldXXXXXXXXXYYY() //TODO give a better name
 }
 ```
 
-The compiler and my TODO list point out that I still have three things to do: 
+The compiler and my TODO list point out that I still have three things to do:
 
 * define `data` variable,
 * name my Statement and
 * state my expectations (the `THEN` section of the Statement)
 
-I can do them in any order I see fit, so I pick the last task from the list. As mentioned, the purpose I gave `DataDispatch` is to manage the channel lifetime. ????If so, then the one expecting messages is the `channel`. As you remember from the last chapter, there are two behaviors of `DataDispatch` associated with managing this lifetime - a happy path and the one where we get an exception. As we want to specify only one behavior in each Statement, we take the happy path. This, by the way, will allow us to give the Statement a good name, but remember, we don't want to be distracted from our current task and the task to give our Statement a name is on our TODO list so we don't worry about that. Another thing we don't want to worry about is that we have one more behavior to specify, so we add it to the TODO list as well:
+I can do them in any order I see fit, so I pick the last task from the list. To specify what is expected from `DataDispatch`, I have to answer myself four questions:
+
+1. What are the obligations of `DataDispatch`?
+1. What is the purpose of `DataDispatch`?
+1. Who are the collaborators that need to receive messages from `DataDispatch`?
+1. What is the behavior of `DataDispatch` that I need to specify?
+
+My answers are as follows:
+
+1. `DataDispatch` is obligated to sending data as long as it is valid. In case of invalid data, it throws an exception. That's two behaviors. As I only specify a single behavior per Statement, I pick the first one (adding the second one to my TODO list), which I will call "the happy path" from now on. This, by the way, will allow me to give the Statement a good name, but remember, I don't want to be distracted from my current task and the task to give our Statement a name is on my TODO list so I don't worry about it yet.
+1. The purpose of `DataDispatch` is to manage connection lifetime while sending received data. So what I would need to specify is how `DataDispatch` manages this lifetime during the "happy path" scenario. The rest of what is needed to fulfill the obligation of `DataDispatch` is outside the scope of my Statement as it is pushed to collaborators.
+1. I already defined one collaborator and called it `Channel`. As mentioned in the last chapter, in unit-level Statements, I use mock for my collaborators to specify what messages they receive. Thus, I know that the `THEN` section will say what messages is the  `Channel` role (played by a mock object) expected to receive from my `DataDispatch`.
+1. My conclusion from the three above points is that I expect a `Channel` to be used correctly in a scenario where the data is send without errors. As channels are typically opened and closed, then what my `DataDispatch` is expected to do is to open the channel, then push data through it, and then close it.
+
+//todo todo todo todo todo todo todo todo  the below is a propos point 1 above~!~~!!!!!!!!!!!!
 
 ```csharp
 //TODO: specify a behavior where sending data
@@ -339,13 +360,11 @@ public void ApplyTo(byte[] data)
 }
 ```
 
-
-//todo make this an aside
-To tell you the truth, usually before writing the correct implementation, I play a bit, making it wrong in several ways, just to see if I guess correctly the reason why the Statement will turn false and to make sure the error messages are informative enough. For example, I may write only the first line and observe whether the Statement is still false and if the reason is changed. Then I may add the second, but pass something other than `_data` to the `Open()` method (e.g. a `null`) etc. This way, I "test my test", not only for correctness (whether it will fail for the right reason) but also for diagnostics (will it give me enough information when it fails?). Also, this is the way I learn about feedback that I receive from my tools should such a Statement turn false later.
+T> To tell you the truth, usually before writing the correct implementation, I play a bit, making it wrong in several ways, just to see if I can correctly guess the reason why the Statement will turn false and to make sure the error messages are informative enough. For example, I may write only the first line and observe whether the Statement is still false and if the reason is changed. Then I may add the second, but pass something other than `_data` to the `Open()` method (e.g. a `null`) etc. This way, I "test my test", not only for correctness (whether it will fail for the right reason) but also for diagnostics (will it give me enough information when it fails?). Also, this is the way I learn about feedback that I receive from my tools should such a Statement turn false later.
 
 ### Second behavior - specifying an error
 
-The first Statement is implemented, so time for the second one. (XXX it comes from TODO list XXX) Our second behavior was that in case the sending failed, the user of `DataDispatch` should receive this error and the connection should be safely closed. Note that the notion of what "closing the connection" means is placed in the `Channel` implementations, because we consciously delegated the implementation details there. The same goes for the meaning of "errors while sending data -- this is also the responsibility of `Channel`. What we need to specify about `DataDispatch` is how it handles the sending errors in regard to its user and its `Channel`.
+The first Statement is implemented, so time for the second one. (XXX TODO TODO TODO TODO TODO it comes from TODO list XXX) Our second behavior was that in case the sending failed, the user of `DataDispatch` should receive this error and the connection should be safely closed. Note that the notion of what "closing the connection" means is placed in the `Channel` implementations, because we consciously delegated the implementation details there. The same goes for the meaning of "errors while sending data -- this is also the responsibility of `Channel`. What we need to specify about `DataDispatch` is how it handles the sending errors in regard to its user and its `Channel`.
 
 Let's start writing the Statement by stating the obvious. This time, we'll use the strategy of starting with a good name. I picked the following name to state the expected behavior:
 
