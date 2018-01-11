@@ -65,15 +65,16 @@ Typically, value objects tend to be passed a lot throughout an application and u
 public class ObjectWithDate {
 
   private final Date _date = new Date();
-  
+
   //...
-  
+
   public Date getDate() {
     //oops...
     return _date;
   }
 }
 ```
+
 The `getDate()` method allows users of the `ObjectWithDate` class to access the date. But remember, a date object is mutable and a getter returns a reference! Everyone who calls the getter gains access to the internally stored instance of `Date` and can modify it like this:
 
 ```java
@@ -87,7 +88,7 @@ return date;
 Of course, no one would do it in the same line like on the snippet above, but usually, this date was accessed, assigned to a variable and passed through several methods, one of which did something like this:
 
 ```java
-public void DoSomething(Date date) {
+public void doSomething(Date date) {
   date.setTime(date.getTime() + 10000); //oops!
   this.nextUpdateTime = date;
 }
