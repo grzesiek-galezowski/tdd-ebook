@@ -1,5 +1,6 @@
 010_Dedication.md
 015_Thanks.md
+017_CodeExamples.md
 020_Part1Marker.md
 030_Motivations.md
 040_Three_Essential_Tools.md
