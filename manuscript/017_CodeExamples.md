@@ -6,7 +6,7 @@ The language of choice for code examples is C#, however, I made some exception f
 
 ### Dropping "I" from interface names
 
-Personally, I am not a big fan of using `ISomething`, so I decided to drop the `I` even though most C# developers expect to see it in interface names. I hope you can forgive me this one.
+Personally, I am not a big fan of using `ISomething` as interface name, so I decided to drop the `I` even though most C# developers expect to see it. I hope you can forgive me this one.
 
 ### Idiomatic C#
 
@@ -136,7 +136,7 @@ and is called like this:
 List<int> ints = CreateArrayOf<int>();
 ```
 
-These differences are visible in the design of the library for generating test data that I use throughout this book. While in the C# version, one generates test data by writing:
+These differences are visible in the design of the library that I use throughout this book for generating test data. While in the C# version, one generates test data by writing:
 
 ```csharp
 var data = Any.Instance<MyData>();
