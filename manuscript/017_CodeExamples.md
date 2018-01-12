@@ -48,13 +48,20 @@ public void doSomething()
 
 ### `readonly` and `const` instead of `final`
 
-Where Java uses final for constants and readonly fields, C# uses two keywords: `const` and `readonly`. Without going into details, whenever you see something like:
+Where Java uses final for constants (together with `static`) and read-only fields, C# uses two keywords: `const` and `readonly`. Without going into details, whenever you see something like:
 
 ```csharp
 public class User
 {
-    private const int DefaultAge = 15;
-    private readonly List<int> Marks = new List<int>();
+  // a constant with literal:
+  private const int DefaultAge = 15;
+
+  // a "constant" object:
+  private static readonly TimeSpan DefaultSessionTime
+    = TimeSpan.FromDays(2);
+
+  // a read-only instance field:
+  private readonly List<int> Marks = new List<int>();
 }
 ```
 
@@ -62,8 +69,15 @@ think:
 
 ```java
 public class User {
-    private final int DEFAULT_AGE = 15;
-    private final List<Integer> MARKS = new ArrayList<Integer>();
+  //a constant with literal:
+  private static final int DEFAULT_AGE = 15; 
+
+  //a "constant" object:
+  private static final Duration 
+    DEFAULT_SESSION_TIME = Duration.ofDays(2);
+
+  // a read-only instance field:
+  private final List<Integer> marks = new ArrayList<>();
 }
 ```
 
