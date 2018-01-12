@@ -63,7 +63,7 @@ def validate_uris uris, errors
       res = req.request_head(url.path)
       
       message = "#{uri} => #{res.code}, #{res.message}"
-      if res.code.to_i == 400 then 
+      if res.code.to_i == 400 or res.code.to_i == 403 then 
         puts message.yellow
       elsif res.code.to_i > 400 then
         raise message
