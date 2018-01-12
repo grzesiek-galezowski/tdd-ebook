@@ -1,5 +1,21 @@
 # About code examples
 
+## Notes for C# users
+
+The language of choice for code examples is C#, however, I made some exception from the typical C# code conventions.
+
+### Dropping "I" from interface names
+
+Personally, I am not a big fan of using `ISomething`, so I decided to drop the `I` even though most C# developers expect to see it in interface names. I hope you can forgive me this one.
+
+### Idiomatic C#
+
+Most of the code in this book is not idiomatic C#. I tried to avoid properties, events, and most modern features. This is in order to allow users of other languages (especially Java) to benefit from the book.
+
+### Using underscore in field names
+
+Some people like it, some not. I decided to stick to the convention of putting an underscore (`_`) before a class field name.
+
 ## Notes for Java users
 
 The language of choice for code examples is C#. That said, I wanted the book to be as technology-agnostic as possible, to allow especially Java programmers to benefit from it. I tried using a minimum number of C#-specific features and in several places even made remarks targeted at Java users to make it easier for them. Still, there are some things I could not avoid. That's why I wrote up a list containing several of the differences between Java and C# that Java users could benefit from knowing when reading the book.
