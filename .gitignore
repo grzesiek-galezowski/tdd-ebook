@@ -6,5 +6,6 @@
 *.svg
 *~
 /.project
+/.idea/
 
 manuscript/images/webpage/Thumbs.db
