@@ -1,8 +1,8 @@
 ﻿-# Part 3: TDD in Object-Oriented World
 
-> # Status: under development
->
-> I am in progress of writing this part. Still, there are several chapters that are already available for reading and pretty stable. I look forward to receiving your feedback!
+A> ## Status: under development
+A>
+A> I am in progress of writing this part. Still, there are several chapters that are already available for reading and pretty stable. I look forward to receiving your feedback!
 
 So far, we've talked a lot about the object-oriented world, consisting of objects that exhibit the following properties:
 

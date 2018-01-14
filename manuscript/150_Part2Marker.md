@@ -1,8 +1,8 @@
 -# Part 2: Object-Oriented World
 
-> # Status: pretty stable
->
-> This chapter will probably get one big review in the far future. While I am pleased with the content, I will be looking for a better structure and wording, making little changes here and there. I may also add a number of sections explaining things to existing chapters on things I find were not sufficiently explained. Still, if you read it as it is now, you're not going to miss anything significant.
+A> ## Status: pretty stable
+A>
+A> This chapter will probably get one big review in the far future. While I am pleased with the content, I will be looking for a better structure and wording, making little changes here and there. I may also add a number of sections explaining things to existing chapters on things I find were not sufficiently explained. Still, if you read it as it is now, you're not going to miss anything significant.
 
 Most of the examples in the previous part were about a single object that did not have dependencies on other objects (with an exception of some values -- strings, integers, enums etc.). This is not how most OO systems are built. In this part, we are finally going to look at scenarios where multiple objects work together as a system.
 
