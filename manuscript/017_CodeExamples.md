@@ -130,6 +130,7 @@ public List<T> CreateArrayOf<T>()
 }
 ```
 
+and called as such:
 
 ```csharp
 List<int> ints = CreateArrayOf<int>();
