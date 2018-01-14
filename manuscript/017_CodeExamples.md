@@ -8,9 +8,9 @@ The language of choice for code examples is C#, however, I made some exception f
 
 Personally, I am not a big fan of using `ISomething` as interface name, so I decided to drop the `I` even though most C# developers expect to see it. I hope you can forgive me this one.
 
-### Idiomatic C#
+### Idiomatic C\#
 
-Most of the code in this book is not idiomatic C#. I tried to avoid properties, events, and most modern features. This is in order to allow users of other languages (especially Java) to benefit from the book.
+Most of the code in this book is not idiomatic C#. I tried to avoid properties, events, and most modern features. My goal is to allow users of other languages (especially Java) to benefit from the book.
 
 ### Using underscore in field names
 
@@ -121,7 +121,7 @@ and called like this:
 List<Integer> ints = createArrayOf(Integer.class);
 ```
 
-while in C# it is defined like this:
+whereas in C# the same method would be defined as:
 
 ```java
 public List<T> CreateArrayOf<T>()
@@ -130,7 +130,6 @@ public List<T> CreateArrayOf<T>()
 }
 ```
 
-and is called like this:
 
 ```csharp
 List<int> ints = CreateArrayOf<int>();
