@@ -194,19 +194,20 @@ I can do them in any order I see fit, so I pick the last task from the list. To 
 
 My answers are as follows:
 
-1. `DataDispatch` is obligated to sending data as long as it is valid. In case of invalid data, it throws an exception. That's two behaviors. As I only specify a single behavior per Statement, I pick the first one (adding the second one to my TODO list), which I will call "the happy path" from now on. This, by the way, will allow me to give the Statement a good name, but remember, I don't want to be distracted from my current task and the task to give our Statement a name is on my TODO list so I don't worry about it yet.
-1. The purpose of `DataDispatch` is to manage connection lifetime while sending received data. So what I would need to specify is how `DataDispatch` manages this lifetime during the "happy path" scenario. The rest of what is needed to fulfill the obligation of `DataDispatch` is outside the scope of my Statement as it is pushed to collaborators.
-1. I already defined one collaborator and called it `Channel`. As mentioned in the last chapter, in unit-level Statements, I use mock for my collaborators to specify what messages they receive. Thus, I know that the `THEN` section will say what messages is the  `Channel` role (played by a mock object) expected to receive from my `DataDispatch`.
-1. My conclusion from the three above points is that I expect a `Channel` to be used correctly in a scenario where the data is send without errors. As channels are typically opened and closed, then what my `DataDispatch` is expected to do is to open the channel, then push data through it, and then close it.
+1. `DataDispatch` is obligated to sending data as long as it is valid. In case of invalid data, it throws an exception. That's two scenarios. As I only specify a single scenario per Statement, I need to pick one of them. I pick the first one (which I will call "the happy path" from now on), adding the second one to my TODO list:
 
-//todo todo todo todo todo todo todo todo  the below is a propos point 1 above~!~~!!!!!!!!!!!!
+   ```csharp
+   //TODO: specify a behavior where sending data
+   //      through a channel raises an exception
+   ```
 
-```csharp
-//TODO: specify a behavior where sending data
-//      through a channel raises an exception
-```
+1. The purpose of `DataDispatch` is to manage connection lifetime while sending data received via the `ApplyTo()` method. So what I would need to specify is how `DataDispatch` manages this lifetime during the "happy path" scenario. The rest of what I need to fulfill the obligation of `DataDispatch` is outside the scope of the current Statement as I decide to push it to collaborators.
+1. I already defined one collaborator and called it `Channel`. As mentioned in the last chapter, in unit-level Statements, I use mocks as to fill my collaborators' roles to specify what messages they should receive. Thus, I know that the `THEN` section will say what are the messages that the `Channel` role (played by a mock object) is expected to receive from my `DataDispatch`.
+1. Now that I know the scenario, the purpose and the collaborators, I can define my expected behavior in terms of those things. My conclusion is that I expect `DataDispatch` to properly manage (purpose) a `Channel` (collaborator) in a ("happy path") scenario where the data is send without errors. As channels are typically opened before they are used and closed afterwards, then what my `DataDispatch` is expected to do is to open the channel, then push data through it, and then close it.
 
-Now we can get back to our task at hand, which is specifying the happy path behavior. In the typical scenario, managing the connection means that the channel is open, then the data is send, then the channel is closed. We can specify that using NSubstitute's `Received.InOrder()` syntax. With this, we will specify that the three methods should be called in a specific order. Wait, what methods? After all, our `Channel` interface looks like this:
+TODO TODO TODO TODO :
+
+Deciding on the behavior will allow me to give the Statement a good name, but remember, I don't want to be distracted from my current task and the task to give our Statement a name is on my TODO list so I don't worry about it yet. So, back to the current task at hand - specifying the expectation. What I expect is the correct calls being made with correct arguments correct number of times. I can specify that using NSubstitute's `Received.InOrder()` syntax. With this, we will specify that the three methods should be called in a specific order. Wait, what methods? After all, our `Channel` interface looks like this:
 
 ```csharp
 public interface Channel

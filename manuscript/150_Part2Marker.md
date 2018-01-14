@@ -1,5 +1,9 @@
 -# Part 2: Object-Oriented World
 
+> # Status: pretty stable
+>
+> This chapter will probably get one big review in the far future. While I am pleased with the content, I will be looking for a better structure and wording, making little changes here and there. I may also add a number of sections explaining things to existing chapters on things I find were not sufficiently explained. Still, if you read it as it is now, you're not going to miss anything significant.
+
 Most of the examples in the previous part were about a single object that did not have dependencies on other objects (with an exception of some values -- strings, integers, enums etc.). This is not how most OO systems are built. In this part, we are finally going to look at scenarios where multiple objects work together as a system.
 
 This brings about some issues that need to be discussed. One of them is the approach to object oriented design and how it influences the tools we use to test-drive our code. You probably heard something about a tool called mock objects (at least from one of the introductory chapters of this book) or, in a broader sense, test doubles. If you open your web browser and type "mock objects break encapsulation", you will find a lot of different opinions -- some saying that mocks are great, others blaming them for all the evil in the world, and a lot of opinions that fall inbetween. The discussions are still heated, even though mocks were introduced more than ten years ago. My goal in this chapter is to outline the context and forces that lead to adoption of mocks and how to use them for your benefit, not failure.

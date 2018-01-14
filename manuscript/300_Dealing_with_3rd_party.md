@@ -20,6 +20,8 @@ Johhny and Benjamin, creating subscription, subscription is validated (as few fi
 
 ## How to specify value objects?
 
+## Terminal nodes in object graph
+
 # Guidance of test smells
 
 ## Long Statements

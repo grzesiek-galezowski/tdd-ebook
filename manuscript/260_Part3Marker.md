@@ -1,5 +1,9 @@
 ﻿-# Part 3: TDD in Object-Oriented World
 
+> # Status: under development
+>
+> I am in progress of writing this part. Still, there are several chapters that are already available for reading and pretty stable. I look forward to receiving your feedback!
+
 So far, we've talked a lot about the object-oriented world, consisting of objects that exhibit the following properties:
 
 1. Objects send messages to each other using interfaces and according to protocols. As long as these interfaces and protocols are adhered to by the recipients of the messages, the sender objects don't need to know who exactly is on the other side to handle the message. In other words, interfaces and protocols allow decoupling senders from the identity of their recipients.
