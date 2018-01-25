@@ -68,7 +68,7 @@ Note several things:
 1. the `//THEN` section is empty for now -- it only contains a single assertion that is designed to fail when the execution flow reaches it (this way I protect myself from mistakenly making the Statement true until I state my true expectations). I will define the `//THEN` section once I figure out what is the purpose that I want to give this class and the behavior that I want to specify.
 1. If you remember the `Channel` interface from the last chapter, well, in this continuum it doesn't exist yet and let's assume that, I don't even know that I need it. I will "discover" it later.
 
-## Leaning on the compiler
+### Leaning on the compiler
 
 So I did my brain dump. What do I do now? I don't want to think too hard yet (time will come for that). First, I reach for the feedback to my compiler -- maybe it can give me some hints on what I am missing?
 
@@ -113,7 +113,7 @@ Of course, the declaration of `data` that my IDE put in the code will still not 
 byte[] data = ... /* whatever initialization code*/;
 ```
 
-## Turning the brain on - what about data?
+### Turning the brain on - what about data?
 
 It looks like I can't continue my brain-dead parade anymore. In order to decide how to define this data, I have to turn on my thought processes and decide what exactly is the obligation of the `ApplyTo()` method and what does it need the `data` for. After some thinking (how convenient of me to exclude this part from the book!) I decide that applying data dispatch should send the data it receives. But... should it do it alone? There are at least two things associated with sending the data:
 
