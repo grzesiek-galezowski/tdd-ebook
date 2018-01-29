@@ -445,7 +445,7 @@ ShouldRethrowExceptionAndCloseChannelWhenSendingDataFails()
 }
 ```
 
-Before I start dissecting the name into useful code, I start by stating the bleedy obvious (note that I'm mixing two strategies of starting from false Statement now -- I didn't say you can't do that now, did I?). I know for sure that:
+Before I start dissecting the name into useful code, I start by stating the bleedy obvious (note that I'm mixing two strategies of starting from false Statement now -- I didn't say you can't do that now, did I?). Having learned a lot by writing and implementing the previous Statement, I know for sure that:
 
 1. I need to work with `DataDispatch` again.
 1. I need to pass a mock of `Channel` to `DataDispatch` constructor.
@@ -454,8 +454,6 @@ Before I start dissecting the name into useful code, I start by stating the blee
 1. I need some kind of invalid data (although I don't know yet what to do to make it "invalid").
 
 I write that down in a form of code:
-
-//TODO TODO TODO TODO TODO TODO TODO 
 
 ```csharp
 public void
@@ -485,15 +483,15 @@ I also know that one aspect of the expected behavior is closing the channel. I k
 }
 ```
 
-I used `Received(1)` instead of just `Received()`, because attempting to close the channel several times might cause trouble, so I want to be explicit on the expectaton that the `DataDispatch` should close the channel exactly once. Another thing -- I am not removing the `Assert.True(false)` yet, as the current implementation already closes the channel and so the Statement could become true if not for this assertion (if it compiled, that is). I will remove this assertion only after I fully define the context of the behavior.
+I used `Received(1)` instead of just `Received()`, because attempting to close the channel several times might cause trouble, so I want to be explicit on the expectaton that the `DataDispatch` should close the channel exactly once. Another thing -- I am not removing the `Assert.True(false)` yet, as the current implementation already closes the channel and so the Statement could become true if not for this assertion (if it compiled, that is). I will remove this assertion only after I fully define the behavior.
 
 ### Expecting exception
 
-Another thing I expect `DataDispatch` to do in this behavior is to rethrow any sending errors, which are reported as exception thrown by `Channel` from the `Send()` method.
+Another thing I expect `DataDispatch` to do in this behavior is to rethrow any sending errors, which are reported as exceptions thrown by `Channel` from the `Send()` method.
 
 T> Typically, I rarely write Statements about rethrown exceptions, but here I have no choice -- if I don't catch the exception in my Statement, I won't be able to evaluate whether the channel was closed or not, since the uncaught exception will stop executing the Statement.
 
-To specify that I expect an exception in my Statement, I just need to use `Assert.Throws<>()` assertion and pass the code that should throw the exception as lambda:
+To specify that I expect an exception in my Statement, I need to use a special assertion called `Assert.Throws<>()` and pass the code that should throw the exception as a lambda:
 
 ```csharp
  //WHEN
@@ -503,15 +501,15 @@ Assert.Throws<Exception>(() =>
 
 ### Defining invalid data
 
-OK, now the time has come to decide what actually is invalid data. 
+My compiler shows me that the `data` variable is undefined. OK, now the time has come to decide what actually is invalid data.
 
-First of all, remember that `DataDispatch` cannot tell the difference between valid and invalid data - I placed this responsibility on the `Channel` as each `Channel` implementation might have different criteria for data validation. In my Statement, I use a mock implementation for channel, so I can just tell my mock that it should treat the data I define in my Statement as invalid. Thus, the value of the `data` itself is irrevelant as long as I configure my `Channel` mock to act as if it was invalid. So first, let's define the `data` as any byte array:
+First of all, remember that `DataDispatch` cannot tell the difference between valid and invalid data - this is the purpose of the `Channel` as each `Channel` implementation might have different criteria for data validation. In my Statement, I use a mock to play the channel role, so I can just tell my mock that it should treat the data I define in my Statement as invalid. Thus, the value of the `data` itself is irrelevant as long as I configure my `Channel` mock to act as if it was invalid. As a conclusion, I define the `data` as any byte array:
 
 ```csharp
 var invalidData = Any.Array<byte>();
 ```
 
-Then let's write down the assumption of how the `channel` will behave given this data:
+I also need to write down the assumption of how the `channel` will behave given this data:
 
 ```csharp
 //GIVEN
@@ -522,7 +520,7 @@ channel.When(c => c.Send(invalidData)).Throw(exceptionFromChannel);
 
 Note that the place where I configure the mock to throw an exception is the `//GIVEN` section. This is because any predefined mock behavior is my assumption. By pre-canning the method outcome in this case, I say "given that channel for some reason rejects this data".
 
-Now that we have the full Statement code, we can get rid of the `Assert.True(false)` assertion. The full Statement looks like this:
+Now that I have the full Statement code, I can get rid of the `Assert.True(false)` assertion. The full Statement looks like this:
 
 ```csharp
 public void
@@ -546,7 +544,7 @@ ShouldRethrowExceptionAndCloseChannelWhenSendingDataFails()
 }
 ```
 
-Now, it may look a bit messy, but given my toolset, this has to do. This Statement will now turn false on the second assertion. Wait, the second? What about the first one? Well, the first assertion says that an exception should be rethrown and methods in C# rethrow the exception by default (that's why typically I don't specify that something should rethrow an exception -- I do it this time because otherwise it would not let me specify how `DataDispatch` uses a `Channel`). Thus, this behavior is implemented by not implementing anything. Should I just acept it and go on? Well, I don't want to. Remember what I wrote in the first part of the book -- we need to see each assertion fail at least once. An assertion that passes straight away is something we should be suspicious about. What I need to do now is to temporary break the behavior and see the failure. I can do that in (at least) two ways:
+Now, it may look a bit messy, but given my toolset, this will have to do. This Statement will now turn false on the second assertion. Wait, the second? What about the first one? Well, the first assertion says that an exception should be rethrown and methods in C# rethrow the exception by default, not requiring any implementation on my part[^idonotthrow]. Should I just acept it and go on? Well, I don't want to. Remember what I wrote in the first part of the book -- we need to see each assertion fail at least once. An assertion that passes straight away is something we should be suspicious about. What I need to do now is to temporary break the behavior do that I can see the failure. I can do that in (at least) two ways:
 
 1. By going to the Statement and commenting out the line that configures the `Channel` mock to throw an exception.
 1. By going to the production code and surrounding the `channel.Send(data)` statement with a try-catch block.
@@ -557,7 +555,7 @@ Either way would do, but I typically prefer to change the production code and no
 channel.Received(1).Close();
 ```
 
-This assertion fails because our current implementation of the `ApplyTo()` method is:
+This assertion fails because my current implementation of the `ApplyTo()` method is:
 
 ```csharp
 _channel.Open();
@@ -565,7 +563,7 @@ _channel.Send(data);
 _channel.Close();
 ```
 
-and an exception thrown from the `Send()` method interrupts the processing, instantly exiting the method, so `Close()` is never called. We can change this behavior by using `try-finally` block to wrap the call to `Send()`:
+and an exception thrown from the `Send()` method interrupts the processing, instantly exiting the method, so `Close()` is never called. We can change this behavior by using `try-finally` block to wrap the call to `Send()`[^idiomatictryfinally]:
 
 ```csharp
 _channel.Open();
@@ -579,19 +577,24 @@ finally
 }
 ```
 
-This makes our second Statement true and concludes this example. I I were to go on, my next step would be to implement the newly discovered `Channel` interface.
+This makes my second Statement true and concludes this example. If I were to go on, my next step would be to implement the newly discovered `Channel` interface, as currently it has no implementation at all.
 
 ## Summary
 
 In this chapter, we delved into writing mock-based Statements and developing classes in a test-first manner. This example is not a strict prescription or any kind of "one true way" of test-driving such implementation - some things could've been done differently. For example, there were many situations where I got several TODO items pointed by my compiler or the failing test. Depending on many factors, I might've approached them in a different order. For example, in the second behavior, I could've defined `data` as `Any.Array<byte>()` right from the start (and left a TODO item to check on it later and confirm whether it can stay this way) to get the Statement to compiling state quicker.
 
-Another interesting point was the moment when I discovered the `Channel` interface -- I'm aware that I slipped over it by saying something "we can see that the class has too many purposes, then magic happens and then we've got an interface to delegate parts of the logic to". This "magic happens" part is often called "interface discovery" and we will dig a little deeper into it in the next chapter.
+Another interesting point was the moment when I discovered the `Channel` interface -- I'm aware that I slipped over it by saying something like "we can see that the class has too many purposes, then magic happens and then we've got an interface to delegate parts of the logic to". This "magic happens" part is often called "interface discovery" and we will dig a little deeper into it in the next chapter.
 
 You might've noticed that this chapter was longer than the last one, which may lead you to a conclusion that TDD complicates things rather than simplifying them. There were, however, several factors that made this chapter longer:
 
-1. In this chapter, we specified two behaviors (happy path plus error handling), whereas in the last chapter we only specified one (happy path).
+1. In this chapter, we specified two behaviors (a "happy path" plus error handling), whereas in the last chapter we only specified one (the "happy path").
 1. In this chapter, we designed and implemented the `DataDispatch` class and discovered the `Channel` interface whereas in the last chapter they were given to us right from the start.
-1. Because I assume the test-first way of writing Statements is less familiar to you, I took my time to explain it in more detail.
-1. The process I described usually takes seconds in writing and maybe several minutes in thinking.
+1. Because I assume the test-first way of writing Statements may be less familiar to you, I took my time to explain it in more detail.
 
-[^nextchapterdiscovery]: more on this in further chapters
+So don't worry -- when one gets used to it, the process I described typically takes several minutes at worst.
+
+[^nextchapterdiscovery]: more on this in further chapters.
+
+[^idonotthrow]: that's why typically I don't specify that something should rethrow an exception -- I do it this time because otherwise it would not let me specify how `DataDispatch` uses a `Channel`.
+
+[^idiomatictryfinally]: of course, the idiomatic way to do it in C# would be to use the `IDisposable` interface and a `using` block.
