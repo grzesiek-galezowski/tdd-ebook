@@ -1,3 +1,13 @@
+# 31-01-2018
+
+A new version of the book is available! Notable changes are:
+
+1. **An entirely new chapter** on mock objects applied in a test-first manner. I did three or four passes through the content to ensure it reads smoothly. Of course, any sugggestions, bug fixes etc. are welcome. You can always use the github page for these.
+1. **New supporting chapter**: *About code examples* is added. As some of the readers are more familiar with Java than C# and I want them to get the most out of this book, I made some rough notes at the beginning of the book that point towards some of the differences between the two languages. A small piece of this chapter is also dedicated to C# users. If you use a different language and still enjoy the book, I encourage you to contribute notes that allow the users of your language of choice to access the book more easily.
+1. **Part statuses**. Many times I have been asked whether a particular part of the book is stable enough. Some readers didn't want to read something that was about to change soon in a big way. Likewise, many would rather read a nearly finished thing than an "alpha chapters". This is why I decided to be more open about the status and each part begins with a status note that says what I currently think about the content maturity.
+
+Happy reading and, as usual, I'm looking forward to your opinions and suggestions.
+
 # 18-11-2017
 
 Hi, today's update brings to you a cosmetically revised version of factories chapter (the most changes were made to "Factories are themselves polymorphic (encapsulation of rule)" section, where the existing example was changed to one I consider better) as well as a new chapter on mock objects. You may also note that I changed the numbering of parts. Part 2 is entirely devoted to object oriented design primer and object-oriented TDD was moved to newsly created chapter 3. There are also some placeholders as I have lots of ideas for new chapters. Everything will come, in time. Looking at all the hype around functional programming, I can only hope that OO doesn't become obsolete before I finish the book :-D.
