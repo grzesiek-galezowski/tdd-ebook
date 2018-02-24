@@ -405,4 +405,3 @@ So far, we have talked about value objects using a specific example of product n
 
 [^constructorsdynamic]: This is literally true for languages like Java, C# or C++. There are other languages (like Ruby), with different rules regarding object construction. Still, the original argument - that the naming of methods responsible for object creation is constrained - holds.
 
-
