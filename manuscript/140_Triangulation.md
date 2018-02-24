@@ -1,6 +1,6 @@
 # Driving the implementation from Specification
 
-As one of the last topics of the core TDD techniques that don't require us to delve into the object-oriented design world, I'd like to show you three techniques for turning a false Statement true. The names of the techniques come from a book by Kent Beck, [Test-Driven Development: By Example](http://www.pearsonhighered.com/educator/product/Test-Driven-Development-By-Example/9780321146533.page) and are:
+As one of the last topics of the core TDD techniques that don't require us to delve into the object-oriented design world, I'd like to show you three techniques for turning a false Statement true. The names of the techniques come from a book by Kent Beck, [Test-Driven Development: By Example](https://isbnsearch.org/isbn/9780321146533) and are:
 
 1. Type the obvious implementation
 1. Fake it (`til you make it)

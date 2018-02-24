@@ -269,6 +269,6 @@ I, on the other hand, follow Amir Kolsky and Scott Bain, who recommend using `An
 
 I hope that this chapter gave you some understanding of how different TDD styles came into existence and why I use some of the techniques I do (and how these techniques are not just a series of random choices). In the next chapters, I will try to introduce some more techniques to help you grow a bag of neat tricks -- a coherent style[^xunitpatterns].
 
-[^mocks-are-not-stubs]: One of such articles can be found at http://martinfowler.com/articles/mocksArentStubs.html 
+[^mocks-are-not-stubs]: One of such articles can be found at https://martinfowler.com/articles/mocksArentStubs.html 
 [^xunitpatterns]: For the biggest collection of such techniques, or more precisely, patterns, see XUnit Test Patterns by Gerard Meszaros.
 [^false-positive]: A "false positive" is a test that should be failing but is passing.

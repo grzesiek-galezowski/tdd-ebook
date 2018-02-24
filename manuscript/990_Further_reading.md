@@ -14,7 +14,7 @@
   - Ken Pugh has a chapter devoted to value objects in his book *Prefactoring* (the name of the chapter is *Abstract Data Types*).
   - *Growing Object Oriented Software Guided By Tests* contains some examples of using value objects and some strategies on refactoring towards them.
   - [Value object discussion](http://c2.com/cgi/wiki?ValueObject) on C2 wiki.
-  - [Martin Fowler's bliki mentions](http://martinfowler.com/bliki/ValueObject.html) value objects. They are also one of the patterns in his book [Patterns of Enterprise Application Architecture](http://martinfowler.com/books/eaa.html)
+  - [Martin Fowler's bliki mentions](https://martinfowler.com/bliki/ValueObject.html) value objects. They are also one of the patterns in his book [Patterns of Enterprise Application Architecture](https://martinfowler.com/books/eaa.html)
   - Arlo Beshele [describes](http://arlobelshee.com/the-no-mocks-book/) how he uses value objects (described under the name of *Whole Value*) much more than I do in this book, presenting an alternative design style that is closer to functional that the one I write about.
-  - [Implementation Patterns](http://www.isbnsearch.org/isbn/0321413091) book by Kent Beck includes value object as one of the patterns.   
+  - [Implementation Patterns](https://isbnsearch.org/isbn/9780321413093) book by Kent Beck includes value object as one of the patterns.
   

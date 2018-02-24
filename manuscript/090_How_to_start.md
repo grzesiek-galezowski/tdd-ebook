@@ -70,7 +70,7 @@ Note a few things about the name of the Statement:
 
 ### My favourite convention
 
-There are many conventions for naming Statements appropriately. My favorite is the one [developed by Dan North](http://dannorth.net/introducing-bdd/), where each Statement name begins with the word `Should`. So for example, I would name a Statement:
+There are many conventions for naming Statements appropriately. My favorite is the one [developed by Dan North](https://dannorth.net/introducing-bdd/), where each Statement name begins with the word `Should`. So for example, I would name a Statement:
 
 `ShouldReportAllErrorsSortedAlphabeticallyWhenErrorsOccurDuringSearch()`
 
@@ -419,7 +419,7 @@ All what is left is to find a good name for the Statement. This isn't an issue s
 When I'm stuck and don't know how to start writing a new failing Statement, the techniques from this chapter help me push things in the right direction. Note that the examples given are simplistic and built on an assumption that there is only one object that takes some kind of input parameter and returns a well defined result. However, this isn't how most of the object-oriented world is built. In that world, we often have objects that communicate with other objects, send messages, invoke methods on each other and these methods often don't have any return values but are instead declared as `void`. Even though, all of the techniques described in this chapter will still work in such case and we'll revisit them as soon as we learn how to do TDD in the larger object-oriented world (after the introduction of the concept of mock objects in Part 2). Here, I tried to keep it simple.
 
 
-[^argumentsagainstshould]: There are also some arguments against using the word "should", e.g. by Kevlin Henney (see http://www.infoq.com/presentations/testing-communication).
+[^argumentsagainstshould]: There are also some arguments against using the word "should", e.g. by Kevlin Henney (see https://www.infoq.com/presentations/testing-communication).
 
 [^differenttestingenums]: This approach of picking a single value out of several ones using `Any.From()` does not always work well with enums. Sometimes a parameterized test (a "theory" in XUnit.NET terminology) is better. This topic will be discussed in one of the the coming chapters.
 
