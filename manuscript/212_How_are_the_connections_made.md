@@ -195,7 +195,7 @@ So far, all of the factories we considered had creation methods with empty param
 
 ### Not only factories
 
-Throughout this section, we have used a factory as our role model, but the approach of obtaining a recipient in response to a message is wider than that. Other types of objects that fall into this category include, among others: [repositories](https://martinfowler.com/eaaCatalog/repository.html), [caches](https://en.wikipedia.org/wiki/Cache_(computing)), [builders](http://www.blackwasp.co.uk/Builder.aspx), collections[^collectionsremark]. While they are all important concepts (which you can look up on the web if you like), they are not required to progress through this chapter so I won't go through them now.
+Throughout this section, we have used a factory as our role model, but the approach of obtaining a recipient in response to a message is wider than that. Other types of objects that fall into this category include, among others: [repositories](https://martinfowler.com/eaaCatalog/repository.html), [caches](https://en.wikipedia.org/wiki/Cache_%28computing%29), [builders](http://www.blackwasp.co.uk/Builder.aspx), collections[^collectionsremark]. While they are all important concepts (which you can look up on the web if you like), they are not required to progress through this chapter so I won't go through them now.
 
 ## Receive as a registered [observer](http://www.oodesign.com/observer-pattern.html)
 

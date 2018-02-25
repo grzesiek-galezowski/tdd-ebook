@@ -12,7 +12,7 @@ require 'openssl'
 require 'differ'
 require 'custom_commands_2'
 
-task :default => [:validate_encoding, :validate_sample, :detect_dead_links] do
+task :default => [:validate_encoding, :validate_sample, :detect_dead_links, "sample:generate"] do
 end
 
 task :validate_encoding do
@@ -58,6 +58,23 @@ task :detect_dead_links do
     validate_uris uris, errors
   end
 end
+
+namespace :diagrams do
+  #not diagrams, but images!!!
+  desc "Regenerates all SVG diagrams from source and puts them in the source directory"
+  task :regenerate do
+    puts sh("cd ./Diagrams/ && ruby ./Generate.rb")
+    puts move(Dir.glob('./Diagrams/*.svg'), $MANUSCRIPT_IMAGES_DIR, :verbose => true)
+    puts move(Dir.glob('./Diagrams/*.png'), $MANUSCRIPT_IMAGES_DIR, :verbose => true)
+  end
+end
+
+namespace :sample do
+  task :generate do
+    cp_r $MANUSCRIPT_BOOK_CHAPTERS_LIST, $MANUSCRIPT_SAMPLE_CHAPTERS_LIST
+  end
+end
+
 
 #TODO
 #2. refactor

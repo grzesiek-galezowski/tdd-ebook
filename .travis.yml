@@ -1,3 +1,4 @@
 language: ruby
 install: gem install rchardet colorize differ
+
 sudo: false
