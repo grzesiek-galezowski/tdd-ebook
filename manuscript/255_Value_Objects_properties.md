@@ -69,7 +69,7 @@ private ProductName(string value)
 }
 ```
 
-and you probably wonder why. I'd like to decompose the question further decomposed into two others: 
+and you probably wonder why. I'd like to decompose the question further into two others:
 
 1. How should we create new instances then?
 1. Why private and not public?
