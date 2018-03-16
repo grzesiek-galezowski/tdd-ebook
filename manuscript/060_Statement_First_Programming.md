@@ -106,7 +106,7 @@ public class Frame
 }
 ```
 
-and we need to write a Specification for a `Validation` class that accepts a `Frame` as an argument and checks whether the time slot (whatever it is) is above a value specified in a constant called `TimeSlot.MaxAllowed` (so it's a constant defined in a `TimeSlot` class). If it is, then the validation returns `false`, if it's not, then it returns `true`.
+and we need to write a Specification for a `Validation` class that accepts a `Frame` object as an argument and checks whether the time slot (whatever it is) inside it is correct. The correctness is determined by comparing the time slot to a maximum allowed value specified in a constant called `TimeSlot.MaxAllowed` (so it's a constant defined in a `TimeSlot` class). If the frame time slot is higher than the maximum allowed, it is assumed incorrect and the validation should return `false`. Otherwise, `true` should be returned.
 
 Let's take a look at the following Statement which specifies that setting a value higher than allowed to a field of a `frame` should make the validation fail:
 
