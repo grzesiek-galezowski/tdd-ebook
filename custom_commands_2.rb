@@ -1,5 +1,16 @@
 $ROOT = Pathname.pwd
 $MANUSCRIPT_DIR = $ROOT + "manuscript"
+$MANUSCRIPT_IMAGES_DIR = $MANUSCRIPT_DIR + "images"
+$MANUSCRIPT_COVER_IMAGE = $MANUSCRIPT_IMAGES_DIR + "homemade_title_page.png"
+$BOOK_CHAPTERS_LIST = "Book.txt"
+$SAMPLE_CHAPTERS_LIST = "Sample.txt"
+
+$MANUSCRIPT_BOOK_CHAPTERS_LIST = $MANUSCRIPT_DIR + $BOOK_CHAPTERS_LIST
+$MANUSCRIPT_SAMPLE_CHAPTERS_LIST = $MANUSCRIPT_DIR + $SAMPLE_CHAPTERS_LIST
+
+$ROOT_DIR_COVER_IMAGE = $ROOT + "cover_real.png"
+
+
 
 def for_each_manuscript_file
   errors = DetectedErrors.new

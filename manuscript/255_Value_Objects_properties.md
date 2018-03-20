@@ -69,7 +69,7 @@ private ProductName(string value)
 }
 ```
 
-and you probably wonder why. I'd like to decompose the question further decomposed into two others: 
+and you probably wonder why. I'd like to decompose the question further into two others:
 
 1. How should we create new instances then?
 1. Why private and not public?
@@ -404,5 +404,4 @@ So far, we have talked about value objects using a specific example of product n
 [^essentialskills]: A. Shalloway et al., Essential Skills For The Agile Developer.
 
 [^constructorsdynamic]: This is literally true for languages like Java, C# or C++. There are other languages (like Ruby), with different rules regarding object construction. Still, the original argument - that the naming of methods responsible for object creation is constrained - holds.
-
 

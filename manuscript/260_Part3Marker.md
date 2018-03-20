@@ -24,7 +24,7 @@ This joint world is the world we are going to fit mock objects and other TDD pra
 
 I know we have put TDD aside for such a long time. Believe me that this is because I consider understanding the concepts from part 2 crucial to getting mocks right.
 
-Mock objects are not a new tool, however, there is still a lot of misunderstanding of what their nature is and where and how they fit best into the TDD approach. Some opinions went as far as to say that there are two styles of TDD: one that uses mocks (called "mockist TDD" or "London style TDD") and another without them (called "cassic TDD" or "Chicago style TDD"). Personally, I don't support this division. I like very much what [Nat Pryce said about it](https://groups.google.com/d/msg/growing-object-oriented-software/GNS8bQ93yOo/GViu-YvWCEoJ):
+Mock objects are not a new tool, however, there is still a lot of misunderstanding of what their nature is and where and how they fit best into the TDD approach. Some opinions went as far as to say that there are two styles of TDD: one that uses mocks (called "mockist TDD" or "London style TDD") and another without them (called "cassic TDD" or "Chicago style TDD"). Personally, I don't support this division. I like very much what [Nat Pryce said about it](https://groups.google.com/forum/#!msg/growing-object-oriented-software/GNS8bQ93yOo/GViu-YvWCEoJ):
 
 > (...) I argue that there are not different kinds of TDD. There are different design conventions, and you pick the testing techniques and tools most appropriate for the conventions you're working in.
 

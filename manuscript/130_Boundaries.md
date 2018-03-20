@@ -474,4 +474,4 @@ In this chapter, I described specifying functional boundaries with a minimum am
 
 [^tetraphobia]: https://en.wikipedia.org/wiki/Tetraphobia
 [^istqb]: see e.g. chapter 4.3 of ISQTB Foundation Level Syllabus at http://www.istqb.org/downloads/send/2-foundation-level-documents/3-foundation-level-syllabus-2011.html4
-[^kentconfidence]: http://stackoverflow.com/a/153565
+[^kentconfidence]: https://stackoverflow.com/questions/153234/how-deep-are-your-unit-tests/153565#153565

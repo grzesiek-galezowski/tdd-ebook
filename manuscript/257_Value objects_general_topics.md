@@ -374,7 +374,7 @@ As such, we expect values to contain query methods (although, as I said, we stri
 
 ## Summary
 
-This concludes my writing on value objects. I never thought there would be so much to discuss as to how I believe they should be designed. For readers interested in seeing a state-of-the-art case study of value objects, I recommend looking at [Noda Time](https://nodatime.org/) (for C#) and [Joda Time](http://www.joda.org/joda-time) (for Java) libraries (or [Java 8 new time and date API](http://www.oracle.com/technetwork/articles/java/jf14-date-time-2125367.html)).
+This concludes my writing on value objects. I never thought there would be so much to discuss as to how I believe they should be designed. For readers interested in seeing a state-of-the-art case study of value objects, I recommend looking at [Noda Time](https://nodatime.org/) (for C#) and [Joda Time](http://www.joda.org/joda-time/) (for Java) libraries (or [Java 8 new time and date API](http://www.oracle.com/technetwork/articles/java/jf14-date-time-2125367.html)).
 
 [^functionallanguages]: This is one of the reasons why functional languages, where data is immutable by default, gain a lot of attention in domains where doing many things in parallel is necessary.
 

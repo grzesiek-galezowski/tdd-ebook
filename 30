@@ -1,0 +1,71 @@
+=========================
+======================
+================
+[0;32;49mhttp://xunit.github.io/ => 200, OK[0m
+[0;32;49mhttp://nsubstitute.github.io/ => 200, OK[0m
+[0;32;49mhttps://github.com/AutoFixture/AutoFixture => 200, OK[0m
+[0;32;49mhttp://www.confreaks.com/videos/759-rubymidwest2011-keynote-architecture-the-lost-years => 301, Moved Permanently[0m
+[0;32;49mhttps://www.youtube.com/watch?v=b0vhGEGJC8g => 301, Moved Permanently[0m
+[0;32;49mhttp://www.growing-object-oriented-software.com/ => 200, OK[0m
+[0;32;49mhttp://dannorth.net/introducing-bdd/ => 301, Moved Permanently[0m
+[0;32;49mhttp://www.infoq.com/presentations/testing-communication => 301, Moved Permanently[0m
+[0;32;49mhttps://en.wikipedia.org/wiki/Analysis => 200, OK[0m
+[0;32;49mhttp://www.specflow.org/ => 301, Moved Permanently[0m
+[0;32;49mhttps://cucumber.io/ => 200, OK[0m
+[0;32;49mhttp://fit.c2.com/ => 200, OK[0m
+[0;32;49mhttp://claysnow.co.uk/unit-tests-are-your-specification/ => 200, OK[0m
+[0;32;49mhttps://lizkeogh.com/2012/05/30/showcasing-the-language-of-bdd/ => 200, OK[0m
+[0;32;49mhttp://www.sustainabletdd.com/ => 200, OK[0m
+[0;32;49mhttp://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html => 200, OK[0m
+[0;32;49mhttp://blog.ploeh.dk/2009/03/05/ConstrainedNon-Determinism/ => 200, OK[0m
+[0;32;49mhttps://github.com/AutoFixture/AutoFixture => 200, OK[0m
+[0;32;49mhttps://github.com/grzesiek-galezowski/tdd-toolkit => 200, OK[0m
+[0;32;49mhttps://martinfowler.com/articles/mocksArentStubs.html => 200, OK[0m
+[0;32;49mhttps://en.wikipedia.org/wiki/Boundary_testing => 200, OK[0m
+[0;32;49mhttp://www.sustainabletdd.com/ => 200, OK[0m
+[0;32;49mhttps://en.wikipedia.org/wiki/Tetraphobia => 200, OK[0m
+[0;32;49mhttp://www.istqb.org/downloads/send/2-foundation-level-documents/3-foundation-level-syllabus-2011.html4 => 302, Found[0m
+[0;32;49mhttp://stackoverflow.com/a/153565 => 301, Moved Permanently[0m
+[0;32;49mhttp://www.pearsonhighered.com/educator/product/Test-Driven-Development-By-Example/9780321146533.page => 301, Moved Permanently[0m
+[0;32;49mhttp://encyclopedia2.thefreedictionary.com/radar+triangulation => 200, OK[0m
+[0;32;49mhttp://blog.cleancoder.com/uncle-bob/2014/12/17/TheCyclesOfTDD.html => 200, OK[0m
+[0;32;49mhttps://groups.google.com/d/msg/growing-object-oriented-software/rwxCURI_3kM/2UcNAlF_Jh4J => 302, Moved Temporarily[0m
+[0;32;49mhttp://c2.com/cgi/wiki?AlanKayOnMessaging => 302, Found[0m
+[0;32;49mhttp://www.netobjectives.com/PatternRepository/index.php?title=TheAbstractFactoryPattern => 301, Moved Permanently[0m
+[0;32;49mhttp://en.wikipedia.org/wiki/Creational_pattern => 301, TLS Redirect[0m
+[0;32;49mhttps://martinfowler.com/eaaCatalog/repository.html => 200, OK[0m
+[0;32;49mhttp://en.wikipedia.org/wiki/Cache_(computing => 301, TLS Redirect[0m
+[0;32;49mhttp://www.blackwasp.co.uk/Builder.aspx => 200, OK[0m
+[0;32;49mhttp://www.oodesign.com/observer-pattern.html => 200, OK[0m
+[0;32;49mhttp://www.cs.oberlin.edu/~jwalker/nullObjPattern/ => 200, OK[0m
+[0;32;49mhttp://www.cs.oberlin.edu/~jwalker/refs/woolf.ps => 200, OK[0m
+[0;32;49mhttp://blog.ploeh.dk/2011/07/28/CompositionRoot/ => 200, OK[0m
+[0;33;49mhttp://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod => 400, Bad Request[0m
+[0;33;49mhttp://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod => 400, Bad Request[0m
+[0;32;49mhttps://stackoverflow.fogbugz.com/default.asp?W29030 => 302, Found[0m
+[0;32;49mhttp://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol => 301, TLS Redirect[0m
+[0;33;49mhttp://www.wirfs-brock.com/PDFs/PrinciplesInPractice.pdf => 403, Forbidden[0m
+[0;32;49mhttp://www.natpryce.com/articles/000783.html => 200, OK[0m
+[0;32;49mhttps://vimeo.com/105785565 => 200, OK[0m
+[0;32;49mhttp://www.netobjectives.com/blogs/shalloway%E2%80%99s-law-and-shalloway%E2%80%99s-principle => 200, OK[0m
+[0;32;49mhttps://msdn.microsoft.com/en-us/library/7h9bszxx.aspx => 301, Moved Permanently[0m
+[0;32;49mhttps://msdn.microsoft.com/en-us/library/ms131187.aspx => 200, OK[0m
+[0;32;49mhttp://blog.ploeh.dk/2014/11/18/the-isnullorwhitespace-trap/ => 200, OK[0m
+[0;32;49mhttps://msdn.microsoft.com/en-us/library/dn467185(v=vs.111).aspx => 200, OK[0m
+[0;32;49mhttps://nodatime.org/ => 200, OK[0m
+[0;32;49mhttp://www.joda.org/joda-time => 301, Moved Permanently[0m
+[0;32;49mhttp://www.oracle.com/technetwork/articles/java/jf14-date-time-2125367.html => 200, OK[0m
+[0;32;49mhttps://www.nuget.org/packages/AtmaFilesystem/ => 200, OK[0m
+[0;32;49mhttps://www.nuget.org/packages/AtmaFilesystem/ => 200, OK[0m
+[0;32;49mhttps://stackoverflow.com/questions/333829/why-cant-i-define-a-default-constructor-for-a-struct-in-net => 200, OK[0m
+[0;32;49mhttps://martinfowler.com/bliki/AliasingBug.html => 200, OK[0m
+[0;32;49mhttps://groups.google.com/d/msg/growing-object-oriented-software/GNS8bQ93yOo/GViu-YvWCEoJ => 302, Moved Temporarily[0m
+[0;33;49mhttp://www.wirfs-brock.com/PDFs/PrinciplesInPractice.pdf => 403, Forbidden[0m
+[0;32;49mhttp://www.netobjectives.com/blogs/resistance-not-change => 200, OK[0m
+[0;32;49mhttp://xunitpatterns.com/ => 200, OK[0m
+[0;32;49mhttp://c2.com/cgi/wiki?ValueObject => 302, Found[0m
+[0;32;49mhttps://martinfowler.com/bliki/ValueObject.html => 200, OK[0m
+[0;32;49mhttps://martinfowler.com/books/eaa.html => 200, OK[0m
+[0;32;49mhttp://arlobelshee.com/the-no-mocks-book/ => 200, OK[0m
+[0;32;49mhttp://www.isbnsearch.org/isbn/0321413091 => 301, Moved Permanently[0m
+[0;32;49mhttp://misko.hevery.com/code-reviewers-guide/flaw-constructor-does-real-work/ => 200, OK[0m

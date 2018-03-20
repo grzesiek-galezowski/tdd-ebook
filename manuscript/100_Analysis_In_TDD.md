@@ -69,7 +69,7 @@ And check items count
 Then the count should be 3
 ```
 
-While on acceptance level we put such behavior descriptions together with code as a single whole (If this doesn't ring a bell, look at tools such as [SpecFlow](http://www.specflow.org/) or [Cucumber](https://cucumber.io/) or [FIT](http://fit.c2.com/) to get some examples), on the unit level the description is usually not written down in a literal way, but rather it is translated and written only in form of source code. Still, the structure of GIVEN-WHEN-THEN is useful when thinking about behaviors required from an object or objects, as we saw when we talked about starting from Statement rather than code. I like to put the structure explicitly in my Statements -- I find that it helps make them more readable[^sebrosegwt]. So most of my unit-level Statements follow this template:
+While on acceptance level we put such behavior descriptions together with code as a single whole (If this doesn't ring a bell, look at tools such as [SpecFlow](http://specflow.org/) or [Cucumber](https://cucumber.io/) or [FIT](http://fit.c2.com/) to get some examples), on the unit level the description is usually not written down in a literal way, but rather it is translated and written only in form of source code. Still, the structure of GIVEN-WHEN-THEN is useful when thinking about behaviors required from an object or objects, as we saw when we talked about starting from Statement rather than code. I like to put the structure explicitly in my Statements -- I find that it helps make them more readable[^sebrosegwt]. So most of my unit-level Statements follow this template:
 
 ```csharp
 [Fact]

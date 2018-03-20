@@ -249,6 +249,6 @@ In this chapter, I tried to give you some advice on designing classes that does 
 
 [^storypoints]: Provided we are not using a measure such as story points.
 
-[^smtp]: SMTP stands for Simple Mail Transfer Protocol and is a standard protocol for sending and receiving e-mail. You can read more on [Wikipedia](http://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol). 
+[^smtp]: SMTP stands for Simple Mail Transfer Protocol and is a standard protocol for sending and receiving e-mail. You can read more on [Wikipedia](https://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol). 
 
 [^rddandsrp]: Note that I'm writing about responsibility in terms of single responsibility principle. In responsibility-driven design, responsibility means something different. See [Rebecca Wirfs-Brock's clarification](http://www.wirfs-brock.com/PDFs/PrinciplesInPractice.pdf).

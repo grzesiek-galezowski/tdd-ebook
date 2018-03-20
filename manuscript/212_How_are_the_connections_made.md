@@ -135,7 +135,7 @@ If this ability is not required, I strongly prefer the constructor approach as i
 
 ## Receive in response to a message (i.e. as method return value)
 
-This method of composing objects relies on an intermediary object -- often an implementation of a [factory pattern](http://www.netobjectives.com/PatternRepository/index.php?title=TheAbstractFactoryPattern) -- to supply recipients on request. To simplify things, I will use factories in examples presented in this section, although what I tell you is true for some other [creational patterns](http://en.wikipedia.org/wiki/Creational_pattern) as well (also, later in this chapter, I'll cover some aspects of factory pattern in depth).
+This method of composing objects relies on an intermediary object -- often an implementation of a [factory pattern](http://www.netobjectives.com/PatternRepository/index.php?title=TheAbstractFactoryPattern) -- to supply recipients on request. To simplify things, I will use factories in examples presented in this section, although what I tell you is true for some other [creational patterns](https://en.wikipedia.org/wiki/Creational_pattern) as well (also, later in this chapter, I'll cover some aspects of factory pattern in depth).
 
 To be able to ask a factory for recipients, the sender needs to obtain a reference to it first. Typically, a factory is composed with a sender through constructor (an approach I already described). For example:
 
@@ -195,7 +195,7 @@ So far, all of the factories we considered had creation methods with empty param
 
 ### Not only factories
 
-Throughout this section, we have used a factory as our role model, but the approach of obtaining a recipient in response to a message is wider than that. Other types of objects that fall into this category include, among others: [repositories](http://martinfowler.com/eaaCatalog/repository.html), [caches](http://en.wikipedia.org/wiki/Cache_(computing)), [builders](http://www.blackwasp.co.uk/Builder.aspx), collections[^collectionsremark]. While they are all important concepts (which you can look up on the web if you like), they are not required to progress through this chapter so I won't go through them now.
+Throughout this section, we have used a factory as our role model, but the approach of obtaining a recipient in response to a message is wider than that. Other types of objects that fall into this category include, among others: [repositories](https://martinfowler.com/eaaCatalog/repository.html), [caches](https://en.wikipedia.org/wiki/Cache_%28computing%29), [builders](http://www.blackwasp.co.uk/Builder.aspx), collections[^collectionsremark]. While they are all important concepts (which you can look up on the web if you like), they are not required to progress through this chapter so I won't go through them now.
 
 ## Receive as a registered [observer](http://www.oodesign.com/observer-pattern.html)
 

@@ -106,7 +106,7 @@ public class Frame
 }
 ```
 
-and we need to write a Specification for a `Validation` class that accepts a `Frame` as an argument and checks whether the time slot (whatever it is) is above a value specified in a constant called `TimeSlot.MaxAllowed` (so it's a constant defined in a `TimeSlot` class). If it is, then the validation returns `false`, if it's not, then it returns `true`.
+and we need to write a Specification for a `Validation` class that accepts a `Frame` object as an argument and checks whether the time slot (whatever it is) inside it is correct. The correctness is determined by comparing the time slot to a maximum allowed value specified in a constant called `TimeSlot.MaxAllowed` (so it's a constant defined in a `TimeSlot` class). If the frame time slot is higher than the maximum allowed, it is assumed incorrect and the validation should return `false`. Otherwise, `true` should be returned.
 
 Let's take a look at the following Statement which specifies that setting a value higher than allowed to a field of a `frame` should make the validation fail:
 
@@ -190,7 +190,7 @@ On the other hand, when doing TDD (as we will see in the coming chapters) our Sp
 
 ## "Test-After" often leads to design rework
 
-I like reading and watching Uncle Bob (Robert C. Martin). One day I was listening to [his keynote at Ruby Midwest 2011, called Architecture The Lost Years](http://www.confreaks.com/videos/759-rubymidwest2011-keynote-architecture-the-lost-years). At the end, Robert made some digressions, one of them about TDD. He said that writing tests after the code is not TDD and instead called it "a waste of time".
+I like reading and watching Uncle Bob (Robert C. Martin). One day I was listening to [his keynote at Ruby Midwest 2011, called Architecture The Lost Years](http://confreaks.tv/videos/rubymidwest2011-keynote-architecture-the-lost-years). At the end, Robert made some digressions, one of them about TDD. He said that writing tests after the code is not TDD and instead called it "a waste of time".
 
 My initial thought was that the comment was maybe a bit too exaggerated and only about missing all the benefits that starting with a false Statement brings me: the ability to see the Statement fail, the ability to do a clean-sheet analysis etc. However, now I feel that there's much more to it, thanks to something I learned from Amir Kolsky and Scott Bain -- in order to be able to write a maintainable Specification for a piece of code, the code must have a high level of **testability**. We will talk about this quality in part 2 of this book, but for now let's assume the following simplified definition: the higher testability of a piece of code (e.g. a class), the easier it is to write a Statement for its behavior.
 
