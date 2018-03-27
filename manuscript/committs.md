@@ -57,132 +57,68 @@ hosting the web app. The web part is already written, time for the TicketOffice.
 ```csharp
 public class Main
 {
-    public static void Main(string[] args) 
+  public static void Main(string[] args) 
+  {
+    new WebApp(new TicketOffice()).Host();
+  }
+}
+```
+
+Ticket office class:
+
+```csharp
+public class TicketOffice
+{
+    public TicketDto MakeReservation(ReservationRequestDto requestDto) 
     {
-      new WebApp(new TicketOffice())
-       .Host();
+        throw new NotImplementedException("Not implemented");
     }
 }
 ```
+
 -------------------------------------
-+import api.TicketOffice;
-+import autofixture.publicinterface.Any;
-+import lombok.val;
- import org.testng.annotations.Test;
-+import request.dto.ReservationRequestDto;
-+
-+import static org.assertj.core.api.Assertions.assertThat;
- 
- public class TicketOfficeSpecification {
-     
-     @Test
--    public void shouldXXXYYYZZZ() {
--        // TODO: Write this code!
-+    public void shouldCreateAndExecuteCommandWithTicketAndTrain() {
-+        //WHEN
-+        val ticketOffice = new TicketOffice();
-+        val reservation = Any.anonymous(ReservationRequestDto.class);
-+        //WHEN
-+        val reservationDto = ticketOffice.makeReservation(reservation);
- 
-+        //THEN
-+        assertThat(reservationDto).isEqualTo(resultDto);
-     }
- }
----------------------------------------------------------------------------------------------------------------
-commit 5b552ca4717d3795d649b6aa70b3ed4cee92b844
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
-Date:   Tue Feb 27 16:17:58 2018 +0100
+First Statement:
 
-    ticket dto feels better
+```csharp 
+public class TicketOfficeSpecification 
+{
+    
+  [Fact]
+  public void ShouldCreateAndExecuteCommandWithTicketAndTrain() 
+  {
+    //WHEN
+    var ticketOffice = new TicketOffice();
+    var reservation = Any.Instance<ReservationRequestDto>();
+    //WHEN
+    var ticketDto = ticketOffice.MakeReservation(reservation);
 
-diff --git a/Java/src/main/java/api/TicketOffice.java b/Java/src/main/java/api/TicketOffice.java
-index a4406eb..045f2c0 100644
---- a/Java/src/main/java/api/TicketOffice.java
-+++ b/Java/src/main/java/api/TicketOffice.java
-@@ -1,11 +1,11 @@
- package api;
- 
- import request.dto.ReservationRequestDto;
--import response.dto.ReservationDto;
-+import response.dto.TicketDto;
- 
- public class TicketOffice {
- 
--    public ReservationDto makeReservation(
-+    public TicketDto makeReservation(
-         ReservationRequestDto request) {
-         throw new RuntimeException("lol");
-     }
+    //THEN
+    Assert.Equal(resultDto, ticketDto);
+  }
+}
+```
 
----------------------------------------------------------------------------------------------------------------
-rename reservation dto to ticket dto
----------------------------------------------------------------------------------------------------------------
-
-@@ -2,12 +2,12 @@ package response.dto;
- 
- import java.util.List;
- 
--public class ReservationDto {
-+public class TicketDto {
-     public final String trainId;
-     public final String ticketId;
-     public final List<SeatDto> seats;
- 
--    public ReservationDto(
-+    public TicketDto(
-         String trainId,
-         List<response.dto.SeatDto> seats,
-         String ticketId) {
----------------------------------------------------------------------------------------------------------------
-this changes the specification as well
----------------------------------------------------------------------------------------------------------------
-@@ -14,9 +14,9 @@ public class TicketOfficeSpecification {
-         val ticketOffice = new TicketOffice();
-         val reservation = Any.anonymous(ReservationRequestDto.class);
-         //WHEN
--        val reservationDto = ticketOffice.makeReservation(reservation);
-+        val ticketDto = ticketOffice.makeReservation(reservation);
- 
-         //THEN
--        assertThat(reservationDto).isEqualTo(resultDto);
-+        assertThat(ticketDto).isEqualTo(resultDto);
-     }
- }
 
 commit 59c3e78f91feee08be6ba7ea155f0dcb398cb3f8
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
 Date:   Tue Feb 27 16:20:34 2018 +0100
 
     Let's have a ticket convertible to dto
-    
     (btw, how to hide this toDto method?)
 
 ---------------------------------------------------------------------------------------------------------------
-Introducing ticket dto into the test
----------------------------------------------------------------------------------------------------------------
-@@ -3,8 +3,10 @@ import autofixture.publicinterface.Any;
- import lombok.val;
- import org.testng.annotations.Test;
- import request.dto.ReservationRequestDto;
-+import response.dto.TicketDto;
- 
- import static org.assertj.core.api.Assertions.assertThat;
-+import static org.mockito.BDDMockito.given;
- 
- public class TicketOfficeSpecification {
-     
-@@ -13,6 +15,10 @@ public class TicketOfficeSpecification {
-         //WHEN
-         val ticketOffice = new TicketOffice();
-         val reservation = Any.anonymous(ReservationRequestDto.class);
-+        val resultDto = Any.anonymous(TicketDto.class);
+
+```csharp 
+    //WHEN
+    var ticketOffice = new TicketOffice();
+    var reservation = Any.Instance<ReservationRequestDto>();
++   var resultDto = Any.Instance<TicketDto>();
 +
-+        given(ticket.toDto()).willReturn(resultDto);
++   ticket.ToDto().Returns(resultDto);
 +
-         //WHEN
-         val ticketDto = ticketOffice.makeReservation(reservation);
- 
+    //WHEN
+    var ticketDto = ticketOffice.MakeReservation(reservation);
+```
 
 commit 23002b0151dc0130c15a5b21effa037440123832
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
@@ -190,49 +126,23 @@ Date:   Tue Feb 27 16:24:09 2018 +0100
 
     discovered a Ticket interface and one method
 
-diff --git a/Java/src/main/java/logic/Ticket.java b/Java/src/main/java/logic/Ticket.java
-new file mode 100644
+```csharp
+         var ticketOffice = new TicketOffice();
+         var reservation = Any.Instance<ReservationRequestDto>();;
+         var resultDto = Any.Instance<TicketDto>();
++        Ticket ticket = Substitute.For<Ticket>();
+ 
+         ticket.ToDto().Returns(resultDto);
+```
 
-
-
-
-
-
-index 0000000..1cc7e63
---- /dev/null
-+++ b/Java/src/main/java/logic/Ticket.java
-@@ -0,0 +1,4 @@
-+package logic;
-+
-+public interface Ticket {
+```csharp
++public interface Ticket
++{
 +}
-diff --git a/Java/src/test/java/TicketOfficeSpecification.java b/Java/src/test/java/TicketOfficeSpecification.java
-index 6cbdfbd..fc9a496 100644
---- a/Java/src/test/java/TicketOfficeSpecification.java
-+++ b/Java/src/test/java/TicketOfficeSpecification.java
-@@ -1,5 +1,6 @@
- import api.TicketOffice;
- import autofixture.publicinterface.Any;
-+import logic.Ticket;
- import lombok.val;
- import org.testng.annotations.Test;
- import request.dto.ReservationRequestDto;
-@@ -7,6 +8,7 @@ import response.dto.TicketDto;
- 
- import static org.assertj.core.api.Assertions.assertThat;
- import static org.mockito.BDDMockito.given;
-+import static org.mockito.Mockito.mock;
- 
- public class TicketOfficeSpecification {
-     
-@@ -16,6 +18,7 @@ public class TicketOfficeSpecification {
-         val ticketOffice = new TicketOffice();
-         val reservation = Any.anonymous(ReservationRequestDto.class);
-         val resultDto = Any.anonymous(TicketDto.class);
-+        Ticket ticket = mock(Ticket.class);
- 
-         given(ticket.toDto()).willReturn(resultDto);
- 
+
+```
+
+//TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
 
 commit 858b5befe562f951594a167bf426a32835ac20c6
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
@@ -262,17 +172,15 @@ Date:   Tue Feb 27 16:25:53 2018 +0100
     Not much OO, is it?
 
 diff --git a/Java/src/test/java/TicketOfficeSpecification.java b/Java/src/test/java/TicketOfficeSpecification.java
-index fc9a496..81523e6 100644
---- a/Java/src/test/java/TicketOfficeSpecification.java
-+++ b/Java/src/test/java/TicketOfficeSpecification.java
-@@ -20,6 +20,7 @@ public class TicketOfficeSpecification {
-         val resultDto = Any.anonymous(TicketDto.class);
-         Ticket ticket = mock(Ticket.class);
- 
-+        given(ticketFactory.createBlankTicket()).willReturn(ticket);
-         given(ticket.toDto()).willReturn(resultDto);
- 
-         //WHEN
+```csharp
+    var resultDto = Any.Instance<TicketDto>();
+    var ticket = Substitute.For<Ticket>();
+
++   ticketFactory.CreateBlankTicket().Returns(ticket);
+    ticket.ToDto().Returns(resultDto);
+
+//WHEN
+```
 
 commit 68eab6eb29f83bc9bc3342478baae48644366568
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
@@ -280,120 +188,71 @@ Date:   Tue Feb 27 16:27:19 2018 +0100
 
     Introduced TicketFactory collaborator
 
+diff --git a/Java/src/test/java/TicketOfficeSpecification.java b/Java/src/test/java/TicketOfficeSpecification.java
+```csharp
+    var resultDto = Any.Instance<TicketDto>();
+    var ticket = Substitute.For<Ticket>();
++   var ticketFactory = Substitute.For<TicketFactory>());
+
+    ticketFactory.CreateBlankTicket().Returns(ticket);
+    ticket.ToDto().Returns(resultDto);
+```
+
+//TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
+
 diff --git a/Java/src/main/java/logic/TicketFactory.java b/Java/src/main/java/logic/TicketFactory.java
 new file mode 100644
 
-
-
-
-
-
-index 0000000..27a10ef
---- /dev/null
 +++ b/Java/src/main/java/logic/TicketFactory.java
 @@ -0,0 +1,5 @@
-+package logic;
 +
-+public interface TicketFactory {
-+    Ticket createBlankTicket();
++public interface TicketFactory 
++{
++    Ticket CreateBlankTicket();
 +}
-diff --git a/Java/src/test/java/TicketOfficeSpecification.java b/Java/src/test/java/TicketOfficeSpecification.java
-index 81523e6..b6728f5 100644
---- a/Java/src/test/java/TicketOfficeSpecification.java
-+++ b/Java/src/test/java/TicketOfficeSpecification.java
-@@ -1,6 +1,7 @@
- import api.TicketOffice;
- import autofixture.publicinterface.Any;
- import logic.Ticket;
-+import logic.TicketFactory;
- import lombok.val;
- import org.testng.annotations.Test;
- import request.dto.ReservationRequestDto;
-@@ -20,6 +21,7 @@ public class TicketOfficeSpecification {
-         val resultDto = Any.anonymous(TicketDto.class);
-         Ticket ticket = mock(Ticket.class);
- 
-+        val ticketFactory = mock(TicketFactory.class);
-         given(ticketFactory.createBlankTicket()).willReturn(ticket);
-         given(ticket.toDto()).willReturn(resultDto);
- 
+
 
 commit 6ebe534eedbfbf08bcdfc1ffff46b4fe80d83049
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
 Date:   Wed Feb 28 07:49:26 2018 +0100
 
     Discovered a command
-    
     For now mistakenly assuming that it will take a parameter
 
 diff --git a/Java/src/test/java/TicketOfficeSpecification.java b/Java/src/test/java/TicketOfficeSpecification.java
-index b6728f5..b92dc64 100644
---- a/Java/src/test/java/TicketOfficeSpecification.java
-+++ b/Java/src/test/java/TicketOfficeSpecification.java
-@@ -9,6 +9,7 @@ import response.dto.TicketDto;
- 
- import static org.assertj.core.api.Assertions.assertThat;
- import static org.mockito.BDDMockito.given;
-+import static org.mockito.BDDMockito.then;
- import static org.mockito.Mockito.mock;
- 
- public class TicketOfficeSpecification {
-@@ -29,6 +30,7 @@ public class TicketOfficeSpecification {
-         val ticketDto = ticketOffice.makeReservation(reservation);
- 
-         //THEN
-+        then(bookCommand).should().execute(ticket);
-         assertThat(ticketDto).isEqualTo(resultDto);
-     }
- }
+```csharp
+    var ticketDto = ticketOffice.MakeReservation(reservation);
+
+    //THEN
++   bookCommand.Received(1).Execute(ticket);
+    Assert.Equal(resultDto, ticketDto);
+}
+```
 
 commit 80934e48144dbea60567f464795d38fb2b905644
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
 Date:   Wed Feb 28 07:50:37 2018 +0100
 
     Introduced Command collaborator
-    
     Now our problem is - where do we get the command from?
 
-diff --git a/Java/src/main/java/logic/Command.java b/Java/src/main/java/logic/Command.java
-new file mode 100644
+diff --git a/Java/src/test/java/TicketOfficeSpecification.java b/Java/src/test/java/TicketOfficeSpecification.java
 
+```csharp
+  var ticket = Substitute.For<Ticket>();
++ var bookCommand = Sustitute.For<Command>();
 
+  var ticketFactory = Substitute.For<TicketFactory>();
+  ticketFactory.CreateBlankTicket().Returns(ticket);
+```
 
-
-
-
-index 0000000..da9e156
---- /dev/null
 +++ b/Java/src/main/java/logic/Command.java
 @@ -0,0 +1,4 @@
-+package logic;
-+
-+public interface Command {
+```csharp
++public interface Command
++{
 +}
-diff --git a/Java/src/test/java/TicketOfficeSpecification.java b/Java/src/test/java/TicketOfficeSpecification.java
-index b92dc64..f1cf97f 100644
---- a/Java/src/test/java/TicketOfficeSpecification.java
-+++ b/Java/src/test/java/TicketOfficeSpecification.java
-@@ -1,8 +1,10 @@
- import api.TicketOffice;
- import autofixture.publicinterface.Any;
-+import logic.Command;
- import logic.Ticket;
- import logic.TicketFactory;
- import lombok.val;
-+import org.testng.CommandLineArgs;
- import org.testng.annotations.Test;
- import request.dto.ReservationRequestDto;
- import response.dto.TicketDto;
-@@ -21,6 +23,7 @@ public class TicketOfficeSpecification {
-         val reservation = Any.anonymous(ReservationRequestDto.class);
-         val resultDto = Any.anonymous(TicketDto.class);
-         Ticket ticket = mock(Ticket.class);
-+        val bookCommand = mock(Command.class);
- 
-         val ticketFactory = mock(TicketFactory.class);
-         given(ticketFactory.createBlankTicket()).willReturn(ticket);
+```
 
 commit 9af87d9e8f4f931dd1c65d04d00a0b5bded88007
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
@@ -401,37 +260,26 @@ Date:   Wed Feb 28 07:52:08 2018 +0100
 
     I decide a command factory will wrap dto with a command
 
-diff --git a/Java/src/main/java/logic/Command.java b/Java/src/main/java/logic/Command.java
-index da9e156..c0202a2 100644
---- a/Java/src/main/java/logic/Command.java
-+++ b/Java/src/main/java/logic/Command.java
-@@ -1,4 +1,5 @@
- package logic;
- 
- public interface Command {
-+    void execute(Ticket ticket);
- }
+
 diff --git a/Java/src/test/java/TicketOfficeSpecification.java b/Java/src/test/java/TicketOfficeSpecification.java
-index f1cf97f..7720e10 100644
---- a/Java/src/test/java/TicketOfficeSpecification.java
-+++ b/Java/src/test/java/TicketOfficeSpecification.java
-@@ -4,7 +4,6 @@ import logic.Command;
- import logic.Ticket;
- import logic.TicketFactory;
- import lombok.val;
--import org.testng.CommandLineArgs;
- import org.testng.annotations.Test;
- import request.dto.ReservationRequestDto;
- import response.dto.TicketDto;
-@@ -28,6 +27,8 @@ public class TicketOfficeSpecification {
-         val ticketFactory = mock(TicketFactory.class);
-         given(ticketFactory.createBlankTicket()).willReturn(ticket);
-         given(ticket.toDto()).willReturn(resultDto);
-+        given(commandFactory.createBookCommand(reservation))
-+            .willReturn(bookCommand);
+```csharp
+         var ticketFactory = Substitute.For<TicketFactory>();
+         ticketFactory.CreateBlankTicket().Returns(ticket);
+         ticket.ToDto().Returns(resultDto);
++        commandFactory.CreateBookCommand(reservation)
++            .Returns(bookCommand);
  
          //WHEN
-         val ticketDto = ticketOffice.makeReservation(reservation);
+         var ticketDto = ticketOffice.MakeReservation(reservation);
+```
+
+diff --git a/Java/src/main/java/logic/Command.java b/Java/src/main/java/logic/Command.java
+
+```csharp
+ public interface Command {
++    void Execute(Ticket ticket);
+ }
+ ```
 
 commit 27c3d4a3f39cb97f1ac61d024f79c60737e2a971
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
@@ -445,10 +293,6 @@ diff --git a/Java/src/main/java/logic/CommandFactory.java b/Java/src/main/java/l
 new file mode 100644
 
 
-
-
-
-
 index 0000000..62baaa3
 --- /dev/null
 +++ b/Java/src/main/java/logic/CommandFactory.java
@@ -457,8 +301,9 @@ index 0000000..62baaa3
 +
 +import request.dto.ReservationRequestDto;
 +
-+public interface CommandFactory {
-+    Command createBookCommand(ReservationRequestDto reservation);
++public interface CommandFactory 
++{
++    Command CreateBookCommand(ReservationRequestDto reservation);
 +}
 diff --git a/Java/src/test/java/TicketOfficeSpecification.java b/Java/src/test/java/TicketOfficeSpecification.java
 index 7720e10..ca0ac87 100644
@@ -473,12 +318,12 @@ index 7720e10..ca0ac87 100644
  import logic.TicketFactory;
  import lombok.val;
 @@ -27,6 +28,7 @@ public class TicketOfficeSpecification {
-         val ticketFactory = mock(TicketFactory.class);
-         given(ticketFactory.createBlankTicket()).willReturn(ticket);
-         given(ticket.toDto()).willReturn(resultDto);
-+        val commandFactory = mock(CommandFactory.class);
-         given(commandFactory.createBookCommand(reservation))
-             .willReturn(bookCommand);
+         var ticketFactory = Substitute.For<TicketFactory>();
+         ticketFactory.CreateBlankTicket().Returns(ticket);
+         ticket.ToDto().Returns(resultDto);
++        var commandFactory = Substitute.For<CommandFactory>();
+         commandFactory.CreateBookCommand(reservation)
+             .Returns(bookCommand);
  
 
 commit a46886c0a1f1414b3bcd78aaa6fb06b51737c791
@@ -507,7 +352,7 @@ index 045f2c0..c2687db 100644
 +
 +    }
 +
-     public TicketDto makeReservation(
+     public TicketDto MakeReservation(
          ReservationRequestDto request) {
          throw new RuntimeException("lol");
 diff --git a/Java/src/test/java/TicketOfficeSpecification.java b/Java/src/test/java/TicketOfficeSpecification.java
@@ -515,25 +360,25 @@ index ca0ac87..bb0a5d0 100644
 --- a/Java/src/test/java/TicketOfficeSpecification.java
 +++ b/Java/src/test/java/TicketOfficeSpecification.java
 @@ -19,16 +19,16 @@ public class TicketOfficeSpecification {
-     @Test
-     public void shouldCreateAndExecuteCommandWithTicketAndTrain() {
+     [Fact]
+     public void ShouldCreateAndExecuteCommandWithTicketAndTrain() {
          //WHEN
--        val ticketOffice = new TicketOffice();
-+        val commandFactory = mock(CommandFactory.class);
-+        val ticketOffice = new TicketOffice(commandFactory);
-         val reservation = Any.anonymous(ReservationRequestDto.class);
-         val resultDto = Any.anonymous(TicketDto.class);
--        Ticket ticket = mock(Ticket.class);
-+        val ticket = mock(Ticket.class);
-         val bookCommand = mock(Command.class);
+-        var ticketOffice = new TicketOffice();
++        var commandFactory = Substitute.For<CommandFactory>();
++        var ticketOffice = new TicketOffice(commandFactory);
+         var reservation = Any.Instance<ReservationRequestDto>();;
+         var resultDto = Any.Instance<TicketDto>();
+-        Ticket ticket = Substitute.For<Ticket>();
++        var ticket = Substitute.For<Ticket>();
+         var bookCommand = Substitute.For<Command>();
 -
-         val ticketFactory = mock(TicketFactory.class);
+         var ticketFactory = Substitute.For<TicketFactory>();
 +
-         given(ticketFactory.createBlankTicket()).willReturn(ticket);
-         given(ticket.toDto()).willReturn(resultDto);
--        val commandFactory = mock(CommandFactory.class);
-         given(commandFactory.createBookCommand(reservation))
-             .willReturn(bookCommand);
+         ticketFactory.CreateBlankTicket().Returns(ticket);
+         ticket.ToDto().Returns(resultDto);
+-        var commandFactory = Substitute.For<CommandFactory>();
+         commandFactory.CreateBookCommand(reservation)
+             .Returns(bookCommand);
  
 
 commit 4ae76313220c9fda115482c9ffe33668033d8a3d
@@ -542,7 +387,7 @@ Date:   Wed Feb 28 07:57:56 2018 +0100
 
     I noticed I can pass the ticket to factory
     
-    and have the command as something more generic with a void execute() method
+    and have the command as something more generic with a void Execute() method
 
 diff --git a/Java/src/main/java/logic/Command.java b/Java/src/main/java/logic/Command.java
 index c0202a2..96b1f3f 100644
@@ -552,8 +397,8 @@ index c0202a2..96b1f3f 100644
  package logic;
  
  public interface Command {
--    void execute(Ticket ticket);
-+    void execute();
+-    void Execute(Ticket ticket);
++    void Execute();
  }
 diff --git a/Java/src/main/java/logic/CommandFactory.java b/Java/src/main/java/logic/CommandFactory.java
 index 62baaa3..18208a5 100644
@@ -563,8 +408,8 @@ index 62baaa3..18208a5 100644
  import request.dto.ReservationRequestDto;
  
  public interface CommandFactory {
--    Command createBookCommand(ReservationRequestDto reservation);
-+    Command createBookCommand(ReservationRequestDto reservation, Ticket ticket);
+-    Command CreateBookCommand(ReservationRequestDto reservation);
++    Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket);
  }
 diff --git a/Java/src/test/java/TicketOfficeSpecification.java b/Java/src/test/java/TicketOfficeSpecification.java
 index bb0a5d0..8b3f66a 100644
@@ -572,18 +417,18 @@ index bb0a5d0..8b3f66a 100644
 +++ b/Java/src/test/java/TicketOfficeSpecification.java
 @@ -29,14 +29,14 @@ public class TicketOfficeSpecification {
  
-         given(ticketFactory.createBlankTicket()).willReturn(ticket);
-         given(ticket.toDto()).willReturn(resultDto);
--        given(commandFactory.createBookCommand(reservation))
-+        given(commandFactory.createBookCommand(reservation, ticket))
-             .willReturn(bookCommand);
+         ticketFactory.CreateBlankTicket().Returns(ticket);
+         ticket.ToDto().Returns(resultDto);
+-        commandFactory.CreateBookCommand(reservation)
++        given(commandFactory.CreateBookCommand(reservation, ticket))
+             .Returns(bookCommand);
  
          //WHEN
-         val ticketDto = ticketOffice.makeReservation(reservation);
+         var ticketDto = ticketOffice.MakeReservation(reservation);
  
          //THEN
--        then(bookCommand).should().execute(ticket);
-+        then(bookCommand).should().execute();
+-        then(bookCommand).should().Execute(ticket);
++        then(bookCommand).should().Execute();
          assertThat(ticketDto).isEqualTo(resultDto);
      }
  }
@@ -600,7 +445,7 @@ index c2687db..9804346 100644
 +++ b/Java/src/main/java/api/TicketOffice.java
 @@ -13,7 +13,7 @@ public class TicketOffice {
  
-     public TicketDto makeReservation(
+     public TicketDto MakeReservation(
          ReservationRequestDto request) {
 -        throw new RuntimeException("lol");
 +        return new TicketDto(null, null, null);
@@ -638,27 +483,27 @@ index 9804346..6239a21 100644
 +        this.commandFactory = commandFactory;
      }
  
-     public TicketDto makeReservation(
+     public TicketDto MakeReservation(
 diff --git a/Java/src/test/java/TicketOfficeSpecification.java b/Java/src/test/java/TicketOfficeSpecification.java
 index 8b3f66a..62624d9 100644
 --- a/Java/src/test/java/TicketOfficeSpecification.java
 +++ b/Java/src/test/java/TicketOfficeSpecification.java
 @@ -20,12 +20,14 @@ public class TicketOfficeSpecification {
-     public void shouldCreateAndExecuteCommandWithTicketAndTrain() {
+     public void ShouldCreateAndExecuteCommandWithTicketAndTrain() {
          //WHEN
-         val commandFactory = mock(CommandFactory.class);
--        val ticketOffice = new TicketOffice(commandFactory);
-         val reservation = Any.anonymous(ReservationRequestDto.class);
-         val resultDto = Any.anonymous(TicketDto.class);
-         val ticket = mock(Ticket.class);
-         val bookCommand = mock(Command.class);
-         val ticketFactory = mock(TicketFactory.class);
-+        val ticketOffice = new TicketOffice(
+         var commandFactory = Substitute.For<CommandFactory>();
+-        var ticketOffice = new TicketOffice(commandFactory);
+         var reservation = Any.Instance<ReservationRequestDto>();;
+         var resultDto = Any.Instance<TicketDto>();
+         var ticket = Substitute.For<Ticket>();
+         var bookCommand = Substitute.For<Command>();
+         var ticketFactory = Substitute.For<TicketFactory>();
++        var ticketOffice = new TicketOffice(
 +            commandFactory,
 +            ticketFactory);
  
-         given(ticketFactory.createBlankTicket()).willReturn(ticket);
-         given(ticket.toDto()).willReturn(resultDto);
+         ticketFactory.CreateBlankTicket().Returns(ticket);
+         ticket.ToDto().Returns(resultDto);
 
 commit 517dbacaf02f9122898deaa73de9ad4f53256b79
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
@@ -695,10 +540,10 @@ index 6239a21..0fb9af4 100644
 +        this.ticketFactory = ticketFactory;
      }
  
-     public TicketDto makeReservation(
+     public TicketDto MakeReservation(
          ReservationRequestDto request) {
-+        val ticket = ticketFactory.createBlankTicket();
-+        val command = commandFactory.createBookCommand(request, ticket);
++        var ticket = ticketFactory.createBlankTicket();
++        var command = commandFactory.CreateBookCommand(request, ticket);
          return new TicketDto(null, null, null);
      }
  
@@ -717,9 +562,9 @@ index 0fb9af4..7929925 100644
 +++ b/Java/src/main/java/api/TicketOffice.java
 @@ -24,6 +24,7 @@ public class TicketOffice {
          ReservationRequestDto request) {
-         val ticket = ticketFactory.createBlankTicket();
-         val command = commandFactory.createBookCommand(request, ticket);
-+        command.execute();
+         var ticket = ticketFactory.createBlankTicket();
+         var command = commandFactory.CreateBookCommand(request, ticket);
++        command.Execute();
          return new TicketDto(null, null, null);
      }
  
@@ -737,9 +582,9 @@ index 7929925..941b7fd 100644
 --- a/Java/src/main/java/api/TicketOffice.java
 +++ b/Java/src/main/java/api/TicketOffice.java
 @@ -25,7 +25,7 @@ public class TicketOffice {
-         val ticket = ticketFactory.createBlankTicket();
-         val command = commandFactory.createBookCommand(request, ticket);
-         command.execute();
+         var ticket = ticketFactory.createBlankTicket();
+         var command = commandFactory.CreateBookCommand(request, ticket);
+         command.Execute();
 -        return new TicketDto(null, null, null);
 +        return ticket.toDto();
      }
@@ -827,9 +672,9 @@ index 0000000..a5eb928
 +
 +import request.dto.ReservationRequestDto;
 +
-+public class BookingCommandFactory implements CommandFactory {
++public class BookingCommandFactory : CommandFactory {
 +    @Override
-+    public Command createBookCommand(ReservationRequestDto reservation, Ticket ticket) {
++    public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) {
 +        //todo implement
 +        return null;
 +    }
@@ -848,7 +693,7 @@ index 0000000..4bc54a5
 @@ -0,0 +1,9 @@
 +package logic;
 +
-+public class TrainTicketFactory implements TicketFactory {
++public class TrainTicketFactory : TicketFactory {
 +    @Override
 +    public Ticket createBlankTicket() {
 +        //todo implement
@@ -901,8 +746,8 @@ index e58520b..c5ce32b 100644
 +
  public class TrainTicketFactorySpecification {
 -    
-+    @Test
-+    public void shouldCreateBookingCommand() {
++    [Fact]
++    public void ShouldCreateBookingCommand() {
 +        //GIVEN
 +
 +        //WHEN
@@ -951,8 +796,8 @@ index c5ce32b..0000000
 -import static org.assertj.core.api.Assertions.assertThat;
 -
 -public class TrainTicketFactorySpecification {
--    @Test
--    public void shouldCreateBookingCommand() {
+-    [Fact]
+-    public void ShouldCreateBookingCommand() {
 -        //GIVEN
 -
 -        //WHEN
@@ -1002,15 +847,15 @@ index 6dc1b99..7a6b6b8 100644
 +import static org.mockito.Mockito.mock;
 +
  public class BookingCommandFactoryTest {
-+    @Test
-+    public void shouldCreateBookTicketCommand() {
++    [Fact]
++    public void ShouldCreateBookTicketCommand() {
 +        //GIVEN
-+        val bookingCommandFactory = new BookingCommandFactory();
-+        val reservation = mock(ReservationRequestDto.class);
-+        val ticket = mock(Ticket.class);
++        var bookingCommandFactory = new BookingCommandFactory();
++        var reservation = Substitute.For<ReservationRequestDto>();
++        var ticket = Substitute.For<Ticket>();
 +
 +        //WHEN
-+        Command result = bookingCommandFactory.createBookCommand(reservation, ticket);
++        Command result = bookingCommandFactory.CreateBookCommand(reservation, ticket);
  
 +        //THEN
 +        assertThat(result).isInstanceOf(BookTicketCommand.class);
@@ -1036,9 +881,9 @@ index ae17b99..137bf5c 100644
  package logic;
  
 -public class BookTicketCommand {
-+public class BookTicketCommand implements Command {
++public class BookTicketCommand : Command {
 +    @Override
-+    public void execute() {
++    public void Execute() {
 +        //todo implement
 +
 +    }
@@ -1048,9 +893,9 @@ index a5eb928..ad8bd50 100644
 --- a/Java/src/main/java/logic/BookingCommandFactory.java
 +++ b/Java/src/main/java/logic/BookingCommandFactory.java
 @@ -5,7 +5,6 @@ import request.dto.ReservationRequestDto;
- public class BookingCommandFactory implements CommandFactory {
+ public class BookingCommandFactory : CommandFactory {
      @Override
-     public Command createBookCommand(ReservationRequestDto reservation, Ticket ticket) {
+     public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) {
 -        //todo implement
 -        return null;
 +        return new BookTicketCommand();
@@ -1061,12 +906,12 @@ index 7a6b6b8..d1e7e4e 100644
 --- a/Java/src/test/java/logic/BookingCommandFactoryTest.java
 +++ b/Java/src/test/java/logic/BookingCommandFactoryTest.java
 @@ -17,7 +17,8 @@ public class BookingCommandFactoryTest {
-         val ticket = mock(Ticket.class);
+         var ticket = Substitute.For<Ticket>();
  
          //WHEN
--        Command result = bookingCommandFactory.createBookCommand(reservation, ticket);
+-        Command result = bookingCommandFactory.CreateBookCommand(reservation, ticket);
 +        Command result = bookingCommandFactory
-+            .createBookCommand(reservation, ticket);
++            .CreateBookCommand(reservation, ticket);
  
          //THEN
          assertThat(result).isInstanceOf(BookTicketCommand.class);
@@ -1088,7 +933,7 @@ index 137bf5c..c254c5c 100644
  
 +import request.dto.ReservationRequestDto;
 +
- public class BookTicketCommand implements Command {
+ public class BookTicketCommand : Command {
 +    private ReservationRequestDto reservation;
 +
 +    public BookTicketCommand(ReservationRequestDto reservation) {
@@ -1096,16 +941,16 @@ index 137bf5c..c254c5c 100644
 +    }
 +
      @Override
-     public void execute() {
+     public void Execute() {
          //todo implement
 diff --git a/Java/src/main/java/logic/BookingCommandFactory.java b/Java/src/main/java/logic/BookingCommandFactory.java
 index ad8bd50..9a685da 100644
 --- a/Java/src/main/java/logic/BookingCommandFactory.java
 +++ b/Java/src/main/java/logic/BookingCommandFactory.java
 @@ -5,6 +5,6 @@ import request.dto.ReservationRequestDto;
- public class BookingCommandFactory implements CommandFactory {
+ public class BookingCommandFactory : CommandFactory {
      @Override
-     public Command createBookCommand(ReservationRequestDto reservation, Ticket ticket) {
+     public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) {
 -        return new BookTicketCommand();
 +        return new BookTicketCommand(reservation);
      }
@@ -1117,7 +962,7 @@ Date:   Thu Mar 1 08:01:56 2018 +0100
 
     The test now passes. New items on TODO list
     
-    (e.g. execute() method)
+    (e.g. Execute() method)
 
 diff --git a/Java/src/main/java/logic/BookTicketCommand.java b/Java/src/main/java/logic/BookTicketCommand.java
 index c254c5c..41e2ff8 100644
@@ -1125,7 +970,7 @@ index c254c5c..41e2ff8 100644
 +++ b/Java/src/main/java/logic/BookTicketCommand.java
 @@ -4,9 +4,11 @@ import request.dto.ReservationRequestDto;
  
- public class BookTicketCommand implements Command {
+ public class BookTicketCommand : Command {
      private ReservationRequestDto reservation;
 +    private Ticket ticket;
  
@@ -1141,9 +986,9 @@ index 9a685da..abec844 100644
 --- a/Java/src/main/java/logic/BookingCommandFactory.java
 +++ b/Java/src/main/java/logic/BookingCommandFactory.java
 @@ -5,6 +5,6 @@ import request.dto.ReservationRequestDto;
- public class BookingCommandFactory implements CommandFactory {
+ public class BookingCommandFactory : CommandFactory {
      @Override
-     public Command createBookCommand(ReservationRequestDto reservation, Ticket ticket) {
+     public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) {
 -        return new BookTicketCommand(reservation);
 +        return new BookTicketCommand(reservation, ticket);
      }
@@ -1194,8 +1039,8 @@ index dd0ef10..0f2adeb 100644
 +import static org.assertj.core.api.Assertions.assertThat;
 +
  public class BookTicketCommandSpecification {
-+    @Test
-+    public void shouldXXXXXXXXXXXXX() {
++    [Fact]
++    public void ShouldXXXXXXXXXXXXX() {
 +        //GIVEN
 +
 +        //WHEN
@@ -1225,9 +1070,9 @@ index 0f2adeb..d1960b5 100644
 -
  public class BookTicketCommandSpecification {
 +    /*
-     @Test
+     [Fact]
 +    //hmm, should reserve a train, but I have no train
-     public void shouldXXXXXXXXXXXXX() {
+     public void ShouldXXXXXXXXXXXXX() {
          //GIVEN
  
 @@ -13,5 +11,5 @@ public class BookTicketCommandSpecification {
@@ -1252,14 +1097,14 @@ index abec844..14ad559 100644
 @@ -3,6 +3,11 @@ package logic;
  import request.dto.ReservationRequestDto;
  
- public class BookingCommandFactory implements CommandFactory {
+ public class BookingCommandFactory : CommandFactory {
 +    public BookingCommandFactory(TrainRepository trainRepo) {
 +        //todo implement
 +
 +    }
 +
      @Override
-     public Command createBookCommand(ReservationRequestDto reservation, Ticket ticket) {
+     public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) {
          return new BookTicketCommand(reservation, ticket);
 diff --git a/Java/src/main/java/logic/TrainRepository.java b/Java/src/main/java/logic/TrainRepository.java
 new file mode 100644
@@ -1282,20 +1127,20 @@ index d1e7e4e..8650cfb 100644
 --- a/Java/src/test/java/logic/BookingCommandFactoryTest.java
 +++ b/Java/src/test/java/logic/BookingCommandFactoryTest.java
 @@ -12,10 +12,12 @@ public class BookingCommandFactoryTest {
-     @Test
-     public void shouldCreateBookTicketCommand() {
+     [Fact]
+     public void ShouldCreateBookTicketCommand() {
          //GIVEN
--        val bookingCommandFactory = new BookingCommandFactory();
-+        val trainRepo = mock(TrainRepository.class);
-+        val bookingCommandFactory = new BookingCommandFactory(
+-        var bookingCommandFactory = new BookingCommandFactory();
++        var trainRepo = Substitute.For<TrainRepository>();
++        var bookingCommandFactory = new BookingCommandFactory(
 +            trainRepo
 +        );
-         val reservation = mock(ReservationRequestDto.class);
-         val ticket = mock(Ticket.class);
+         var reservation = Substitute.For<ReservationRequestDto>();
+         var ticket = Substitute.For<Ticket>();
 -
          //WHEN
          Command result = bookingCommandFactory
-             .createBookCommand(reservation, ticket);
+             .CreateBookCommand(reservation, ticket);
 
 commit 4466cd02d45b53db9c2b3c0382c0cecacf8ed8e7
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
@@ -1319,15 +1164,15 @@ index 8650cfb..932c94a 100644
  public class BookingCommandFactoryTest {
 @@ -18,6 +19,10 @@ public class BookingCommandFactoryTest {
          );
-         val reservation = mock(ReservationRequestDto.class);
-         val ticket = mock(Ticket.class);
+         var reservation = Substitute.For<ReservationRequestDto>();
+         var ticket = Substitute.For<Ticket>();
 +
-+        given(trainRepo.getTrainBy(reservation.trainId))
-+            .willReturn(train);
++        trainRepo.GetTrainBy(reservation.trainId)
++            .Returns(train);
 +
          //WHEN
          Command result = bookingCommandFactory
-             .createBookCommand(reservation, ticket);
+             .CreateBookCommand(reservation, ticket);
 @@ -26,5 +31,7 @@ public class BookingCommandFactoryTest {
          assertThat(result).isInstanceOf(BookTicketCommand.class);
          assertThat(result).has(dependencyOn(reservation));
@@ -1366,12 +1211,12 @@ index 932c94a..6cdb16b 100644
 +++ b/Java/src/test/java/logic/BookingCommandFactoryTest.java
 @@ -19,6 +19,7 @@ public class BookingCommandFactoryTest {
          );
-         val reservation = mock(ReservationRequestDto.class);
-         val ticket = mock(Ticket.class);
-+        val train = mock(Train.class);
+         var reservation = Substitute.For<ReservationRequestDto>();
+         var ticket = Substitute.For<Ticket>();
++        var train = Substitute.For<Train>();
  
-         given(trainRepo.getTrainBy(reservation.trainId))
-             .willReturn(train);
+         trainRepo.GetTrainBy(reservation.trainId)
+             .Returns(train);
 
 commit 099039cdcf54bbf52ce7c10135855d7f795dc55d
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
@@ -1416,9 +1261,9 @@ index 0000000..fa1688d
 @@ -0,0 +1,9 @@
 +package logic;
 +
-+public class CouchDbTrainRepository implements TrainRepository {
++public class CouchDbTrainRepository : TrainRepository {
 +    @Override
-+    public Train getTrainBy(String trainId) {
++    public Train GetTrainBy(String trainId) {
 +        //todo implement
 +        return null;
 +    }
@@ -1431,7 +1276,7 @@ index fdb959b..ed8681c 100644
  package logic;
  
  public interface TrainRepository {
-+    Train getTrainBy(String trainId);
++    Train GetTrainBy(String trainId);
  }
 
 commit 6258d57f9ead2f7098192f68761ec547d59fbb04
@@ -1461,7 +1306,7 @@ index 41e2ff8..2cf945f 100644
 --- a/Java/src/main/java/logic/BookTicketCommand.java
 +++ b/Java/src/main/java/logic/BookTicketCommand.java
 @@ -5,10 +5,15 @@ import request.dto.ReservationRequestDto;
- public class BookTicketCommand implements Command {
+ public class BookTicketCommand : Command {
      private ReservationRequestDto reservation;
      private Ticket ticket;
 +    private Train trainBy;
@@ -1484,7 +1329,7 @@ index 14ad559..8bd9c3a 100644
 @@ -3,13 +3,16 @@ package logic;
  import request.dto.ReservationRequestDto;
  
- public class BookingCommandFactory implements CommandFactory {
+ public class BookingCommandFactory : CommandFactory {
 -    public BookingCommandFactory(TrainRepository trainRepo) {
 -        //todo implement
 +    private TrainRepository trainRepo;
@@ -1494,11 +1339,11 @@ index 14ad559..8bd9c3a 100644
      }
  
      @Override
-     public Command createBookCommand(ReservationRequestDto reservation, Ticket ticket) {
+     public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) {
 -        return new BookTicketCommand(reservation, ticket);
 +        return new BookTicketCommand(
 +            reservation,
-+            ticket, trainRepo.getTrainBy(reservation.trainId));
++            ticket, trainRepo.GetTrainBy(reservation.trainId));
      }
  }
 
@@ -1522,9 +1367,9 @@ index d1960b5..4515842 100644
  public class BookTicketCommandSpecification {
 -    /*
 +
-     @Test
+     [Fact]
 -    //hmm, should reserve a train, but I have no train
-     public void shouldXXXXXXXXXXXXX() {
+     public void ShouldXXXXXXXXXXXXX() {
          //GIVEN
  
 @@ -11,5 +14,5 @@ public class BookTicketCommandSpecification {
@@ -1556,14 +1401,14 @@ index 4515842..73e50af 100644
  
  import static org.assertj.core.api.Assertions.assertThat;
 @@ -9,8 +10,10 @@ public class BookTicketCommandSpecification {
-     @Test
-     public void shouldXXXXXXXXXXXXX() {
+     [Fact]
+     public void ShouldXXXXXXXXXXXXX() {
          //GIVEN
 -
-+        val bookTicketCommand
++        var bookTicketCommand
 +            = new BookTicketCommand(reservation, ticket, train);
          //WHEN
-+        bookTicketCommand.execute();
++        bookTicketCommand.Execute();
  
          //THEN
          assertThat(1).isEqualTo(2);
@@ -1592,20 +1437,20 @@ index 73e50af..49ec989 100644
  
  public class BookTicketCommandSpecification {
  
-     @Test
-     public void shouldXXXXXXXXXXXXX() {
+     [Fact]
+     public void ShouldXXXXXXXXXXXXX() {
          //GIVEN
-+        val reservation = Any.anonymous(ReservationRequestDto.class);
-+        val ticket = Any.anonymous(Ticket.class);
-+        val train = mock(Train.class);
-         val bookTicketCommand
++        var reservation = Any.Instance<ReservationRequestDto>();;
++        var ticket = Any.Instance<Ticket>();
++        var train = Substitute.For<Train>();
+         var bookTicketCommand
              = new BookTicketCommand(reservation, ticket, train);
          //WHEN
-         bookTicketCommand.execute();
+         bookTicketCommand.Execute();
  
          //THEN
 -        assertThat(1).isEqualTo(2);
-+        then(train).should().reserve(reservation.seatCount, ticket);
++        then(train).should().Reserve(reservation.seatCount, ticket);
      }
  }
 \ No newline at end of file
@@ -1624,7 +1469,7 @@ index c96a022..7756147 100644
  package logic;
  
  public interface Train {
-+    void reserve(int seatCount, Ticket ticketToFill);
++    void Reserve(int seatCount, Ticket ticketToFill);
  }
 
 commit 0887a104e359021e49da4252d6c00c449ec3c616
@@ -1640,7 +1485,7 @@ index 2cf945f..7f130be 100644
 --- a/Java/src/main/java/logic/BookTicketCommand.java
 +++ b/Java/src/main/java/logic/BookTicketCommand.java
 @@ -5,7 +5,7 @@ import request.dto.ReservationRequestDto;
- public class BookTicketCommand implements Command {
+ public class BookTicketCommand : Command {
      private ReservationRequestDto reservation;
      private Ticket ticket;
 -    private Train trainBy;
@@ -1648,7 +1493,7 @@ index 2cf945f..7f130be 100644
  
      public BookTicketCommand(
          ReservationRequestDto reservation,
-@@ -13,12 +13,12 @@ public class BookTicketCommand implements Command {
+@@ -13,12 +13,12 @@ public class BookTicketCommand : Command {
          Train train) {
          this.reservation = reservation;
          this.ticket = ticket;
@@ -1657,24 +1502,24 @@ index 2cf945f..7f130be 100644
      }
  
      @Override
-     public void execute() {
+     public void Execute() {
 -        //todo implement
 -
 +        //todo a full DTO is not required
-+        train.reserve(reservation.seatCount, ticket);
++        train.Reserve(reservation.seatCount, ticket);
      }
  }
 diff --git a/Java/src/main/java/logic/BookingCommandFactory.java b/Java/src/main/java/logic/BookingCommandFactory.java
 index 8bd9c3a..5fb0c73 100644
 --- a/Java/src/main/java/logic/BookingCommandFactory.java
 +++ b/Java/src/main/java/logic/BookingCommandFactory.java
-@@ -13,6 +13,7 @@ public class BookingCommandFactory implements CommandFactory {
-     public Command createBookCommand(ReservationRequestDto reservation, Ticket ticket) {
+@@ -13,6 +13,7 @@ public class BookingCommandFactory : CommandFactory {
+     public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) {
          return new BookTicketCommand(
              reservation,
--            ticket, trainRepo.getTrainBy(reservation.trainId));
+-            ticket, trainRepo.GetTrainBy(reservation.trainId));
 +            ticket,
-+            trainRepo.getTrainBy(reservation.trainId));
++            trainRepo.GetTrainBy(reservation.trainId));
      }
  }
 
@@ -1689,9 +1534,9 @@ index fa1688d..1d827ef 100644
 --- a/Java/src/main/java/logic/CouchDbTrainRepository.java
 +++ b/Java/src/main/java/logic/CouchDbTrainRepository.java
 @@ -3,7 +3,6 @@ package logic;
- public class CouchDbTrainRepository implements TrainRepository {
+ public class CouchDbTrainRepository : TrainRepository {
      @Override
-     public Train getTrainBy(String trainId) {
+     public Train GetTrainBy(String trainId) {
 -        //todo implement
 -        return null;
 +        return new TrainWithCoaches();
@@ -1711,9 +1556,9 @@ index 0000000..a1e89ff
 @@ -0,0 +1,9 @@
 +package logic;
 +
-+public class TrainWithCoaches implements Train {
++public class TrainWithCoaches : Train {
 +    @Override
-+    public void reserve(int seatCount, Ticket ticketToFill) {
++    public void Reserve(int seatCount, Ticket ticketToFill) {
 +        //todo implement
 +
 +    }
@@ -1734,12 +1579,12 @@ index 49ec989..057d6dd 100644
 @@ -11,7 +11,7 @@ import static org.mockito.Mockito.mock;
  public class BookTicketCommandSpecification {
  
-     @Test
--    public void shouldXXXXXXXXXXXXX() {
-+    public void shouldReserveSeatsOnTrainWhenExecuted() {
+     [Fact]
+-    public void ShouldXXXXXXXXXXXXX() {
++    public void ShouldReserveSeatsOnTrainWhenExecuted() {
          //GIVEN
-         val reservation = Any.anonymous(ReservationRequestDto.class);
-         val ticket = Any.anonymous(Ticket.class);
+         var reservation = Any.Instance<ReservationRequestDto>();;
+         var ticket = Any.Instance<Ticket>();
 diff --git a/Java/src/test/java/logic/TrainWithCoachesSpecification.java b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 new file mode 100644
 
@@ -1779,13 +1624,13 @@ index f428d56..b94e1b5 100644
 +import static org.assertj.core.api.Assertions.assertThat;
 +
  public class TrainWithCoachesSpecification {
-+    @Test
-+    public void shouldXXXXX() { //todo rename
++    [Fact]
++    public void ShouldXXXXX() { //todo rename
 +        //GIVEN
-+        val trainWithCoaches = new TrainWithCoaches();
++        var trainWithCoaches = new TrainWithCoaches();
 +
 +        //WHEN
-+        trainWithCoaches.reserve(seatCount, ticket);
++        trainWithCoaches.Reserve(seatCount, ticket);
  
 +        //THEN
 +        assertThat(1).isEqualTo(2);
@@ -1817,15 +1662,15 @@ index b94e1b5..dc2e1f5 100644
 +import static org.mockito.Mockito.mock;
  
  public class TrainWithCoachesSpecification {
-     @Test
-     public void shouldXXXXX() { //todo rename
+     [Fact]
+     public void ShouldXXXXX() { //todo rename
          //GIVEN
-         val trainWithCoaches = new TrainWithCoaches();
-+        val seatCount = Any.intValue();
-+        val ticket = mock(Ticket.class);
+         var trainWithCoaches = new TrainWithCoaches();
++        var seatCount = Any.intValue();
++        var ticket = Substitute.For<Ticket>();
  
          //WHEN
-         trainWithCoaches.reserve(seatCount, ticket);
+         trainWithCoaches.Reserve(seatCount, ticket);
 
 commit 8a88f13dd2f4d359895aa29be75e087a300a093e
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
@@ -1839,7 +1684,7 @@ index 7f130be..d51b09a 100644
 +++ b/Java/src/main/java/logic/BookTicketCommand.java
 @@ -4,21 +4,21 @@ import request.dto.ReservationRequestDto;
  
- public class BookTicketCommand implements Command {
+ public class BookTicketCommand : Command {
      private ReservationRequestDto reservation;
 -    private Ticket ticket;
 +    private TicketInProgress ticketInProgress;
@@ -1857,27 +1702,27 @@ index 7f130be..d51b09a 100644
      }
  
      @Override
-     public void execute() {
+     public void Execute() {
          //todo a full DTO is not required
--        train.reserve(reservation.seatCount, ticket);
-+        train.reserve(reservation.seatCount, ticketInProgress);
+-        train.Reserve(reservation.seatCount, ticket);
++        train.Reserve(reservation.seatCount, ticketInProgress);
      }
  }
 diff --git a/Java/src/main/java/logic/BookingCommandFactory.java b/Java/src/main/java/logic/BookingCommandFactory.java
 index 5fb0c73..45d369d 100644
 --- a/Java/src/main/java/logic/BookingCommandFactory.java
 +++ b/Java/src/main/java/logic/BookingCommandFactory.java
-@@ -10,10 +10,10 @@ public class BookingCommandFactory implements CommandFactory {
+@@ -10,10 +10,10 @@ public class BookingCommandFactory : CommandFactory {
      }
  
      @Override
--    public Command createBookCommand(ReservationRequestDto reservation, Ticket ticket) {
-+    public Command createBookCommand(ReservationRequestDto reservation, TicketInProgress ticketInProgress) {
+-    public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) {
++    public Command CreateBookCommand(ReservationRequestDto reservation, TicketInProgress ticketInProgress) {
          return new BookTicketCommand(
              reservation,
 -            ticket,
 +            ticketInProgress,
-             trainRepo.getTrainBy(reservation.trainId));
+             trainRepo.GetTrainBy(reservation.trainId));
      }
  }
 diff --git a/Java/src/main/java/logic/CommandFactory.java b/Java/src/main/java/logic/CommandFactory.java
@@ -1888,8 +1733,8 @@ index 18208a5..28a0048 100644
  import request.dto.ReservationRequestDto;
  
  public interface CommandFactory {
--    Command createBookCommand(ReservationRequestDto reservation, Ticket ticket);
-+    Command createBookCommand(ReservationRequestDto reservation, TicketInProgress ticketInProgress);
+-    Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket);
++    Command CreateBookCommand(ReservationRequestDto reservation, TicketInProgress ticketInProgress);
  }
 diff --git a/Java/src/main/java/logic/TicketFactory.java b/Java/src/main/java/logic/TicketFactory.java
 index 27a10ef..b084a79 100644
@@ -1925,8 +1770,8 @@ index 7756147..bf2a15c 100644
  package logic;
  
  public interface Train {
--    void reserve(int seatCount, Ticket ticketToFill);
-+    void reserve(int seatCount, TicketInProgress ticketInProgressToFill);
+-    void Reserve(int seatCount, Ticket ticketToFill);
++    void Reserve(int seatCount, TicketInProgress ticketInProgressToFill);
  }
 diff --git a/Java/src/main/java/logic/TrainTicketFactory.java b/Java/src/main/java/logic/TrainTicketFactory.java
 index 4bc54a5..356a56a 100644
@@ -1934,7 +1779,7 @@ index 4bc54a5..356a56a 100644
 +++ b/Java/src/main/java/logic/TrainTicketFactory.java
 @@ -2,7 +2,7 @@ package logic;
  
- public class TrainTicketFactory implements TicketFactory {
+ public class TrainTicketFactory : TicketFactory {
      @Override
 -    public Ticket createBlankTicket() {
 +    public TicketInProgress createBlankTicket() {
@@ -1947,10 +1792,10 @@ index a1e89ff..47c59d2 100644
 +++ b/Java/src/main/java/logic/TrainWithCoaches.java
 @@ -2,7 +2,7 @@ package logic;
  
- public class TrainWithCoaches implements Train {
+ public class TrainWithCoaches : Train {
      @Override
--    public void reserve(int seatCount, Ticket ticketToFill) {
-+    public void reserve(int seatCount, TicketInProgress ticketInProgressToFill) {
+-    public void Reserve(int seatCount, Ticket ticketToFill) {
++    public void Reserve(int seatCount, TicketInProgress ticketInProgressToFill) {
          //todo implement
  
      }
@@ -1977,17 +1822,17 @@ index 62624d9..7922e08 100644
 -public class TicketOfficeSpecification {
 +public class TicketInProgressOfficeSpecification {
      
-     @Test
-     public void shouldCreateAndExecuteCommandWithTicketAndTrain() {
+     [Fact]
+     public void ShouldCreateAndExecuteCommandWithTicketAndTrain() {
 @@ -22,7 +22,7 @@ public class TicketOfficeSpecification {
-         val commandFactory = mock(CommandFactory.class);
-         val reservation = Any.anonymous(ReservationRequestDto.class);
-         val resultDto = Any.anonymous(TicketDto.class);
--        val ticket = mock(Ticket.class);
-+        val ticket = mock(TicketInProgress.class);
-         val bookCommand = mock(Command.class);
-         val ticketFactory = mock(TicketFactory.class);
-         val ticketOffice = new TicketOffice(
+         var commandFactory = Substitute.For<CommandFactory>();
+         var reservation = Any.Instance<ReservationRequestDto>();;
+         var resultDto = Any.Instance<TicketDto>();
+-        var ticket = Substitute.For<Ticket>();
++        var ticket = Substitute.For<TicketInProgress>();
+         var bookCommand = Substitute.For<Command>();
+         var ticketFactory = Substitute.For<TicketFactory>();
+         var ticketOffice = new TicketOffice(
 diff --git a/Java/src/test/java/logic/BookTicketCommandSpecification.java b/Java/src/test/java/logic/BookTicketInProgressCommandSpecification.java
 similarity index 85%
 rename from Java/src/test/java/logic/BookTicketCommandSpecification.java
@@ -2002,14 +1847,14 @@ index 057d6dd..34b1b23 100644
 -public class BookTicketCommandSpecification {
 +public class BookTicketInProgressCommandSpecification {
  
-     @Test
-     public void shouldReserveSeatsOnTrainWhenExecuted() {
+     [Fact]
+     public void ShouldReserveSeatsOnTrainWhenExecuted() {
          //GIVEN
-         val reservation = Any.anonymous(ReservationRequestDto.class);
--        val ticket = Any.anonymous(Ticket.class);
-+        val ticket = Any.anonymous(TicketInProgress.class);
-         val train = mock(Train.class);
-         val bookTicketCommand
+         var reservation = Any.Instance<ReservationRequestDto>();;
+-        var ticket = Any.Instance<Ticket>();
++        var ticket = Any.Instance<TicketInProgress>();
+         var train = Substitute.For<Train>();
+         var bookTicketCommand
              = new BookTicketCommand(reservation, ticket, train);
 diff --git a/Java/src/test/java/logic/BookingCommandFactoryTest.java b/Java/src/test/java/logic/BookingCommandFactoryTest.java
 index 6cdb16b..caa1b3c 100644
@@ -2018,12 +1863,12 @@ index 6cdb16b..caa1b3c 100644
 @@ -18,7 +18,7 @@ public class BookingCommandFactoryTest {
              trainRepo
          );
-         val reservation = mock(ReservationRequestDto.class);
--        val ticket = mock(Ticket.class);
-+        val ticket = mock(TicketInProgress.class);
-         val train = mock(Train.class);
+         var reservation = Substitute.For<ReservationRequestDto>();
+-        var ticket = Substitute.For<Ticket>();
++        var ticket = Substitute.For<TicketInProgress>();
+         var train = Substitute.For<Train>();
  
-         given(trainRepo.getTrainBy(reservation.trainId))
+         trainRepo.GetTrainBy(reservation.trainId)
 diff --git a/Java/src/test/java/logic/TrainWithCoachesSpecification.java b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 index dc2e1f5..6bbf7aa 100644
 --- a/Java/src/test/java/logic/TrainWithCoachesSpecification.java
@@ -2038,22 +1883,22 @@ index dc2e1f5..6bbf7aa 100644
 +import static org.mockito.Mockito.never;
  
  public class TrainWithCoachesSpecification {
-     @Test
+     [Fact]
 @@ -13,13 +14,16 @@ public class TrainWithCoachesSpecification {
          //GIVEN
-         val trainWithCoaches = new TrainWithCoaches();
-         val seatCount = Any.intValue();
--        val ticket = mock(Ticket.class);
-+        val ticket = mock(TicketInProgress.class);
+         var trainWithCoaches = new TrainWithCoaches();
+         var seatCount = Any.intValue();
+-        var ticket = Substitute.For<Ticket>();
++        var ticket = Substitute.For<TicketInProgress>();
  
          //WHEN
-         trainWithCoaches.reserve(seatCount, ticket);
+         trainWithCoaches.Reserve(seatCount, ticket);
  
          //THEN
 -        assertThat(1).isEqualTo(2);
-+        then(coach1).should(never()).reserve(seatCount, ticket);
-+        then(coach2).should().reserve(seatCount, ticket);
-+        then(coach3).should(never()).reserve(seatCount, ticket);
++        coach1.DidNotReceive().Reserve(seatCount, ticket);
++        coach2.Received(1).Reserve(seatCount, ticket);
++        coach3.DidNotReceive().Reserve(seatCount, ticket);
      }
 +    //todo ticket in progress instead of plain ticket
  
@@ -2087,21 +1932,21 @@ index 6bbf7aa..6a96aef 100644
 --- a/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 +++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 @@ -15,6 +15,9 @@ public class TrainWithCoachesSpecification {
-         val trainWithCoaches = new TrainWithCoaches();
-         val seatCount = Any.intValue();
-         val ticket = mock(TicketInProgress.class);
-+        Coach coach1 = mock(Coach.class);
-+        Coach coach2 = mock(Coach.class);
-+        Coach coach3 = mock(Coach.class);
+         var trainWithCoaches = new TrainWithCoaches();
+         var seatCount = Any.intValue();
+         var ticket = Substitute.For<TicketInProgress>();
++        Coach coach1 = Substitute.For<Coach>();
++        Coach coach2 = Substitute.For<Coach>();
++        Coach coach3 = Substitute.For<Coach>();
  
          //WHEN
-         trainWithCoaches.reserve(seatCount, ticket);
+         trainWithCoaches.Reserve(seatCount, ticket);
 
 commit 051c009926e1f332455e9e325ba3135d863d30fb
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
 Date:   Wed Mar 7 07:56:04 2018 +0100
 
-    Discovered the reserve() method
+    Discovered the Reserve() method
 
 diff --git a/Java/src/main/java/logic/Coach.java b/Java/src/main/java/logic/Coach.java
 index e4b82df..300a248 100644
@@ -2111,25 +1956,25 @@ index e4b82df..300a248 100644
  package logic;
  
  public interface Coach {
-+    void reserve(int seatCount, TicketInProgress ticket);
++    void Reserve(int seatCount, TicketInProgress ticket);
  }
 diff --git a/Java/src/test/java/logic/TrainWithCoachesSpecification.java b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 index 6a96aef..cd3969f 100644
 --- a/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 +++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 @@ -15,9 +15,9 @@ public class TrainWithCoachesSpecification {
-         val trainWithCoaches = new TrainWithCoaches();
-         val seatCount = Any.intValue();
-         val ticket = mock(TicketInProgress.class);
--        Coach coach1 = mock(Coach.class);
--        Coach coach2 = mock(Coach.class);
--        Coach coach3 = mock(Coach.class);
-+        val coach1 = mock(Coach.class);
-+        val coach2 = mock(Coach.class);
-+        val coach3 = mock(Coach.class);
+         var trainWithCoaches = new TrainWithCoaches();
+         var seatCount = Any.intValue();
+         var ticket = Substitute.For<TicketInProgress>();
+-        Coach coach1 = Substitute.For<Coach>();
+-        Coach coach2 = Substitute.For<Coach>();
+-        Coach coach3 = Substitute.For<Coach>();
++        var coach1 = Substitute.For<Coach>();
++        var coach2 = Substitute.For<Coach>();
++        var coach3 = Substitute.For<Coach>();
  
          //WHEN
-         trainWithCoaches.reserve(seatCount, ticket);
+         trainWithCoaches.Reserve(seatCount, ticket);
 
 commit 0a73afacd82d7f2d4d709ca945cd18f343164388
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
@@ -2146,39 +1991,39 @@ index 47c59d2..20d3221 100644
 @@ -1,6 +1,9 @@
  package logic;
  
- public class TrainWithCoaches implements Train {
+ public class TrainWithCoaches : Train {
 +    public TrainWithCoaches(Coach... coaches) {
 +    }
 +
      @Override
-     public void reserve(int seatCount, TicketInProgress ticketInProgressToFill) {
+     public void Reserve(int seatCount, TicketInProgress ticketInProgressToFill) {
          //todo implement
 diff --git a/Java/src/test/java/logic/TrainWithCoachesSpecification.java b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 index cd3969f..7afa52f 100644
 --- a/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 +++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 @@ -12,12 +12,14 @@ public class TrainWithCoachesSpecification {
-     @Test
-     public void shouldXXXXX() { //todo rename
+     [Fact]
+     public void ShouldXXXXX() { //todo rename
          //GIVEN
--        val trainWithCoaches = new TrainWithCoaches();
-         val seatCount = Any.intValue();
-         val ticket = mock(TicketInProgress.class);
-         val coach1 = mock(Coach.class);
-         val coach2 = mock(Coach.class);
-         val coach3 = mock(Coach.class);
-+        val trainWithCoaches = new TrainWithCoaches(
+-        var trainWithCoaches = new TrainWithCoaches();
+         var seatCount = Any.intValue();
+         var ticket = Substitute.For<TicketInProgress>();
+         var coach1 = Substitute.For<Coach>();
+         var coach2 = Substitute.For<Coach>();
+         var coach3 = Substitute.For<Coach>();
++        var trainWithCoaches = new TrainWithCoaches(
 +            coach1, coach2, coach3
 +        );
  
          //WHEN
-         trainWithCoaches.reserve(seatCount, ticket);
+         trainWithCoaches.Reserve(seatCount, ticket);
 
 commit 585426746e7ad1e5f0e082ec432e42f98855f3d3
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
 Date:   Wed Mar 7 08:00:58 2018 +0100
 
-    discovered allowsUpFrontReservationOf() method
+    discovered AllowsUpFrontReservationOf() method
     
     One more condition awaits - if no coach allows up front, we take the first one that has the limit.
 
@@ -2198,20 +2043,20 @@ index 7afa52f..09badf2 100644
              coach1, coach2, coach3
          );
  
-+        given(coach1.allowsUpFrontReservationOf(seatCount))
-+            .willReturn(false);
-+        given(coach2.allowsUpFrontReservationOf(seatCount))
-+            .willReturn(true);
-+        given(coach3.allowsUpFrontReservationOf(seatCount))
-+            .willReturn(true);
++        coach1.AllowsUpFrontReservationOf(seatCount)
++            .Returns(false);
++        coach2.AllowsUpFrontReservationOf(seatCount)
++            .Returns(true);
++        coach3.AllowsUpFrontReservationOf(seatCount)
++            .Returns(true);
 +
 +
          //WHEN
-         trainWithCoaches.reserve(seatCount, ticket);
+         trainWithCoaches.Reserve(seatCount, ticket);
  
 @@ -29,6 +38,5 @@ public class TrainWithCoachesSpecification {
-         then(coach2).should().reserve(seatCount, ticket);
-         then(coach3).should(never()).reserve(seatCount, ticket);
+         coach2.Received(1).Reserve(seatCount, ticket);
+         coach3.DidNotReceive().Reserve(seatCount, ticket);
      }
 -    //todo ticket in progress instead of plain ticket
 -
@@ -2234,18 +2079,18 @@ index 300a248..6cb559a 100644
 @@ -2,4 +2,6 @@ package logic;
  
  public interface Coach {
-     void reserve(int seatCount, TicketInProgress ticket);
+     void Reserve(int seatCount, TicketInProgress ticket);
 +
-+    boolean allowsUpFrontReservationOf(int seatCount);
++    bool AllowsUpFrontReservationOf(int seatCount);
  }
 diff --git a/Java/src/main/java/logic/CouchDbTrainRepository.java b/Java/src/main/java/logic/CouchDbTrainRepository.java
 index 1d827ef..9f7ea45 100644
 --- a/Java/src/main/java/logic/CouchDbTrainRepository.java
 +++ b/Java/src/main/java/logic/CouchDbTrainRepository.java
 @@ -3,6 +3,7 @@ package logic;
- public class CouchDbTrainRepository implements TrainRepository {
+ public class CouchDbTrainRepository : TrainRepository {
      @Override
-     public Train getTrainBy(String trainId) {
+     public Train GetTrainBy(String trainId) {
 +        //todo there should be something passed here!!
          return new TrainWithCoaches();
      }
@@ -2261,9 +2106,9 @@ diff --git a/Java/src/main/java/logic/TrainWithCoaches.java b/Java/src/main/java
 index 20d3221..bbe9f0f 100644
 --- a/Java/src/main/java/logic/TrainWithCoaches.java
 +++ b/Java/src/main/java/logic/TrainWithCoaches.java
-@@ -7,6 +7,5 @@ public class TrainWithCoaches implements Train {
+@@ -7,6 +7,5 @@ public class TrainWithCoaches : Train {
      @Override
-     public void reserve(int seatCount, TicketInProgress ticketInProgressToFill) {
+     public void Reserve(int seatCount, TicketInProgress ticketInProgressToFill) {
          //todo implement
 -
      }
@@ -2275,12 +2120,12 @@ index 09badf2..05b36cd 100644
 @@ -11,7 +11,7 @@ import static org.mockito.Mockito.never;
  
  public class TrainWithCoachesSpecification {
-     @Test
--    public void shouldXXXXX() { //todo rename
-+    public void shouldReserveSeatsInFirstCoachThatHasPlaceBelowLimit() { //todo rename
+     [Fact]
+-    public void ShouldXXXXX() { //todo rename
++    public void ShouldReserveSeatsInFirstCoachThatHasPlaceBelowLimit() { //todo rename
          //GIVEN
-         val seatCount = Any.intValue();
-         val ticket = mock(TicketInProgress.class);
+         var seatCount = Any.intValue();
+         var ticket = Substitute.For<TicketInProgress>();
 
 commit 80d3c0fea9f2088f5b798ea03fa00ef67aa934e8
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
@@ -2297,7 +2142,7 @@ index bbe9f0f..a2ee63f 100644
 @@ -1,11 +1,20 @@
  package logic;
  
- public class TrainWithCoaches implements Train {
+ public class TrainWithCoaches : Train {
 +    private Coach[] coaches;
 +
      public TrainWithCoaches(Coach... coaches) {
@@ -2305,12 +2150,12 @@ index bbe9f0f..a2ee63f 100644
      }
  
      @Override
--    public void reserve(int seatCount, TicketInProgress ticketInProgressToFill) {
+-    public void Reserve(int seatCount, TicketInProgress ticketInProgressToFill) {
 -        //todo implement
-+    public void reserve(int seatCount, TicketInProgress ticketInProgress) {
++    public void Reserve(int seatCount, TicketInProgress ticketInProgress) {
 +        for (Coach coach : coaches) {
-+            if(coach.allowsUpFrontReservationOf(seatCount)) {
-+                coach.reserve(seatCount, ticketInProgress);
++            if(coach.AllowsUpFrontReservationOf(seatCount)) {
++                coach.Reserve(seatCount, ticketInProgress);
 +                return;
 +            }
 +        }
@@ -2324,23 +2169,23 @@ index 05b36cd..87a62fe 100644
 @@ -11,7 +11,7 @@ import static org.mockito.Mockito.never;
  
  public class TrainWithCoachesSpecification {
-     @Test
--    public void shouldReserveSeatsInFirstCoachThatHasPlaceBelowLimit() { //todo rename
-+    public void shouldReserveSeatsInFirstCoachThatHasPlaceBelowLimit() { 
+     [Fact]
+-    public void ShouldReserveSeatsInFirstCoachThatHasPlaceBelowLimit() { //todo rename
++    public void ShouldReserveSeatsInFirstCoachThatHasPlaceBelowLimit() { 
          //GIVEN
-         val seatCount = Any.intValue();
-         val ticket = mock(TicketInProgress.class);
+         var seatCount = Any.intValue();
+         var ticket = Substitute.For<TicketInProgress>();
 @@ -29,7 +29,6 @@ public class TrainWithCoachesSpecification {
-         given(coach3.allowsUpFrontReservationOf(seatCount))
-             .willReturn(true);
+         coach3.AllowsUpFrontReservationOf(seatCount)
+             .Returns(true);
  
 -
          //WHEN
-         trainWithCoaches.reserve(seatCount, ticket);
+         trainWithCoaches.Reserve(seatCount, ticket);
  
 @@ -38,5 +37,7 @@ public class TrainWithCoachesSpecification {
-         then(coach2).should().reserve(seatCount, ticket);
-         then(coach3).should(never()).reserve(seatCount, ticket);
+         coach2.Received(1).Reserve(seatCount, ticket);
+         coach3.DidNotReceive().Reserve(seatCount, ticket);
      }
 +
 +
@@ -2359,11 +2204,11 @@ index 6cb559a..209e271 100644
 --- a/Java/src/main/java/logic/Coach.java
 +++ b/Java/src/main/java/logic/Coach.java
 @@ -4,4 +4,6 @@ public interface Coach {
-     void reserve(int seatCount, TicketInProgress ticket);
+     void Reserve(int seatCount, TicketInProgress ticket);
  
-     boolean allowsUpFrontReservationOf(int seatCount);
+     bool AllowsUpFrontReservationOf(int seatCount);
 +
-+    boolean allowsReservationOf(int seatCount);
++    bool allowsReservationOf(int seatCount);
  }
 diff --git a/Java/src/test/java/logic/TrainWithCoachesSpecification.java b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 index 87a62fe..8157890 100644
@@ -2372,49 +2217,49 @@ index 87a62fe..8157890 100644
 @@ -11,7 +11,7 @@ import static org.mockito.Mockito.never;
  
  public class TrainWithCoachesSpecification {
-     @Test
--    public void shouldReserveSeatsInFirstCoachThatHasPlaceBelowLimit() { 
-+    public void shouldReserveSeatsInFirstCoachThatHasPlaceBelowLimit() {
+     [Fact]
+-    public void ShouldReserveSeatsInFirstCoachThatHasPlaceBelowLimit() { 
++    public void ShouldReserveSeatsInFirstCoachThatHasPlaceBelowLimit() {
          //GIVEN
-         val seatCount = Any.intValue();
-         val ticket = mock(TicketInProgress.class);
+         var seatCount = Any.intValue();
+         var ticket = Substitute.For<TicketInProgress>();
 @@ -38,6 +38,41 @@ public class TrainWithCoachesSpecification {
-         then(coach3).should(never()).reserve(seatCount, ticket);
+         coach3.DidNotReceive().Reserve(seatCount, ticket);
      }
  
-+    @Test
++    [Fact]
 +    public void
 +    shouldReserveSeatsInFirstCoachThatHasFreeSeatsIfNoneAllowsReservationUpFront() {
 +        //GIVEN
-+        val seatCount = Any.intValue();
-+        val ticket = mock(TicketInProgress.class);
-+        val coach1 = mock(Coach.class);
-+        val coach2 = mock(Coach.class);
-+        val coach3 = mock(Coach.class);
-+        val trainWithCoaches = new TrainWithCoaches(
++        var seatCount = Any.intValue();
++        var ticket = Substitute.For<TicketInProgress>();
++        var coach1 = Substitute.For<Coach>();
++        var coach2 = Substitute.For<Coach>();
++        var coach3 = Substitute.For<Coach>();
++        var trainWithCoaches = new TrainWithCoaches(
 +            coach1, coach2, coach3
 +        );
 +
-+        given(coach1.allowsUpFrontReservationOf(seatCount))
-+            .willReturn(false);
-+        given(coach2.allowsUpFrontReservationOf(seatCount))
-+            .willReturn(false);
-+        given(coach3.allowsUpFrontReservationOf(seatCount))
-+            .willReturn(false);
++        coach1.AllowsUpFrontReservationOf(seatCount)
++            .Returns(false);
++        coach2.AllowsUpFrontReservationOf(seatCount)
++            .Returns(false);
++        coach3.AllowsUpFrontReservationOf(seatCount)
++            .Returns(false);
 +        given(coach1.allowsReservationOf(seatCount))
-+            .willReturn(false);
++            .Returns(false);
 +        given(coach2.allowsReservationOf(seatCount))
-+            .willReturn(true);
++            .Returns(true);
 +        given(coach3.allowsReservationOf(seatCount))
-+            .willReturn(false);
++            .Returns(false);
 +
 +        //WHEN
-+        trainWithCoaches.reserve(seatCount, ticket);
++        trainWithCoaches.Reserve(seatCount, ticket);
 +
 +        //THEN
-+        then(coach1).should(never()).reserve(seatCount, ticket);
-+        then(coach2).should().reserve(seatCount, ticket);
-+        then(coach3).should(never()).reserve(seatCount, ticket);
++        coach1.DidNotReceive().Reserve(seatCount, ticket);
++        coach2.Received(1).Reserve(seatCount, ticket);
++        coach3.DidNotReceive().Reserve(seatCount, ticket);
 +    }
 +
  
@@ -2434,19 +2279,19 @@ diff --git a/Java/src/main/java/logic/TrainWithCoaches.java b/Java/src/main/java
 index a2ee63f..1e45cd9 100644
 --- a/Java/src/main/java/logic/TrainWithCoaches.java
 +++ b/Java/src/main/java/logic/TrainWithCoaches.java
-@@ -9,6 +9,12 @@ public class TrainWithCoaches implements Train {
+@@ -9,6 +9,12 @@ public class TrainWithCoaches : Train {
  
      @Override
-     public void reserve(int seatCount, TicketInProgress ticketInProgress) {
+     public void Reserve(int seatCount, TicketInProgress ticketInProgress) {
 +        for (Coach coach : coaches) {
 +            if(coach.allowsReservationOf(seatCount)) {
-+                coach.reserve(seatCount, ticketInProgress);
++                coach.Reserve(seatCount, ticketInProgress);
 +                break;
 +            }
 +        }
          for (Coach coach : coaches) {
-             if(coach.allowsUpFrontReservationOf(seatCount)) {
-                 coach.reserve(seatCount, ticketInProgress);
+             if(coach.AllowsUpFrontReservationOf(seatCount)) {
+                 coach.Reserve(seatCount, ticketInProgress);
 
 commit f9a24aeb01276dd1a1bc0dc6f534abd45b4db3f6
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
@@ -2460,21 +2305,21 @@ diff --git a/Java/src/main/java/logic/TrainWithCoaches.java b/Java/src/main/java
 index 1e45cd9..abb29e5 100644
 --- a/Java/src/main/java/logic/TrainWithCoaches.java
 +++ b/Java/src/main/java/logic/TrainWithCoaches.java
-@@ -10,17 +10,16 @@ public class TrainWithCoaches implements Train {
+@@ -10,17 +10,16 @@ public class TrainWithCoaches : Train {
      @Override
-     public void reserve(int seatCount, TicketInProgress ticketInProgress) {
+     public void Reserve(int seatCount, TicketInProgress ticketInProgress) {
          for (Coach coach : coaches) {
 -            if(coach.allowsReservationOf(seatCount)) {
-+            if(coach.allowsUpFrontReservationOf(seatCount)) {
-                 coach.reserve(seatCount, ticketInProgress);
++            if(coach.AllowsUpFrontReservationOf(seatCount)) {
+                 coach.Reserve(seatCount, ticketInProgress);
 -                break;
 +                return;
              }
          }
          for (Coach coach : coaches) {
--            if(coach.allowsUpFrontReservationOf(seatCount)) {
+-            if(coach.AllowsUpFrontReservationOf(seatCount)) {
 +            if(coach.allowsReservationOf(seatCount)) {
-                 coach.reserve(seatCount, ticketInProgress);
+                 coach.Reserve(seatCount, ticketInProgress);
                  return;
              }
          }
@@ -2486,18 +2331,18 @@ index 8157890..a84d16a 100644
 --- a/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 +++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 @@ -28,6 +28,12 @@ public class TrainWithCoachesSpecification {
-             .willReturn(true);
-         given(coach3.allowsUpFrontReservationOf(seatCount))
-             .willReturn(true);
+             .Returns(true);
+         coach3.AllowsUpFrontReservationOf(seatCount)
+             .Returns(true);
 +        given(coach1.allowsReservationOf(seatCount))
-+            .willReturn(true);
++            .Returns(true);
 +        given(coach2.allowsReservationOf(seatCount))
-+            .willReturn(true);
++            .Returns(true);
 +        given(coach3.allowsReservationOf(seatCount))
-+            .willReturn(true);
++            .Returns(true);
  
          //WHEN
-         trainWithCoaches.reserve(seatCount, ticket);
+         trainWithCoaches.Reserve(seatCount, ticket);
 
 commit 758456f88428359540a4951daaa6d099ee32970e
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
@@ -2511,59 +2356,59 @@ index a84d16a..c1a5b96 100644
 +++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 @@ -15,26 +15,14 @@ public class TrainWithCoachesSpecification {
          //GIVEN
-         val seatCount = Any.intValue();
-         val ticket = mock(TicketInProgress.class);
--        val coach1 = mock(Coach.class);
--        val coach2 = mock(Coach.class);
--        val coach3 = mock(Coach.class);
+         var seatCount = Any.intValue();
+         var ticket = Substitute.For<TicketInProgress>();
+-        var coach1 = Substitute.For<Coach>();
+-        var coach2 = Substitute.For<Coach>();
+-        var coach3 = Substitute.For<Coach>();
 +
 +        Coach coach1 = coachWithoutAvailableUpFront(seatCount);
 +        Coach coach2 = coachWithAvailableUpFront(seatCount);
 +        Coach coach3 = coachWithAvailableUpFront(seatCount);
 +
-         val trainWithCoaches = new TrainWithCoaches(
+         var trainWithCoaches = new TrainWithCoaches(
              coach1, coach2, coach3
          );
 -
--        given(coach1.allowsUpFrontReservationOf(seatCount))
--            .willReturn(false);
--        given(coach2.allowsUpFrontReservationOf(seatCount))
--            .willReturn(true);
--        given(coach3.allowsUpFrontReservationOf(seatCount))
--            .willReturn(true);
+-        coach1.AllowsUpFrontReservationOf(seatCount)
+-            .Returns(false);
+-        coach2.AllowsUpFrontReservationOf(seatCount)
+-            .Returns(true);
+-        coach3.AllowsUpFrontReservationOf(seatCount)
+-            .Returns(true);
 -        given(coach1.allowsReservationOf(seatCount))
--            .willReturn(true);
+-            .Returns(true);
 -        given(coach2.allowsReservationOf(seatCount))
--            .willReturn(true);
+-            .Returns(true);
 -        given(coach3.allowsReservationOf(seatCount))
--            .willReturn(true);
+-            .Returns(true);
 -
          //WHEN
-         trainWithCoaches.reserve(seatCount, ticket);
+         trainWithCoaches.Reserve(seatCount, ticket);
  
 @@ -44,6 +32,24 @@ public class TrainWithCoachesSpecification {
-         then(coach3).should(never()).reserve(seatCount, ticket);
+         coach3.DidNotReceive().Reserve(seatCount, ticket);
      }
  
 +    private Coach coachWithAvailableUpFront(Integer seatCount) {
-+        val coach2 = mock(Coach.class);
-+        given(coach2.allowsUpFrontReservationOf(seatCount))
-+            .willReturn(true);
++        var coach2 = Substitute.For<Coach>();
++        coach2.AllowsUpFrontReservationOf(seatCount)
++            .Returns(true);
 +        given(coach2.allowsReservationOf(seatCount))
-+            .willReturn(true);
++            .Returns(true);
 +        return coach2;
 +    }
 +
 +    private Coach coachWithoutAvailableUpFront(Integer seatCount) {
-+        val coach1 = mock(Coach.class);
-+        given(coach1.allowsUpFrontReservationOf(seatCount))
-+            .willReturn(false);
++        var coach1 = Substitute.For<Coach>();
++        coach1.AllowsUpFrontReservationOf(seatCount)
++            .Returns(false);
 +        given(coach1.allowsReservationOf(seatCount))
-+            .willReturn(true);
++            .Returns(true);
 +        return coach1;
 +    }
 +
-     @Test
+     [Fact]
      public void
      shouldReserveSeatsInFirstCoachThatHasFreeSeatsIfNoneAllowsReservationUpFront() {
 
@@ -2579,101 +2424,101 @@ diff --git a/Java/src/main/java/logic/TrainWithCoaches.java b/Java/src/main/java
 index abb29e5..0afb6b4 100644
 --- a/Java/src/main/java/logic/TrainWithCoaches.java
 +++ b/Java/src/main/java/logic/TrainWithCoaches.java
-@@ -15,6 +15,7 @@ public class TrainWithCoaches implements Train {
+@@ -15,6 +15,7 @@ public class TrainWithCoaches : Train {
                  return;
              }
          }
 +
          for (Coach coach : coaches) {
              if(coach.allowsReservationOf(seatCount)) {
-                 coach.reserve(seatCount, ticketInProgress);
+                 coach.Reserve(seatCount, ticketInProgress);
 diff --git a/Java/src/test/java/logic/TrainWithCoachesSpecification.java b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 index c1a5b96..b14abc2 100644
 --- a/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 +++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 @@ -32,50 +32,19 @@ public class TrainWithCoachesSpecification {
-         then(coach3).should(never()).reserve(seatCount, ticket);
+         coach3.DidNotReceive().Reserve(seatCount, ticket);
      }
  
 -    private Coach coachWithAvailableUpFront(Integer seatCount) {
--        val coach2 = mock(Coach.class);
--        given(coach2.allowsUpFrontReservationOf(seatCount))
--            .willReturn(true);
+-        var coach2 = Substitute.For<Coach>();
+-        coach2.AllowsUpFrontReservationOf(seatCount)
+-            .Returns(true);
 -        given(coach2.allowsReservationOf(seatCount))
--            .willReturn(true);
+-            .Returns(true);
 -        return coach2;
 -    }
 -
 -    private Coach coachWithoutAvailableUpFront(Integer seatCount) {
--        val coach1 = mock(Coach.class);
--        given(coach1.allowsUpFrontReservationOf(seatCount))
--            .willReturn(false);
+-        var coach1 = Substitute.For<Coach>();
+-        coach1.AllowsUpFrontReservationOf(seatCount)
+-            .Returns(false);
 -        given(coach1.allowsReservationOf(seatCount))
--            .willReturn(true);
+-            .Returns(true);
 -        return coach1;
 -    }
 -
-     @Test
+     [Fact]
      public void
      shouldReserveSeatsInFirstCoachThatHasFreeSeatsIfNoneAllowsReservationUpFront() {
          //GIVEN
-         val seatCount = Any.intValue();
-         val ticket = mock(TicketInProgress.class);
--        val coach1 = mock(Coach.class);
--        val coach2 = mock(Coach.class);
--        val coach3 = mock(Coach.class);
-+        val coach1 = coachWithout(seatCount);
-+        val coach2 = coachWithoutAvailableUpFront(seatCount);
-+        val coach3 = coachWithout(seatCount);
-         val trainWithCoaches = new TrainWithCoaches(
+         var seatCount = Any.intValue();
+         var ticket = Substitute.For<TicketInProgress>();
+-        var coach1 = Substitute.For<Coach>();
+-        var coach2 = Substitute.For<Coach>();
+-        var coach3 = Substitute.For<Coach>();
++        var coach1 = coachWithout(seatCount);
++        var coach2 = coachWithoutAvailableUpFront(seatCount);
++        var coach3 = coachWithout(seatCount);
+         var trainWithCoaches = new TrainWithCoaches(
              coach1, coach2, coach3
          );
  
--        given(coach1.allowsUpFrontReservationOf(seatCount))
--            .willReturn(false);
--        given(coach2.allowsUpFrontReservationOf(seatCount))
--            .willReturn(false);
--        given(coach3.allowsUpFrontReservationOf(seatCount))
--            .willReturn(false);
+-        coach1.AllowsUpFrontReservationOf(seatCount)
+-            .Returns(false);
+-        coach2.AllowsUpFrontReservationOf(seatCount)
+-            .Returns(false);
+-        coach3.AllowsUpFrontReservationOf(seatCount)
+-            .Returns(false);
 -        given(coach1.allowsReservationOf(seatCount))
--            .willReturn(false);
+-            .Returns(false);
 -        given(coach2.allowsReservationOf(seatCount))
--            .willReturn(true);
+-            .Returns(true);
 -        given(coach3.allowsReservationOf(seatCount))
--            .willReturn(false);
+-            .Returns(false);
 -
          //WHEN
-         trainWithCoaches.reserve(seatCount, ticket);
+         trainWithCoaches.Reserve(seatCount, ticket);
  
 @@ -85,6 +54,30 @@ public class TrainWithCoachesSpecification {
-         then(coach3).should(never()).reserve(seatCount, ticket);
+         coach3.DidNotReceive().Reserve(seatCount, ticket);
      }
  
 +    private Coach coachWithout(Integer seatCount) {
-+        val coach1 = mock(Coach.class);
-+        given(coach1.allowsUpFrontReservationOf(seatCount))
-+            .willReturn(false);
++        var coach1 = Substitute.For<Coach>();
++        coach1.AllowsUpFrontReservationOf(seatCount)
++            .Returns(false);
 +        given(coach1.allowsReservationOf(seatCount))
-+            .willReturn(false);
++            .Returns(false);
 +        return coach1;
 +    }
  
 -    //todo what if no coach allows up front reservation?
 +    private Coach coachWithAvailableUpFront(Integer seatCount) {
-+        val coach2 = mock(Coach.class);
-+        given(coach2.allowsUpFrontReservationOf(seatCount))
-+            .willReturn(true);
++        var coach2 = Substitute.For<Coach>();
++        coach2.AllowsUpFrontReservationOf(seatCount)
++            .Returns(true);
 +        given(coach2.allowsReservationOf(seatCount))
-+            .willReturn(true);
++            .Returns(true);
 +        return coach2;
 +    }
 +
 +    private Coach coachWithoutAvailableUpFront(Integer seatCount) {
-+        val coach1 = mock(Coach.class);
-+        given(coach1.allowsUpFrontReservationOf(seatCount))
-+            .willReturn(false);
++        var coach1 = Substitute.For<Coach>();
++        coach1.AllowsUpFrontReservationOf(seatCount)
++            .Returns(false);
 +        given(coach1.allowsReservationOf(seatCount))
-+            .willReturn(true);
++            .Returns(true);
 +        return coach1;
 +    }
  }
@@ -2699,21 +2544,21 @@ index 0000000..3e70cb0
 @@ -0,0 +1,21 @@
 +package logic;
 +
-+public class CoachWithSeats implements Coach {
++public class CoachWithSeats : Coach {
 +    @Override
-+    public void reserve(int seatCount, TicketInProgress ticket) {
++    public void Reserve(int seatCount, TicketInProgress ticket) {
 +        //todo implement
 +
 +    }
 +
 +    @Override
-+    public boolean allowsUpFrontReservationOf(int seatCount) {
++    public bool AllowsUpFrontReservationOf(int seatCount) {
 +        //todo implement
 +        return false;
 +    }
 +
 +    @Override
-+    public boolean allowsReservationOf(int seatCount) {
++    public bool allowsReservationOf(int seatCount) {
 +        //todo implement
 +        return false;
 +    }
@@ -2722,9 +2567,9 @@ diff --git a/Java/src/main/java/logic/CouchDbTrainRepository.java b/Java/src/mai
 index 9f7ea45..1a4b009 100644
 --- a/Java/src/main/java/logic/CouchDbTrainRepository.java
 +++ b/Java/src/main/java/logic/CouchDbTrainRepository.java
-@@ -4,6 +4,8 @@ public class CouchDbTrainRepository implements TrainRepository {
+@@ -4,6 +4,8 @@ public class CouchDbTrainRepository : TrainRepository {
      @Override
-     public Train getTrainBy(String trainId) {
+     public Train GetTrainBy(String trainId) {
          //todo there should be something passed here!!
 -        return new TrainWithCoaches();
 +        return new TrainWithCoaches(
@@ -2761,13 +2606,13 @@ index 0000000..14417c8
 +
 +public class CoachWithSeatsSpecification {
 +
-+    @Test
++    [Fact]
 +    public void xxXXxxXX() { //todo rename
 +        //GIVEN
-+        val coachWithSeats = new CoachWithSeats();
++        var coachWithSeats = new CoachWithSeats();
 +        //WHEN
 +        int seatCount = Any.intValue();
-+        val reservationAllowed = coachWithSeats.allowsReservationOf(seatCount);
++        var reservationAllowed = coachWithSeats.allowsReservationOf(seatCount);
 +
 +        //THEN
 +        assertThat(reservationAllowed).isTrue();
@@ -2803,12 +2648,12 @@ index 14417c8..a1a9cbe 100644
 --- a/Java/src/test/java/logic/CoachWithSeatsSpecification.java
 +++ b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
 @@ -11,7 +11,18 @@ public class CoachWithSeatsSpecification {
-     @Test
+     [Fact]
      public void xxXXxxXX() { //todo rename
          //GIVEN
--        val coachWithSeats = new CoachWithSeats();
-+        Seat seat1 = Any.anonymous(Seat.class);
-+        val coachWithSeats = new CoachWithSeats(
+-        var coachWithSeats = new CoachWithSeats();
++        Seat seat1 = Any.Instance<Seat>();
++        var coachWithSeats = new CoachWithSeats(
 +            seat1,
 +            seat2,
 +            seat3,
@@ -2821,7 +2666,7 @@ index 14417c8..a1a9cbe 100644
 +        );
          //WHEN
          int seatCount = Any.intValue();
-         val reservationAllowed = coachWithSeats.allowsReservationOf(seatCount);
+         var reservationAllowed = coachWithSeats.allowsReservationOf(seatCount);
 
 commit 893d36847f8d48def0fab6b286e76f90e6baa310
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
@@ -2834,21 +2679,21 @@ index a1a9cbe..ec90a2b 100644
 --- a/Java/src/test/java/logic/CoachWithSeatsSpecification.java
 +++ b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
 @@ -11,7 +11,17 @@ public class CoachWithSeatsSpecification {
-     @Test
+     [Fact]
      public void xxXXxxXX() { //todo rename
          //GIVEN
 +        //todo what's special about these seats?
-         Seat seat1 = Any.anonymous(Seat.class);
-+        Seat seat2 = Any.anonymous(Seat.class);
-+        Seat seat3 = Any.anonymous(Seat.class);
-+        Seat seat4 = Any.anonymous(Seat.class);
-+        Seat seat5 = Any.anonymous(Seat.class);
-+        Seat seat6 = Any.anonymous(Seat.class);
-+        Seat seat7 = Any.anonymous(Seat.class);
-+        Seat seat8 = Any.anonymous(Seat.class);
-+        Seat seat9 = Any.anonymous(Seat.class);
-+        Seat seat10 = Any.anonymous(Seat.class);
-         val coachWithSeats = new CoachWithSeats(
+         Seat seat1 = Any.Instance<Seat>();
++        Seat seat2 = Any.Instance<Seat>();
++        Seat seat3 = Any.Instance<Seat>();
++        Seat seat4 = Any.Instance<Seat>();
++        Seat seat5 = Any.Instance<Seat>();
++        Seat seat6 = Any.Instance<Seat>();
++        Seat seat7 = Any.Instance<Seat>();
++        Seat seat8 = Any.Instance<Seat>();
++        Seat seat9 = Any.Instance<Seat>();
++        Seat seat10 = Any.Instance<Seat>();
+         var coachWithSeats = new CoachWithSeats(
              seat1,
              seat2,
 @@ -21,7 +31,8 @@ public class CoachWithSeatsSpecification {
@@ -2875,12 +2720,12 @@ index 3e70cb0..57c9f25 100644
 @@ -1,6 +1,9 @@
  package logic;
  
- public class CoachWithSeats implements Coach {
+ public class CoachWithSeats : Coach {
 +    public CoachWithSeats(Seat... seats) {
 +    }
 +
      @Override
-     public void reserve(int seatCount, TicketInProgress ticket) {
+     public void Reserve(int seatCount, TicketInProgress ticket) {
          //todo implement
 
 commit 5c17b650ca042d5c5feb011ca94e842625eff4a9
@@ -2898,14 +2743,14 @@ index ec90a2b..d3406eb 100644
 @@ -9,9 +9,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  public class CoachWithSeatsSpecification {
  
-     @Test
+     [Fact]
 -    public void xxXXxxXX() { //todo rename
-+    public void shouldNotAllowReservingMoreSeatsThanItHas() { //todo rename
++    public void ShouldNotAllowReservingMoreSeatsThanItHas() { //todo rename
          //GIVEN
 -        //todo what's special about these seats?
-         Seat seat1 = Any.anonymous(Seat.class);
-         Seat seat2 = Any.anonymous(Seat.class);
-         Seat seat3 = Any.anonymous(Seat.class);
+         Seat seat1 = Any.Instance<Seat>();
+         Seat seat2 = Any.Instance<Seat>();
+         Seat seat3 = Any.Instance<Seat>();
 @@ -34,12 +33,14 @@ public class CoachWithSeatsSpecification {
              seat9,
              seat10
@@ -2913,8 +2758,8 @@ index ec90a2b..d3406eb 100644
 +
          //WHEN
 -        int seatCount = Any.intValue();
--        val reservationAllowed = coachWithSeats.allowsReservationOf(seatCount);
-+        val reservationAllowed = coachWithSeats.allowsReservationOf(11);
+-        var reservationAllowed = coachWithSeats.allowsReservationOf(seatCount);
++        var reservationAllowed = coachWithSeats.allowsReservationOf(11);
  
          //THEN
 -        assertThat(reservationAllowed).isTrue();
@@ -2941,17 +2786,17 @@ index d3406eb..9740d5a 100644
 @@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  public class CoachWithSeatsSpecification {
  
-     @Test
--    public void shouldNotAllowReservingMoreSeatsThanItHas() { //todo rename
-+    public void shouldNotAllowReservingMoreSeatsThanItHas() {
+     [Fact]
+-    public void ShouldNotAllowReservingMoreSeatsThanItHas() { //todo rename
++    public void ShouldNotAllowReservingMoreSeatsThanItHas() {
          //GIVEN
-         Seat seat1 = Any.anonymous(Seat.class);
-         Seat seat2 = Any.anonymous(Seat.class);
+         Seat seat1 = Any.Instance<Seat>();
+         Seat seat2 = Any.Instance<Seat>();
 @@ -36,11 +36,15 @@ public class CoachWithSeatsSpecification {
  
          //WHEN
-         val reservationAllowed = coachWithSeats.allowsReservationOf(11);
-+        val upFrontAllowed = coachWithSeats.allowsUpFrontReservationOf(11);
+         var reservationAllowed = coachWithSeats.allowsReservationOf(11);
++        var upFrontAllowed = coachWithSeats.AllowsUpFrontReservationOf(11);
  
          //THEN
          assertThat(reservationAllowed).isFalse();
@@ -2981,8 +2826,8 @@ index 9740d5a..dbc7abb 100644
          assertThat(upFrontAllowed).isFalse();
      }
  
-+    @Test
-+    public void shouldAllowReservingSeatsThatAreFree() {
++    [Fact]
++    public void ShouldAllowReservingSeatsThatAreFree() {
 +        //GIVEN
 +        Seat seat1 = freeSeat();
 +        Seat seat2 = freeSeat();
@@ -2994,7 +2839,7 @@ index 9740d5a..dbc7abb 100644
 +        Seat seat8 = freeSeat();
 +        Seat seat9 = freeSeat();
 +        Seat seat10 = freeSeat();
-+        val coachWithSeats = new CoachWithSeats(
++        var coachWithSeats = new CoachWithSeats(
 +            seat1,
 +            seat2,
 +            seat3,
@@ -3008,14 +2853,14 @@ index 9740d5a..dbc7abb 100644
 +        );
 +
 +        //WHEN
-+        val reservationAllowed = coachWithSeats.allowsReservationOf(10);
++        var reservationAllowed = coachWithSeats.allowsReservationOf(10);
 +
 +        //THEN
 +        assertThat(reservationAllowed).isTrue();
 +    }
 +
 +    private Seat freeSeat() {
-+        return Any.anonymous(Seat.class);
++        return Any.Instance<Seat>();
 +    }
 +
 +
@@ -3040,7 +2885,7 @@ index 57c9f25..01c882f 100644
  
 +import java.util.Arrays;
 +
- public class CoachWithSeats implements Coach {
+ public class CoachWithSeats : Coach {
 +    private Seat[] seats;
 +
      public CoachWithSeats(Seat... seats) {
@@ -3048,10 +2893,10 @@ index 57c9f25..01c882f 100644
      }
  
      @Override
-@@ -18,7 +23,7 @@ public class CoachWithSeats implements Coach {
+@@ -18,7 +23,7 @@ public class CoachWithSeats : Coach {
  
      @Override
-     public boolean allowsReservationOf(int seatCount) {
+     public bool allowsReservationOf(int seatCount) {
 -        //todo implement
 -        return false;
 +        //todo not yet the right implementation
@@ -3075,7 +2920,7 @@ index 7835a2a..4f03bd8 100644
  package logic;
  
  public interface Seat {
-+    boolean isFree();
++    bool isFree();
  }
 diff --git a/Java/src/test/java/logic/CoachWithSeatsSpecification.java b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
 index dbc7abb..dfc4f8e 100644
@@ -3094,8 +2939,8 @@ index dbc7abb..dfc4f8e 100644
      }
  
      private Seat freeSeat() {
--        return Any.anonymous(Seat.class);
-+        Seat mock = mock(Seat.class);
+-        return Any.Instance<Seat>();
++        Seat mock = Substitute.For<Seat>();
 +        when(mock.isFree()).thenReturn(true);
 +        return mock;
      }
@@ -3115,8 +2960,8 @@ index dfc4f8e..e835cab 100644
 --- a/Java/src/test/java/logic/CoachWithSeatsSpecification.java
 +++ b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
 @@ -48,27 +48,17 @@ public class CoachWithSeatsSpecification {
-     @Test
-     public void shouldAllowReservingSeatsThatAreFree() {
+     [Fact]
+     public void ShouldAllowReservingSeatsThatAreFree() {
          //GIVEN
 -        Seat seat1 = freeSeat();
 -        Seat seat2 = freeSeat();
@@ -3128,7 +2973,7 @@ index dfc4f8e..e835cab 100644
 -        Seat seat8 = freeSeat();
 -        Seat seat9 = freeSeat();
 -        Seat seat10 = freeSeat();
-         val coachWithSeats = new CoachWithSeats(
+         var coachWithSeats = new CoachWithSeats(
 -            seat1,
 -            seat2,
 -            seat3,
@@ -3159,7 +3004,7 @@ index dfc4f8e..e835cab 100644
 +
 +
      private Seat freeSeat() {
-         Seat mock = mock(Seat.class);
+         Seat mock = Substitute.For<Seat>();
          when(mock.isFree()).thenReturn(true);
 
 commit ab3475b0ee19bf11d3cc4c140703549d917480ee
@@ -3176,10 +3021,10 @@ index e835cab..c1aba66 100644
          assertThat(reservationAllowed).isTrue();
      }
  
-+    @Test
-+    public void shouldNotAllowReservingWhenNotEnoughFreeSeats() {
++    [Fact]
++    public void ShouldNotAllowReservingWhenNotEnoughFreeSeats() {
 +        //GIVEN
-+        val coachWithSeats = new CoachWithSeats(
++        var coachWithSeats = new CoachWithSeats(
 +            freeSeat(),
 +            freeSeat(),
 +            freeSeat(),
@@ -3193,14 +3038,14 @@ index e835cab..c1aba66 100644
 +        );
 +
 +        //WHEN
-+        val reservationAllowed = coachWithSeats.allowsReservationOf(10);
++        var reservationAllowed = coachWithSeats.allowsReservationOf(10);
 +
 +        //THEN
 +        assertThat(reservationAllowed).isTrue();
 +    }
 +
 +    private Seat reservedSeat() {
-+        Seat mock = mock(Seat.class);
++        Seat mock = Substitute.For<Seat>();
 +        when(mock.isFree()).thenReturn(false);
 +        return mock;
 +    }
@@ -3218,10 +3063,10 @@ diff --git a/Java/src/main/java/logic/CoachWithSeats.java b/Java/src/main/java/l
 index 01c882f..952b8fb 100644
 --- a/Java/src/main/java/logic/CoachWithSeats.java
 +++ b/Java/src/main/java/logic/CoachWithSeats.java
-@@ -23,7 +23,8 @@ public class CoachWithSeats implements Coach {
+@@ -23,7 +23,8 @@ public class CoachWithSeats : Coach {
  
      @Override
-     public boolean allowsReservationOf(int seatCount) {
+     public bool allowsReservationOf(int seatCount) {
 -        //todo not yet the right implementation
 -        return seatCount == Arrays.stream(seats).count();
 +        return seatCount == Arrays.stream(seats)
@@ -3234,7 +3079,7 @@ index c1aba66..542dbd1 100644
 --- a/Java/src/test/java/logic/CoachWithSeatsSpecification.java
 +++ b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
 @@ -88,7 +88,7 @@ public class CoachWithSeatsSpecification {
-         val reservationAllowed = coachWithSeats.allowsReservationOf(10);
+         var reservationAllowed = coachWithSeats.allowsReservationOf(10);
  
          //THEN
 -        assertThat(reservationAllowed).isTrue();
@@ -3259,10 +3104,10 @@ index 542dbd1..cf3e163 100644
          assertThat(reservationAllowed).isFalse();
      }
  
-+    @Test
-+    public void shouldAllowReservingUpFrontUpTo70PercentOfSeats() {
++    [Fact]
++    public void ShouldAllowReservingUpFrontUpTo70PercentOfSeats() {
 +        //GIVEN
-+        val coachWithSeats = new CoachWithSeats(
++        var coachWithSeats = new CoachWithSeats(
 +            freeSeat(),
 +            freeSeat(),
 +            freeSeat(),
@@ -3276,8 +3121,8 @@ index 542dbd1..cf3e163 100644
 +        );
 +
 +        //WHEN
-+        val reservationAllowed =
-+            coachWithSeats.allowsUpFrontReservationOf(7);
++        var reservationAllowed =
++            coachWithSeats.AllowsUpFrontReservationOf(7);
 +
 +        //THEN
 +        assertThat(reservationAllowed).isTrue();
@@ -3285,7 +3130,7 @@ index 542dbd1..cf3e163 100644
 +
 +
      private Seat reservedSeat() {
-         Seat mock = mock(Seat.class);
+         Seat mock = Substitute.For<Seat>();
          when(mock.isFree()).thenReturn(false);
 
 commit fe86c7c467e238e6409fd49e6995237312a22e43
@@ -3298,10 +3143,10 @@ diff --git a/Java/src/main/java/logic/CoachWithSeats.java b/Java/src/main/java/l
 index 952b8fb..ef62030 100644
 --- a/Java/src/main/java/logic/CoachWithSeats.java
 +++ b/Java/src/main/java/logic/CoachWithSeats.java
-@@ -17,8 +17,8 @@ public class CoachWithSeats implements Coach {
+@@ -17,8 +17,8 @@ public class CoachWithSeats : Coach {
  
      @Override
-     public boolean allowsUpFrontReservationOf(int seatCount) {
+     public bool AllowsUpFrontReservationOf(int seatCount) {
 -        //todo implement
 -        return false;
 +        //todo not the right implementation yet
@@ -3324,10 +3169,10 @@ index cf3e163..331d351 100644
          assertThat(reservationAllowed).isTrue();
      }
  
-+    @Test
-+    public void shouldNotAllowReservingUpFrontOverTo70PercentOfSeats() {
++    [Fact]
++    public void ShouldNotAllowReservingUpFrontOverTo70PercentOfSeats() {
 +        //GIVEN
-+        val coachWithSeats = new CoachWithSeats(
++        var coachWithSeats = new CoachWithSeats(
 +            freeSeat(),
 +            freeSeat(),
 +            freeSeat(),
@@ -3341,15 +3186,15 @@ index cf3e163..331d351 100644
 +        );
 +
 +        //WHEN
-+        val reservationAllowed =
-+            coachWithSeats.allowsUpFrontReservationOf(8);
++        var reservationAllowed =
++            coachWithSeats.AllowsUpFrontReservationOf(8);
 +
 +        //THEN
 +        assertThat(reservationAllowed).isTrue();
 +    }
  
      private Seat reservedSeat() {
-         Seat mock = mock(Seat.class);
+         Seat mock = Substitute.For<Seat>();
 
 commit da173981eceb7af6e24c7e4f815ad949dd70d7fb
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
@@ -3361,10 +3206,10 @@ diff --git a/Java/src/main/java/logic/CoachWithSeats.java b/Java/src/main/java/l
 index ef62030..4669230 100644
 --- a/Java/src/main/java/logic/CoachWithSeats.java
 +++ b/Java/src/main/java/logic/CoachWithSeats.java
-@@ -23,7 +23,11 @@ public class CoachWithSeats implements Coach {
+@@ -23,7 +23,11 @@ public class CoachWithSeats : Coach {
  
      @Override
-     public boolean allowsReservationOf(int seatCount) {
+     public bool allowsReservationOf(int seatCount) {
 -        return seatCount == Arrays.stream(seats)
 +        return seatCount == freeSeatCount();
 +    }
@@ -3382,11 +3227,11 @@ index 331d351..f37ab16 100644
          assertThat(reservationAllowed).isTrue();
      }
  
--    @Test
-+    //@Test todo uncomment!
-     public void shouldNotAllowReservingUpFrontOverTo70PercentOfSeats() {
+-    [Fact]
++    //[Fact] todo uncomment!
+     public void ShouldNotAllowReservingUpFrontOverTo70PercentOfSeats() {
          //GIVEN
-         val coachWithSeats = new CoachWithSeats(
+         var coachWithSeats = new CoachWithSeats(
 
 commit 0e80f243d62c036f33ec96756304888ae67cd453
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
@@ -3402,13 +3247,13 @@ index f37ab16..9d56b74 100644
          assertThat(reservationAllowed).isTrue();
      }
  
--    //@Test todo uncomment!
-+    @Test
-     public void shouldNotAllowReservingUpFrontOverTo70PercentOfSeats() {
+-    //[Fact] todo uncomment!
++    [Fact]
+     public void ShouldNotAllowReservingUpFrontOverTo70PercentOfSeats() {
          //GIVEN
-         val coachWithSeats = new CoachWithSeats(
+         var coachWithSeats = new CoachWithSeats(
 @@ -136,7 +136,7 @@ public class CoachWithSeatsSpecification {
-             coachWithSeats.allowsUpFrontReservationOf(8);
+             coachWithSeats.AllowsUpFrontReservationOf(8);
  
          //THEN
 -        assertThat(reservationAllowed).isTrue();
@@ -3427,17 +3272,17 @@ diff --git a/Java/src/main/java/logic/CoachWithSeats.java b/Java/src/main/java/l
 index 4669230..4f1440e 100644
 --- a/Java/src/main/java/logic/CoachWithSeats.java
 +++ b/Java/src/main/java/logic/CoachWithSeats.java
-@@ -17,13 +17,13 @@ public class CoachWithSeats implements Coach {
+@@ -17,13 +17,13 @@ public class CoachWithSeats : Coach {
  
      @Override
-     public boolean allowsUpFrontReservationOf(int seatCount) {
+     public bool AllowsUpFrontReservationOf(int seatCount) {
 -        //todo not the right implementation yet
 -        return true;
 +        return seatCount <= seats.length;
      }
  
      @Override
-     public boolean allowsReservationOf(int seatCount) {
+     public bool allowsReservationOf(int seatCount) {
 -        return seatCount == freeSeatCount();
 +
 +        return seatCount <= freeSeatCount();
@@ -3457,10 +3302,10 @@ diff --git a/Java/src/main/java/logic/CoachWithSeats.java b/Java/src/main/java/l
 index 4f1440e..b7be055 100644
 --- a/Java/src/main/java/logic/CoachWithSeats.java
 +++ b/Java/src/main/java/logic/CoachWithSeats.java
-@@ -17,7 +17,7 @@ public class CoachWithSeats implements Coach {
+@@ -17,7 +17,7 @@ public class CoachWithSeats : Coach {
  
      @Override
-     public boolean allowsUpFrontReservationOf(int seatCount) {
+     public bool AllowsUpFrontReservationOf(int seatCount) {
 -        return seatCount <= seats.length;
 +        return seatCount <= seats.length * 0.7;
      }
@@ -3479,10 +3324,10 @@ diff --git a/Java/src/main/java/logic/CoachWithSeats.java b/Java/src/main/java/l
 index b7be055..4074012 100644
 --- a/Java/src/main/java/logic/CoachWithSeats.java
 +++ b/Java/src/main/java/logic/CoachWithSeats.java
-@@ -17,7 +17,7 @@ public class CoachWithSeats implements Coach {
+@@ -17,7 +17,7 @@ public class CoachWithSeats : Coach {
  
      @Override
-     public boolean allowsUpFrontReservationOf(int seatCount) {
+     public bool AllowsUpFrontReservationOf(int seatCount) {
 -        return seatCount <= seats.length * 0.7;
 +        return (freeSeatCount() - seatCount) >= seats.length * 0.3;
      }
@@ -3496,10 +3341,10 @@ index 9d56b74..a4b8de0 100644
          assertThat(reservationAllowed).isFalse();
      }
  
-+    @Test
-+    public void shouldNotAllowReservingUpFrontOver70PercentOfSeatsWhenSomeAreAlreadyReserved() {
++    [Fact]
++    public void ShouldNotAllowReservingUpFrontOver70PercentOfSeatsWhenSomeAreAlreadyReserved() {
 +        //GIVEN
-+        val coachWithSeats = new CoachWithSeats(
++        var coachWithSeats = new CoachWithSeats(
 +            reservedSeat(),
 +            freeSeat(),
 +            freeSeat(),
@@ -3513,8 +3358,8 @@ index 9d56b74..a4b8de0 100644
 +        );
 +
 +        //WHEN
-+        val reservationAllowed =
-+            coachWithSeats.allowsUpFrontReservationOf(7);
++        var reservationAllowed =
++            coachWithSeats.AllowsUpFrontReservationOf(7);
 +
 +        //THEN
 +        assertThat(reservationAllowed).isFalse();
@@ -3522,7 +3367,7 @@ index 9d56b74..a4b8de0 100644
 +
 +
      private Seat reservedSeat() {
-         Seat mock = mock(Seat.class);
+         Seat mock = Substitute.For<Seat>();
          when(mock.isFree()).thenReturn(false);
 
 commit 05355a1aca3a0d902ac4c8ba62bdc30ac73e6d3b
@@ -3535,10 +3380,10 @@ diff --git a/Java/src/main/java/logic/CoachWithSeats.java b/Java/src/main/java/l
 index 4074012..43ce204 100644
 --- a/Java/src/main/java/logic/CoachWithSeats.java
 +++ b/Java/src/main/java/logic/CoachWithSeats.java
-@@ -22,7 +22,6 @@ public class CoachWithSeats implements Coach {
+@@ -22,7 +22,6 @@ public class CoachWithSeats : Coach {
  
      @Override
-     public boolean allowsReservationOf(int seatCount) {
+     public bool allowsReservationOf(int seatCount) {
 -
          return seatCount <= freeSeatCount();
      }
@@ -3550,7 +3395,7 @@ index 4f03bd8..0c24d39 100644
 @@ -2,4 +2,5 @@ package logic;
  
  public interface Seat {
-     boolean isFree();
+     bool isFree();
 +    void reserveFor(TicketInProgress ticketInProgress);
  }
 diff --git a/Java/src/test/java/logic/CoachWithSeatsSpecification.java b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
@@ -3572,21 +3417,21 @@ index a4b8de0..75d87df 100644
          assertThat(reservationAllowed).isFalse();
      }
  
-+    @Test
-+    public void shouldReserveFirstFreeSeats() {
++    [Fact]
++    public void ShouldReserveFirstFreeSeats() {
 +        //GIVEN
-+        val seat1 = mock(Seat.class);
-+        val seat2 = mock(Seat.class);
-+        val seat3 = mock(Seat.class);
-+        val ticketInProgress = mock(TicketInProgress.class);
-+        val coachWithSeats = new CoachWithSeats(
++        var seat1 = Substitute.For<Seat>();
++        var seat2 = Substitute.For<Seat>();
++        var seat3 = Substitute.For<Seat>();
++        var ticketInProgress = Substitute.For<TicketInProgress>();
++        var coachWithSeats = new CoachWithSeats(
 +            seat1,
 +            seat2,
 +            seat3
 +        );
 +
 +        //WHEN
-+        coachWithSeats.reserve(2, ticketInProgress);
++        coachWithSeats.Reserve(2, ticketInProgress);
 +
 +        //THEN
 +        then(seat1).should().reserveFor(ticketInProgress);
@@ -3595,7 +3440,7 @@ index a4b8de0..75d87df 100644
 +    }
  
      private Seat reservedSeat() {
-         Seat mock = mock(Seat.class);
+         Seat mock = Substitute.For<Seat>();
 
 commit 398d4ab300d4394ae097ab202332757f2f63d5d7
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
@@ -3607,10 +3452,10 @@ diff --git a/Java/src/main/java/logic/CoachWithSeats.java b/Java/src/main/java/l
 index 43ce204..713c4d4 100644
 --- a/Java/src/main/java/logic/CoachWithSeats.java
 +++ b/Java/src/main/java/logic/CoachWithSeats.java
-@@ -11,7 +11,14 @@ public class CoachWithSeats implements Coach {
+@@ -11,7 +11,14 @@ public class CoachWithSeats : Coach {
  
      @Override
-     public void reserve(int seatCount, TicketInProgress ticket) {
+     public void Reserve(int seatCount, TicketInProgress ticket) {
 -        //todo implement
 +        for (Seat seat : seats) {
 +            if (seatCount == 0) {
@@ -3644,7 +3489,7 @@ index 75d87df..b046ef2 100644
 -    //todo other scenarios
 -    //todo what's special about these seats?
 -
-+    //todo should we protect reserve() method?
++    //todo should we protect Reserve() method?
  }
 \ No newline at end of file
 
@@ -3663,7 +3508,7 @@ index b046ef2..68a1034 100644
      }
  
 -
-     //todo should we protect reserve() method?
+     //todo should we protect Reserve() method?
  }
 \ No newline at end of file
 
@@ -3677,8 +3522,8 @@ diff --git a/Java/src/main/java/logic/CouchDbTrainRepository.java b/Java/src/mai
 index 1a4b009..8bf4abd 100644
 --- a/Java/src/main/java/logic/CouchDbTrainRepository.java
 +++ b/Java/src/main/java/logic/CouchDbTrainRepository.java
-@@ -5,7 +5,10 @@ public class CouchDbTrainRepository implements TrainRepository {
-     public Train getTrainBy(String trainId) {
+@@ -5,7 +5,10 @@ public class CouchDbTrainRepository : TrainRepository {
+     public Train GetTrainBy(String trainId) {
          //todo there should be something passed here!!
          return new TrainWithCoaches(
 -            new CoachWithSeats()
@@ -3703,9 +3548,9 @@ index 0000000..2e20b7f
 @@ -0,0 +1,15 @@
 +package logic;
 +
-+public class NamedSeat implements Seat {
++public class NamedSeat : Seat {
 +    @Override
-+    public boolean isFree() {
++    public bool isFree() {
 +        //todo implement
 +        return false;
 +    }
@@ -3729,7 +3574,7 @@ diff --git a/Java/src/main/java/logic/CouchDbTrainRepository.java b/Java/src/mai
 index 8bf4abd..3e9340e 100644
 --- a/Java/src/main/java/logic/CouchDbTrainRepository.java
 +++ b/Java/src/main/java/logic/CouchDbTrainRepository.java
-@@ -6,8 +6,8 @@ public class CouchDbTrainRepository implements TrainRepository {
+@@ -6,8 +6,8 @@ public class CouchDbTrainRepository : TrainRepository {
          //todo there should be something passed here!!
          return new TrainWithCoaches(
              new CoachWithSeats(
@@ -3747,14 +3592,14 @@ index 2e20b7f..26b5b8e 100644
 @@ -1,6 +1,11 @@
  package logic;
  
- public class NamedSeat implements Seat {
-+    public NamedSeat(Boolean isFree) {
+ public class NamedSeat : Seat {
++    public NamedSeat(bool isFree) {
 +        //todo implement
 +
 +    }
 +
      @Override
-     public boolean isFree() {
+     public bool isFree() {
          //todo implement
 diff --git a/Java/src/test/java/logic/NamedSeatSpecification.java b/Java/src/test/java/logic/NamedSeatSpecification.java
 new file mode 100644
@@ -3777,14 +3622,14 @@ index 0000000..3568928
 +import static org.assertj.core.api.Assertions.assertThat;
 +
 +public class NamedSeatSpecification {
-+    @Test
-+    public void shouldBeFreeDependingOnPassedConstructorParameter() {
++    [Fact]
++    public void ShouldBeFreeDependingOnPassedConstructorParameter() {
 +        //GIVEN
-+        val isInitiallyFree = Any.booleanValue();
-+        val namedSeat = new NamedSeat(isInitiallyFree);
++        var isInitiallyFree = Any.booleanValue();
++        var namedSeat = new NamedSeat(isInitiallyFree);
 +
 +        //WHEN
-+        val isEventuallyFree = namedSeat.isFree();
++        var isEventuallyFree = namedSeat.isFree();
 +
 +        //THEN
 +        assertThat(isEventuallyFree).isEqualTo(isInitiallyFree);
@@ -3810,17 +3655,17 @@ index 26b5b8e..5e93c8e 100644
 @@ -1,15 +1,15 @@
  package logic;
  
- public class NamedSeat implements Seat {
--    public NamedSeat(Boolean isFree) {
+ public class NamedSeat : Seat {
+-    public NamedSeat(bool isFree) {
 -        //todo implement
-+    private Boolean isFree;
++    private bool isFree;
  
-+    public NamedSeat(Boolean isFree) {
++    public NamedSeat(bool isFree) {
 +        this.isFree = isFree;
      }
  
      @Override
-     public boolean isFree() {
+     public bool isFree() {
 -        //todo implement
 -        return false;
 +        return isFree;
@@ -3835,8 +3680,8 @@ index 3568928..5894ae3 100644
  import static org.assertj.core.api.Assertions.assertThat;
  
  public class NamedSeatSpecification {
--    @Test
-+    @Test(invocationCount = 2)
-     public void shouldBeFreeDependingOnPassedConstructorParameter() {
+-    [Fact]
++    [Fact](invocationCount = 2)
+     public void ShouldBeFreeDependingOnPassedConstructorParameter() {
          //GIVEN
-         val isInitiallyFree = Any.booleanValue();
+         var isInitiallyFree = Any.booleanValue();
