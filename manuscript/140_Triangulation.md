@@ -454,9 +454,9 @@ An example of an ASCII art that is expected from our class looks like this:
 
 Note that there are three kinds of symbols:
 
-- `.` mean either an empty space (there is no segment there) or a segment that is not lit.
-- `-` mean a lit horizontal segment
-- `|` mean a lit vertical segment
+- `.` means either an empty space (there is no segment there) or a segment that is not lit.
+- `-` means a lit horizontal segment
+- `|` means a lit vertical segment
 
 The functionality we need to implement should allow one to not only display numbers, but to light any combination of segments at will. So, we can decide to not light any segment, thus getting the following output:
 
