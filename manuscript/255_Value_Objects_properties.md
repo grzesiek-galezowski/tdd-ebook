@@ -52,11 +52,11 @@ private string _value;
  Only the methods we publish can be used to operate on the state. This is useful for three things:
 
 1. To restrict allowed operations to what we think makes sense to do with a product name. Everything else (i.e. what we think does not make sense to do) is not allowed. 
-1. To achieve immutability of `ProductName` instances (more on why we want the type to be immutable later), which means that when we create an instance, we cannot modify it. If the `_value` field was public, everyone could modify the state of `ProductName` instance by writing something like:
+2. To achieve immutability of `ProductName` instances (more on why we want the type to be immutable later), which means that when we create an instance, we cannot modify it. If the `_value` field was public, everyone could modify the state of `ProductName` instance by writing something like:
   ```csharp
   productName.data = "something different"; 
   ```
-1. To protect against creating a product name with an invalid state. When creating a product name, we have to pass a string with containing a name through a static `For()` method that can perform the validation (more on this later). If there are no other ways we can set the name, we can rest assured that the validation will happen every time someone wants to create a `ProductName`
+3. To protect against creating a product name with an invalid state. When creating a product name, we have to pass a string with containing a name through a static `For()` method that can perform the validation (more on this later). If there are no other ways we can set the name, we can rest assured that the validation will happen every time someone wants to create a `ProductName`.
 
 ## Hidden constructor
 
@@ -69,7 +69,7 @@ private ProductName(string value)
 }
 ```
 
-and you probably wonder why. I'd like to decompose the question further decomposed into two others: 
+and you probably wonder why. I'd like to decompose the question further into two others:
 
 1. How should we create new instances then?
 1. Why private and not public?
