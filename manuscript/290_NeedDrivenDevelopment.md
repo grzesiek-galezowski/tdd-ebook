@@ -451,27 +451,17 @@ Passed the first assertion but the second one still fails (look at the error mes
      }
 ```
 
-```
 Passed the second assertion, test green. WHat about the order of invocations?
 
 Can we alter it to make it invalid? No, creation comes before usage, usage goes before returning value, return comes last.
  
-
-commit 23de6b1c8e6d7d84fb972ab02c2888c3a933d333
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
 Date:   Wed Feb 28 16:37:04 2018 +0100
 
     [LATE] creating an instance. need some implementations
 
-diff --git a/Java/src/main/java/bootstrap/Main.java b/Java/src/main/java/bootstrap/Main.java
-index 2f5013f..5c11658 100644
---- a/Java/src/main/java/bootstrap/Main.java
 +++ b/Java/src/main/java/bootstrap/Main.java
-@@ -1,9 +1,11 @@
- package bootstrap;
- 
-+import api.TicketOffice;
-+
+
+```
  public class Main {
  
      public static void main(String[] args) {
@@ -480,19 +470,17 @@ index 2f5013f..5c11658 100644
      }
  
  }
+```
 
-commit 07c2b7388d1a33d457b61f76ce27dfa7916a0fa8
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
 Date:   Wed Feb 28 16:38:41 2018 +0100
 
     the empty implementations add to TODO list.
     
     I need to pick one item to work on.
 
-diff --git a/Java/src/main/java/api/TicketOffice.java b/Java/src/main/java/api/TicketOffice.java
-index 941b7fd..a16d7de 100644
---- a/Java/src/main/java/api/TicketOffice.java
 +++ b/Java/src/main/java/api/TicketOffice.java
+
+```
 @@ -14,7 +14,6 @@ public class TicketOffice {
      public TicketOffice(
          CommandFactory commandFactory,
@@ -501,17 +489,11 @@ index 941b7fd..a16d7de 100644
  
          this.commandFactory = commandFactory;
          this.ticketFactory = ticketFactory;
-diff --git a/Java/src/main/java/bootstrap/Main.java b/Java/src/main/java/bootstrap/Main.java
-index 5c11658..acd7e6d 100644
---- a/Java/src/main/java/bootstrap/Main.java
+```
+
 +++ b/Java/src/main/java/bootstrap/Main.java
-@@ -1,11 +1,14 @@
- package bootstrap;
- 
- import api.TicketOffice;
-+import logic.BookingCommandFactory;
-+import logic.TrainTicketFactory;
- 
+
+```
  public class Main {
  
      public static void main(String[] args) {
@@ -521,197 +503,75 @@ index 5c11658..acd7e6d 100644
      }
  
  }
-diff --git a/Java/src/main/java/logic/BookingCommandFactory.java b/Java/src/main/java/logic/BookingCommandFactory.java
-new file mode 100644
+```
 
-
-
-
-
-
-index 0000000..a5eb928
---- /dev/null
 +++ b/Java/src/main/java/logic/BookingCommandFactory.java
-@@ -0,0 +1,11 @@
-+package logic;
-+
-+import request.dto.ReservationRequestDto;
-+
+
+```
 +public class BookingCommandFactory : CommandFactory {
 +    
-+    public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) {
++    public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) 
++    {
 +        //todo implement
 +        return null;
 +    }
 +}
-diff --git a/Java/src/main/java/logic/TrainTicketFactory.java b/Java/src/main/java/logic/TrainTicketFactory.java
-new file mode 100644
+```
 
-
-
-
-
-
-index 0000000..4bc54a5
---- /dev/null
 +++ b/Java/src/main/java/logic/TrainTicketFactory.java
-@@ -0,0 +1,9 @@
-+package logic;
-+
-+public class TrainTicketFactory : TicketFactory {
+
+```
++public class TrainTicketFactory : TicketFactory 
++{
 +    
-+    public Ticket createBlankTicket() {
++    public Ticket createBlankTicket() 
++    {
 +        //todo implement
 +        return null;
 +    }
 +}
+```
 
-commit b536cc0491ca89a7be6c1ccd81d12a0b2cb91dc1
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
 Date:   Wed Feb 28 16:40:33 2018 +0100
 
     I pick the factory as there is not much I can do with Ticket yet
 
-diff --git a/Java/src/test/java/logic/TrainTicketFactorySpecification.java b/Java/src/test/java/logic/TrainTicketFactorySpecification.java
-new file mode 100644
-
-
-
-
-
-
-index 0000000..e58520b
---- /dev/null
 +++ b/Java/src/test/java/logic/TrainTicketFactorySpecification.java
-@@ -0,0 +1,6 @@
-+package logic;
-+
+
+```
 +public class TrainTicketFactorySpecification {
 +    
 +
 +}
-\ No newline at end of file
+```
 
-commit 867552ef44b8f0c51a7fbdc7316f739b64c5e561
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
-Date:   Wed Feb 28 16:41:23 2018 +0100
-
-    THe factory should create a specific command for me
-
-diff --git a/Java/src/test/java/logic/TrainTicketFactorySpecification.java b/Java/src/test/java/logic/TrainTicketFactorySpecification.java
-index e58520b..c5ce32b 100644
---- a/Java/src/test/java/logic/TrainTicketFactorySpecification.java
-+++ b/Java/src/test/java/logic/TrainTicketFactorySpecification.java
-@@ -1,6 +1,18 @@
- package logic;
- 
-+import org.testng.annotations.Test;
-+
-+import static org.assertj.core.api.Assertions.assertThat;
-+
- public class TrainTicketFactorySpecification {
--    
-+    [Fact]
-+    public void ShouldCreateBookingCommand() {
-+        //GIVEN
-+
-+        //WHEN
-+
-+        //THEN
-+        assertThat(1).isEqualTo(2);
-+    }
- 
- }
-\ No newline at end of file
-
-commit cbf2f0f18e49ee13842d7aa61532b738e9bd3f59
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
 Date:   Wed Feb 28 16:43:17 2018 +0100
 
     [SORRY] I pick command factory as there is not much I can do with tickets
 
-diff --git a/Java/src/test/java/logic/BookingCommandFactoryTest.java b/Java/src/test/java/logic/BookingCommandFactoryTest.java
-new file mode 100644
++++ b/Java/src/test/java/logic/BookingCommandFactorySpecification.java
 
-
-
-
-
-
-index 0000000..6dc1b99
---- /dev/null
-+++ b/Java/src/test/java/logic/BookingCommandFactoryTest.java
-@@ -0,0 +1,5 @@
-+package logic;
-+
-+public class BookingCommandFactoryTest {
+```
++public class BookingCommandFactorySpecification {
 +
 +}
-\ No newline at end of file
-diff --git a/Java/src/test/java/logic/TrainTicketFactorySpecification.java b/Java/src/test/java/logic/TrainTicketFactorySpecification.java
-deleted file mode 100644
-index c5ce32b..0000000
---- a/Java/src/test/java/logic/TrainTicketFactorySpecification.java
-+++ /dev/null
-@@ -1,18 +0,0 @@
--package logic;
--
--import org.testng.annotations.Test;
--
--import static org.assertj.core.api.Assertions.assertThat;
--
--public class TrainTicketFactorySpecification {
--    [Fact]
--    public void ShouldCreateBookingCommand() {
--        //GIVEN
--
--        //WHEN
--
--        //THEN
--        assertThat(1).isEqualTo(2);
--    }
--
--}
-\ No newline at end of file
+```
 
-commit 08a4b6753369993e170395b3a54df1ad4ad53dea
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
 Date:   Thu Mar 1 07:57:53 2018 +0100
 
     wrote a failing test for a type and dependencies
 
-diff --git a/Java/src/main/java/logic/BookTicketCommand.java b/Java/src/main/java/logic/BookTicketCommand.java
-new file mode 100644
-
-
-
-
-
-
-index 0000000..ae17b99
---- /dev/null
 +++ b/Java/src/main/java/logic/BookTicketCommand.java
-@@ -0,0 +1,4 @@
-+package logic;
-+
+
+```
 +public class BookTicketCommand {
 +}
-diff --git a/Java/src/test/java/logic/BookingCommandFactoryTest.java b/Java/src/test/java/logic/BookingCommandFactoryTest.java
-index 6dc1b99..7a6b6b8 100644
---- a/Java/src/test/java/logic/BookingCommandFactoryTest.java
-+++ b/Java/src/test/java/logic/BookingCommandFactoryTest.java
-@@ -1,5 +1,27 @@
- package logic;
- 
-+import lombok.val;
-+import org.testng.annotations.Test;
-+import request.dto.ReservationRequestDto;
-+
-+import static com.github.grzesiek_galezowski.test_environment.types.ObjectGraphContainsDependencyCondition.dependencyOn;
-+import static org.assertj.core.api.Assertions.assertThat;
-+import static org.mockito.Mockito.mock;
-+
- public class BookingCommandFactoryTest {
+```
+
++++ b/Java/src/test/java/logic/BookingCommandFactorySpecification.java
+
+```
+ public class BookingCommandFactorySpecification {
 +    [Fact]
 +    public void ShouldCreateBookTicketCommand() {
 +        //GIVEN
@@ -728,23 +588,17 @@ index 6dc1b99..7a6b6b8 100644
 +        assertThat(result).has(dependencyOn(ticket));
 +    }
  }
-\ No newline at end of file
+```
 
-commit 9829f47c60d93a90a06a1b2a40b49c2eb67cb679
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
 Date:   Thu Mar 1 07:59:49 2018 +0100
 
     Returning book ticket command forced interface implementation
     
     (can be applied via a quick fix)
 
-diff --git a/Java/src/main/java/logic/BookTicketCommand.java b/Java/src/main/java/logic/BookTicketCommand.java
-index ae17b99..137bf5c 100644
---- a/Java/src/main/java/logic/BookTicketCommand.java
 +++ b/Java/src/main/java/logic/BookTicketCommand.java
-@@ -1,4 +1,9 @@
- package logic;
- 
+
+```
 -public class BookTicketCommand {
 +public class BookTicketCommand : Command {
 +    
@@ -753,24 +607,23 @@ index ae17b99..137bf5c 100644
 +
 +    }
  }
-diff --git a/Java/src/main/java/logic/BookingCommandFactory.java b/Java/src/main/java/logic/BookingCommandFactory.java
-index a5eb928..ad8bd50 100644
---- a/Java/src/main/java/logic/BookingCommandFactory.java
+```
+
 +++ b/Java/src/main/java/logic/BookingCommandFactory.java
-@@ -5,7 +5,6 @@ import request.dto.ReservationRequestDto;
- public class BookingCommandFactory : CommandFactory {
-     
+
+```
      public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) {
 -        //todo implement
 -        return null;
 +        return new BookTicketCommand();
      }
- }
-diff --git a/Java/src/test/java/logic/BookingCommandFactoryTest.java b/Java/src/test/java/logic/BookingCommandFactoryTest.java
-index 7a6b6b8..d1e7e4e 100644
---- a/Java/src/test/java/logic/BookingCommandFactoryTest.java
-+++ b/Java/src/test/java/logic/BookingCommandFactoryTest.java
-@@ -17,7 +17,8 @@ public class BookingCommandFactoryTest {
+```
+
++++ b/Java/src/test/java/logic/BookingCommandFactorySpecification.java
+
+```
+@@ -17,7 +17,8 @@ public class BookingCommandFactorySpecification 
+{
          var ticket = Substitute.For<Ticket>();
  
          //WHEN
@@ -780,24 +633,16 @@ index 7a6b6b8..d1e7e4e 100644
  
          //THEN
          assertThat(result).isInstanceOf(BookTicketCommand.class);
+```
 
-commit ff7322cbe40c6a241c3422f133ff183241c5bd51
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
 Date:   Thu Mar 1 08:00:57 2018 +0100
 
     Made 2nd assertion pass by introducing field for dto
-    
     The 3rd assertion still fails.
 
-diff --git a/Java/src/main/java/logic/BookTicketCommand.java b/Java/src/main/java/logic/BookTicketCommand.java
-index 137bf5c..c254c5c 100644
---- a/Java/src/main/java/logic/BookTicketCommand.java
 +++ b/Java/src/main/java/logic/BookTicketCommand.java
-@@ -1,6 +1,14 @@
- package logic;
- 
-+import request.dto.ReservationRequestDto;
-+
+
+```
  public class BookTicketCommand : Command {
 +    private ReservationRequestDto reservation;
 +
@@ -805,14 +650,11 @@ index 137bf5c..c254c5c 100644
 +        this.reservation = reservation;
 +    }
 +
-     
-     public void Execute() {
-         //todo implement
-diff --git a/Java/src/main/java/logic/BookingCommandFactory.java b/Java/src/main/java/logic/BookingCommandFactory.java
-index ad8bd50..9a685da 100644
---- a/Java/src/main/java/logic/BookingCommandFactory.java
+```
+
 +++ b/Java/src/main/java/logic/BookingCommandFactory.java
-@@ -5,6 +5,6 @@ import request.dto.ReservationRequestDto;
+
+```
  public class BookingCommandFactory : CommandFactory {
      
      public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) {
@@ -820,21 +662,13 @@ index ad8bd50..9a685da 100644
 +        return new BookTicketCommand(reservation);
      }
  }
+```
 
-commit 3dff9247d571348d6121495b1ededef983a26a36
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
 Date:   Thu Mar 1 08:01:56 2018 +0100
 
-    The test now passes. New items on TODO list
-    
-    (e.g. Execute() method)
+    The test now passes. New items on TODO list (e.g. Execute() method)
 
-diff --git a/Java/src/main/java/logic/BookTicketCommand.java b/Java/src/main/java/logic/BookTicketCommand.java
-index c254c5c..41e2ff8 100644
---- a/Java/src/main/java/logic/BookTicketCommand.java
-+++ b/Java/src/main/java/logic/BookTicketCommand.java
-@@ -4,9 +4,11 @@ import request.dto.ReservationRequestDto;
- 
+```
  public class BookTicketCommand : Command {
      private ReservationRequestDto reservation;
 +    private Ticket ticket;
@@ -844,13 +678,12 @@ index c254c5c..41e2ff8 100644
          this.reservation = reservation;
 +        this.ticket = ticket;
      }
- 
+```
+
      
-diff --git a/Java/src/main/java/logic/BookingCommandFactory.java b/Java/src/main/java/logic/BookingCommandFactory.java
-index 9a685da..abec844 100644
---- a/Java/src/main/java/logic/BookingCommandFactory.java
 +++ b/Java/src/main/java/logic/BookingCommandFactory.java
-@@ -5,6 +5,6 @@ import request.dto.ReservationRequestDto;
+
+```
  public class BookingCommandFactory : CommandFactory {
      
      public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) {
@@ -858,51 +691,29 @@ index 9a685da..abec844 100644
 +        return new BookTicketCommand(reservation, ticket);
      }
  }
+``` 
 
-commit 51fd3d1e982031bf6f8b34bead2f97a545b09cef
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
 Date:   Thu Mar 1 08:03:46 2018 +0100
 
     As my next step, I choose BookTicketCommand
     
     I prefer it over TicketFactory as it will allow me to learn more about the Ticket interface. So now I am optimizing for learning.
 
-diff --git a/Java/src/test/java/logic/BookTicketCommandSpecification.java b/Java/src/test/java/logic/BookTicketCommandSpecification.java
-new file mode 100644
-
-
-
-
-
-
-index 0000000..dd0ef10
---- /dev/null
 +++ b/Java/src/test/java/logic/BookTicketCommandSpecification.java
-@@ -0,0 +1,5 @@
-+package logic;
-+
+
+```
 +public class BookTicketCommandSpecification {
 +
 +}
-\ No newline at end of file
+```
 
-commit 0f3e0bdb151f4a65c6eb110c0dcd012624cf5ad4
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
 Date:   Thu Mar 1 08:04:30 2018 +0100
 
     I have yet to discover what behavior I will require from the command
 
-diff --git a/Java/src/test/java/logic/BookTicketCommandSpecification.java b/Java/src/test/java/logic/BookTicketCommandSpecification.java
-index dd0ef10..0f2adeb 100644
---- a/Java/src/test/java/logic/BookTicketCommandSpecification.java
 +++ b/Java/src/test/java/logic/BookTicketCommandSpecification.java
-@@ -1,5 +1,17 @@
- package logic;
- 
-+import org.testng.annotations.Test;
-+
-+import static org.assertj.core.api.Assertions.assertThat;
-+
+
+```
  public class BookTicketCommandSpecification {
 +    [Fact]
 +    public void ShouldXXXXXXXXXXXXX() {
@@ -914,54 +725,38 @@ index dd0ef10..0f2adeb 100644
 +        assertThat(1).isEqualTo(2);
 +    }
  }
-\ No newline at end of file
+```
 
-commit 2daff5d44e2977e97f568e7bf5cce742f3c516cf
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
 Date:   Thu Mar 1 08:05:48 2018 +0100
 
     I realize I have no train, so I comment the test and backtrack
 
-diff --git a/Java/src/test/java/logic/BookTicketCommandSpecification.java b/Java/src/test/java/logic/BookTicketCommandSpecification.java
-index 0f2adeb..d1960b5 100644
---- a/Java/src/test/java/logic/BookTicketCommandSpecification.java
 +++ b/Java/src/test/java/logic/BookTicketCommandSpecification.java
-@@ -1,11 +1,9 @@
- package logic;
- 
--import org.testng.annotations.Test;
--
--import static org.assertj.core.api.Assertions.assertThat;
--
+
+```
  public class BookTicketCommandSpecification {
 +    /*
      [Fact]
 +    //hmm, should reserve a train, but I have no train
      public void ShouldXXXXXXXXXXXXX() {
          //GIVEN
- 
-@@ -13,5 +11,5 @@ public class BookTicketCommandSpecification {
+
+        ...
  
          //THEN
          assertThat(1).isEqualTo(2);
 -    }
 +    }*/
  }
-\ No newline at end of file
+```
 
-commit 80ca8a3a29f3e0b5f3ab7830bfa1e7414fd0c4f6
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
 Date:   Thu Mar 1 16:14:20 2018 +0100
 
     Discovered TrainRepository interface
 
-diff --git a/Java/src/main/java/logic/BookingCommandFactory.java b/Java/src/main/java/logic/BookingCommandFactory.java
-index abec844..14ad559 100644
---- a/Java/src/main/java/logic/BookingCommandFactory.java
 +++ b/Java/src/main/java/logic/BookingCommandFactory.java
-@@ -3,6 +3,11 @@ package logic;
- import request.dto.ReservationRequestDto;
- 
+
+```
  public class BookingCommandFactory : CommandFactory {
 +    public BookingCommandFactory(TrainRepository trainRepo) {
 +        //todo implement
@@ -971,27 +766,20 @@ index abec844..14ad559 100644
      
      public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) {
          return new BookTicketCommand(reservation, ticket);
-diff --git a/Java/src/main/java/logic/TrainRepository.java b/Java/src/main/java/logic/TrainRepository.java
-new file mode 100644
+```
 
-
-
-
-
-
-index 0000000..fdb959b
---- /dev/null
 +++ b/Java/src/main/java/logic/TrainRepository.java
-@@ -0,0 +1,4 @@
-+package logic;
-+
-+public interface TrainRepository {
+
+```
++public interface TrainRepository 
++{
 +}
-diff --git a/Java/src/test/java/logic/BookingCommandFactoryTest.java b/Java/src/test/java/logic/BookingCommandFactoryTest.java
-index d1e7e4e..8650cfb 100644
---- a/Java/src/test/java/logic/BookingCommandFactoryTest.java
-+++ b/Java/src/test/java/logic/BookingCommandFactoryTest.java
-@@ -12,10 +12,12 @@ public class BookingCommandFactoryTest {
+```
+
++++ b/Java/src/test/java/logic/BookingCommandFactorySpecification.java
+
+```
+@@ -12,10 +12,12 @@ public class BookingCommandFactorySpecification {
      [Fact]
      public void ShouldCreateBookTicketCommand() {
          //GIVEN
@@ -1006,28 +794,21 @@ index d1e7e4e..8650cfb 100644
          //WHEN
          Command result = bookingCommandFactory
              .CreateBookCommand(reservation, ticket);
+```
 
-commit 4466cd02d45b53db9c2b3c0382c0cecacf8ed8e7
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
 Date:   Thu Mar 1 16:16:14 2018 +0100
 
     Discovered train collaborator and getBy repo method
     
     Now what type should the train variable be?
 
-diff --git a/Java/src/test/java/logic/BookingCommandFactoryTest.java b/Java/src/test/java/logic/BookingCommandFactoryTest.java
-index 8650cfb..932c94a 100644
---- a/Java/src/test/java/logic/BookingCommandFactoryTest.java
-+++ b/Java/src/test/java/logic/BookingCommandFactoryTest.java
-@@ -6,6 +6,7 @@ import request.dto.ReservationRequestDto;
- 
- import static com.github.grzesiek_galezowski.test_environment.types.ObjectGraphContainsDependencyCondition.dependencyOn;
- import static org.assertj.core.api.Assertions.assertThat;
-+import static org.mockito.BDDMockito.given;
- import static org.mockito.Mockito.mock;
- 
- public class BookingCommandFactoryTest {
-@@ -18,6 +19,10 @@ public class BookingCommandFactoryTest {
+
+
++++ b/Java/src/test/java/logic/BookingCommandFactorySpecification.java
+
+```
+public class BookingCommandFactorySpecification {
+    //...
          );
          var reservation = Substitute.For<ReservationRequestDto>();
          var ticket = Substitute.For<Ticket>();
@@ -1038,7 +819,7 @@ index 8650cfb..932c94a 100644
          //WHEN
          Command result = bookingCommandFactory
              .CreateBookCommand(reservation, ticket);
-@@ -26,5 +31,7 @@ public class BookingCommandFactoryTest {
+@@ -26,5 +31,7 @@ public class BookingCommandFactorySpecification {
          assertThat(result).isInstanceOf(BookTicketCommand.class);
          assertThat(result).has(dependencyOn(reservation));
          assertThat(result).has(dependencyOn(ticket));
@@ -1046,35 +827,26 @@ index 8650cfb..932c94a 100644
 +        assertThat(result).has(dependencyOn(train));
      }
  }
-\ No newline at end of file
+```
 
-commit 53448a8b7b04913a07f719cecf3927939ce23463
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
+
 Date:   Thu Mar 1 16:17:14 2018 +0100
 
     Discovered a Train interface
 
-diff --git a/Java/src/main/java/logic/Train.java b/Java/src/main/java/logic/Train.java
-new file mode 100644
-
-
-
-
-
-
-index 0000000..c96a022
---- /dev/null
 +++ b/Java/src/main/java/logic/Train.java
-@@ -0,0 +1,4 @@
-+package logic;
-+
-+public interface Train {
+
+```
++public interface Train 
++{
 +}
-diff --git a/Java/src/test/java/logic/BookingCommandFactoryTest.java b/Java/src/test/java/logic/BookingCommandFactoryTest.java
-index 932c94a..6cdb16b 100644
---- a/Java/src/test/java/logic/BookingCommandFactoryTest.java
-+++ b/Java/src/test/java/logic/BookingCommandFactoryTest.java
-@@ -19,6 +19,7 @@ public class BookingCommandFactoryTest {
+```
+
++++ b/Java/src/test/java/logic/BookingCommandFactorySpecification.java
+
+```
+@@ -19,6 +19,7 @@ public class BookingCommandFactorySpecification 
+{
          );
          var reservation = Substitute.For<ReservationRequestDto>();
          var ticket = Substitute.For<Ticket>();
@@ -1082,26 +854,16 @@ index 932c94a..6cdb16b 100644
  
          trainRepo.GetTrainBy(reservation.trainId)
              .Returns(train);
+```
 
-commit 099039cdcf54bbf52ce7c10135855d7f795dc55d
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
+
 Date:   Thu Mar 1 16:19:04 2018 +0100
 
-    Discovered CouchDbTrainRepository
-    
-    the TODO list grows
+    Discovered CouchDbTrainRepository the TODO list grows
 
-diff --git a/Java/src/main/java/bootstrap/Main.java b/Java/src/main/java/bootstrap/Main.java
-index acd7e6d..60e055a 100644
---- a/Java/src/main/java/bootstrap/Main.java
 +++ b/Java/src/main/java/bootstrap/Main.java
-@@ -2,12 +2,15 @@ package bootstrap;
- 
- import api.TicketOffice;
- import logic.BookingCommandFactory;
-+import logic.CouchDbTrainRepository;
- import logic.TrainTicketFactory;
- 
+
+```
  public class Main {
  
      public static void main(String[] args) {
@@ -1111,28 +873,23 @@ index acd7e6d..60e055a 100644
 +        ),
              new TrainTicketFactory());
      }
- 
-diff --git a/Java/src/main/java/logic/CouchDbTrainRepository.java b/Java/src/main/java/logic/CouchDbTrainRepository.java
-new file mode 100644
+```
 
 
-
-
-
-
-index 0000000..fa1688d
---- /dev/null
 +++ b/Java/src/main/java/logic/CouchDbTrainRepository.java
-@@ -0,0 +1,9 @@
-+package logic;
-+
-+public class CouchDbTrainRepository : TrainRepository {
+
+```
++public class CouchDbTrainRepository : TrainRepository 
+{
 +    
-+    public Train GetTrainBy(String trainId) {
++    public Train GetTrainBy(String trainId) 
++    {
 +        //todo implement
 +        return null;
 +    }
 +}
+```
+
 diff --git a/Java/src/main/java/logic/TrainRepository.java b/Java/src/main/java/logic/TrainRepository.java
 index fdb959b..ed8681c 100644
 --- a/Java/src/main/java/logic/TrainRepository.java
@@ -1721,11 +1478,11 @@ index 057d6dd..34b1b23 100644
          var train = Substitute.For<Train>();
          var bookTicketCommand
              = new BookTicketCommand(reservation, ticket, train);
-diff --git a/Java/src/test/java/logic/BookingCommandFactoryTest.java b/Java/src/test/java/logic/BookingCommandFactoryTest.java
+diff --git a/Java/src/test/java/logic/BookingCommandFactorySpecification.java b/Java/src/test/java/logic/BookingCommandFactorySpecification.java
 index 6cdb16b..caa1b3c 100644
---- a/Java/src/test/java/logic/BookingCommandFactoryTest.java
-+++ b/Java/src/test/java/logic/BookingCommandFactoryTest.java
-@@ -18,7 +18,7 @@ public class BookingCommandFactoryTest {
+--- a/Java/src/test/java/logic/BookingCommandFactorySpecification.java
++++ b/Java/src/test/java/logic/BookingCommandFactorySpecification.java
+@@ -18,7 +18,7 @@ public class BookingCommandFactorySpecification {
              trainRepo
          );
          var reservation = Substitute.For<ReservationRequestDto>();
@@ -3551,6 +3308,7 @@ index 3568928..5894ae3 100644
 @@ -7,7 +7,7 @@ import org.testng.annotations.Test;
  import static org.assertj.core.api.Assertions.assertThat;
  
+```
  public class NamedSeatSpecification {
 -    [Fact]
 +    [Fact](invocationCount = 2)
