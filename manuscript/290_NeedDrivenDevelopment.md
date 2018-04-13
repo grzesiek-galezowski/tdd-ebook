@@ -2632,11 +2632,6 @@ Date:   Thu Mar 15 08:34:50 2018 +0100
 diff --git a/Java/src/test/java/logic/CoachWithSeatsSpecification.java 
 
 ```csharp
-@@ -91,6 +91,31 @@ public class CoachWithSeatsSpecification {
-         assertThat(reservationAllowed).isFalse();
-     }
-
- 
 +    [Fact]
 +    public void ShouldAllowReservingUpFrontUpTo70PercentOfSeats() {
 +        //GIVEN
@@ -2662,22 +2657,11 @@ diff --git a/Java/src/test/java/logic/CoachWithSeatsSpecification.java
 +    }
 +
 +
-     private Seat ReservedSeat() {
-         Seat mock = Substitute.For<Seat>();
-         mock.IsFree().Returns(false);
 ```
-
-commit fe86c7c467e238e6409fd49e6995237312a22e43
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
-Date:   Thu Mar 15 08:35:45 2018 +0100
 
     Naively passing the test
 
-diff --git a/Java/src/main/java/logic/CoachWithSeats.java b/Java/src/main/java/logic/CoachWithSeats.java
-index 952b8fb..ef62030 100644
---- a/Java/src/main/java/logic/CoachWithSeats.java
 +++ b/Java/src/main/java/logic/CoachWithSeats.java
-@@ -17,8 +17,8 @@ public class CoachWithSeats : Coach {
  
 ```csharp     
      public bool AllowsUpFrontReservationOf(int seatCount) {
@@ -2688,13 +2672,7 @@ index 952b8fb..ef62030 100644
      }
 ```
  
-     
-
-commit 2102466b3e3a3bd937bb58584121c615145daa1c
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
-Date:   Thu Mar 15 08:38:02 2018 +0100
-
-    New test for up front
+New test for up front:
 
 diff --git a/Java/src/test/java/logic/CoachWithSeatsSpecification.java 
 
@@ -2731,19 +2709,12 @@ diff --git a/Java/src/test/java/logic/CoachWithSeatsSpecification.java
          Seat mock = Substitute.For<Seat>();
 ```
 
-commit da173981eceb7af6e24c7e4f815ad949dd70d7fb
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
-Date:   Thu Mar 15 16:46:37 2018 +0100
+Commented out a failing test and refactored:
 
-    Commented out a failing test and refactored
 
-diff --git a/Java/src/main/java/logic/CoachWithSeats.java b/Java/src/main/java/logic/CoachWithSeats.java
-index ef62030..4669230 100644
---- a/Java/src/main/java/logic/CoachWithSeats.java
 +++ b/Java/src/main/java/logic/CoachWithSeats.java
-@@ -23,7 +23,11 @@ public class CoachWithSeats : Coach {
- 
-     
+
+```csharp     
      public bool allowsReservationOf(int seatCount) {
 -        return seatCount == Arrays.stream(seats)
 +        return seatCount == freeSeatCount();
@@ -2754,34 +2725,23 @@ index ef62030..4669230 100644
              .filter(seat -> seat.IsFree())
              .count();
      }
-diff --git a/Java/src/test/java/logic/CoachWithSeatsSpecification.java b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
-index 331d351..f37ab16 100644
---- a/Java/src/test/java/logic/CoachWithSeatsSpecification.java
+```
+
 +++ b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
-@@ -115,7 +115,7 @@ public class CoachWithSeatsSpecification {
-         Assert.True(reservationAllowed);
-     }
- 
+
+```csharp 
 -    [Fact]
 +    //[Fact] todo uncomment!
      public void ShouldNotAllowReservingUpFrontOverTo70PercentOfSeats() {
          //GIVEN
          var coachWithSeats = new CoachWithSeats(
+```             
 
-commit 0e80f243d62c036f33ec96756304888ae67cd453
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
-Date:   Thu Mar 15 16:48:42 2018 +0100
+Damn, 2 tests failing...
 
-    damn, 2 tests failing...
-
-diff --git a/Java/src/test/java/logic/CoachWithSeatsSpecification.java b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
-index f37ab16..9d56b74 100644
---- a/Java/src/test/java/logic/CoachWithSeatsSpecification.java
 +++ b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
-@@ -115,7 +115,7 @@ public class CoachWithSeatsSpecification {
-         Assert.True(reservationAllowed);
-     }
- 
+
+```csharp 
 -    //[Fact] todo uncomment!
 +    [Fact]
      public void ShouldNotAllowReservingUpFrontOverTo70PercentOfSeats() {
@@ -2794,19 +2754,14 @@ index f37ab16..9d56b74 100644
 -        Assert.True(reservationAllowed);
 +        assertThat(reservationAllowed).isFalse();
      }
- 
-     private Seat ReservedSeat() {
+```
 
-commit cbbb474eb90284bed957abd0a13833f1d7d26b75
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
-Date:   Thu Mar 15 16:49:52 2018 +0100
+OK, one test failing:
 
-    OK, one test failing
 
-diff --git a/Java/src/main/java/logic/CoachWithSeats.java b/Java/src/main/java/logic/CoachWithSeats.java
-index 4669230..4f1440e 100644
---- a/Java/src/main/java/logic/CoachWithSeats.java
 +++ b/Java/src/main/java/logic/CoachWithSeats.java
+
+```csharp
 @@ -17,13 +17,13 @@ public class CoachWithSeats : Coach {
  
      
@@ -2824,19 +2779,13 @@ index 4669230..4f1440e 100644
      }
  
      private long freeSeatCount() {
+```
 
-commit bde8fa7131861ffbc4f640a9af65a77376db115e
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
-Date:   Thu Mar 15 16:51:10 2018 +0100
+Made last test pass. omitting rounding behavior etc.:
 
-    Made last test pass
-    
-    omitting rounding behavior etc.
-
-diff --git a/Java/src/main/java/logic/CoachWithSeats.java b/Java/src/main/java/logic/CoachWithSeats.java
-index 4f1440e..b7be055 100644
---- a/Java/src/main/java/logic/CoachWithSeats.java
 +++ b/Java/src/main/java/logic/CoachWithSeats.java
+
+```csharp
 @@ -17,7 +17,7 @@ public class CoachWithSeats : Coach {
  
      
@@ -2844,38 +2793,25 @@ index 4f1440e..b7be055 100644
 -        return seatCount <= seats.length;
 +        return seatCount <= seats.length * 0.7;
      }
- 
+```
      
 
-commit c72a4cc250e0627c7eb1347acb00ae1e6ad86c0e
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
-Date:   Thu Mar 15 16:55:33 2018 +0100
+Picked the right formula for the criteria. Another test green.
 
-    Picked the right formula for the criteria
-    
-    Another test green
-
-diff --git a/Java/src/main/java/logic/CoachWithSeats.java b/Java/src/main/java/logic/CoachWithSeats.java
-index b7be055..4074012 100644
---- a/Java/src/main/java/logic/CoachWithSeats.java
 +++ b/Java/src/main/java/logic/CoachWithSeats.java
-@@ -17,7 +17,7 @@ public class CoachWithSeats : Coach {
- 
-     
+
+```csharp
      public bool AllowsUpFrontReservationOf(int seatCount) {
 -        return seatCount <= seats.length * 0.7;
 +        return (freeSeatCount() - seatCount) >= seats.length * 0.3;
      }
+```
  
      
-diff --git a/Java/src/test/java/logic/CoachWithSeatsSpecification.java b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
-index 9d56b74..a4b8de0 100644
---- a/Java/src/test/java/logic/CoachWithSeatsSpecification.java
 +++ b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
-@@ -139,6 +139,31 @@ public class CoachWithSeatsSpecification {
-         assertThat(reservationAllowed).isFalse();
-     }
- 
+
+
+```csharp 
 +    [Fact]
 +    public void ShouldNotAllowReservingUpFrontOver70PercentOfSeatsWhenSomeAreAlreadyReserved() {
 +        //GIVEN
@@ -2901,56 +2837,37 @@ index 9d56b74..a4b8de0 100644
 +    }
 +
 +
-     private Seat ReservedSeat() {
-         Seat mock = Substitute.For<Seat>();
-         mock.IsFree().Returns(false);
+```
 
-commit 05355a1aca3a0d902ac4c8ba62bdc30ac73e6d3b
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
-Date:   Fri Mar 16 08:27:34 2018 +0100
 
-    Added reservation test
+Added reservation test:
 
-diff --git a/Java/src/main/java/logic/CoachWithSeats.java b/Java/src/main/java/logic/CoachWithSeats.java
-index 4074012..43ce204 100644
---- a/Java/src/main/java/logic/CoachWithSeats.java
 +++ b/Java/src/main/java/logic/CoachWithSeats.java
-@@ -22,7 +22,6 @@ public class CoachWithSeats : Coach {
- 
-     
-     public bool allowsReservationOf(int seatCount) {
+
+```csharp
+@@ -22,7 +22,6 @@ public class CoachWithSeats : Coach 
+{
+     public bool allowsReservationOf(int seatCount) 
+     {
 -
          return seatCount <= freeSeatCount();
      }
- 
-diff --git a/Java/src/main/java/logic/Seat.java b/Java/src/main/java/logic/Seat.java
-index 4f03bd8..0c24d39 100644
---- a/Java/src/main/java/logic/Seat.java
+```
+
 +++ b/Java/src/main/java/logic/Seat.java
-@@ -2,4 +2,5 @@ package logic;
- 
- public interface Seat {
+
+```csharp
+ public interface Seat 
+ {
      bool isFree();
 +    void reserveFor(TicketInProgress ticketInProgress);
  }
-diff --git a/Java/src/test/java/logic/CoachWithSeatsSpecification.java b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
-index a4b8de0..75d87df 100644
---- a/Java/src/test/java/logic/CoachWithSeatsSpecification.java
+```
+
 +++ b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
-@@ -5,7 +5,10 @@ import lombok.val;
- import org.testng.annotations.Test;
- 
- import static org.assertj.core.api.Assertions.assertThat;
-+import static org.mockito.ArgumentMatchers.any;
-+import static org.mockito.BDDMockito.then;
- import static org.mockito.Mockito.mock;
-+import static org.mockito.Mockito.never;
- import static org.mockito.Mockito.when;
- 
+
+```csharp
  public class CoachWithSeatsSpecification {
-@@ -163,6 +166,27 @@ public class CoachWithSeatsSpecification {
-         assertThat(reservationAllowed).isFalse();
-     }
  
 +    [Fact]
 +    public void ShouldReserveFirstFreeSeats() {
@@ -2973,40 +2890,33 @@ index a4b8de0..75d87df 100644
 +        then(seat2).should().reserveFor(ticketInProgress);
 +        then(seat1).should(never()).reserveFor(any(TicketInProgress.class));
 +    }
- 
-     private Seat ReservedSeat() {
-         Seat mock = Substitute.For<Seat>();
+```
 
-commit 398d4ab300d4394ae097ab202332757f2f63d5d7
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
-Date:   Fri Mar 16 08:31:47 2018 +0100
+Added reservation:
 
-    Added reservation
-
-diff --git a/Java/src/main/java/logic/CoachWithSeats.java b/Java/src/main/java/logic/CoachWithSeats.java
-index 43ce204..713c4d4 100644
---- a/Java/src/main/java/logic/CoachWithSeats.java
 +++ b/Java/src/main/java/logic/CoachWithSeats.java
-@@ -11,7 +11,14 @@ public class CoachWithSeats : Coach {
- 
-     
+
+```csharp
      public void Reserve(int seatCount, TicketInProgress ticket) {
 -        //todo implement
-+        for (Seat seat : seats) {
-+            if (seatCount == 0) {
++        foreach (var seat in seats) 
++        {
++            if (seatCount == 0) 
++            {
 +                return;
-+            } else {
++            } 
++            else 
++            {
 +                seat.reserveFor(ticket);
 +                seatCount--;
 +            }
 +        }
- 
      }
+```
  
-diff --git a/Java/src/test/java/logic/CoachWithSeatsSpecification.java b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
-index 75d87df..b046ef2 100644
---- a/Java/src/test/java/logic/CoachWithSeatsSpecification.java
 +++ b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
+
+```csharp
 @@ -185,7 +185,7 @@ public class CoachWithSeatsSpecification {
          //THEN
          then(seat1).should().reserveFor(ticketInProgress);
@@ -3026,39 +2936,17 @@ index 75d87df..b046ef2 100644
 -
 +    //todo should we protect Reserve() method?
  }
-\ No newline at end of file
+```
 
-commit 449ebbc49d71c02007d365b43abe68bbe73c327f
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
-Date:   Fri Mar 16 16:44:28 2018 +0100
+Discovered a NamedSeat class:
 
-    Looking at todo list
-
-diff --git a/Java/src/test/java/logic/CoachWithSeatsSpecification.java b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
-index b046ef2..68a1034 100644
---- a/Java/src/test/java/logic/CoachWithSeatsSpecification.java
-+++ b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
-@@ -201,6 +201,5 @@ public class CoachWithSeatsSpecification {
-         return mock;
-     }
- 
--
-     //todo should we protect Reserve() method?
- }
-\ No newline at end of file
-
-commit c382a3bb80f3c36aff86936aed6bec9521c6e71c
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
-Date:   Fri Mar 16 16:46:56 2018 +0100
-
-    Discovered a NamedSeat class
-
-diff --git a/Java/src/main/java/logic/CouchDbTrainRepository.java b/Java/src/main/java/logic/CouchDbTrainRepository.java
-index 1a4b009..8bf4abd 100644
---- a/Java/src/main/java/logic/CouchDbTrainRepository.java
 +++ b/Java/src/main/java/logic/CouchDbTrainRepository.java
-@@ -5,7 +5,10 @@ public class CouchDbTrainRepository : TrainRepository {
-     public Train GetTrainBy(String trainId) {
+
+```csharp
+@@ -5,7 +5,10 @@ public class CouchDbTrainRepository : TrainRepository 
+{
+     public Train GetTrainBy(string trainId) 
+     {
          //todo there should be something passed here!!
          return new TrainWithCoaches(
 -            new CoachWithSeats()
@@ -3069,47 +2957,36 @@ index 1a4b009..8bf4abd 100644
          );
      }
  }
-diff --git a/Java/src/main/java/logic/NamedSeat.java b/Java/src/main/java/logic/NamedSeat.java
-new file mode 100644
+```
 
-
-
-
-
-
-index 0000000..2e20b7f
---- /dev/null
 +++ b/Java/src/main/java/logic/NamedSeat.java
-@@ -0,0 +1,15 @@
-+package logic;
-+
-+public class NamedSeat : Seat {
+
+```csharp
++public class NamedSeat : Seat 
++{
 +    
-+    public bool isFree() {
++    public bool isFree() 
++    {
 +        //todo implement
 +        return false;
 +    }
 +
 +    
-+    public void reserveFor(TicketInProgress ticketInProgress) {
++    public void reserveFor(TicketInProgress ticketInProgress) 
++    {
 +        //todo implement
 +
 +    }
 +}
+```
 
-commit b0cc065b84d56cf5eecbf7e15933e2aca52f47e4
-Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
-Date:   Fri Mar 16 16:55:13 2018 +0100
+    Added failing test. Note that depending on what Any.boolean() returns, this might pass or not:
 
-    Added failing test
-    
-    Note that depending on what Any.boolean() returns, this might pass or not
-
-diff --git a/Java/src/main/java/logic/CouchDbTrainRepository.java b/Java/src/main/java/logic/CouchDbTrainRepository.java
-index 8bf4abd..3e9340e 100644
---- a/Java/src/main/java/logic/CouchDbTrainRepository.java
 +++ b/Java/src/main/java/logic/CouchDbTrainRepository.java
-@@ -6,8 +6,8 @@ public class CouchDbTrainRepository : TrainRepository {
+
+```csharp
+@@ -6,8 +6,8 @@ public class CouchDbTrainRepository : TrainRepository 
+{
          //todo there should be something passed here!!
          return new TrainWithCoaches(
              new CoachWithSeats(
@@ -3120,13 +2997,11 @@ index 8bf4abd..3e9340e 100644
              )
          );
      }
-diff --git a/Java/src/main/java/logic/NamedSeat.java b/Java/src/main/java/logic/NamedSeat.java
-index 2e20b7f..26b5b8e 100644
---- a/Java/src/main/java/logic/NamedSeat.java
+```
+
 +++ b/Java/src/main/java/logic/NamedSeat.java
-@@ -1,6 +1,11 @@
- package logic;
- 
+
+```csharp
  public class NamedSeat : Seat {
 +    public NamedSeat(bool isFree) {
 +        //todo implement
@@ -3136,27 +3011,14 @@ index 2e20b7f..26b5b8e 100644
      
      public bool isFree() {
          //todo implement
-diff --git a/Java/src/test/java/logic/NamedSeatSpecification.java b/Java/src/test/java/logic/NamedSeatSpecification.java
-new file mode 100644
+```
 
-
-
-
-
-
-index 0000000..3568928
---- /dev/null
 +++ b/Java/src/test/java/logic/NamedSeatSpecification.java
-@@ -0,0 +1,25 @@
-+package logic;
-+
-+import autofixture.publicinterface.Any;
-+import lombok.val;
-+import org.testng.annotations.Test;
-+
-+import static org.assertj.core.api.Assertions.assertThat;
-+
-+public class NamedSeatSpecification {
+
+
+```csharp
++public class NamedSeatSpecification 
++{
 +    [Fact]
 +    public void ShouldBeFreeDependingOnPassedConstructorParameter() {
 +        //GIVEN
@@ -3173,7 +3035,7 @@ index 0000000..3568928
 +    //todo add ctrl + enter to presentation
 +    //todo add CamelHumps to presentation
 +}
-\ No newline at end of file
+```
 
 commit af433d11330bd66378c20cea9e9261cea0fed2e2
 Author: Galezowski Grzegorz-FTW637 <FTW637@motorolasolutions.com>
