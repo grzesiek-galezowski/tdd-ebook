@@ -104,7 +104,6 @@ public class TicketOfficeSpecification
 
 But who is going to return the ticket DTO? (BTW, what is a DTO?)
 
-
 ### Who will give us a ticket DTO?
  
 Let's have a ticket convertible to dto (btw, how to hide this toDto method?)
@@ -117,16 +116,11 @@ Let's have a ticket convertible to dto (btw, how to hide this toDto method?)
 +
 +   ticket.ToDto().Returns(resultDto);
 +
-    //WHEN
-    var ticketDto = ticketOffice.MakeReservation(reservation);
 ```
 
 This leads to discovery of `Ticket` interface and `ToDto()` method.
 
 ```csharp
-         var ticketOffice = new TicketOffice();
-         var reservation = Any.Instance<ReservationRequestDto>();
-         var resultDto = Any.Instance<TicketDto>();
 +        Ticket ticket = Substitute.For<Ticket>();
  
          ticket.ToDto().Returns(resultDto);
@@ -141,7 +135,7 @@ And this needs to be represented in code (btw, are the rest of the objects shown
 
 ```
 
-Introduced toDto method. But how to pass the Ticket?
+Introducing toDto method. But how to pass the Ticket?
 
 ```csharp
 public interface Ticket
@@ -154,49 +148,41 @@ public interface Ticket
 
 Ticket will come from factory - factories don't use tell don't ask. Also, ToDto() also returns a value - because we need to cope with an API that violates CQS. Not much OO, is it?
 
-diff --git a/Java/src/test/java/TicketOfficeSpecification.java b/Java/src/test/java/TicketOfficeSpecification.java
-```csharp
-    var resultDto = Any.Instance<TicketDto>();
-    var ticket = Substitute.For<Ticket>();
+TicketOfficeSpecification.java:
 
+```csharp
 +   ticketFactory.CreateBlankTicket().Returns(ticket);
     ticket.ToDto().Returns(resultDto);
 
 //WHEN
 ```
 
-The Statement shows that we need a factory, so let's introduce it in the Statement first. Name: TicketFactory collaborator
+The Statement shows that we need a factory, so let's introduce it in the Statement first. Name: TicketFactory collaborator.
 
-diff --git a/Java/src/test/java/TicketOfficeSpecification.java b/Java/src/test/java/TicketOfficeSpecification.java
+TicketOfficeSpecification.java
+
 ```csharp
-    var resultDto = Any.Instance<TicketDto>();
-    var ticket = Substitute.For<Ticket>();
 +   var ticketFactory = Substitute.For<TicketFactory>());
 
     ticketFactory.CreateBlankTicket().Returns(ticket);
-    ticket.ToDto().Returns(resultDto);
 ```
 
 The interface does not exist yet, let's create it:
 
-diff --git a/Java/src/main/java/logic/TicketFactory.java b/Java/src/main/java/logic/TicketFactory.java
-new file mode 100644
-
 +++ b/Java/src/main/java/logic/TicketFactory.java
-@@ -0,0 +1,5 @@
+
 ```csharp
-public interface TicketFactory 
+public interface TicketFactory
 {
   Ticket CreateBlankTicket();
 }
 ```
 
-Time for assertions - what do we expect? Johnny uses his experience to pull a command - because we want to get out of CQS violation. Typically we can do two things - either use a command or a facade. For now mistakenly assuming that it will take a parameter.
+Time for assertions - what do we expect? Johnny uses his experience to pull a command - because we want to get out of CQS violation. Typically we can do two things - either use a command or a facade. For now mistakenly assuming that the command will take a parameter.
 
-diff --git a/Java/src/test/java/TicketOfficeSpecification.java b/Java/src/test/java/TicketOfficeSpecification.java
+TicketOfficeSpecification.java
+
 ```csharp
-  var ticketDto = ticketOffice.MakeReservation(reservation);
-
   //THEN
 + bookCommand.Received(1).Execute(ticket);
   Assert.Equal(resultDto, ticketDto);
@@ -205,41 +191,41 @@ diff --git a/Java/src/test/java/TicketOfficeSpecification.java b/Java/src/test/j
 
 Interesting thing is that having both an assertion and a mock verification means we violate CQS. We want to avoid it, but sometimes 3rd party APIs require that.
 
-We know that we need a command, so let's introduce it in the Statement. 
+Also, `Ticket` is an example of collecting parameter pattern. Probably `TicketInProgress` would be a better name.
 
-diff --git a/Java/src/test/java/TicketOfficeSpecification.java b/Java/src/test/java/TicketOfficeSpecification.java
+We know that we need a command, so let's introduce it in the Statement in the GIVEN section.
+
+TicketOfficeSpecification.java
 
 ```csharp
-  var ticket = Substitute.For<Ticket>();
+M var ticket = Substitute.For<TicketInProgress>();
 + var bookCommand = Sustitute.For<Command>();
 
   var ticketFactory = Substitute.For<TicketFactory>();
   ticketFactory.CreateBlankTicket().Returns(ticket);
 ```
 
-+++ b/Java/src/main/java/logic/Command.java
-@@ -0,0 +1,4 @@
+Command.java
+
 ```csharp
-public interface Command
-{
-}
++public interface Command
++{
++}
 ```
 
-Also, this method goes inside the `Command`:
+Also, this method goes inside the `Command` (already used in the Statement):
 
 ```csharp
  public interface Command {
-+    void Execute(Ticket ticket);
++    void Execute(TicketInProgress ticket);
  }
  ```
 
-`TicketOffice` needs to know about the command - how will it get it? I decide a command factory will wrap dto with a command. I'm using this opportunity to 
+`TicketOffice` needs to know about the command - how will it get it? I decide a command factory will wrap dto with a command (GIVEN section).
 
-diff --git a/Java/src/test/java/TicketOfficeSpecification.java b/Java/src/test/java/TicketOfficeSpecification.java
+TicketOfficeSpecification.java
+
 ```csharp
-  var ticketFactory = Substitute.For<TicketFactory>();
-  ticketFactory.CreateBlankTicket().Returns(ticket);
-  ticket.ToDto().Returns(resultDto);
 + commandFactory.CreateBookCommand(reservation)
 +   .Returns(bookCommand);
 
@@ -247,10 +233,18 @@ diff --git a/Java/src/test/java/TicketOfficeSpecification.java b/Java/src/test/j
   var ticketDto = ticketOffice.MakeReservation(reservation);
 ```
 
-Introduced the factory interface. 
+Introducing the factory declaration.
 
-+++ b/Java/src/main/java/logic/CommandFactory.java
-@@ -0,0 +1,7 @@
+```csharp
+public class TicketOfficeSpecification {
++        var commandFactory = Substitute.For<CommandFactory>();
+         commandFactory.CreateBookCommand(reservation)
+             .Returns(bookCommand);
+```
+
+it means we need an interface:
+
+CommandFactory.java
 
 ```csharp
 public interface CommandFactory
@@ -259,29 +253,13 @@ public interface CommandFactory
 }
 ```
 
-And declaring it inside the Statement:
-
-```csharp
-public class TicketOfficeSpecification {
-         var ticketFactory = Substitute.For<TicketFactory>();
-         ticketFactory.CreateBlankTicket().Returns(ticket);
-         ticket.ToDto().Returns(resultDto);
-+        var commandFactory = Substitute.For<CommandFactory>();
-         commandFactory.CreateBookCommand(reservation)
-             .Returns(bookCommand);
-```
-
 Now how should a ticket office get to know it? We can just pass the factory to the constructor, since it does not need anything from the request during its construction time. (since its creation is not dependent on local scope).
 
-diff --git a/Java/src/test/java/TicketOfficeSpecification.java b/Java/src/test/java/TicketOfficeSpecification.java
+TicketOfficeSpecification.java
+
+cos tu jest nie tak: niektore z tych linijek chyba byly juz dodane...
 
 ```csharp
-public class TicketOfficeSpecification {
-  [Fact]
-  public void ShouldCreateAndExecuteCommandWithTicketAndTrain() 
-  {
-    //WHEN
-    var commandFactory = Substitute.For<CommandFactory>();
 -   var ticketOffice = new TicketOffice();
 +   var ticketOffice = new TicketOffice(commandFactory);
     var reservation = Any.Instance<ReservationRequestDto>();
