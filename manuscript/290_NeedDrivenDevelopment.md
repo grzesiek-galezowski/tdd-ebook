@@ -1,6 +1,8 @@
 
 ## Initial objects
 
+TODO remember to describe how a TODO list changes!!!
+
 ### Request
 
 ```csharp
@@ -77,6 +79,20 @@ public class TicketOffice
 ```
 
 ## Let's go!
+
+Composition root:
+
+```csharp
+ public class Main {
+ 
+     public static void main(String[] args) {
+-
++        new TicketOffice();
+     }
+ 
+ }
+```
+
 
 ### First Statement skeleton:
 
@@ -257,19 +273,18 @@ Now how should a ticket office get to know it? We can just pass the factory to t
 
 TicketOfficeSpecification.java
 
-cos tu jest nie tak: niektore z tych linijek chyba byly juz dodane...
+Something's wrong here. Some of these lines were already added:
 
 ```csharp
++   var commandFactory = Substitute.For<CommandFactory>();
 -   var ticketOffice = new TicketOffice();
 +   var ticketOffice = new TicketOffice(commandFactory);
-    var reservation = Any.Instance<ReservationRequestDto>();
-    var resultDto = Any.Instance<TicketDto>();
--   Ticket ticket = Substitute.For<Ticket>();
-+   var ticket = Substitute.For<Ticket>();
+    //...
+-   TicketInProgress ticket = Substitute.For<TicketInProgress>();
++   var ticket = Substitute.For<TicketInProgress>();
     var bookCommand = Substitute.For<Command>();
     var ticketFactory = Substitute.For<TicketFactory>();
 
-+   ticketFactory.CreateBlankTicket().Returns(ticket);
     ticket.ToDto().Returns(resultDto);
 -   var commandFactory = Substitute.For<CommandFactory>();
     commandFactory.CreateBookCommand(reservation).Returns(bookCommand);
@@ -278,46 +293,31 @@ cos tu jest nie tak: niektore z tych linijek chyba byly juz dodane...
 And generating the constructor from the usage:
 
 +++ b/Java/src/main/java/api/TicketOffice.java
- 
+
 ```csharp
  public class TicketOffice 
  {
-+  public TicketOffice(CommandFactory commandFactory) 
++  public TicketOffice(CommandFactory commandFactory)
 +  {
-+    //todo implement
++    throw new NotImplementedException("TODO");
 +  }
-+
-   public TicketDto MakeReservation(
-     ReservationRequestDto request) 
-   {
-     throw new NotImplementedException();
 ```
 
-//TODOOOOOOOOOOOOOOOO
+Composition root:
 
-I noticed I can pass the ticket to factory and have the command as something more generic with a void Execute() method.
-
-+++ b/Java/src/test/java/TicketOfficeSpecification.java
++++ b/Java/src/main/java/bootstrap/Main.java
 
 ```csharp
-  ticketFactory.CreateBlankTicket().Returns(ticket);
-  ticket.ToDto().Returns(resultDto);
-- commandFactory.CreateBookCommand(reservation)
-+ commandFactory.CreateBookCommand(reservation, ticket)
-      .Returns(bookCommand);
- 
-  //WHEN
-  var ticketDto = ticketOffice.MakeReservation(reservation);
- 
-  //THEN
-- bookCommand.Received(1).Execute(ticket);
-+ bookCommand.Received(1).Execute();
-  Assert.Equal(resultDto, ticketDto);
+ public class Main {
+
+     public static void main(String[] args) {
+-        new TicketOffice();
++        new TicketOffice(new BookingCommandFactory() /* new class - include body or null */);
+     }
+ }
 ```
 
-Remove Ticket from the Command:
-
-diff --git a/Java/src/main/java/logic/Command.java b/Java/src/main/java/logic/Command.java
+I noticed I can pass the ticket to factory and have the command as something more generic with a void Execute() method. I remove this via refactoring move:
 
 ```csharp 
  public interface Command 
@@ -327,49 +327,87 @@ diff --git a/Java/src/main/java/logic/Command.java b/Java/src/main/java/logic/Co
  }
 ```
 
-And push it to the factory: 
-
-diff --git a/Java/src/main/java/logic/CommandFactory.java b/Java/src/main/java/logic/CommandFactory.java
- 
-```csharp
- public interface CommandFactory 
- {
--  Command CreateBookCommand(ReservationRequestDto reservation);
-+  Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket);
- }
-```
-
-TicketOffice should know ticket factory
+and it disappears from the test as well:
 
 +++ b/Java/src/test/java/TicketOfficeSpecification.java
 
 ```csharp
-+ var ticketOffice = new TicketOffice(
-+   commandFactory,
+- commandFactory.CreateBookCommand(reservation)
++ commandFactory.CreateBookCommand(reservation, ticket)
+      .Returns(bookCommand);
+
+  //...
+
+  //THEN
+- bookCommand.Received(1).Execute(ticket);
++ bookCommand.Received(1).Execute();
+```
+
+And now I am adding it to the `CreateBookCommand()` method of the factory:
+
+diff --git a/Java/src/main/java/logic/CommandFactory.java 
+ 
+```csharp
+ public interface CommandFactory
+ {
+-  Command CreateBookCommand(ReservationRequestDto reservation);
++  Command CreateBookCommand(
++    ReservationRequestDto reservation,
++    TicketInProgress ticket);
+ }
+```
+
+TicketOffice should know ticket factory. Adding it to the test:
+
++++ b/Java/src/test/java/TicketOfficeSpecification.java
+
+```csharp
+var ticketOffice = new TicketOffice(
+   commandFactory,
 +   ticketFactory);
 ```
 
-+++ b/Java/src/main/java/api/TicketOffice.java
-
-```csharp 
- public class TicketOffice 
- {
-+  private CommandFactory commandFactory;
--  public TicketOffice(CommandFactory commandFactory) 
-+  public TicketOffice(CommandFactory commandFactory, TicketFactory ticketFactory) 
-   {
-     //todo implement
-+    this.commandFactory = commandFactory;
-   }
-```
-
-Returning whatever to make sure we fail for the right reason
-
+and through a quick fix - to the production code.
 
 +++ b/Java/src/main/java/api/TicketOffice.java
 
 ```csharp
-  public TicketDto MakeReservation(ReservationRequestDto request) 
+ public class TicketOffice
+ {
++  private CommandFactory commandFactory;
++  private TicketFactory ticketFactory;
+
+-  public TicketOffice(CommandFactory commandFactory)
++  public TicketOffice(
++        CommandFactory commandFactory,
++        TicketFactory ticketFactory)
+   {
+-     //todo implement
++    this.commandFactory = commandFactory;
++    this.ticketFactory = ticketFactory;
+   }
+```
+
++++ b/Java/src/main/java/bootstrap/Main.java
+
+```csharp
+ public class Main {
+
+     public static void main(String[] args) {
+-        new TicketOffice();
++        new TicketOffice(new BookingCommandFactory(),
++            new TrainTicketFactory()); //TODO new class, or null
+     }
+ 
+ }
+```
+
+Returning whatever to make sure we fail for the right reason:
+
++++ b/Java/src/main/java/api/TicketOffice.java
+
+```csharp
+  public TicketDto MakeReservation(ReservationRequestDto request)
   {
 -   throw new NotImplementedException();
 +   return new TicketDto(null, null, null);
@@ -381,47 +419,25 @@ Returning whatever to make sure we fail for the right reason
 ```csharp
  public class TicketOffice {
  
-     private CommandFactory commandFactory;
-+    private TicketFactory ticketFactory;
- 
--    public TicketOffice(CommandFactory commandFactory, TicketFactory ticketFactory) {
-+    public TicketOffice(
-+        CommandFactory commandFactory,
-+        TicketFactory ticketFactory) {
-         //todo implement
- 
-         this.commandFactory = commandFactory;
-+        this.ticketFactory = ticketFactory;
-     }
- 
-     public TicketDto MakeReservation(
-         ReservationRequestDto request) {
-+        var ticket = ticketFactory.createBlankTicket();
-+        var command = commandFactory.CreateBookCommand(request, ticket);
-         return new TicketDto(null, null, null);
-     }
+    //...
+
+    public TicketDto MakeReservation(ReservationRequestDto request)
+    {
++       var ticket = ticketFactory.CreateBlankTicket();
++       var command = commandFactory.CreateBookCommand(request, ticket);
++       command.Execute();
+        return new TicketDto(null, null, null);
+    }
 ```
 
 We can remove TODOs? Btw, what about TODO list?
+Passed the first assertion but the second one still fails (look at the error message, Luke).
+Now we need to make the second assertion pass:
 
 +++ b/Java/src/main/java/api/TicketOffice.java
 
 ```csharp
-  ReservationRequestDto request) 
-  {
-    var ticket = ticketFactory.createBlankTicket();
-    var command = commandFactory.CreateBookCommand(request, ticket);
-+   command.Execute();
-    return new TicketDto(null, null, null);
-  }
-```
-
-Passed the first assertion but the second one still fails (look at the error message, Luke)
-
-+++ b/Java/src/main/java/api/TicketOffice.java
-
-```csharp
-         var ticket = ticketFactory.createBlankTicket();
+         var ticket = ticketFactory.CreateBlankTicket();
          var command = commandFactory.CreateBookCommand(request, ticket);
          command.Execute();
 -        return new TicketDto(null, null, null);
@@ -429,59 +445,11 @@ Passed the first assertion but the second one still fails (look at the error mes
      }
 ```
 
-Passed the second assertion, test green. WHat about the order of invocations?
-
+Passed the second assertion, test green. What about the order of invocations?
 Can we alter it to make it invalid? No, creation comes before usage, usage goes before returning value, return comes last.
- 
-Date:   Wed Feb 28 16:37:04 2018 +0100
 
-    [LATE] creating an instance. need some implementations
+the empty implementations adds to TODO list.  I need to pick one item to work on. I choose to implement booking command????
 
-+++ b/Java/src/main/java/bootstrap/Main.java
-
-```csharp
- public class Main {
- 
-     public static void main(String[] args) {
--
-+        new TicketOffice();
-     }
- 
- }
-```
-
-Date:   Wed Feb 28 16:38:41 2018 +0100
-
-    the empty implementations add to TODO list.
-    
-    I need to pick one item to work on.
-
-+++ b/Java/src/main/java/api/TicketOffice.java
-
-```csharp
-@@ -14,7 +14,6 @@ public class TicketOffice {
-     public TicketOffice(
-         CommandFactory commandFactory,
-         TicketFactory ticketFactory) {
--        //todo implement
- 
-         this.commandFactory = commandFactory;
-         this.ticketFactory = ticketFactory;
-```
-
-+++ b/Java/src/main/java/bootstrap/Main.java
-
-```csharp
- public class Main {
- 
-     public static void main(String[] args) {
--        new TicketOffice();
-+        new TicketOffice(new BookingCommandFactory(),
-+            new TrainTicketFactory());
-     }
- 
- }
-```
 
 +++ b/Java/src/main/java/logic/BookingCommandFactory.java
 
@@ -502,7 +470,7 @@ Date:   Wed Feb 28 16:38:41 2018 +0100
 +public class TrainTicketFactory : TicketFactory 
 +{
 +    
-+    public Ticket createBlankTicket() 
++    public TicketInProgress CreateBlankTicket()
 +    {
 +        //todo implement
 +        return null;
@@ -513,19 +481,7 @@ Date:   Wed Feb 28 16:38:41 2018 +0100
 Date:   Wed Feb 28 16:40:33 2018 +0100
 
     I pick the factory as there is not much I can do with Ticket yet
-
-+++ b/Java/src/test/java/logic/TrainTicketFactorySpecification.java
-
-```csharp
-+public class TrainTicketFactorySpecification {
-+    
-+
-+}
-```
-
-Date:   Wed Feb 28 16:43:17 2018 +0100
-
-    [SORRY] I pick command factory as there is not much I can do with tickets
+    I pick command factory as there is not much I can do with tickets
 
 +++ b/Java/src/test/java/logic/BookingCommandFactorySpecification.java
 
@@ -535,16 +491,7 @@ Date:   Wed Feb 28 16:43:17 2018 +0100
 +}
 ```
 
-Date:   Thu Mar 1 07:57:53 2018 +0100
-
-    wrote a failing test for a type and dependencies
-
-+++ b/Java/src/main/java/logic/BookTicketCommand.java
-
-```csharp
-+public class BookTicketCommand {
-+}
-```
+writing a failing test for a type and dependencies:
 
 +++ b/Java/src/test/java/logic/BookingCommandFactorySpecification.java
 
@@ -568,192 +515,88 @@ Date:   Thu Mar 1 07:57:53 2018 +0100
  }
 ```
 
-Date:   Thu Mar 1 07:59:49 2018 +0100
-
-    Returning book ticket command forced interface implementation
-    
-    (can be applied via a quick fix)
+This demands new implementation:
 
 +++ b/Java/src/main/java/logic/BookTicketCommand.java
 
 ```csharp
--public class BookTicketCommand 
-+public class BookTicketCommand : Command 
++public class BookTicketCommand {
++}
+```
+
+Returning book ticket command forced interface implementation (can be applied via a quick fix)
+
++++ b/Java/src/main/java/logic/BookingCommandFactory.java
+
+```csharp
+  public Command CreateBookCommand(
+    ReservationRequestDto reservation, TicketInProgress ticket)
+  {
+-   //todo implement
+-   return null;
++   return new BookTicketCommand();
+  }
+```
+
+The above does not compile yet as the `BookTicketCommand` does not implement a `Command` interface. Need to add it (can be done via quick fix):
+
++++ b/Java/src/main/java/logic/BookTicketCommand.java
+
+```csharp
+-public class BookTicketCommand
++public class BookTicketCommand : Command
 +{
-+    
-+    public void Execute() 
++
++    public void Execute()
 +    {
 +        //todo implement
 +    }
  }
 ```
 
+Made 2nd assertion pass by introducing field for dto. The 3rd assertion still fails:
+
 +++ b/Java/src/main/java/logic/BookingCommandFactory.java
 
 ```csharp
-     public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) {
--        //todo implement
--        return null;
-+        return new BookTicketCommand();
-     }
+ public class BookingCommandFactory : CommandFactory {
+     
+    public Command CreateBookCommand(
+       ReservationRequestDto reservation,
+        TicketInProgress ticket) 
+    {
+-       return new BookTicketCommand();
++       return new BookTicketCommand(reservation, ticket);
+    }
+ }
 ```
 
-+++ b/Java/src/test/java/logic/BookingCommandFactorySpecification.java
-
-```csharp
-@@ -17,7 +17,8 @@ public class BookingCommandFactorySpecification 
-{
-         var ticket = Substitute.For<Ticket>();
- 
-         //WHEN
--        Command result = bookingCommandFactory.CreateBookCommand(reservation, ticket);
-+        Command result = bookingCommandFactory
-+            .CreateBookCommand(reservation, ticket);
- 
-         //THEN
-         assertThat(result).isInstanceOf(BookTicketCommand.class);
-```
-
-Date:   Thu Mar 1 08:00:57 2018 +0100
-
-    Made 2nd assertion pass by introducing field for dto
-    The 3rd assertion still fails.
+Generating the constructor:
 
 +++ b/Java/src/main/java/logic/BookTicketCommand.java
 
 ```csharp
  public class BookTicketCommand : Command {
 +    private ReservationRequestDto reservation;
-+
-+    public BookTicketCommand(ReservationRequestDto reservation) {
-+        this.reservation = reservation;
-+    }
-+
-```
-
-+++ b/Java/src/main/java/logic/BookingCommandFactory.java
-
-```csharp
- public class BookingCommandFactory : CommandFactory {
-     
-     public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) {
--        return new BookTicketCommand();
-+        return new BookTicketCommand(reservation);
-     }
- }
-```
-
-Date:   Thu Mar 1 08:01:56 2018 +0100
-
-    The test now passes. New items on TODO list (e.g. Execute() method)
-
-```csharp
- public class BookTicketCommand : Command {
-     private ReservationRequestDto reservation;
 +    private Ticket ticket;
  
--    public BookTicketCommand(ReservationRequestDto reservation) {
 +    public BookTicketCommand(ReservationRequestDto reservation, Ticket ticket) {
-         this.reservation = reservation;
++        this.reservation = reservation;
 +        this.ticket = ticket;
-     }
-```
-
-     
-+++ b/Java/src/main/java/logic/BookingCommandFactory.java
-
-```csharp
- public class BookingCommandFactory : CommandFactory {
-     
-     public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) {
--        return new BookTicketCommand(reservation);
-+        return new BookTicketCommand(reservation, ticket);
-     }
- }
-``` 
-
-Date:   Thu Mar 1 08:03:46 2018 +0100
-
-    As my next step, I choose BookTicketCommand
-    
-    I prefer it over TicketFactory as it will allow me to learn more about the Ticket interface. So now I am optimizing for learning.
-
-+++ b/Java/src/test/java/logic/BookTicketCommandSpecification.java
-
-```csharp
-+public class BookTicketCommandSpecification {
-+
-+}
-```
-
-Date:   Thu Mar 1 08:04:30 2018 +0100
-
-    I have yet to discover what behavior I will require from the command
-
-+++ b/Java/src/test/java/logic/BookTicketCommandSpecification.java
-
-```csharp
- public class BookTicketCommandSpecification {
-+    [Fact]
-+    public void ShouldXXXXXXXXXXXXX() {
-+        //GIVEN
-+
-+        //WHEN
- 
-+        //THEN
-+        assertThat(1).isEqualTo(2);
 +    }
- }
 ```
 
-Date:   Thu Mar 1 08:05:48 2018 +0100
 
-    I realize I have no train, so I comment the test and backtrack
+(Question: why could we do so many steps? Should we not generate the constructor first and assign the field only when the test fails for the right reason? Probably no, since we already saw it failing for the right reason...)
 
-+++ b/Java/src/test/java/logic/BookTicketCommandSpecification.java
+The test now passes. New items on TODO list (e.g. Execute() method)
 
-```csharp
- public class BookTicketCommandSpecification {
-+    /*
-     [Fact]
-+    //hmm, should reserve a train, but I have no train
-     public void ShouldXXXXXXXXXXXXX() {
-         //GIVEN
 
-        ...
- 
-         //THEN
-         assertThat(1).isEqualTo(2);
--    }
-+    }*/
- }
-```
+(btw, mention here that I tried to specify BookCommand and failed)
 
-Date:   Thu Mar 1 16:14:20 2018 +0100
+/////////////////////////////////???
 
-    Discovered TrainRepository interface
-
-+++ b/Java/src/main/java/logic/BookingCommandFactory.java
-
-```csharp
- public class BookingCommandFactory : CommandFactory {
-+    public BookingCommandFactory(TrainRepository trainRepo) {
-+        //todo implement
-+
-+    }
-+
-     
-     public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) {
-         return new BookTicketCommand(reservation, ticket);
-```
-
-+++ b/Java/src/main/java/logic/TrainRepository.java
-
-```csharp
-+public interface TrainRepository 
-+{
-+}
-```
+Discovered TrainRepository interface, because the command will need to get the train from somewhere. Adding it to the test:
 
 +++ b/Java/src/test/java/logic/BookingCommandFactorySpecification.java
 
@@ -775,22 +618,44 @@ Date:   Thu Mar 1 16:14:20 2018 +0100
              .CreateBookCommand(reservation, ticket);
 ```
 
-Date:   Thu Mar 1 16:16:14 2018 +0100
+And the class constructor:
 
-    Discovered train collaborator and getBy repo method
-    
-    Now what type should the train variable be?
++++ b/Java/src/main/java/logic/BookingCommandFactory.java
 
+```csharp
+ public class BookingCommandFactory : CommandFactory {
++  public BookingCommandFactory(TrainRepository trainRepo) {
++      //todo implement
++  }
++
 
+   public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) {
+       return new BookTicketCommand(reservation, ticket);
+```
+
+Thus i have discovered a train repository:
+
++++ b/Java/src/main/java/logic/TrainRepository.java
+
+```csharp
++public interface TrainRepository 
++{
++}
+```
+
+(btw, shouldn't I have started with the command? I already have the factory and the command concrete type...)
+
+Discovered train collaborator and getBy repo method. Now what type should the train variable be?
 
 +++ b/Java/src/test/java/logic/BookingCommandFactorySpecification.java
 
 ```csharp
-public class BookingCommandFactorySpecification {
+public class BookingCommandFactorySpecification 
+{
     //...
          );
          var reservation = Substitute.For<ReservationRequestDto>();
-         var ticket = Substitute.For<Ticket>();
+         var ticket = Substitute.For<TicketInProgress>();
 +
 +        trainRepo.GetTrainBy(reservation.trainId)
 +            .Returns(train);
@@ -798,7 +663,8 @@ public class BookingCommandFactorySpecification {
          //WHEN
          Command result = bookingCommandFactory
              .CreateBookCommand(reservation, ticket);
-@@ -26,5 +31,7 @@ public class BookingCommandFactorySpecification {
+
+@@ -26,5 +31,7 @@
          assertThat(result).isInstanceOf(BookTicketCommand.class);
          assertThat(result).has(dependencyOn(reservation));
          assertThat(result).has(dependencyOn(ticket));
@@ -808,18 +674,11 @@ public class BookingCommandFactorySpecification {
  }
 ```
 
+//////////////TODOOOOOOOOOOOOOOOOO
 
-Date:   Thu Mar 1 16:17:14 2018 +0100
+Discovered a Train interface
 
-    Discovered a Train interface
-
-+++ b/Java/src/main/java/logic/Train.java
-
-```csharp
-+public interface Train 
-+{
-+}
-```
+First in test:
 
 +++ b/Java/src/test/java/logic/BookingCommandFactorySpecification.java
 
@@ -835,10 +694,27 @@ Date:   Thu Mar 1 16:17:14 2018 +0100
              .Returns(train);
 ```
 
+And introduced using the IDE:
 
-Date:   Thu Mar 1 16:19:04 2018 +0100
++++ b/Java/src/main/java/logic/Train.java
 
-    Discovered CouchDbTrainRepository the TODO list grows
+```csharp
++public interface Train
++{
++}
+```
+
+Discovered `GetTrainBy`:
+
++++ b/Java/src/main/java/logic/TrainRepository.java
+
+```csharp
+ public interface TrainRepository {
++    Train GetTrainBy(String trainId);
+ }
+```
+
+Discovered CouchDbTrainRepository. The TODO list grows
 
 +++ b/Java/src/main/java/bootstrap/Main.java
 
@@ -851,19 +727,20 @@ Date:   Thu Mar 1 16:19:04 2018 +0100
 -        new TicketOffice(new BookingCommandFactory(),
 +        new TicketOffice(new BookingCommandFactory(
 +            new CouchDbTrainRepository()
-+        ),
-             new TrainTicketFactory());
++        ),  new TrainTicketFactory());
      }
 ```
 
 
+
 +++ b/Java/src/main/java/logic/CouchDbTrainRepository.java
 
+We won't be implementing it here... Just call the constructor later.
+
 ```csharp
-+public class CouchDbTrainRepository : TrainRepository 
++public class CouchDbTrainRepository : TrainRepository
 +{
-+    
-+    public Train GetTrainBy(String trainId) 
++    public Train GetTrainBy(String trainId)
 +    {
 +        //todo implement
 +        return null;
@@ -871,50 +748,15 @@ Date:   Thu Mar 1 16:19:04 2018 +0100
 +}
 ```
 
-+++ b/Java/src/main/java/logic/TrainRepository.java
-
-```csharp
- public interface TrainRepository {
-+    Train GetTrainBy(String trainId);
- }
-```
 
 Date:   Thu Mar 1 16:21:38 2018 +0100
 
-    Made the last assertion pass
+    Made the last assertion from the factory test pass
     (one more backtracking will be needed)
 
-+++ b/Java/src/main/java/bootstrap/Main.java
 
-```csharp
-     public static void main(String[] args) {
-         new TicketOffice(new BookingCommandFactory(
-             new CouchDbTrainRepository()
--        ),
--            new TrainTicketFactory());
-+        ), new TrainTicketFactory());
-     }
-```
+Adding the dependencies to the factory:
 
-+++ b/Java/src/main/java/logic/BookTicketCommand.java
-
-```csharp
- public class BookTicketCommand : Command {
-     private ReservationRequestDto reservation;
-     private Ticket ticket;
-+    private Train trainBy;
- 
--    public BookTicketCommand(ReservationRequestDto reservation, Ticket ticket) {
-+    public BookTicketCommand(
-+        ReservationRequestDto reservation,
-+        Ticket ticket,
-+        Train train) {
-         this.reservation = reservation;
-         this.ticket = ticket;
-+        this.trainBy = train;
-     }
-``` 
-     
 +++ b/Java/src/main/java/logic/BookingCommandFactory.java
 
 ```csharp
@@ -937,41 +779,69 @@ Date:   Thu Mar 1 16:21:38 2018 +0100
  }
 ```
 
-Date:   Thu Mar 1 16:23:13 2018 +0100
+and the command created with that factory:
 
-    Uncommented a test for booking command
-
-+++ b/Java/src/test/java/logic/BookTicketCommandSpecification.java
++++ b/Java/src/main/java/logic/BookTicketCommand.java
 
 ```csharp
- public class BookTicketCommandSpecification {
--    /*
-+
-     [Fact]
--    //hmm, should reserve a train, but I have no train
-     public void ShouldXXXXXXXXXXXXX() {
-         //GIVEN
+ public class BookTicketCommand : Command {
+     private ReservationRequestDto reservation;
+     private Ticket ticket;
++    private Train trainBy;
  
-@@ -11,5 +14,5 @@ public class BookTicketCommandSpecification {
- 
-         //THEN
-         assertThat(1).isEqualTo(2);
--    }*/
-+    }
- }
+-    public BookTicketCommand(ReservationRequestDto reservation, Ticket ticket) {
++    public BookTicketCommand(
++        ReservationRequestDto reservation,
++        Ticket ticket,
++        Train train) {
+         this.reservation = reservation;
+         this.ticket = ticket;
++        this.trainBy = train;
+     }
 ```
 
-Date:   Thu Mar 1 16:25:36 2018 +0100
+As my next step, I choose BookTicketCommand
 
-    Starting command test
-    brain dump - just invoke the only existing method
+I prefer it over TicketFactory as it will allow me to learn more about the TicketInProgress interface. So now I am optimizing for learning.
 
 +++ b/Java/src/test/java/logic/BookTicketCommandSpecification.java
 
 ```csharp
-@@ -9,8 +10,10 @@ public class BookTicketCommandSpecification {
++public class BookTicketCommandSpecification
++{
++
++}
+```
+
+I have yet to discover what behavior I will require from the command
+
++++ b/Java/src/test/java/logic/BookTicketCommandSpecification.java
+
+```csharp
++public class BookTicketCommandSpecification {
++    [Fact]
++    public void ShouldXXXXXXXXXXXXX()
++    {
++        //GIVEN
++
++        //WHEN
+ 
++        //THEN
++        assertThat(1).isEqualTo(2);
++    }
++}
+```
+Starting command test
+brain dump - just invoke the only existing method
+
++++ b/Java/src/test/java/logic/BookTicketCommandSpecification.java
+
+```csharp
+@@ -9,8 +10,10 @@ public class BookTicketCommandSpecification 
+{
      [Fact]
-     public void ShouldXXXXXXXXXXXXX() {
+     public void ShouldXXXXXXXXXXXXX() 
+     {
          //GIVEN
 -
 +        var bookTicketCommand
@@ -983,17 +853,17 @@ Date:   Thu Mar 1 16:25:36 2018 +0100
          assertThat(1).isEqualTo(2);
 ```
 
-Date:   Thu Mar 1 16:29:00 2018 +0100
-
-    Introduced collaborators and stated expectation
+Introducing collaborators and stating expectations
 
 +++ b/Java/src/test/java/logic/BookTicketCommandSpecification.java
 
 ```csharp 
- public class BookTicketCommandSpecification {
+ public class BookTicketCommandSpecification 
+ {
  
      [Fact]
-     public void ShouldXXXXXXXXXXXXX() {
+     public void ShouldXXXXXXXXXXXXX() 
+     {
          //GIVEN
 +        var reservation = Any.Instance<ReservationRequestDto>();
 +        var ticket = Any.Instance<Ticket>();
@@ -1005,28 +875,22 @@ Date:   Thu Mar 1 16:29:00 2018 +0100
  
          //THEN
 -        assertThat(1).isEqualTo(2);
-+        then(train).should().Reserve(reservation.seatCount, ticket);
++        train.Received(1).Reserve(reservation.seatCount, ticket);
      }
  }
 ```
 
-
-Date:   Mon Mar 5 08:08:06 2018 +0100
-
-    Introduced the reserve method
+The test used a non-existing `Recerve` method - time to introduce it now.
 
 +++ b/Java/src/main/java/logic/Train.java
 
 ```csharp
  public interface Train {
-+    void Reserve(int seatCount, Ticket ticketToFill);
++    void Reserve(int seatCount, TicketInProgress ticketToFill);
  }
 ```
 
-Date:   Mon Mar 5 08:11:53 2018 +0100
-
-    Implemented. Our next stop is a train repository
-    We will not be testing it.
+Implementation to pass the test:
 
 +++ b/Java/src/main/java/logic/BookTicketCommand.java
 
@@ -1059,29 +923,15 @@ Date:   Mon Mar 5 08:11:53 2018 +0100
 
 +++ b/Java/src/main/java/logic/BookingCommandFactory.java
 
-```csharp
-@@ -13,6 +13,7 @@ public class BookingCommandFactory : CommandFactory 
-{
-    //...
-     public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) 
-     {
-         return new BookTicketCommand(
-             reservation,
--            ticket, trainRepo.GetTrainBy(reservation.trainId));
-+            ticket,
-+            trainRepo.GetTrainBy(reservation.trainId));
-     }
- }
-
 Date:   Mon Mar 5 08:14:42 2018 +0100
 
-    Made dummy implementation of TrainWithCoaches
+Made dummy implementation of TrainWithCoaches. We're not test-driving this - Benjamin will go for coffee.
 
 +++ b/Java/src/main/java/logic/CouchDbTrainRepository.java
 
 ```csharp
  public class CouchDbTrainRepository : TrainRepository {
-     
+
      public Train GetTrainBy(String trainId) {
 -        //todo implement
 -        return null;
@@ -1090,13 +940,15 @@ Date:   Mon Mar 5 08:14:42 2018 +0100
  }
 ```
 
+TrainWithCoaches implements an interface, so it has to have the signatures. These empty methods make it to the TODO list.
+
 +++ b/Java/src/main/java/logic/TrainWithCoaches.java
 
 ```csharp
 +public class TrainWithCoaches : Train 
 +{
-+    
-+    public void Reserve(int seatCount, Ticket ticketToFill) 
++
++    public void Reserve(int seatCount, TicketInProgress ticketToFill)
 +    {
 +        //todo implement
 +
@@ -1106,9 +958,7 @@ Date:   Mon Mar 5 08:14:42 2018 +0100
 
 Date:   Mon Mar 5 15:23:23 2018 +0100
 
-    Renaming a test (should've done this earlier)
-    
-    Should have left a TODO.
+ Renaming a test (should've done this earlier). Should have left a TODO.
 
 +++ b/Java/src/test/java/logic/BookTicketCommandSpecification.java
 
@@ -1118,29 +968,15 @@ Date:   Mon Mar 5 15:23:23 2018 +0100
      [Fact]
 -    public void ShouldXXXXXXXXXXXXX() {
 +    public void ShouldReserveSeatsOnTrainWhenExecuted() {
-         //GIVEN
-         var reservation = Any.Instance<ReservationRequestDto>();
-         var ticket = Any.Instance<Ticket>();
 ```
 
-+++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
-
-```csharp
-+public class TrainWithCoachesSpecification {
-+
-+
-+}
-```
-
-Date:   Mon Mar 5 15:26:14 2018 +0100
-
-    braindumping a new test
+As we discovered a new class, time to test-drive it:
 
 +++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 
 ```csharp 
- public class TrainWithCoachesSpecification 
- {
++public class TrainWithCoachesSpecification 
++{
 +    [Fact]
 +    public void ShouldXXXXX() 
 +    { //todo rename
@@ -1155,7 +991,7 @@ Date:   Mon Mar 5 15:26:14 2018 +0100
 +    }
 ``` 
 
-    passed the compiler Now time for some deeper thinking on the expectation
+This doesn't pass the compilation yet. Time to fill the blanks.
 
 +++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 
@@ -1166,226 +1002,48 @@ Date:   Mon Mar 5 15:26:14 2018 +0100
          //GIVEN
          var trainWithCoaches = new TrainWithCoaches();
 +        var seatCount = Any.Integer();
-+        var ticket = Substitute.For<Ticket>();
- 
++        var ticket = Substitute.For<TicketInProgress>();
+
          //WHEN
          trainWithCoaches.Reserve(seatCount, ticket);
 ```
 
-Date:   Wed Mar 7 07:53:13 2018 +0100
 
+Passed the compiler. Now time for some deeper thinking on the expectation
     I know one coach should be reserved even though more meet the condition
-
-+++ b/Java/src/main/java/logic/BookTicketCommand.java
-
-```csharp 
- public class BookTicketCommand : Command 
- {
-     private ReservationRequestDto reservation;
--    private Ticket ticket;
-+    private TicketInProgress ticketInProgress;
-     private Train train;
- 
-     public BookTicketCommand(
-         ReservationRequestDto reservation,
--        Ticket ticket,
-+        TicketInProgress ticketInProgress,
-         Train train) 
-     {
-         this.reservation = reservation;
--        this.ticket = ticket;
-+        this.ticketInProgress = ticketInProgress;
-         this.train = train;
-     }
- 
-     
-     public void Execute() 
-     {
-         //todo a full DTO is not required
--        train.Reserve(reservation.seatCount, ticket);
-+        train.Reserve(reservation.seatCount, ticketInProgress);
-     }
- }
-```
-
-
-+++ b/Java/src/main/java/logic/BookingCommandFactory.java
-
-```csharp
-@@ -10,10 +10,10 @@ public class BookingCommandFactory : CommandFactory {
-     }
- 
-     
--    public Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket) {
-+    public Command CreateBookCommand(ReservationRequestDto reservation, TicketInProgress ticketInProgress) {
-         return new BookTicketCommand(
-             reservation,
--            ticket,
-+            ticketInProgress,
-             trainRepo.GetTrainBy(reservation.trainId));
-     }
- }
-```
-
-
-+++ b/Java/src/main/java/logic/CommandFactory.java
- 
-```csharp
- public interface CommandFactory 
- {
--    Command CreateBookCommand(ReservationRequestDto reservation, Ticket ticket);
-+    Command CreateBookCommand(ReservationRequestDto reservation, TicketInProgress ticketInProgress);
- }
-```
-
-+++ b/Java/src/main/java/logic/TicketFactory.java
-
-```csharp
- public interface TicketFactory 
- {
--    Ticket createBlankTicket();
-+    TicketInProgress createBlankTicket();
- }
-```
-
-
-+++ b/Java/src/main/java/logic/TicketInProgress.java
-
-```csharp
--public interface Ticket {
-+public interface TicketInProgress {
-     TicketDto toDto();
- }
-```
-
-+++ b/Java/src/main/java/logic/Train.java
-
-```csharp
- public interface Train 
- {
--    void Reserve(int seatCount, Ticket ticketToFill);
-+    void Reserve(int seatCount, TicketInProgress ticketInProgress);
- }
-```
-
-+++ b/Java/src/main/java/logic/TrainTicketFactory.java
-
-```csharp
- public class TrainTicketFactory : TicketFactory 
- {
-     
--    public Ticket createBlankTicket() 
--     {
-+    public TicketInProgress createBlankTicket() 
-+    {
-         //todo implement
-         return null;
-     }
-```
-
-+++ b/Java/src/main/java/logic/TrainWithCoaches.java
-
-```csharp 
- public class TrainWithCoaches : Train {
-     
--    public void Reserve(int seatCount, Ticket ticketToFill)
-+    public void Reserve(int seatCount, TicketInProgress ticketInProgress)
-     {
-         //todo implement
-     }
-```
-
-rename from Java/src/test/java/TicketOfficeSpecification.java
-rename to Java/src/test/java/TicketInProgressOfficeSpecification.java
-
---- a/Java/src/test/java/TicketOfficeSpecification.java
-+++ b/Java/src/test/java/TicketInProgressOfficeSpecification.java
-
-```csharp
--public class TicketOfficeSpecification 
-+public class TicketInProgressOfficeSpecification 
-{
-     
-     [Fact]
-     public void ShouldCreateAndExecuteCommandWithTicketAndTrain() {
-@@ -22,7 +22,7 @@ public class TicketOfficeSpecification {
-         var commandFactory = Substitute.For<CommandFactory>();
-         var reservation = Any.Instance<ReservationRequestDto>();
-         var resultDto = Any.Instance<TicketDto>();
--        var ticket = Substitute.For<Ticket>();
-+        var ticket = Substitute.For<TicketInProgress>();
-         var bookCommand = Substitute.For<Command>();
-         var ticketFactory = Substitute.For<TicketFactory>();
-         var ticketOffice = new TicketOffice(
-```
-
-
-+++ b/Java/src/test/java/logic/BookTicketCommandSpecification.java
-
-```csharp
-public class BookTicketCommandSpecification {
- 
-     [Fact]
-     public void ShouldReserveSeatsOnTrainWhenExecuted() {
-         //GIVEN
-         var reservation = Any.Instance<ReservationRequestDto>();
--        var ticket = Any.Instance<Ticket>();
-+        var ticket = Any.Instance<TicketInProgress>();
-         var train = Substitute.For<Train>();
-         var bookTicketCommand
-             = new BookTicketCommand(reservation, ticket, train);
-```
-
-+++ b/Java/src/test/java/logic/BookingCommandFactorySpecification.java
-
-```csharp
-@@ -18,7 +18,7 @@ public class BookingCommandFactorySpecification 
-{
-    ...
-             trainRepo
-         );
-         var reservation = Substitute.For<ReservationRequestDto>();
--        var ticket = Substitute.For<Ticket>();
-+        var ticket = Substitute.For<TicketInProgress>();
-         var train = Substitute.For<Train>();
- 
-         trainRepo.GetTrainBy(reservation.trainId)
-```
 
 +++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 
-```chsarp
-
+```csharp
      [Fact]
-@@ -13,13 +14,16 @@ public class TrainWithCoachesSpecification {
-    
+@@ -13,13 +14,16 @@ public class TrainWithCoachesSpecification
+{
+
          //GIVEN
          var trainWithCoaches = new TrainWithCoaches();
          var seatCount = Any.Integer();
--        var ticket = Substitute.For<Ticket>();
-+        var ticket = Substitute.For<TicketInProgress>();
- 
+         var ticket = Substitute.For<TicketInProgress>();
+
          //WHEN
          trainWithCoaches.Reserve(seatCount, ticket);
- 
+
          //THEN
 -        assertThat(1).isEqualTo(2);
 +        coach1.DidNotReceive().Reserve(seatCount, ticket);
 +        coach2.Received(1).Reserve(seatCount, ticket);
 +        coach3.DidNotReceive().Reserve(seatCount, ticket);
      }
-+    //todo ticket in progress instead of plain ticket
- 
  }
 ```
-
-Discovered the coach interface:
+Verifying coaches although none were added yet. Discovered the coach interface:
 
 ```csharp
 +public interface Coach
 +{
 +}
 ```
+
+Time to introduce the coaches. 3 is many:
 
 +++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 
@@ -1394,15 +1052,15 @@ Discovered the coach interface:
          var trainWithCoaches = new TrainWithCoaches();
          var seatCount = Any.Integer();
          var ticket = Substitute.For<TicketInProgress>();
-+        Coach coach1 = Substitute.For<Coach>();
-+        Coach coach2 = Substitute.For<Coach>();
-+        Coach coach3 = Substitute.For<Coach>();
++        var coach1 = Substitute.For<Coach>();
++        var coach2 = Substitute.For<Coach>();
++        var coach3 = Substitute.For<Coach>();
  
          //WHEN
          trainWithCoaches.Reserve(seatCount, ticket);
 ```
 
-Discovered the Reserve() method
+Also, discovered the Reserve() method - time to put it in:
 
 +++ b/Java/src/main/java/logic/Coach.java
 
@@ -1413,41 +1071,29 @@ Discovered the Reserve() method
  }
 ```
 
-+++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
-
-```csharp
-@@ -15,9 +15,9 @@ public class TrainWithCoachesSpecification {
-         var trainWithCoaches = new TrainWithCoaches();
-         var seatCount = Any.Integer();
-         var ticket = Substitute.For<TicketInProgress>();
--        Coach coach1 = Substitute.For<Coach>();
--        Coach coach2 = Substitute.For<Coach>();
--        Coach coach3 = Substitute.For<Coach>();
-+        var coach1 = Substitute.For<Coach>();
-+        var coach2 = Substitute.For<Coach>();
-+        var coach3 = Substitute.For<Coach>();
- 
-         //WHEN
-         trainWithCoaches.Reserve(seatCount, ticket);
-```
-
-passed coaches as vararg: not test-driving the vararg, using the Kent Beck's putting the right implementation
+passing coaches as vararg: not test-driving the vararg, using the Kent Beck's putting the right implementation.
 
 +++ b/Java/src/main/java/logic/TrainWithCoaches.java
 
 ```csharp
- public class TrainWithCoaches : Train 
+ public class TrainWithCoaches : Train
 +{
-+    public TrainWithCoaches(Coach... coaches) {
++    public TrainWithCoaches(params Coach[] coaches)
++    {
 +    }
 ```
-     
+
+This should still pass. now passing the coaches as parameters:
+
 +++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 
+
 ```csharp
-@@ -12,12 +12,14 @@ public class TrainWithCoachesSpecification {
+@@ -12,12 +12,14 @@ public class TrainWithCoachesSpecification 
+{
      [Fact]
-     public void ShouldXXXXX() { //todo rename
+     public void ShouldXXXXX() 
+     { //todo rename
          //GIVEN
 -        var trainWithCoaches = new TrainWithCoaches();
          var seatCount = Any.Integer();
@@ -1463,8 +1109,7 @@ passed coaches as vararg: not test-driving the vararg, using the Kent Beck's put
          trainWithCoaches.Reserve(seatCount, ticket);
 ```
 
-discovered AllowsUpFrontReservationOf() method. One more condition awaits - if no coach allows up front, we take the first one that has the limit.:
-
+Missing the assumptions about whether the coach allows up front reservation:
 
 +++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 
@@ -1488,12 +1133,14 @@ discovered AllowsUpFrontReservationOf() method. One more condition awaits - if n
          coach2.Received(1).Reserve(seatCount, ticket);
          coach3.DidNotReceive().Reserve(seatCount, ticket);
      }
--    //todo ticket in progress instead of plain ticket
--
+
 +    //todo what if no coach allows up front reservation?
  }
 ```
 
+Added an item to TODO list - we'll get back to it later. if no coach allows up front, we take the first one that has the limit.
+
+Discovered AllowsUpFrontReservationOf() method.
 
 Introduced the method.  a too late TODO - CouchDbRepository should supply the coaches:
 
@@ -1526,19 +1173,24 @@ gave a good name to the test.
 
 +++ b/Java/src/main/java/logic/TrainWithCoaches.java
 
+
+//????????????????????? what is this?
+
 ```csharp
-@@ -7,6 +7,5 @@ public class TrainWithCoaches : Train 
+@@ -7,6 +7,5 @@ public class TrainWithCoaches : Train
 {
-     public void Reserve(int seatCount, TicketInProgress ticketInProgress) 
+     public void Reserve(int seatCount, TicketInProgress ticketInProgress)
      {
          //todo implement
      }
  }
 ```
 
+Now that the scenario is ready, I can give it a good name:
+
 +++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 
-```csharp 
+```csharp
  public class TrainWithCoachesSpecification {
      [Fact]
 -    public void ShouldXXXXX() { //todo rename
@@ -1548,7 +1200,7 @@ gave a good name to the test.
          var ticket = Substitute.For<TicketInProgress>();
 ```
 
-Implemented the first behavior. (in the book, play with the if and return to see each assertion fail):
+Implementing the first behavior. (in the book, play with the if and return to see each assertion fail):
 
 +++ b/Java/src/main/java/logic/TrainWithCoaches.java
 
@@ -1557,7 +1209,7 @@ Implemented the first behavior. (in the book, play with the if and return to see
  {
 +    private Coach[] coaches;
 +
-     public TrainWithCoaches(Coach... coaches) 
+     public TrainWithCoaches(Coach... coaches)
      {
 +        this.coaches = coaches;
      }
@@ -1576,70 +1228,16 @@ Implemented the first behavior. (in the book, play with the if and return to see
  }
 ```
 
-+++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
-
-```csharp
- public class TrainWithCoachesSpecification 
- {
-     [Fact]
--    public void ShouldReserveSeatsInFirstCoachThatHasPlaceBelowLimit() 
-     { //todo rename
-+    public void ShouldReserveSeatsInFirstCoachThatHasPlaceBelowLimit() 
-     { 
-         //GIVEN
-         var seatCount = Any.Integer();
-         var ticket = Substitute.For<TicketInProgress>();
-@@ -29,7 +29,6 @@ public class TrainWithCoachesSpecification {
-         coach3.AllowsUpFrontReservationOf(seatCount)
-             .Returns(true);
- 
--
-         //WHEN
-         trainWithCoaches.Reserve(seatCount, ticket);
- 
-@@ -38,5 +37,7 @@ public class TrainWithCoachesSpecification {
-         coach2.Received(1).Reserve(seatCount, ticket);
-         coach3.DidNotReceive().Reserve(seatCount, ticket);
-     }
-+
-+
-     //todo what if no coach allows up front reservation?
- }
-```
+//by the way, this can be nicely converted to Linq: coaches.First(c => c.AllowsUpFrontReservationOf(seatCount)).?Reserve(seatCount, ticketInProgress);
 
 Discovered AllowsReservationOf method:
 
-+++ b/Java/src/main/java/logic/Coach.java
-
-```csharp
-@@ -4,4 +4,6 @@ public interface Coach
-{
-     void Reserve(int seatCount, TicketInProgress ticket);
-
-     bool AllowsUpFrontReservationOf(int seatCount);
-+
-+    bool AllowsReservationOf(int seatCount);
- }
-```
-
 +++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 
-
 ```csharp 
- public class TrainWithCoachesSpecification 
+ public class TrainWithCoachesSpecification
  {
-     [Fact]
--    public void ShouldReserveSeatsInFirstCoachThatHasPlaceBelowLimit() 
-     { 
-+    public void ShouldReserveSeatsInFirstCoachThatHasPlaceBelowLimit() 
-     {
-         //GIVEN
-         var seatCount = Any.Integer();
-         var ticket = Substitute.For<TicketInProgress>();
-@@ -38,6 +38,41 @@ public class TrainWithCoachesSpecification {
-         coach3.DidNotReceive().Reserve(seatCount, ticket);
-     }
- 
+
 +    [Fact]
 +    public void
 +    ShouldReserveSeatsInFirstCoachThatHasFreeSeatsIfNoneAllowsReservationUpFront() 
@@ -1681,12 +1279,25 @@ Discovered AllowsReservationOf method:
  }
 ```
 
-Bad implementation alows the test to pass! Need to fix the first test:
++++ b/Java/src/main/java/logic/Coach.java
+
+```csharp
+@@ -4,4 +4,6 @@ public interface Coach
+{
+     void Reserve(int seatCount, TicketInProgress ticket);
+
+     bool AllowsUpFrontReservationOf(int seatCount);
++
++    bool AllowsReservationOf(int seatCount);
+ }
+```
+
+Bad implementation (break; instead of return;) alows the test to pass! Need to fix the first test:
 
 +++ b/Java/src/main/java/logic/TrainWithCoaches.java
 
 ```csharp
-@@ -9,6 +9,12 @@ public class TrainWithCoaches : Train 
+@@ -9,6 +9,12 @@ public class TrainWithCoaches : Train
 {
 
      public void Reserve(int seatCount, TicketInProgress ticketInProgress) 
@@ -1706,7 +1317,32 @@ Bad implementation alows the test to pass! Need to fix the first test:
                  coach.Reserve(seatCount, ticketInProgress);
 ```
 
-forced the right implementation. But need to refactor the tests. Next time we change this class, we refactor the code:
+In the following changes, forced the right implementation. But need to refactor the tests. Next time we change this class, we refactor the code:
+
+First we need to say we allow reservations. This dependency between tests is a sign of a design problem.
+
+//TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+
++++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
+
+```csharp
+@@ -28,6 +28,12 @@ public class TrainWithCoachesSpecification 
+{
+    ...
+             .Returns(true);
+         coach3.AllowsUpFrontReservationOf(seatCount)
+             .Returns(true);
++        coach1.AllowsReservationOf(seatCount)
++            .Returns(true);
++        coach2.AllowsReservationOf(seatCount)
++            .Returns(true);
++        coach3.AllowsReservationOf(seatCount)
++            .Returns(true);
+ 
+         //WHEN
+         trainWithCoaches.Reserve(seatCount, ticket);
+```
+
 
 +++ b/Java/src/main/java/logic/TrainWithCoaches.java
 
@@ -1742,25 +1378,6 @@ forced the right implementation. But need to refactor the tests. Next time we ch
  }
 ```
 
-+++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
-
-```csharp
-@@ -28,6 +28,12 @@ public class TrainWithCoachesSpecification 
-{
-    ...
-             .Returns(true);
-         coach3.AllowsUpFrontReservationOf(seatCount)
-             .Returns(true);
-+        coach1.AllowsReservationOf(seatCount)
-+            .Returns(true);
-+        coach2.AllowsReservationOf(seatCount)
-+            .Returns(true);
-+        coach3.AllowsReservationOf(seatCount)
-+            .Returns(true);
- 
-         //WHEN
-         trainWithCoaches.Reserve(seatCount, ticket);
-```
 
 Refactored coaches (truth be told, I should refactor prod code):
 
