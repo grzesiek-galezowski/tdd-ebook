@@ -9,9 +9,9 @@ TODO remember to describe how a TODO list changes!!!
 public class ReservationRequestDto
 {
   public readonly string trainId;
-  public readonly int seatCount;
+  public readonly uint seatCount;
 
-  public ReservationRequestDto(string trainId, int seatCount)
+  public ReservationRequestDto(string trainId, uint seatCount)
   {
     this.trainId = trainId;
     this.seatCount = seatCount;
@@ -59,7 +59,7 @@ hosting the web app. The web part is already written, time for the TicketOffice.
 ```csharp
 public class Main
 {
-  public static void Main(string[] args) 
+  public static void Main(string[] args)
   {
     new WebApp(new TicketOffice()).Host();
   }
@@ -674,8 +674,6 @@ public class BookingCommandFactorySpecification
  }
 ```
 
-//////////////TODOOOOOOOOOOOOOOOOO
-
 Discovered a Train interface
 
 First in test:
@@ -886,7 +884,7 @@ The test used a non-existing `Recerve` method - time to introduce it now.
 
 ```csharp
  public interface Train {
-+    void Reserve(int seatCount, TicketInProgress ticketToFill);
++    void Reserve(uint seatCount, TicketInProgress ticketToFill);
  }
 ```
 
@@ -948,7 +946,7 @@ TrainWithCoaches implements an interface, so it has to have the signatures. Thes
 +public class TrainWithCoaches : Train 
 +{
 +
-+    public void Reserve(int seatCount, TicketInProgress ticketToFill)
++    public void Reserve(uint seatCount, TicketInProgress ticketToFill)
 +    {
 +        //todo implement
 +
@@ -1001,7 +999,7 @@ This doesn't pass the compilation yet. Time to fill the blanks.
      public void ShouldXXXXX() { //todo rename
          //GIVEN
          var trainWithCoaches = new TrainWithCoaches();
-+        var seatCount = Any.Integer();
++        var seatCount = Any.UnsignedInt();
 +        var ticket = Substitute.For<TicketInProgress>();
 
          //WHEN
@@ -1021,7 +1019,7 @@ Passed the compiler. Now time for some deeper thinking on the expectation
 
          //GIVEN
          var trainWithCoaches = new TrainWithCoaches();
-         var seatCount = Any.Integer();
+         var seatCount = Any.UnsignedInt();
          var ticket = Substitute.For<TicketInProgress>();
 
          //WHEN
@@ -1050,7 +1048,7 @@ Time to introduce the coaches. 3 is many:
 ```csharp
 @@ -15,6 +15,9 @@ public class TrainWithCoachesSpecification {
          var trainWithCoaches = new TrainWithCoaches();
-         var seatCount = Any.Integer();
+         var seatCount = Any.UnsignedInt();
          var ticket = Substitute.For<TicketInProgress>();
 +        var coach1 = Substitute.For<Coach>();
 +        var coach2 = Substitute.For<Coach>();
@@ -1067,7 +1065,7 @@ Also, discovered the Reserve() method - time to put it in:
 ```csharp
  public interface Coach 
  {
-+    void Reserve(int seatCount, TicketInProgress ticket);
++    void Reserve(uint seatCount, TicketInProgress ticket);
  }
 ```
 
@@ -1096,7 +1094,7 @@ This should still pass. now passing the coaches as parameters:
      { //todo rename
          //GIVEN
 -        var trainWithCoaches = new TrainWithCoaches();
-         var seatCount = Any.Integer();
+         var seatCount = Any.UnsignedInt();
          var ticket = Substitute.For<TicketInProgress>();
          var coach1 = Substitute.For<Coach>();
          var coach2 = Substitute.For<Coach>();
@@ -1151,9 +1149,9 @@ Introduced the method.  a too late TODO - CouchDbRepository should supply the co
 ```csharp 
  public interface Coach
  {
-     void Reserve(int seatCount, TicketInProgress ticket);
+     void Reserve(uint seatCount, TicketInProgress ticket);
 +
-+    bool AllowsUpFrontReservationOf(int seatCount);
++    bool AllowsUpFrontReservationOf(uint seatCount);
  }
 ```
 
@@ -1179,7 +1177,7 @@ gave a good name to the test.
 ```csharp
 @@ -7,6 +7,5 @@ public class TrainWithCoaches : Train
 {
-     public void Reserve(int seatCount, TicketInProgress ticketInProgress)
+     public void Reserve(uint seatCount, TicketInProgress ticketInProgress)
      {
          //todo implement
      }
@@ -1196,7 +1194,7 @@ Now that the scenario is ready, I can give it a good name:
 -    public void ShouldXXXXX() { //todo rename
 +    public void ShouldReserveSeatsInFirstCoachThatHasPlaceBelowLimit() {
          //GIVEN
-         var seatCount = Any.Integer();
+         var seatCount = Any.UnsignedInt();
          var ticket = Substitute.For<TicketInProgress>();
 ```
 
@@ -1214,7 +1212,7 @@ Implementing the first behavior. (in the book, play with the if and return to se
 +        this.coaches = coaches;
      }
 
--    public void Reserve(int seatCount, TicketInProgress ticketInProgress) 
+-    public void Reserve(uint seatCount, TicketInProgress ticketInProgress) 
      {
 -        //todo implement
 +        foreach (var coach in coaches) {
@@ -1243,7 +1241,7 @@ Discovered AllowsReservationOf method:
 +    ShouldReserveSeatsInFirstCoachThatHasFreeSeatsIfNoneAllowsReservationUpFront() 
 +    {
 +        //GIVEN
-+        var seatCount = Any.Integer();
++        var seatCount = Any.UnsignedInt();
 +        var ticket = Substitute.For<TicketInProgress>();
 +        var coach1 = Substitute.For<Coach>();
 +        var coach2 = Substitute.For<Coach>();
@@ -1275,7 +1273,6 @@ Discovered AllowsReservationOf method:
 +    }
 +
  
-     //todo what if no coach allows up front reservation?
  }
 ```
 
@@ -1284,11 +1281,11 @@ Discovered AllowsReservationOf method:
 ```csharp
 @@ -4,4 +4,6 @@ public interface Coach
 {
-     void Reserve(int seatCount, TicketInProgress ticket);
+     void Reserve(uint seatCount, TicketInProgress ticket);
 
-     bool AllowsUpFrontReservationOf(int seatCount);
+     bool AllowsUpFrontReservationOf(uint seatCount);
 +
-+    bool AllowsReservationOf(int seatCount);
++    bool AllowsReservationOf(uint seatCount);
  }
 ```
 
@@ -1300,7 +1297,7 @@ Bad implementation (break; instead of return;) alows the test to pass! Need to f
 @@ -9,6 +9,12 @@ public class TrainWithCoaches : Train
 {
 
-     public void Reserve(int seatCount, TicketInProgress ticketInProgress) 
+     public void Reserve(uint seatCount, TicketInProgress ticketInProgress)
      {
 +        foreach (var coach in coaches) 
 +        {
@@ -1319,14 +1316,14 @@ Bad implementation (break; instead of return;) alows the test to pass! Need to f
 
 In the following changes, forced the right implementation. But need to refactor the tests. Next time we change this class, we refactor the code:
 
-First we need to say we allow reservations. This dependency between tests is a sign of a design problem.
+First we need to say we allow reservations. This dependency between tests is a sign of a design problem. Then, the method is long. Also, every time we set mock to return up front reservation, we need to set not upfront reservation and vice versa.  We could refactor this to chain of responsibility with two elements, but it's too early for that. We could also refactor to return a value object or enum for the kind of reservation. Or, we could use a collecting parameter, pass it through the list and make it do the reservation.
 
-//TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
+I change the first Statement to include the queries:
 
 +++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 
 ```csharp
-@@ -28,6 +28,12 @@ public class TrainWithCoachesSpecification 
+@@ -28,6 +28,12 @@ public class TrainWithCoachesSpecification
 {
     ...
              .Returns(true);
@@ -1343,20 +1340,21 @@ First we need to say we allow reservations. This dependency between tests is a s
          trainWithCoaches.Reserve(seatCount, ticket);
 ```
 
+THe Statement is now false. Let's just change the implementation:
 
 +++ b/Java/src/main/java/logic/TrainWithCoaches.java
 
 ```csharp
-@@ -10,17 +10,16 @@ public class TrainWithCoaches : Train 
+@@ -10,17 +10,16 @@ public class TrainWithCoaches : Train
 {
      
-     public void Reserve(int seatCount, TicketInProgress ticketInProgress) 
+     public void Reserve(uint seatCount, TicketInProgress ticketInProgress)
      {
          foreach (var coach in coaches) 
          {
--            if(coach.AllowsReservationOf(seatCount)) 
+-            if(coach.AllowsReservationOf(seatCount))
 -            {
-+            if(coach.AllowsUpFrontReservationOf(seatCount)) 
++            if(coach.AllowsUpFrontReservationOf(seatCount))
 +            {
                  coach.Reserve(seatCount, ticketInProgress);
 -                break;
@@ -1365,9 +1363,9 @@ First we need to say we allow reservations. This dependency between tests is a s
          }
          foreach (var coach in coaches) 
          {
--            if(coach.AllowsUpFrontReservationOf(seatCount)) 
+-            if(coach.AllowsUpFrontReservationOf(seatCount))
 -            {
-+            if(coach.AllowsReservationOf(seatCount)) 
++            if(coach.AllowsReservationOf(seatCount))
              {
                  coach.Reserve(seatCount, ticketInProgress);
                  return;
@@ -1378,22 +1376,21 @@ First we need to say we allow reservations. This dependency between tests is a s
  }
 ```
 
-
-Refactored coaches (truth be told, I should refactor prod code):
+For now, refactored coaches Statement (truth be told, I should refactor prod code, not test, but this test refactoring will allow me to refactor the prod. code later as well, e.g. to return an enum):
 
 +++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 
-```csharp    
+```csharp
          //GIVEN
-         var seatCount = Any.Integer();
+         var seatCount = Any.UnsignedInt();
          var ticket = Substitute.For<TicketInProgress>();
 -        var coach1 = Substitute.For<Coach>();
 -        var coach2 = Substitute.For<Coach>();
 -        var coach3 = Substitute.For<Coach>();
 +
-+        Coach coach1 = coachWithoutAvailableUpFront(seatCount);
-+        Coach coach2 = coachWithAvailableUpFront(seatCount);
-+        Coach coach3 = coachWithAvailableUpFront(seatCount);
++        Coach coach1 = CoachWithoutAvailableUpFront(seatCount);
++        Coach coach2 = CoachWithAvailableUpFront(seatCount);
++        Coach coach3 = CoachWithAvailableUpFront(seatCount);
 +
          var trainWithCoaches = new TrainWithCoaches(
              coach1, coach2, coach3
@@ -1419,7 +1416,7 @@ Refactored coaches (truth be told, I should refactor prod code):
          coach3.DidNotReceive().Reserve(seatCount, ticket);
      }
  
-+    private Coach coachWithAvailableUpFront(Integer seatCount) {
++    private Coach CoachWithAvailableUpFront(Integer seatCount) {
 +        var coach2 = Substitute.For<Coach>();
 +        coach2.AllowsUpFrontReservationOf(seatCount)
 +            .Returns(true);
@@ -1428,7 +1425,7 @@ Refactored coaches (truth be told, I should refactor prod code):
 +        return coach2;
 +    }
 +
-+    private Coach coachWithoutAvailableUpFront(Integer seatCount) {
++    private Coach CoachWithoutAvailableUpFront(Integer seatCount) {
 +        var coach1 = Substitute.For<Coach>();
 +        coach1.AllowsUpFrontReservationOf(seatCount)
 +            .Returns(false);
@@ -1439,7 +1436,9 @@ Refactored coaches (truth be told, I should refactor prod code):
 +
 ```
 
-Refactored tests. TODO start from this committ to show refactoring!!
+Refactored tests. TODO start from this committ to show refactoring of production code later!!
+
+Adding `CoachWithout()` method as well to the other tests:
 
 +++ b/Java/src/test/java/logic/TrainWithCoachesSpecification.java
 
@@ -1448,35 +1447,17 @@ Refactored tests. TODO start from this committ to show refactoring!!
          coach3.DidNotReceive().Reserve(seatCount, ticket);
      }
  
--    private Coach coachWithAvailableUpFront(Integer seatCount) {
--        var coach2 = Substitute.For<Coach>();
--        coach2.AllowsUpFrontReservationOf(seatCount)
--            .Returns(true);
--        coach2.AllowsReservationOf(seatCount)
--            .Returns(true);
--        return coach2;
--    }
--
--    private Coach coachWithoutAvailableUpFront(Integer seatCount) {
--        var coach1 = Substitute.For<Coach>();
--        coach1.AllowsUpFrontReservationOf(seatCount)
--            .Returns(false);
--        coach1.AllowsReservationOf(seatCount)
--            .Returns(true);
--        return coach1;
--    }
--
      [Fact]
      public void
      shouldReserveSeatsInFirstCoachThatHasFreeSeatsIfNoneAllowsReservationUpFront() {
          //GIVEN
-         var seatCount = Any.Integer();
+         var seatCount = Any.UnsignedInt();
          var ticket = Substitute.For<TicketInProgress>();
 -        var coach1 = Substitute.For<Coach>();
 -        var coach2 = Substitute.For<Coach>();
 -        var coach3 = Substitute.For<Coach>();
 +        var coach1 = coachWithout(seatCount);
-+        var coach2 = coachWithoutAvailableUpFront(seatCount);
++        var coach2 = CoachWithoutAvailableUpFront(seatCount);
 +        var coach3 = coachWithout(seatCount);
          var trainWithCoaches = new TrainWithCoaches(
              coach1, coach2, coach3
@@ -1512,54 +1493,10 @@ Refactored tests. TODO start from this committ to show refactoring!!
 +    }
  
 -    //todo what if no coach allows up front reservation?
-+    private Coach coachWithAvailableUpFront(Integer seatCount) {
-+        var coach2 = Substitute.For<Coach>();
-+        coach2.AllowsUpFrontReservationOf(seatCount)
-+            .Returns(true);
-+        coach2.AllowsReservationOf(seatCount)
-+            .Returns(true);
-+        return coach2;
-+    }
-+
-+    private Coach coachWithoutAvailableUpFront(Integer seatCount) {
-+        var coach1 = Substitute.For<Coach>();
-+        coach1.AllowsUpFrontReservationOf(seatCount)
-+            .Returns(false);
-+        coach1.AllowsReservationOf(seatCount)
-+            .Returns(true);
-+        return coach1;
-+    }
- }
+}
 ```
 
-Addressed todo - created a class CoachWithSeats:
-
-+++ b/Java/src/main/java/logic/CoachWithSeats.java
-
-```csharp
-+public class CoachWithSeats : Coach {
-+    
-+    public void Reserve(int seatCount, TicketInProgress ticket) 
-+    {
-+        //todo implement
-+
-+    }
-+
-+    
-+    public bool AllowsUpFrontReservationOf(int seatCount) 
-+    {
-+        //todo implement
-+        return false;
-+    }
-+
-+    
-+    public bool AllowsReservationOf(int seatCount) 
-+    {
-+        //todo implement
-+        return false;
-+    }
-+}
-```
+Addressed todo - created a class CoachWithSeats (or else it would probably not compile).
 
 +++ b/Java/src/main/java/logic/CouchDbTrainRepository.java
 
@@ -1567,7 +1504,7 @@ Addressed todo - created a class CoachWithSeats:
 @@ -4,6 +4,8 @@ public class CouchDbTrainRepository : TrainRepository {
      
      public Train GetTrainBy(String trainId) {
-         //todo there should be something passed here!!
+-        //todo there should be something passed here!!
 -        return new TrainWithCoaches();
 +        return new TrainWithCoaches(
 +            new CoachWithSeats()
@@ -1576,7 +1513,66 @@ Addressed todo - created a class CoachWithSeats:
  }
 ```
 
-Brain dump
+The body of the class looks like this:
+
+```csharp
++public class CoachWithSeats : Coach
++{
++
++    public void Reserve(uint seatCount, TicketInProgress ticket)
++    {
++        //todo implement
++
++    }
++
++
++    public bool AllowsUpFrontReservationOf(uint seatCount)
++    {
++        //todo implement (does not compile)
++    }
++
++    
++    public bool AllowsReservationOf(uint seatCount)
++    {
++        //todo implement (does not compile)
++    }
++}
+```
+
+The code does not compile yet, so adding just enough code to make it compile.
+
++++ b/Java/src/main/java/logic/CoachWithSeats.java
+
+```csharp
++public class CoachWithSeats : Coach
++{
++
++    public void Reserve(uint seatCount, TicketInProgress ticket)
++    {
++        //todo implement
++
++    }
++
++
++    public bool AllowsUpFrontReservationOf(uint seatCount)
++    {
++        //todo implement
++        return false;
++    }
++
++    
++    public bool AllowsReservationOf(uint seatCount)
++    {
++        //todo implement
++        return false;
++    }
++}
+```
+
+
+Starting new specification, using brain dump:
+
+//TODOOOOOOOOOOOO TODO TODO
 
 +++ b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
 
@@ -1588,7 +1584,7 @@ Brain dump
 +        //GIVEN
 +        var coachWithSeats = new CoachWithSeats();
 +        //WHEN
-+        int seatCount = Any.Integer();
++        uint seatCount = Any.UnsignedInt();
 +        var reservationAllowed = coachWithSeats.AllowsReservationOf(seatCount);
 +
 +        //THEN
@@ -1628,7 +1624,7 @@ Discovered an interface Seat:
 +            seat9
 +        );
          //WHEN
-         int seatCount = Any.Integer();
+         uint seatCount = Any.UnsignedInt();
          var reservationAllowed = coachWithSeats.AllowsReservationOf(seatCount);
 ```
 
@@ -1664,7 +1660,7 @@ Created enough seats:
 +            seat10
          );
          //WHEN
-         int seatCount = Any.Integer();
+         uint seatCount = Any.UnsignedInt();
 ```
 
 Added a constructor:
@@ -1679,7 +1675,7 @@ diff --git a/Java/src/main/java/logic/CoachWithSeats.java b/Java/src/main/java/l
 +    }
 +
      
-     public void Reserve(int seatCount, TicketInProgress ticket) {
+     public void Reserve(uint seatCount, TicketInProgress ticket) {
          //todo implement
 ```
 
@@ -1704,7 +1700,7 @@ clarified scenario. Test passes right away. suspicious:
          );
 +
          //WHEN
--        int seatCount = Any.Integer();
+-        uint seatCount = Any.UnsignedInt();
 -        var reservationAllowed = coachWithSeats.AllowsReservationOf(seatCount);
 +        var reservationAllowed = coachWithSeats.AllowsReservationOf(11);
  
@@ -1811,7 +1807,7 @@ Made the test pass. but this is not the right implementation:
  
 @@ -18,7 +23,7 @@ public class CoachWithSeats : Coach {
      
-     public bool AllowsReservationOf(int seatCount) {
+     public bool AllowsReservationOf(uint seatCount) {
 -        //todo implement
 -        return false;
 +        //todo not yet the right implementation
@@ -1953,7 +1949,7 @@ implemented only free seats:
 diff --git a/Java/src/main/java/logic/CoachWithSeats.java b/Java/src/main/java/logic/CoachWithSeats.java
 
 ```csharp
-     public bool AllowsReservationOf(int seatCount) {
+     public bool AllowsReservationOf(uint seatCount) {
 -        //todo not yet the right implementation
 -        return seatCount == Arrays.stream(seats).count();
 +        return seatCount == seats
@@ -2018,7 +2014,7 @@ diff --git a/Java/src/test/java/logic/CoachWithSeatsSpecification.java
 
 
 ```csharp
-     public bool AllowsUpFrontReservationOf(int seatCount) {
+     public bool AllowsUpFrontReservationOf(uint seatCount) {
 -        //todo implement
 -        return false;
 +        //todo not the right implementation yet
@@ -2069,7 +2065,7 @@ Commented out a failing test and refactored:
 +++ b/Java/src/main/java/logic/CoachWithSeats.java
 
 ```csharp     
-     public bool AllowsReservationOf(int seatCount) {
+     public bool AllowsReservationOf(uint seatCount) {
 -        return seatCount == Arrays.stream(seats)
 +        return seatCount == freeSeatCount();
 +    }
@@ -2119,14 +2115,14 @@ OK, one test failing:
 @@ -17,13 +17,13 @@ public class CoachWithSeats : Coach {
  
      
-     public bool AllowsUpFrontReservationOf(int seatCount) {
+     public bool AllowsUpFrontReservationOf(uint seatCount) {
 -        //todo not the right implementation yet
 -        return true;
 +        return seatCount <= seats.length;
      }
  
      
-     public bool AllowsReservationOf(int seatCount) {
+     public bool AllowsReservationOf(uint seatCount) {
 -        return seatCount == freeSeatCount();
 +
 +        return seatCount <= freeSeatCount();
@@ -2143,7 +2139,7 @@ Made last test pass. omitting rounding behavior etc.:
 @@ -17,7 +17,7 @@ public class CoachWithSeats : Coach {
  
      
-     public bool AllowsUpFrontReservationOf(int seatCount) {
+     public bool AllowsUpFrontReservationOf(uint seatCount) {
 -        return seatCount <= seats.length;
 +        return seatCount <= seats.length * 0.7;
      }
@@ -2155,7 +2151,7 @@ Picked the right formula for the criteria. Another test green.
 +++ b/Java/src/main/java/logic/CoachWithSeats.java
 
 ```csharp
-     public bool AllowsUpFrontReservationOf(int seatCount) {
+     public bool AllowsUpFrontReservationOf(uint seatCount) {
 -        return seatCount <= seats.length * 0.7;
 +        return (freeSeatCount() - seatCount) >= seats.length * 0.3;
      }
@@ -2201,7 +2197,7 @@ Added reservation test:
 ```csharp
 @@ -22,7 +22,6 @@ public class CoachWithSeats : Coach 
 {
-     public bool AllowsReservationOf(int seatCount) 
+     public bool AllowsReservationOf(uint seatCount) 
      {
 -
          return seatCount <= freeSeatCount();
@@ -2251,7 +2247,7 @@ Added reservation:
 +++ b/Java/src/main/java/logic/CoachWithSeats.java
 
 ```csharp
-     public void Reserve(int seatCount, TicketInProgress ticket) {
+     public void Reserve(uint seatCount, TicketInProgress ticket) {
 -        //todo implement
 +        foreach (var seat in seats) 
 +        {
