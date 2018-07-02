@@ -3,7 +3,16 @@
 
 TODO remember to describe how a TODO list changes!!!
 
+Notes:
+
+1. Johnny is a super programmer, who never makes mistakes
+2. No story slicing
+3. No refactoring
+4. ..?
+
 ### Request
+
+Johnny: Somebody's already written the part that accepts the HTTP request and maps it to the following structure:
 
 ```csharp
 public class ReservationRequestDto
@@ -19,59 +28,125 @@ public class ReservationRequestDto
 }
 ```
 
+Benjamin: I see... Hey, why does the `ReservationRequestDto` name has `Dto` in it? What is it?
+
+Johnny: The suffix `Dto` means that this class represents a Data Transfer Object (in short, DTO)[^POEAA]. Its role is just to transfer data across the process boundaries.
+
+Benjamin: So you mean it is just needed to represent some kind of XML or JSON that is sent to the application?
+
+Johnny: Yes, you could say that.
+
+Benjamin: Cool, what's next?
+
+Johnny: We also need to return a response, which, guess what, is also a DTO. This response represents the reservation made:
+
 ### Response
+
+```csharp
+public class ReservationDto
+{
+  public readonly string trainId;
+  public readonly string reservationId;
+  public readonly List<TicketDto> perSeatTickets;
+
+  public ReservationDto(
+    string trainId,
+    List<TicketDto> perSeatTickets, 
+    string reservationId)
+  {
+    this.trainId = trainId;
+    this.perSeatTickets = perSeatTickets;
+    this.ticketId = ticketId;
+  }
+}
+```
+
+Benjamin: OK, I can see that there's a train ID, which is... the same as the one in the request, right?
+
+Johnny: Right. This is a way to correlate the request with the response.
+
+Benjamin: ...and there is a reservation ID that is probably assigned by our application.
+
+Johnny: correct.
+
+Benjamin: but the `perSeatTickets` field... it is a list of `TicketDto`, which as I understand is one of our custom types. Where is it?
+
+Johnny: Oh, yeah, forgot to show it to you. `TicketDto` is defined as:
 
 ```csharp
 public class TicketDto
 {
-  public readonly string trainId;
-  public readonly string ticketId;
-  public readonly List<SeatDto> seats;
-
-  public TicketDto(string trainId, List<SeatDto> seats, string ticketId)
-  {
-    this.trainId = trainId;
-    this.ticketId = ticketId;
-    this.seats = seats;
-  }
-}
-```
-
-```csharp
-public class SeatDto
-{
   public readonly string coach;
   public readonly int seatNumber;
 
-  public SeatDto(string coach, int seatNumber)
+  public TicketDto(string coach, int seatNumber)
   {
     this.coach = coach;
     this.seatNumber = seatNumber;
   }
-
 }
 ```
 
-## bootstrap
+so it has a coach name and a seat number, and we have a list of these in our ticket.
 
-hosting the web app. The web part is already written, time for the TicketOffice.
+Benjamin: Ok, so a single reservation can contain many tickets and each ticket is for a single place in a specific coach, right?
+
+Johnny: Yes. There are some constraints however, which I will tell you about later.
+
+Benjamin: Ok. So we need these datqa structures to deserialize some kind of JSON or XML input into them?
+
+Johnny: Well, lucky us, as this part is already done. Our work starts from the point where the desrialized data is passed to the application logic. The request entry point is in a class called `TicketOffice`:
 
 ```csharp
-public class Main
+public class TicketOffice
+{
+    public ReservationDto MakeReservation(ReservationRequestDto requestDto)
+    {
+        throw new NotImplementedException("Not implemented");
+    }
+}
+```
+
+## Bootstrap
+
+Benjamin: Are we ready to go?
+
+Johnny: Typically, if I were you, I would like to see one more place in the code.
+
+Benjamin: Which is..?
+
+Johnny: The composition root, of course.
+
+Benjamin: Why would I like to see a composition root?
+
+Johnny: Well, first reason is that it is very close the entry point for the application, so it is a chance for you to see how the application manages its dependencies. The second reason is that each time we will be adding a new class that has the same lifespan as the application, we will need to go to the composition root and modify it. Sooo it would probably be nice to be able to tell where it is.
+
+Benjamin: I thought I could find that later, but while we're at it, can you show me the composition root?
+
+Johnny: Sure, it's here, in the `Application` class:
+
+```csharp
+public class Application
 {
   public static void Main(string[] args)
   {
-    new WebApp(new TicketOffice()).Host();
+    new WebApp(
+        new TicketOffice()
+    ).Host();
   }
 }
 ```
+
+Benjamin: Good to see it doesn't use any fancy reflection-based mechanism for composing objects.
+
+Johnny: Yes, we're lucky about that.
 
 Ticket office class:
 
 ```csharp
 public class TicketOffice
 {
-    public TicketDto MakeReservation(ReservationRequestDto requestDto) 
+    public ReservationDto MakeReservation(ReservationRequestDto requestDto) 
     {
         throw new NotImplementedException("Not implemented");
     }
@@ -80,21 +155,160 @@ public class TicketOffice
 
 ## Let's go!
 
-Composition root:
+Johnny: Anyway, I think we're ready to start.
+
+Benjamin: Ok, where do we start from? Should we write a class called "Reservation" or "Train" first?
+
+Johnny: No, what we will do is we will start from the inputs and work our way towards the inside of the application. Then, if necessary, to the outputs again.
+
+Benjamin: I don't think I understand what you're talking about. Do you mean this "outside-in" approach that you talked about yesterday?
+
+Johnny: Yes and don't worry if you didn't get what I said, I will explain as we go. For now, the only thing it means is that we will follow the path of the request as it comes from the outside and start implementing at first place that is not working as we think it should. Specifically, this means we start at:
 
 ```csharp
- public class Main {
- 
-     public static void main(String[] args) {
--
-+        new TicketOffice();
-     }
- 
- }
+public class TicketOffice
+{
+    public ReservationDto MakeReservation(ReservationRequestDto requestDto) 
+    {
+        throw new NotImplementedException("Not implemented");
+    }
+}
 ```
 
+Benjamin: Why?
+
+Johnny: Because this is the place nearest to the request entry point where the behavior differs from the one we expect.
+
+Benjamin: I see... so... if we didn't have the request deserialization code in place already, we'd start there, right?
+
+Johnny: Yes, you got it.
+
+Benjamin: And... we start with a false Statement, no?
+
+Johnny: Yes, let's do that.
 
 ### First Statement skeleton:
+
+Benjamin: Don't tell me anything, I'll try doing it myself.
+
+Johnny: Sure, as you wish.
+
+Benjamin: The first thing I need to do is to add an empty Specification for the TicketOffice class:
+
+```csharp
+public class TicketOfficeSpecification
+{
+    //TODO add a Statement
+}
+```
+
+Then, I need to add my first Statement. I know that in this Statement, I need to create an instance of the `TicketOffice` class and call the `MakeReservation` method, since it's the only method in this class and it's not implemented.
+
+Johnny: so what strategy do you use for starting with a false Statement?
+
+Benjamin: "invoke method have one", as far as I remember.
+
+Johnny: So what's the code going to look like?
+
+Benjamin: for starters, I will do my brain dump just as you taught me. After stating all the bleedy obvious facts, I get:
+
+```csharp
+[Fact]
+public void ShouldXXXXX() //TODO better name
+{
+  //WHEN
+  var ticketOffice = new TicketOffice();
+
+  //WHEN
+  ticketOffice.MakeReservation(request);
+
+  //THEN
+  Assert.True(false);
+}
+```
+
+Johnny: Good... my... apprentice...
+
+Benjamin: What?
+
+Johnny: Oh, nevermind...  anyway, the code doesn't compile now, since this line:
+
+```csharp
+ticketOffice.MakeReservation(request);
+```
+
+uses a variable `request` that does not exist. Let's generate it using our IDE!
+
+Benjamin: By the way, I wanted to ask about this line. Making it compile is something we need to do to move on. Weren't we supposed to add a `TODO` comment for things we need to get back to, like we did with the Statement name:
+
+```csharp
+public void ShouldXXXXX() //TODO better name
+```
+
+Johnny: My opinion is that this is not necessary, because the compiler, by failing on this line, has already creeated a TODO item for us, just not on our TODO list but on compile error log. This is different than the need to change a method name, which the compiler will not remind you about.
+
+Benjamin: So my TODO list is composed of cmopile errors, test failures and the items I manually mark as `TODO`? Is this how I should understand it?
+
+Johnny: Exactly. Going back to the `request` variable, let's create it.
+
+Benjamin: Sure. I came out like this:
+
+```csharp
+ReservationRequestDto request;
+```
+
+We need to assign something to the variable.
+
+Johnny: Yes, and since it's a DTO, it is certainly not going to be a mock.
+
+Benjamin: You mean we don't mock DTOs?
+
+Johnny: No, there's no need to. DTOs are, by definition, data structures. Later I will explain it in more details. For now, just accept my word on it.
+
+Benjamin: Sooo... if it's not going to be a mock, then let's generate it using the `Any.Instance<>()` method.
+
+Johnny: That is exactly what I would do.
+
+Benjamin: So this line:
+
+```csharp
+ReservationRequestDto reservation;
+```
+
+Becomes:
+
+```csharp
+var reservation = Any.Instance<ReservationRequestDto>();
+```
+
+Johnny: Yes, and now the Statement compiles, so after everything compiles, our Statement seems to be false. This is because of this line:
+
+```csharp
+Assert.True(false);
+```
+
+Benjamin: so we change this `false` to `true` and we're done here, right?
+
+Johnny: ...
+
+Benjamin: Oh, seems I pulled a string there, didn't I? What I really wanted to say is let's turn this assertion into something useful.
+
+Johnny: phew, don't scare me like that. Yes, this assertion needs to be rewritten. And it so happens that when we look at the following line:
+
+```csharp
+ticketOffice.MakeReservation(request);
+```
+
+the `MakeReservation()` method returns a result, which we can see in the production code:
+
+```csharp
+public ReservationDto MakeReservation(ReservationRequestDto requestDto) 
+```
+
+but in our Statement, we don't do anything with it.
+
+///////////////TODO
+
 
 (brain dump -> method, assertion, good name, not a full Statement yet)
 
@@ -1570,17 +1784,17 @@ The code does not compile yet, so adding just enough code to make it compile.
 ```
 
 
-Starting new specification, using brain dump:
-
-//TODOOOOOOOOOOOO TODO TODO
+Starting specification for new class, using brain dump:
 
 +++ b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
 
 ```csharp
-+public class CoachWithSeatsSpecification {
++public class CoachWithSeatsSpecification 
++{
 +
 +    [Fact]
-+    public void xxXXxxXX() { //todo rename
++    public void xxXXxxXX()
++    { //TODO rename
 +        //GIVEN
 +        var coachWithSeats = new CoachWithSeats();
 +        //WHEN
@@ -1590,28 +1804,21 @@ Starting new specification, using brain dump:
 +        //THEN
 +        Assert.True(reservationAllowed);
 +    }
-+
 +}
 ```
 
-Discovered an interface Seat:
-
-+++ b/Java/src/main/java/logic/Seat.java
-
-```csharp
-+public interface Seat {
-+}
-```
+Now we need to somehow determine the seat count. I pass seats and then create an instance of the first one and this leads me to inventing a type for it. This way, I discover the Seat interface:
 
 +++ b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
 
 ```csharp
 @@ -11,7 +11,18 @@ public class CoachWithSeatsSpecification {
      [Fact]
-     public void xxXXxxXX() { //todo rename
+     public void xxXXxxXX() //todo rename
+     {
          //GIVEN
 -        var coachWithSeats = new CoachWithSeats();
-+        Seat seat1 = Any.Instance<Seat>();
++        Seat seat1 = Any.Instance<Seat>(); //introduced later
 +        var coachWithSeats = new CoachWithSeats(
 +            seat1,
 +            seat2,
@@ -1621,11 +1828,22 @@ Discovered an interface Seat:
 +            seat6,
 +            seat7,
 +            seat8,
-+            seat9
++            seat9,
++            seat10
 +        );
          //WHEN
          uint seatCount = Any.UnsignedInt();
          var reservationAllowed = coachWithSeats.AllowsReservationOf(seatCount);
+```
+
+and we define the interface:
+
++++ b/Java/src/main/java/logic/Seat.java
+
+```csharp
++public interface Seat
++{
++}
 ```
 
 Created enough seats:
@@ -1651,21 +1869,11 @@ Created enough seats:
          var coachWithSeats = new CoachWithSeats(
              seat1,
              seat2,
-@@ -21,7 +31,8 @@ public class CoachWithSeatsSpecification {
-             seat6,
-             seat7,
-             seat8,
--            seat9
-+            seat9,
-+            seat10
-         );
-         //WHEN
-         uint seatCount = Any.UnsignedInt();
 ```
 
 Added a constructor:
 
-diff --git a/Java/src/main/java/logic/CoachWithSeats.java b/Java/src/main/java/logic/CoachWithSeats.java
+b/Java/src/main/java/logic/CoachWithSeats.java
 
 +++ b/Java/src/main/java/logic/CoachWithSeats.java
 
@@ -1674,12 +1882,9 @@ diff --git a/Java/src/main/java/logic/CoachWithSeats.java b/Java/src/main/java/l
 +    public CoachWithSeats(Seat... seats) {
 +    }
 +
-     
-     public void Reserve(uint seatCount, TicketInProgress ticket) {
-         //todo implement
 ```
 
-clarified scenario. Test passes right away. suspicious:
+Clarified scenario. Test passes right away. suspicious:
 
 +++ b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
 
@@ -1687,10 +1892,11 @@ clarified scenario. Test passes right away. suspicious:
  public class CoachWithSeatsSpecification {
  
      [Fact]
--    public void xxXXxxXX() { //todo rename
-+    public void ShouldNotAllowReservingMoreSeatsThanItHas() { //todo rename
-         //GIVEN
--        //todo what's special about these seats?
+-    public void xxXXxxXX() //todo rename
++    public void ShouldNotAllowReservingMoreSeatsThanItHas()
+{
+        //GIVEN
+        //todo what's special about these seats?
          Seat seat1 = Any.Instance<Seat>();
          Seat seat2 = Any.Instance<Seat>();
          Seat seat3 = Any.Instance<Seat>();
@@ -1706,7 +1912,7 @@ clarified scenario. Test passes right away. suspicious:
  
          //THEN
 -        Assert.True(reservationAllowed);
-+        assertThat(reservationAllowed).isFalse();
++        Assert.False(reservationAllowed);
      }
  
 +    //todo what's special about these seats?
@@ -1714,16 +1920,18 @@ clarified scenario. Test passes right away. suspicious:
  }
 ```
 
+//////TODOOOOOOOO I stop here and start writing the chapter. Still wondering if a method for determining the best possible reservation type returning an enum would be better than two boolean questions.
+
 Reused test and added todo:
 
 +++ b/Java/src/test/java/logic/CoachWithSeatsSpecification.java
 
 ```csharp
 public class CoachWithSeatsSpecification {
- 
+
      [Fact]
--    public void ShouldNotAllowReservingMoreSeatsThanItHas() { //todo rename
-+    public void ShouldNotAllowReservingMoreSeatsThanItHas() {
+     public void ShouldNotAllowReservingMoreSeatsThanItHas() 
+     {
          //GIVEN
          Seat seat1 = Any.Instance<Seat>();
          Seat seat2 = Any.Instance<Seat>();
@@ -2425,3 +2633,5 @@ Discovered a NamedSeat class:
          //GIVEN
          var isInitiallyFree = Any.booleanValue();
 ```
+
+[^POEAA]: Patterns of enterprise application architecture, M. Fowler.
