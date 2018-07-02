@@ -118,6 +118,56 @@ Here, the `destination` is allowed to modify the date it receives anyway it like
 
 I saw many, many issues in production code caused by the mutability of Java `Date` type alone. That's one of the reasons the new time library in Java 8 (`java.time`) contains immutable types for time and date. When a type is immutable, you can safely return its instance or pass it somewhere without having to worry that someone will overwrite your local state against your will.
 
+### Watch out for the constructor!
+
+You may think that it's fairly easy to get used to cases such as above and avoid them by just being more careful, but my experience is that there are many gotchas associated with immutability. Another variant of the `Date` case from Java could be something like this: Let's imagine we have a `Money` type, which is defined as:
+
+```csharp
+public class Money
+{
+  private readonly int _amount;
+  private readonly Currencies _currency;
+  private readonly List<ExchangeRate> _exchangeRates;
+
+  public Money(
+    int amount,
+    Currencies currency,
+    List<ExchangeRate> exchangeRates)
+  {
+    _amount = amount;
+    _currency = currency;
+    _exchangeRates = exchangeRates;
+  }
+
+  //... other methods
+}
+```
+
+Note that this class has a field of type `List<>`, which is itself mutable. But let's also imagine that we have carefully reviewed all of the methods of this class so that this mutable data is not exposed. Does it mean we are safe?
+
+The answer is: as long as our constructor stays as it is, no. Note that the constructor takes a mutable list and just assigns it to a private field. Thus, someone may do something like this:
+
+```csharp
+List<ExchangeRate> rates = GetExchangeRates();
+
+Money dollars = new Money(100, Currencies.USD, rates);
+
+//modify the list that was passed to dollars object
+rates.Add(GetAnotherExchangeRate());
+```
+
+In the example above, the `dollars` object was changed by modifying the list that was passed inside. To get the immutability, one would have to either use an immutable collection library or change the following line:
+
+```csharp
+_exchangeRates = exchangeRates;
+```
+
+to:
+
+```csharp
+_exchangeRates = new List<ExchangeRate>(exchangeRates);
+```
+
 ### Thread safety
 
 When mutable values are shared between threads, there is a risk that they are changed by several threads at the same time or modified by one thread while being read by another. This can cause data corruption. Like I mentioned, value objects tend to be created many times in many places and passed inside methods or returned as results a lot - this seems to be their nature. Thus, this risk of data corruption or inconsistency raises.
