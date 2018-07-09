@@ -9,7 +9,9 @@ So here is the promised definition of `ProductName`:
 ```csharp
 //This is the class we created and used
 //in the previous chapter
-public class ProductName 
+
+// class signature
+public sealed class ProductName
   : IEquatable<ProductName>
 {
   // Hidden data:
@@ -40,6 +42,12 @@ public class ProductName
 ```
 
 Using the comments, I divided the class into sections and will describe them in order.
+
+## Class signature
+
+There are two things to note about the class signature. The first one is that the class is `sealed` (in Java that would be `final`), i.e. I disallow inheriting from it. This is because I want the ojects of this class to be immutable. On the first sight, sealing the class has nothing to do with immutability. I will explain it in the next chapter when I discuss the aspects of value object design.
+
+THe second thing to note is that the class implements an `IEquatable` interface that adds more strongly typed versions of the `Equals(T object)` method. This is not strictly required as in C#, every object has a default `Equals(Object o)` method, but is typically considered a good practice since it allows e.g. more efficient use of value objects with C# collections such as `Dictionary`[^whyuseequatable].
 
 ## Hidden data
 
@@ -404,4 +412,6 @@ So far, we have talked about value objects using a specific example of product n
 [^essentialskills]: A. Shalloway et al., Essential Skills For The Agile Developer.
 
 [^constructorsdynamic]: This is literally true for languages like Java, C# or C++. There are other languages (like Ruby), with different rules regarding object construction. Still, the original argument - that the naming of methods responsible for object creation is constrained - holds.
+
+[^whyuseequatable]: https://stackoverflow.com/questions/2734914/whats-the-difference-between-iequatable-and-just-overriding-object-equals
 
