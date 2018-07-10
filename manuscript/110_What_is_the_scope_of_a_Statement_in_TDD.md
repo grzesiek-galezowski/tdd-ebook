@@ -231,5 +231,5 @@ So every time we have several physical assertions that can be (or are) extracted
 
 In this chapter, we tried to find out how much should go into a single Statement. We examined the notions of level and functional scope to end up with a conclusion that a Statement should cover a single behavior. We backed this statement by three rules by Amir Kolsky and looked at an example of what could happen when we don't follow one of them. Finally, we discussed how the notion of "single Statement per behavior" is related to "single assertion per Statement".
 
-[^CleanCode]: Clean Code movies, don't remember which episode -- please help me find it and report issue on github.
-[^unclebobdisagrees]: Some disagree, however, with writing Statements on the class level - see http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html
+[^CleanCode]: Clean Code series, episode 19 (https://cleancoders.com/episode/clean-code-episode-19-p1/show), Robert C. Martin, 2013
+[^unclebobdisagrees]: Some disagree, however, with writing Statements on the class level - see http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html or https://vimeo.com/68375232
