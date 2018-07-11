@@ -693,7 +693,7 @@ So note that this time, I used the *type the obvious implementation* approach - 
 The two lessons from this are:
 
 1. When I stop triangulating along one axis, I may still need to triangulate along others.
-1. Triangulation allows me to take smaller steps when we *need* and when I don't, I use another approach. There are many things I don't triangulate.
+1. Triangulation allows me to take smaller steps when I *need* to and when I don't, I use another approach. There are many things I don't triangulate.
 
 I hope that, by showing you this example, I made a more compelling case for triangulation. I'd like to stop here, leaving the rest of this exercise for the reader.
 
