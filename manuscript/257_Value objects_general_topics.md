@@ -29,7 +29,7 @@ When we read from the dictionary using the same key:
 AnObject anObject = _objects[key];
 ```
 
-then its hash code is calculated again and only when the hash codes match are the key objects compared for equality. 
+then its hash code is calculated again and only when the hash codes match are the key objects compared for equality.
 
 Thus, in order to successfully retrieve an object from a dictionary with a key, this key object must meet the following conditions in regard to the key we previously used to put the object in:
 
@@ -57,20 +57,20 @@ As I find it a quite common situation that value objects end up as keys inside d
 
 ### Accidental modification by foreign code
 
-I bet many who code or coded in Java know its `Date` class. `Date` behaves like a value (it has overloaded equality and hash code generation), but is mutable (with methods like `setMonth()`, `setTime()`, `setHours()` etc.). 
+I bet many who code or coded in Java know its `Date` class. `Date` behaves like a value (it has overloaded equality and hash code generation), but is mutable (with methods like `setMonth()`, `setTime()`, `setHours()` etc.).
 
 Typically, value objects tend to be passed a lot throughout an application and used in calculations. Many Java programmers at least once exposed a `Date` value using a getter:
 
 ```java
 public class ObjectWithDate {
 
-  private final Date _date = new Date();
+  private final Date date = new Date();
 
   //...
 
   public Date getDate() {
     //oops...
-    return _date;
+    return this.date;
   }
 }
 ```
@@ -85,7 +85,7 @@ o.getDate().setTime(date.getTime() + 10000); //oops!
 return date;
 ```
 
-Of course, no one would do it in the same line like on the snippet above, but usually, this date was accessed, assigned to a variable and passed through several methods, one of which did something like this:
+Of course, almost no one would probably do it in the same line like in the snippet above, but usually, this date would be accessed, assigned to a variable and then passed through several methods, one of which would do something like this:
 
 ```java
 public void doSomething(Date date) {
@@ -100,7 +100,7 @@ As most of the time it wasn't the intention, the problem of date mutability forc
 
 ```java
 public Date getDate() {
-  return (Date)_date.clone();
+  return (Date)this.date.clone();
 }
 ```
 
@@ -232,6 +232,89 @@ to:
 _exchangeRates = new List<ExchangeRate>(exchangeRates);
 ```
 
+#### Inheritable dependencies can surprise you!
+
+Another gotcha has to do with objects of inheritable types. Let's take a look at the example of a class called `DateWithZone`, representing a date with time zone. Let's say that this class has a dependency on another class called `ZoneId`:
+
+```csharp
+public sealed class DateWithZone : IEquatable<DateWithZone>
+{
+  private readonly ZoneId _zoneId;
+
+  public DateWithZone(ZoneId zoneId)
+  {
+    _zoneId = zoneId;
+  }
+
+  //... some equality methods and operators...
+
+  public override int GetHashCode()
+  {
+    return (_zoneId != null ? _zoneId.GetHashCode() : 0);
+  }
+
+}
+```
+
+Note that for simplicity, I made the `DateWithZone` type to consist *only* of zone id, which of course in reality does not make any sense. I am doing this only because I want this example to be stripped to the bone. Anyway, the `ZoneId` type is defined as follows:
+
+```csharp
+public class ZoneId
+{
+
+} 
+```
+
+There are two things to note about this class. First, it has an empty body, so no fields and methods defined. The second thing is that this type is not `sealed` (OK, the third thing is that this type does not have value semantics, since its equality operations are inherited as reference-based from the `Object` class, but for the sake of this example let's ignore that).
+
+I just said that the `ZoneId` does not have any fields and methods, didn't I? Well, I lied. A class in C# inherits from `Object`, which means it implicitly inherits some fields and methods. One of such methods is `GetHashCode()`, which means that the following code compiles:
+
+```csharp
+var zoneId = new ZoneId();
+Console.WriteLine(zoneId.GetHashCode());
+```
+
+The last piece of information that we need to see the bigger picture is that methods like `Equals()` and `GetHashCode()` can be overridden. This, combined with the fact that our `ZoneId` is not `sealed`, means that somebody can do something like this:
+
+```csharp
+public class EvilZoneId : ZoneId
+{ 
+  private int _i = 0;
+  
+  public override GetHashCode()
+  {
+    _i++;
+    return i;  
+  }
+}
+```
+
+When calling `GetHashCode()` multiple times on instances of this class, it's going to return 1,2,3,4,5,6,7... and so on. This is because the `_i` field is in fact a piece of mutable state and it is modified every time we request a hash code. Now, I assume no sane person would write code like this, but on the other hand, the language does not restrict it. So assuming such an evil class would come to existence in a code base that uses the `DateWithZone`, let's see what could be the consequence on this type.
+
+First, let's imagine someone does the following:
+
+```csharp
+var date = new DateWithZone(new EvilZoneId());
+
+//...
+
+DoSomething(date.GetHashCode());
+DoSomething(date.GetHashCode());
+DoSomething(date.GetHashCode());
+```
+
+Note that the user of the `DateWithZone` instance uses its hash code, but the `GetHashCode()` operation of this class is implemented as:
+
+```csharp
+public override int GetHashCode()
+{
+  return (_zoneId != null ? _zoneId.GetHashCode() : 0);
+}
+```
+
+So it uses the hash code of the zone id, which, in our example, is of class `EvilZoneId` which is mutable. As a consequence, our instance of `DateWithZone` is mutable as well.
+
+Of course, this gets worse the more methods might be overridden
 TODO abstract classes, generic methods
 
 
