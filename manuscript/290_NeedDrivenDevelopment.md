@@ -302,7 +302,7 @@ ticketOffice.MakeReservation(request);
 the `MakeReservation()` method returns a result, which we can see in the production code:
 
 ```csharp
-public ReservationDto MakeReservation(ReservationRequestDto requestDto) 
+public ReservationDto MakeReservation(ReservationRequestDto requestDto)
 ```
 
 but in our Statement, we don't do anything with it.
