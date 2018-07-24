@@ -465,7 +465,7 @@ Some value types have values that are so specific that they have their own names
 For such values, the common practice I've seen is making them globally accessible from the value object classes, as is done in all the above examples from C# and Java. This is because values are immutable, so the global accessibility doesn't hurt. For example, we can imagine `string.Empty` implemented like this:
 
 ```csharp
-public class string
+public sealed class String //... some interfaces here
 {
   //...
   public const string Empty = "";
