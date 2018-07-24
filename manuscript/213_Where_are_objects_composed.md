@@ -796,7 +796,7 @@ There is, however, the second part of the section name: "encapsulating terminolo
   }
 ```
 
-Putting it all together, factories allow giving names to some specific object compositions to increase readability and they allow hiding the meaning of some of the domain terms for easier change in the future, because we ca modify a meaning of the encapsulated term by changing the code inside the factory methods.
+Putting it all together, factories allow giving names to some specific object compositions to increase readability and they allow hiding the meaning of some of the domain terms for easier change in the future, because we can modify a meaning of the encapsulated term by changing the code inside the factory methods.
 
 ### Factories help eliminate redundancy
 
