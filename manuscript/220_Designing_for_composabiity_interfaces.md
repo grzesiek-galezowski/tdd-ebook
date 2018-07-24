@@ -73,7 +73,7 @@ public void SendSomethingToRecipients()
 
 We can see that in the second case we are losing the notion of which message belongs to which recipient -- each callback is standalone from the point of view of the sender. This is unfortunate, because in our design approach, we want to highlight the roles each recipient plays in the communication, to make it readable and logical. Also, ironically, decoupling using events or callbacks can make composability harder. This is because roles tell us which sets of behaviors belong together and thus, need to change together. If each behavior is triggered using a separate event or callback, an overhead is placed on us to remember which behaviors should be changed together, and which ones can change independently.
 
-This does not mean that events or callbacks are bad. It's just that they are not fit for replacing interfaces -- in reality, their purpose is a little bit different. We use events or callbacks not ?tell somebody to do something?, but to indicate what happened (that's why we call them events, after all...). This fits well the observer pattern we already talked about in the previous chapter. So, instead of using observer objects, we may consider using events or callbacks instead (as in everything, there are some tradeoffs for each of the solutions). In other words, events and callbacks have their use in the composition, but they are fit for a case so specific, that they cannot be treated as a default choice. The advantage of interfaces is that they bind together messages that represent a coherent abstractions and convey roles in the communication. This improves readability and clarity.
+This does not mean that events or callbacks are bad. It's just that they are not fit for replacing interfaces -- in reality, their purpose is a little bit different. We use events or callbacks not to tell somebody to do something, but to indicate what happened (that's why we call them events, after all...). This fits well the observer pattern we already talked about in the previous chapter. So, instead of using observer objects, we may consider using events or callbacks instead (as in everything, there are some tradeoffs for each of the solutions). In other words, events and callbacks have their use in the composition, but they are fit for a case so specific, that they cannot be treated as a default choice. The advantage of interfaces is that they bind together messages that represent a coherent abstractions and convey roles in the communication. This improves readability and clarity.
 
 ## Small interfaces
 
@@ -98,8 +98,8 @@ It is impossible to remove either of the methods from the `Recipient` interface,
 So, what do we do then? We try to separate groups of methods used by different senders and move them to separate interfaces, so that each sender has access only to the methods it needs. After all, a class can implement more than one interface, like this:
 
 ```csharp
-public class ImplementingObject 
-: InterfaceForSender1, 
+public class ImplementingObject
+: InterfaceForSender1,
   InterfaceForSender2,
   InterfaceForSender3
 { ... }
