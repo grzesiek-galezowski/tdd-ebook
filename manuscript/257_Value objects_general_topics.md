@@ -234,7 +234,7 @@ _exchangeRates = new List<ExchangeRate>(exchangeRates);
 
 #### Inheritable dependencies can surprise you!
 
-Another gotcha has to do with objects of inheritable types. Let's take a look at the example of a class called `DateWithZone`, representing a date with time zone. Let's say that this class has a dependency on another class called `ZoneId`:
+Another gotcha has to do with objects of types which can be subclassed (i.e. are not `sealed`). Let's take a look at the example of a class called `DateWithZone`, representing a date with a time zone. Let's say that this class has a dependency on another class called `ZoneId` and is defined as such:
 
 ```csharp
 public sealed class DateWithZone : IEquatable<DateWithZone>
@@ -256,7 +256,7 @@ public sealed class DateWithZone : IEquatable<DateWithZone>
 }
 ```
 
-Note that for simplicity, I made the `DateWithZone` type to consist *only* of zone id, which of course in reality does not make any sense. I am doing this only because I want this example to be stripped to the bone. Anyway, the `ZoneId` type is defined as follows:
+Note that for simplicity, I made the `DateWithZone` type consist *only* of zone id, which of course in reality does not make any sense. I am doing this only because I want this example to be stripped to the bone. This is also why, for the sake of this example, `ZoneId` type is defined simply as:
 
 ```csharp
 public class ZoneId
@@ -265,9 +265,9 @@ public class ZoneId
 } 
 ```
 
-There are two things to note about this class. First, it has an empty body, so no fields and methods defined. The second thing is that this type is not `sealed` (OK, the third thing is that this type does not have value semantics, since its equality operations are inherited as reference-based from the `Object` class, but for the sake of this example let's ignore that).
+There are two things to note about this class. First, it has an empty body, so no fields and methods defined. The second thing is that this type is not `sealed` (OK, the third thing is that this type does not have value semantics, since its equality operations are inherited as reference-based from the `Object` class, but, again for the sake of simplification, let's ignore that).
 
-I just said that the `ZoneId` does not have any fields and methods, didn't I? Well, I lied. A class in C# inherits from `Object`, which means it implicitly inherits some fields and methods. One of such methods is `GetHashCode()`, which means that the following code compiles:
+I just said that the `ZoneId` does not have any fields and methods, didn't I? Well, I lied. A class in C# inherits from `Object`, which means it implicitly inherits some fields and methods. One of these methods is `GetHashCode()`, which means that the following code compiles:
 
 ```csharp
 var zoneId = new ZoneId();
@@ -278,7 +278,7 @@ The last piece of information that we need to see the bigger picture is that met
 
 ```csharp
 public class EvilZoneId : ZoneId
-{ 
+{
   private int _i = 0;
   
   public override GetHashCode()
@@ -289,9 +289,9 @@ public class EvilZoneId : ZoneId
 }
 ```
 
-When calling `GetHashCode()` multiple times on instances of this class, it's going to return 1,2,3,4,5,6,7... and so on. This is because the `_i` field is in fact a piece of mutable state and it is modified every time we request a hash code. Now, I assume no sane person would write code like this, but on the other hand, the language does not restrict it. So assuming such an evil class would come to existence in a code base that uses the `DateWithZone`, let's see what could be the consequence on this type.
+When calling `GetHashCode()` on an instance of this class multiple times, it's going to return 1,2,3,4,5,6,7... and so on. This is because the `_i` field is in fact a piece of mutable state and it is modified every time we request a hash code. Now, I assume no sane person would write code like this, but on the other hand, the language does not restrict it. So assuming such an evil class would come to existence in a code base that uses the `DateWithZone`, let's see what could be the consequence on this type.
 
-First, let's imagine someone does the following:
+First, let's imagine someone doing the following:
 
 ```csharp
 var date = new DateWithZone(new EvilZoneId());
@@ -312,12 +312,11 @@ public override int GetHashCode()
 }
 ```
 
-So it uses the hash code of the zone id, which, in our example, is of class `EvilZoneId` which is mutable. As a consequence, our instance of `DateWithZone` is mutable as well.
+So it uses the hash code of the zone id, which, in our example, is of class `EvilZoneId` which is mutable. As a consequence, our instance of `DateWithZone` ends up being mutable as well.
 
-Of course, this gets worse the more methods might be overridden
-TODO abstract classes, generic methods
+This example shows a trivial and not too believable case of `GetHashCode()` because I wanted to show you that even empty classes have some methods that can be overridden to make the objects mutable. To make sure the class cannot be subclassed in a mutable way, we would have to either make all methods `sealed` (including those inherited from `Object`) or, better, make the class `sealed`. Another observation that can be made is that if our `ZoneId` was an abstract class with at least one abstract method, we would have no chance of ensuring immutability of its implementations, as abstract methods by definition exist to be implemented in subclasses, so we cannot make an abstract method or class `sealed`.
 
-
+There are more gotchas (e.g. a similar one applied to generic types), but I'll leave them for another time.
 
 ## Handling of variability
 
