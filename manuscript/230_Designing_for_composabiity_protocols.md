@@ -69,7 +69,7 @@ it would compile just fine, but fail badly when executed. This is because the be
 
 So, again, there are certain rules that restrict the way two objects can communicate. Both sender and recipient of a message must adhere to the rules, or the they will not be able to work together.
 
-The good news is that, most of the time, *we* are the ones who design these protocols, along with the interfaces, so we can design them to be either easier or harder or to follow by different implementations of an interface. Of course, we are wholeheartedly for the "easier" part.
+The good news is that, most of the time, *we* are the ones who design these protocols, along with the interfaces, so we can design them to be either easier or harder to follow by different implementations of an interface. Of course, we are wholeheartedly for the "easier" part.
 
 ## Protocol stability
 
