@@ -843,6 +843,6 @@ The rules outlined here apply to the most of the objects in our application. Wai
 
 [^messageotherchangecase]: although it does need to change when the rule "first validate, then apply to sessions" changes
 
-[^simplerbutnotflexible]: There are simple ways, yet none is as flexible as using factories.
+[^simplerbutnotflexible]: There are simpler ways, yet none is as flexible as using factories.
 
 [^skippingports]: The two versions of the API would probably be hosted on different URLs or on different ports. In real-world scenario, these different values would probably need to be passed as constructor parameters as well.
