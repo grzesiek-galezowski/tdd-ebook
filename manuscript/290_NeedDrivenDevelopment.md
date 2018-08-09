@@ -8,6 +8,7 @@ Notes:
 1. Johnny is a super programmer, who never makes mistakes
 2. No story slicing
 3. No refactoring
+4. No higher level tests
 4. ..?
 
 ### Request
@@ -98,14 +99,18 @@ Benjamin: Ok. So we need these datqa structures to deserialize some kind of JSON
 Johnny: Well, lucky us, as this part is already done. Our work starts from the point where the desrialized data is passed to the application logic. The request entry point is in a class called `TicketOffice`:
 
 ```csharp
+[SomeKindOfController]
 public class TicketOffice
 {
+    [SuperFrameworkMethod]
     public ReservationDto MakeReservation(ReservationRequestDto requestDto)
     {
         throw new NotImplementedException("Not implemented");
     }
 }
 ```
+
+As I can see, it has annotations specific to a web framework, so we will probably not implement the use case directly in the `MakeReservation` method to avoid coupling our use case logic to code that needs to meet the requirements of a specific framework.
 
 ## Bootstrap
 
@@ -220,7 +225,7 @@ public void ShouldXXXXX() //TODO better name
   var ticketOffice = new TicketOffice();
 
   //WHEN
-  ticketOffice.MakeReservation(request);
+  ticketOffice.MakeReservation(requestDto);
 
   //THEN
   Assert.True(false);
@@ -234,10 +239,10 @@ Benjamin: What?
 Johnny: Oh, nevermind...  anyway, the code doesn't compile now, since this line:
 
 ```csharp
-ticketOffice.MakeReservation(request);
+ticketOffice.MakeReservation(requestDto);
 ```
 
-uses a variable `request` that does not exist. Let's generate it using our IDE!
+uses a variable `requestDto` that does not exist. Let's generate it using our IDE!
 
 Benjamin: By the way, I wanted to ask about this line. Making it compile is something we need to do to move on. Weren't we supposed to add a `TODO` comment for things we need to get back to, like we did with the Statement name:
 
@@ -249,12 +254,12 @@ Johnny: My opinion is that this is not necessary, because the compiler, by faili
 
 Benjamin: So my TODO list is composed of cmopile errors, test failures and the items I manually mark as `TODO`? Is this how I should understand it?
 
-Johnny: Exactly. Going back to the `request` variable, let's create it.
+Johnny: Exactly. Going back to the `requestDto` variable, let's create it.
 
 Benjamin: Sure. I came out like this:
 
 ```csharp
-ReservationRequestDto request;
+ReservationRequestDto requestDto;
 ```
 
 We need to assign something to the variable.
@@ -272,13 +277,13 @@ Johnny: That is exactly what I would do.
 Benjamin: So this line:
 
 ```csharp
-ReservationRequestDto reservation;
+ReservationRequestDto requestDto;
 ```
 
 Becomes:
 
 ```csharp
-var reservation = Any.Instance<ReservationRequestDto>();
+var requestDto = Any.Instance<ReservationRequestDto>();
 ```
 
 Johnny: Yes, and now the Statement compiles, so after everything compiles, our Statement seems to be false. This is because of this line:
@@ -296,10 +301,10 @@ Benjamin: Oh, seems I pulled a string there, didn't I? What I really wanted to s
 Johnny: phew, don't scare me like that. Yes, this assertion needs to be rewritten. And it so happens that when we look at the following line:
 
 ```csharp
-ticketOffice.MakeReservation(request);
+ticketOffice.MakeReservation(requestDto);
 ```
 
-the `MakeReservation()` method returns a result, which we can see in the production code:
+it doesn't make any use of the return value of `MakeReservation()` while it's evident from the signature that its return type is a `ReservationDto`:
 
 ```csharp
 public ReservationDto MakeReservation(ReservationRequestDto requestDto)
@@ -307,30 +312,167 @@ public ReservationDto MakeReservation(ReservationRequestDto requestDto)
 
 but in our Statement, we don't do anything with it.
 
-///////////////TODO
+Benjamin: Ok, let me guess, you want me to assign this return value to a variable and then assert its equality to... what exactly?
 
+Johnny: For now, to an expected value, which we don't know yet what's going to be, but we will worry later when it really blocks us.
 
-(brain dump -> method, assertion, good name, not a full Statement yet)
+Benjamin: Right. So here goes:
 
 ```csharp
-public class TicketOfficeSpecification
+[Fact]
+public void ShouldXXXXX() //TODO better name
 {
+  //WHEN
+  var requestDto = Any.Instance<ReservationRequestDto>();
+  var ticketOffice = new TicketOffice();
 
-  [Fact]
-  public void ShouldCreateAndExecuteCommandWithTicketAndTrain()
-  {
-    //WHEN
-    var ticketOffice = new TicketOffice();
-    var reservation = Any.Instance<ReservationRequestDto>();
+  //WHEN
+  var reservationDto = ticketOffice.MakeReservation(requestDto);
 
-    //WHEN
-    var ticketDto = ticketOffice.MakeReservation(reservation);
-
-    //THEN
-    Assert.Equal(resultDto, ticketDto);
-  }
+  //THEN
+  //doesn't compile - we don't have expectedReservationDto yet:
+  Assert.Equal(expectedReservation, reservationDto);
 }
 ```
+
+Benjamin: So please explain to me how did it get us any closer to our solution?
+
+Johnny: Well, we transformed our problem from "what assertion to write" into "what is the reservation that we expect". This is indeed a step in the right direction.
+
+Benjamin: Enlighten me then - what is the reservation that we expect?
+
+Johnny: For now, the Statement is not compiling at all, so to go any step further, we can just introduce a `ReservationDto` as any value. Thus, we can just write in the `GIVEN` section:
+
+```csharp
+var expectedReservationDto = Any.Instance<ReservationDto>();
+```
+
+and it will make the following code compile:
+
+```csharp
+//THEN
+Assert.Equal(expectedReservationDto, reservationDto);
+```
+
+Benjamin: But this assertion will fail anyway...
+
+Johnny: That's still better than not compiling, isn't it?
+
+Benjamin: Well, if you put it this way... Now our problem is that the expected value from in assertion is something the production code doesn't know about. This means that this assertion is not assertion the outcome of the behavior of production code. How do we solve this?
+
+Johnny: This is where we need to exercise our design skills to introduce some new collaborators. This task is hard at the boundaries of application logic, since we need to draw the collaborators not from the domain, but rather think about a design pattern that will allow us to reach our goals. Every time we enter our application logic, we do so from a perspective of a use case. In this particular example, our use case is "making a reservation". A use case is typically represented by either a method in a facade[^FacadePattern] or a command object[^CommandPattern]. Commands are a bit more complex, but more scalable. If making a reservation was our only use case, it probably wouldn't make sense to use it. But as we already have more high priority requests for features, I believe we can assume that commands will be a better fit.
+
+Benjamin: So you propose to use more complex solution - isn't that "big design up front"?
+
+Johnny: I believe that it isn't. Remember I'm using just *a bit* more complex solution. The cost of implementation is only a bit higher as well as the cost of maintenance. If for some peculiar reason someone says tommorow that they don't need the rest of the features at all, the increase in complexity will be negligible taking into account the small size of the overall code base. If, however, we add more features, then using commands will save us some time in the longer run. Thus, given what I know, I am not adding this to support speculative new features, but to make the code easier to modify in the long run[^FowlerSimplicity]. I agree though that choosing just enough complexity for a given moment is a difficult task[^SandroMancussoDesign].
+
+Benjamin: I still don't get it how introducing a command is going to help us here. Typically, a command has an `Execute()` method that typically doesn't return anything. How then will it give us the response that we need? And also, there's this another issue: how is this command going to be created? It will probably require the request passed as one of its constructor parameter, so we cannot pass the command to the `TicketOffice`'s constructor as the first time we can access the request is when the `MakeReservation()` method is invoked.
+
+Johnny: Yes, you are right in both of your conclusions. Thankfully, when you choose to go with commands, typically there are standard solutions to the problems you mentioned. The commands are typically created using factories and they convey their results using a pattern called *collecting parameter*[^KerievskyCollectingParameter]. Let's start with the collecting parameter, which will represent a domain concept of a reservation in progress. What we currently know about it is that it's going to give a response DTO at the very end. All of the three objects: the command, the collecting parameter and the factory, are collaborators, so they will be mocks in our Statement.
+
+Benjamin: Ok, lead the way.
+
+Johnny: Allright, let's start with the `GIVEN` section. Here, we need to say that the collecting parameter mock, let's call it `reservationInProgress` will give us the `reservationDto` (which is already defined in the body of the Statement) when asked:
+
+```csharp
+//GIVEN
+//...
+reservationInProgress.ToDto().Returns(reservationDto);
+```
+
+Of course, we don't have this variable, so now we need to introduce it. As I explained earlier, this needs to be a mock:
+
+```csharp
+///GIVEN
+var reservationInProgress = Substitute.For<ReservationInProgress>();
+//...
+reservationInProgress.ToDto().Returns(reservationDto);
+//...
+```
+
+Now, the Statement does not compile because the `ReservationInProgress` interface that I just used in the mock definition is not introduced yet.
+
+Benjamin: In other words, you just discovered that you need this interface.
+
+Johnny: Exactly. This forces me to introduce this interface into the code:
+
+```csharp
+public interface ReservationInProgress
+{
+
+}
+```
+
+Now, the Statement still doesn't compile, because there's this line:
+
+```csharp
+reservationInProgress.ToDto().Returns(reservationDto);
+```
+
+which requires the `ReservationInProgress` to have a `ToDto()` method, but for now, this interface is empty. After adding the required method, it will look like this:
+
+```csharp
+public interface ReservationInProgress
+{
+  ReservationDto ToDto();
+}
+```
+
+Benjamin: Ok, let me take a second to grasp the full Statement as it is now.
+
+Johnny: Sure, take your time, this is how it currently looks like:
+
+```csharp
+[Fact]
+public void ShouldXXXXX() //TODO better name
+{
+  //WHEN
+  var requestDto = Any.Instance<ReservationRequestDto>();
+  var ticketOffice = new TicketOffice();
+  var reservationInProgress = Substitute.For<ReservationInProgress>();
+
+  reservationInProgress.ToDto().Returns(reservationDto);
+
+  //WHEN
+  var reservationDto = ticketOffice.MakeReservation(requestDto);
+
+  //THEN
+  Assert.Equal(expectedReservation, reservationDto);
+}
+```
+
+Benjamin: Ok, I think I caught up. So, can I take grab the keyboard for some time?
+
+Johnny: I was about to propose it. Here.
+
+Benjamin: Thanks. Looking at this Statement, we have this `ReservationInProgress` all set up and created, but this mock of ours is not passed to the `TicketOffice` at all. So how should it use our pre-configured mock object?
+
+Johnny: Remember our discussion about separating object use from creation?
+
+Benjamin: Yeah, I guess I know what you're getting at. The `TicketOffice` should somhow get an already created object. It can get it e.g. through the constructor or from a factory.
+
+Johnny: Yes, and if you look at the lifetime of a `TicketOffice`, which is created once at the start of the application, it can't really accept a `ReservationInProgress` through a constructor, because it would mean we would also have a single `ReservationInProgress` all the reservation requests. Hence, what we really need is something that will be created each time anew when the request is made.
+
+
+
+//TODO TODO TODO TODO 
+
+In other words,  which, in turn, forces us to introduce an interface called `ReservationInProgress`.
+
+//TODO TODO
+//TODO order of calls
+//todo exposing ToDto()
+
+Now, we need to somehow let `TicketOffice` know that it should use our `reservationInProgress`. We cannot pass it as a constructor parameter to the `TicketOffice`, as the lifetime of a reservation is the same as the request, but `TicketOffice` lives longer - we don't create a new `TicketOffice` for each request. Thus, we need to pass a factory that will create an empty reservation in progress for us:
+
+
+
+//TODO with outside in, no such speculation!!!
+
+
+
+
+//TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO 
 
 But who is going to return the ticket DTO? (BTW, what is a DTO?)
 
@@ -2635,3 +2777,5 @@ Discovered a NamedSeat class:
 ```
 
 [^POEAA]: Patterns of enterprise application architecture, M. Fowler.
+[^FowlerSimplicity]: TODO Martin Fowler on the YAGNI
+[^SandorMancussoDesign]: TODO Sando Mancusso on design approaches.
