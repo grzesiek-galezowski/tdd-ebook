@@ -372,12 +372,12 @@ Johnny: Yes, you are right in both of your conclusions. Thankfully, when you cho
 
 Benjamin: Ok, lead the way.
 
-Johnny: Allright, let's start with the `GIVEN` section. Here, we need to say that the collecting parameter mock, let's call it `reservationInProgress` will give us the `reservationDto` (which is already defined in the body of the Statement) when asked:
+Johnny: Allright, let's start with the `GIVEN` section. Here, we need to say that the collecting parameter mock, let's call it `reservationInProgress` will give us the `expectedReservationDto` (which is already defined in the body of the Statement) when asked:
 
 ```csharp
 //GIVEN
 //...
-reservationInProgress.ToDto().Returns(reservationDto);
+reservationInProgress.ToDto().Returns(expectedReservationDto);
 ```
 
 Of course, we don't have this variable, so now we need to introduce it. As I explained earlier, this needs to be a mock:
@@ -406,7 +406,7 @@ public interface ReservationInProgress
 Now, the Statement still doesn't compile, because there's this line:
 
 ```csharp
-reservationInProgress.ToDto().Returns(reservationDto);
+reservationInProgress.ToDto().Returns(expectedReservationDto);
 ```
 
 which requires the `ReservationInProgress` to have a `ToDto()` method, but for now, this interface is empty. After adding the required method, it will look like this:
@@ -430,8 +430,9 @@ public void ShouldXXXXX() //TODO better name
   var requestDto = Any.Instance<ReservationRequestDto>();
   var ticketOffice = new TicketOffice();
   var reservationInProgress = Substitute.For<ReservationInProgress>();
+  var expectedReservationDto = Any.Instance<ReservationDto>();
 
-  reservationInProgress.ToDto().Returns(reservationDto);
+  reservationInProgress.ToDto().Returns(expectedReservationDto);
 
   //WHEN
   var reservationDto = ticketOffice.MakeReservation(requestDto);
@@ -443,15 +444,98 @@ public void ShouldXXXXX() //TODO better name
 
 Benjamin: Ok, I think I caught up. So, can I take grab the keyboard for some time?
 
-Johnny: I was about to propose it. Here.
+Johnny: I was about to suggest it. Here.
 
 Benjamin: Thanks. Looking at this Statement, we have this `ReservationInProgress` all set up and created, but this mock of ours is not passed to the `TicketOffice` at all. So how should it use our pre-configured mock object?
 
 Johnny: Remember our discussion about separating object use from creation?
 
-Benjamin: Yeah, I guess I know what you're getting at. The `TicketOffice` should somhow get an already created object. It can get it e.g. through the constructor or from a factory.
+Benjamin: Yeah, I guess I know what you're getting at. The `TicketOffice` should somehow get an already created object. It can get it e.g. through the constructor or from a factory.
 
-Johnny: Yes, and if you look at the lifetime of a `TicketOffice`, which is created once at the start of the application, it can't really accept a `ReservationInProgress` through a constructor, because it would mean we would also have a single `ReservationInProgress` all the reservation requests. Hence, what we really need is something that will be created each time anew when the request is made.
+Johnny: Yes, and if you look at the lifetime of a `TicketOffice`, which is created once at the start of the application, it can't really accept a `ReservationInProgress` through a constructor, because every time a new request is made, we have a new `ReservationInProgress`, so passing it through a `TicketOffice` constructor would force us to create a new `TicketOffice` every time as well. Thus, the solution that better fits our current situation is...
+
+Benjamin: A factory, right? You're suggesting that instead of passing a `ReservationInProgress` through a constructor, we should rather pass something that knows how to create `ReservationInProgress` instances?
+
+Johnny: Exactly.
+
+Benjamin: Ok, so how to write it in the Statement?
+
+Johnny: First write what you really need. The factory is going to be a mock, because we need to configure it so that when asked, it returns our `ReservationInProgress` mock. So let's write that configuration first, pretending we already have the factory available in our Statement body.
+
+Benjamin: Let me see... right, that should do it:
+
+```csharp
+//GIVEN
+...
+reservationInProgressFactory.FreshInstance().Returns(reservationInProgress);
+```
+
+Johnny: Nice, the code does not compile, because we don't have a `reservationInProgressFactory`. So let's create it.
+
+Benjamin: And it should be a mock, just like you said earlier. Then this will be the definition:
+
+```csharp
+var reservationInProgressFactory = Substitute<ReservationInProgressFactory>();
+```
+
+and, let me guess, you want me to introduce the `ReservationInProgressFactory` as we don't currently have anything like that?
+
+Johnny: (smiles)
+
+Benjamin: All right.
+
+```csharp
+public interface ReservationInProgressRepository
+{
+
+}
+```
+
+Benjamin: and now, the compiler tells us that we don't have the `FreshInstance()` method, so let me introduce it:
+
+```csharp
+public interface ReservationInProgressRepository
+{
+    ReservationInProgress FreshInstance();
+}
+```
+
+Benjamin: Good, the code compiles, and... the Statement is now reported as true! Does it mean we're finished with this one?
+
+Johnny: No, it seems we are missing one more expectation in our `THEN` section. if you look at the Statement full body as it is now:
+
+```csharp
+[Fact]
+public void ShouldXXXXX() //TODO better name
+{
+  //WHEN
+  var requestDto = Any.Instance<ReservationRequestDto>();
+  var ticketOffice = new TicketOffice();
+  var reservationInProgress = Substitute.For<ReservationInProgress>();
+  var expectedReservationDto = Any.Instance<ReservationDto>();
+  var reservationInProgressFactory = Substitute<ReservationInProgressFactory>();
+
+  reservationInProgressFactory.FreshInstance().Returns(reservationInProgress);
+  reservationInProgress.ToDto().Returns(expectedReservationDto);
+
+  //WHEN
+  var reservationDto = ticketOffice.MakeReservation(requestDto);
+
+  //THEN
+  Assert.Equal(expectedReservation, reservationDto);
+}
+```
+
+the only way the `TicketOffice` interacts with the `ReservationInProgress` is by calling the `ToDto` method. So the question that we need to ask ourselves now is "how will the instance of `ReservationInProgress` know what `ReservationDto` to create?".
+
+Benjamin: Oh right... the `ReservationDto` needs to be created based on the current application state and the data in the `ReservationRequestDto`, but the `ReservationInProgress` knows nothing about this data.
+
+
+
+
+
+
+
 
 
 
