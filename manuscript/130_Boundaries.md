@@ -43,7 +43,7 @@ In such cases, we need to carefully choose our input values to gain a sufficient
 
 ## Exceptions to the rule
 
-There are times when a Statement is true for every value except one (or several) explicitly specified. My approach varies a bit depending on the set of possible values and the number of exceptions. I'm ging to give you three examples to help you understand these variations better.
+There are times when a Statement is true for every value except one (or several) explicitly specified. My approach varies a bit depending on the set of possible values and the number of exceptions. I'm going to give you three examples to help you understand these variations better.
 
 ### Example 1: a single exception from a large set of values
 
