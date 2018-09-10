@@ -530,7 +530,72 @@ the only way the `TicketOffice` interacts with the `ReservationInProgress` is by
 
 Benjamin: Oh right... the `ReservationDto` needs to be created based on the current application state and the data in the `ReservationRequestDto`, but the `ReservationInProgress` knows nothing about this data.
 
+Johnny: Yes, filling the `ReservationInProgress` is one of the responsibilities of the application we are writing. If we did it all in thie `TicketOffice` class, it would surely have too much to handle and our Statement would grow immensely. So we need to push the responsibility of handling our use case further to other collaborating objects and use mocks for those objects here.
 
+Benjamin: So what do you propose?
+
+Johnny: Usually, when I push use case-related logic to another object, I pick from among the Facade pattern and the Command pattern. Fadaces are simpler but less scalable, while commands are way more scalable and composable but a new command needs to be created each time a use case is triggered.
+
+Benjamin: So shall we go with Facade?
+
+Johnny: Well, let's go with Command, just to show you how it can be done. I am sure you could figure out the Facade option by yourself.
+
+Benjamin: Ok, so what do I type?
+
+Johnny: Well, let's assume we have this command and then let's think about what we want our `TicketOffice` to do with it.
+
+Benjamin: We want the `TicketOffice` to execute the command, obviously..?
+
+Johnny: Right, let's write this in form of expectation.
+
+Benjamin: Ok, I'd write something like this:
+
+```csharp
+reservationCommand.Received(1).Execute(reservationInProgress);
+```
+
+I already passed the `reservationInProgress` as the command will need to fill it.
+
+Johnny: Wait, it so happens that I know a better way to pass this `reservationInProgress` then to the `Execute()` method. Please for now make this method parameterless.
+
+Benjamin: Ok, as you wish, but I thought this would be a good place to pass it.
+
+Johnny: It might look like this, but typically, I want my commands to have parameterless execution methods. This way I can compose them more freely.
+
+Benjamin: Ok, so I removed the parameter and the `THEN` section looks like this:
+
+```csharp
+//THEN
+reservationCommand.Received(1).Execute(reservationInProgress);
+Assert.Equal(expectedReservation, reservationDto);
+```
+
+Benjamin: and it doesn't compile of course. So I already know I need to introduce a variable of a type that I have to pretend already exists. Aand, I already know it should be a mock, since I verify that it received a call to its `Execute()` method.
+
+Johnny: (nods)
+
+Benjamin: In the `GIVEN` section, I'll add the `reservationCommand` as a mock:
+
+```csharp
+var reservationCommand = Substitute.For<ReservationCommand>();
+```
+
+Johnny: Sure, now we need to figure out how to pass this command to the `TicketOffice`. By nature, a command object represents, well, an issued command, so it cannot be created once in the composition root and then passed to the constrructor, because then: 
+
+1. it would essentially become a facade, 
+1. we would need to pass the `reservationInProgress` to the `Execute()` method which we wanted to avoid.
+
+Benjamin: Wait, don't tell me... you want to add another factory here?
+
+Johnny: Yes, that's what I would like to do.
+
+Benjamin: But... that's a second factory in a single Statement, aren't we, like, overdoing it a little?
+
+Johnny: I understand why you feel that way. Still, this is a consequence of my design choice. We wouldn't need a factory if we went with a facade. In simple apps, I just use a facade and do away with this dilemma. I could also drop the use of collecting parameter patern and then I would only have a factory for commands, but that would mean I would not resolve the command-query separation principle violation and would need to push it further. And, if I used a facade without a collecting parameter, then I would not need any factory at all. To cheer you up, this is an entry point for a use case where we need to wrap some things in abstractions, so I don't expect this many factories in the rest of the code. I treat this part as a sort of anti-corruption layer which protects me from everything imposed by outside of my application logic which I don't want to deal with inside of my application logic.
+
+Benjamin: I will need to trust you on that. I hope it will make things easier later because for now... ugh...
+
+TODO introduce the factory
 
 
 
