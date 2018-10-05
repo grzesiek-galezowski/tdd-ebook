@@ -99,7 +99,7 @@ public class User {
 
 ### A `List<T>`
 
-If you are a Java user, note that in C#, `List<T>` is not an abstract class, but a concrete one. it is typically used where you would use an `ArrayList`.
+If you are a Java user, note that in C#, `List<T>` is not an interface, but a concrete class. it is typically used where you would use an `ArrayList`.
 
 ### Generics
 
