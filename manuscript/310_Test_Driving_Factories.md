@@ -1,3 +1,9 @@
+1. No refactoring
+1. There will be no story slicing
+1. No higher level tests
+1. ..?
+
+
 //////////////////////////////////
 
 
