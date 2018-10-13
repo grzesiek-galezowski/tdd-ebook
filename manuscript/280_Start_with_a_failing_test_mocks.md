@@ -21,7 +21,7 @@ The relationship between the two can be described by the following sentences:
 
 1. A class has obligations towards its clients.
 1. The obligations are what the class "promises" to do for its clients.
-1. The class does not have to fulfill the obligations alone. Typically, it does so with help from other objects -- its collaborators. Those collaborators, in turn, have have their obligations and collaborators.
+1. The class does not have to fulfill the obligations alone. Typically, it does so with help from other objects -- its collaborators. Those collaborators, in turn, have their obligations and collaborators.
 1. Each of the collaborators is given a purpose resulting from decomposition of the obligation.
 
 ## Channel and DataDispatch one more time
@@ -129,7 +129,7 @@ I decide to not put the entirety of logic in the `DataDispatch` class, because:
 
 Thus, my decision is to divide and conquer, i.e. find `DataDispatch` some collaborators that will help it achieve its goal and delegate parts of the logic to them. After some consideration, I decide that the purpose of `DataDispatch` should be managing the connection lifetime. The rest of the logic I decide to delegate to a collaborator role that I named `Channel`. The process of coming out with collaborator roles and delegating some obligations to them is called *interface discovery*. I will cover it in the next chapter.
 
-Anyway, since my `DataDispatch` is goind to delegate some logic to the `Channel`, it has to know it. Thus, I'll connect this new collaborator to the `DataDispatch`. A `DataDispatch` will not work without a `Channel`, which means I need to pass the channel to `DataDispatch` as a constructor parameter. It's tempting to just go to the definition of this constructor and add a parameter there, but that's not what I'll do. I will, as usual, start my changes from the Statement. Thus, I will modify the following code:
+Anyway, since my `DataDispatch` is going to delegate some logic to the `Channel`, it has to know it. Thus, I'll connect this new collaborator to the `DataDispatch`. A `DataDispatch` will not work without a `Channel`, which means I need to pass the channel to `DataDispatch` as a constructor parameter. It's tempting to just go to the definition of this constructor and add a parameter there, but that's not what I'll do. I will, as usual, start my changes from the Statement. Thus, I will modify the following code:
 
 ```csharp
 //GIVEN
