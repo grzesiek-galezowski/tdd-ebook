@@ -431,9 +431,7 @@ Now, the Statement does not compile because the `ReservationInProgress` interfac
 
 Benjamin: In other words, you just discovered that you need this interface.
 
-Johnny: Exactly. What I'm currently doing is I'm pulling objects from need. My current need it to have this interface in my code:
-
-???????????????????????????????????????
+Johnny: Exactly. What I'm currently doing is I'm pulling abstractions and objects into my code as I need them. And my current need it to have this interface in my code:
 
 ```csharp
 public interface ReservationInProgress
@@ -457,7 +455,9 @@ public interface ReservationInProgress
 }
 ```
 
-Benjamin: Ok, let me take a second to grasp the full Statement as it is now.
+and the Statement compiles again, although it is still a false one.
+
+Benjamin: Ok. Now let me take a second to grasp the full Statement as it is now.
 
 Johnny: Sure, take your time, this is how it currently looks like:
 
@@ -477,7 +477,7 @@ public void ShouldXXXXX() //TODO better name
   var reservationDto = ticketOffice.MakeReservation(requestDto);
 
   //THEN
-  Assert.Equal(expectedReservation, reservationDto);
+  Assert.Equal(expectedReservationDto, reservationDto);
 }
 ```
 
@@ -485,13 +485,13 @@ Benjamin: Ok, I think I caught up. So, can I take grab the keyboard for some tim
 
 Johnny: I was about to suggest it. Here.
 
-Benjamin: Thanks. Looking at this Statement, we have this `ReservationInProgress` all set up and created, but this mock of ours is not passed to the `TicketOffice` at all. So how should it use our pre-configured mock object?
+Benjamin: Thanks. Looking at this Statement, we have this `ReservationInProgress` all set up and created, but this mock of ours is not passed to the `TicketOffice` at all. So how should the `TicketOffice` use our pre-configured `reservationInProgress`?
 
-Johnny: Remember our discussion about separating object use from creation?
+Johnny: Remember our discussion about separating object use from construction?
 
-Benjamin: Yeah, I guess I know what you're getting at. The `TicketOffice` should somehow get an already created object. It can get it e.g. through the constructor or from a factory.
+Benjamin: Yeah, I guess I know what you're getting at. The `TicketOffice` should somehow get an already created object from the outside. It can get it e.g. through a constructor or from a factory.
 
-Johnny: Yes, and if you look at the lifetime of a `TicketOffice`, which is created once at the start of the application, it can't really accept a `ReservationInProgress` through a constructor, because every time a new request is made, we have a new `ReservationInProgress`, so passing it through a `TicketOffice` constructor would force us to create a new `TicketOffice` every time as well. Thus, the solution that better fits our current situation is...
+Johnny: Yes, and if you look at the lifetime of our `TicketOffice`, which is created once at the start of the application, it can't really accept a `ReservationInProgress` through a constructor, because every time a new request is made, we have a new `ReservationInProgress`, so passing it through a `TicketOffice` constructor would force us to create a new `TicketOffice` every time as well. Thus, the solution that better fits our current situation is...
 
 Benjamin: A factory, right? You're suggesting that instead of passing a `ReservationInProgress` through a constructor, we should rather pass something that knows how to create `ReservationInProgress` instances?
 
@@ -499,7 +499,7 @@ Johnny: Exactly.
 
 Benjamin: Ok, so how to write it in the Statement?
 
-Johnny: First write what you really need. The factory is going to be a mock, because we need to configure it so that when asked, it returns our `ReservationInProgress` mock. So let's write that configuration first, pretending we already have the factory available in our Statement body.
+Johnny: First write what you really need. The factory needs to be a mock, because we need to configure it so that when asked, it returns our `ReservationInProgress` mock. So let's write that configuration first, pretending we already have the factory available in our Statement body.
 
 Benjamin: Let me see... right, that should do it:
 
@@ -509,7 +509,7 @@ Benjamin: Let me see... right, that should do it:
 reservationInProgressFactory.FreshInstance().Returns(reservationInProgress);
 ```
 
-Johnny: Nice, the code does not compile, because we don't have a `reservationInProgressFactory`. So let's create it.
+Johnny: Nice. Now the code does not compile, because we don't have a `reservationInProgressFactory`. So let's create it.
 
 Benjamin: And it should be a mock, just like you said earlier. Then this will be the definition:
 
@@ -521,7 +521,7 @@ and, let me guess, you want me to introduce the `ReservationInProgressFactory` a
 
 Johnny: (smiles)
 
-Benjamin: All right.
+Benjamin: All right. Here:
 
 ```csharp
 public interface ReservationInProgressRepository
@@ -558,14 +558,20 @@ Benjamin: Like..?
 
 Johnny: For example, the `ReservationInProgressFactory` mock is not passed to the `TicketOffice` constructor so there is no way for the ticket office to use this factory.
 
-Benjamin: Ok, so I'll add it. The Statement will change like this:
+Benjamin: Ok, so I'll add it. The Statement will change in this place:
+
+```csharp
+var ticketOffice = new TicketOffice();
+```
+
+to:
 
 ```csharp
 var reservationInProgressFactory = Substitute<ReservationInProgressFactory>();
 var ticketOffice = new TicketOffice(reservationInProgressFactory);
 ```
 
-and a constructor will need to be added to the `TicketOffice` class:
+and a constructor needs to be added to the `TicketOffice` class:
 
 ```csharp
 public TicketOffice(ReservationInProgressFactory reservationInProgressFactory)
@@ -574,7 +580,7 @@ public TicketOffice(ReservationInProgressFactory reservationInProgressFactory)
 }
 ```
 
-Johnny: Agree. And, we need to maintain the composition root which just stopped compiling. This is because the constructor of a `TicketOffice` is invoked there and it needs uptading as well:
+Johnny: Agree. And, we need to maintain the composition root which just stopped compiling. This is because the constructor of a `TicketOffice` is invoked there and it needs an update as well:
 
 ```csharp
 public class Application
@@ -582,24 +588,24 @@ public class Application
   public static void Main(string[] args)
   {
     new WebApp(
-        new TicketOffice() //compile error!
+        new TicketOffice(/* compile error - instance missing */)
     ).Host();
   }
 }
 ```
 
-Benjamin: But what should we pass? We have an interface, but no class of which we could create an object.
+Benjamin: But what should we pass? We have an interface, but no class of which we could create an instance.
 
-Johnny: We can think about something now, but if we don't want to, we can call it e.g. `TodoReservationInProgressFactory` and leave a TODO comment to get back to it later. For now, we just need this to compile.
+Johnny: We need to create the class. Typically, if I have an idea about the name of the required class, I create the class by that name. If I don't have any idea on how to call it yet, I can call it e.g. `TodoReservationInProgressFactory` and leave a TODO comment to get back to it later. For now, we just need this to compile.
 
 Benjamin: So maybe we could pass a `null`?
 
-Johnny: We could, but that's not my favourite option. I typically just create the class.
+Johnny: We could, but that's not my favourite option. I typically just create the class. One of the reasons is that the class will need to implement an interface to compile and then we will need to introduce a methods which will by default throw a `NotImplementedException` and this exception will end up on my TODO list as well.
 
 Benjamin: Ok, so this line:
 
 ```csharp
-new TicketOffice() //compile error!
+new TicketOffice(/* compile error - instance missing */)
 ```
 
 becomes:
@@ -619,7 +625,6 @@ public class TodoReservationInProgressFactory : ReservationInProgressFactory
 
 Johnny: It still doesn't compile, because the interface `ReservationInProgressFactory` has some methods that we need to implement. Thankfully, we can do this with a single IDE command and get:
 
-
 ```csharp
 public class TodoReservationInProgressFactory : ReservationInProgressFactory
 {
@@ -630,7 +635,18 @@ public class TodoReservationInProgressFactory : ReservationInProgressFactory
 }
 ```
 
-We could already assign the constructor parameter to a field, but it's also OK to do it later. Anyway, it seems we are missing one more expectation in our `THEN` section. if you look at the Statement full body as it is now:
+and, as I mentioned a second ago, this exception will end up on my TODO list, reminding me that I need to address it.
+
+Getting back to the constructor of `TicketOffice`:
+
+```csharp
+public TicketOffice(ReservationInProgressFactory reservationInProgressFactory)
+{
+
+}
+```
+
+we could already assign the constructor parameter to a field, but it's also OK to do it later. Anyway, it seems we are missing one more expectation in our `THEN` section. if you look at the Statement's full body as it is now:
 
 ```csharp
 [Fact]
@@ -654,19 +670,19 @@ public void ShouldXXXXX() //TODO better name
 }
 ```
 
-the only way the `TicketOffice` interacts with the `ReservationInProgress` is by calling the `ToDto` method. So the question that we need to ask ourselves now is "how will the instance of `ReservationInProgress` know what `ReservationDto` to create?".
+the only way the `TicketOffice` will interact with the `ReservationInProgress` is by calling the `ToDto` method. So the question that we need to ask ourselves now is "how will the instance of `ReservationInProgress` know what `ReservationDto` to create when this method is called?".
 
-Benjamin: Oh right... the `ReservationDto` needs to be created based on the current application state and the data in the `ReservationRequestDto`, but the `ReservationInProgress` knows nothing about this data so far.
+Benjamin: Oh right... the `ReservationDto` needs to be created based on the current application state and the data in the `ReservationRequestDto`, but the `ReservationInProgress` knows nothing about any of these things so far.
 
 Johnny: Yes, filling the `ReservationInProgress` is one of the responsibilities of the application we are writing. If we did it all in thie `TicketOffice` class, it would surely have too much to handle and our Statement would grow immensely. So we need to push the responsibility of handling our use case further to other collaborating objects and use mocks for those objects here.
 
 Benjamin: So what do you propose?
 
-Johnny: Usually, when I push use case-related logic to another object, I pick from among the Facade pattern and the Command pattern. Fadaces are simpler but less scalable, while commands are way more scalable and composable but a new command needs to be created each time a use case is triggered.
+Johnny: Remember our discussion from a while ago? Usually, when I push use case-related logic to another object, I pick from among the Facade pattern and the Command pattern. Fadaces are simpler but less scalable, while commands are way more scalable and composable but a new command needs to be created each time a use case is triggered.
 
-Benjamin: So shall we go with Facade?
+Benjamin: Ok, I already know that you prefer commands.
 
-Johnny: Well, let's go with Command, just to show you how it can be done. I am sure you could figure out the Facade option by yourself.
+Johnny: Well, yeah, bear with me if only for the sake of seeing how commands can be used here. I am sure you could figure out the Facade option by yourself.
 
 Benjamin: Ok, so what do I type?
 
@@ -684,18 +700,18 @@ reservationCommand.Received(1).Execute(reservationInProgress);
 
 I already passed the `reservationInProgress` as the command will need to fill it.
 
-Johnny: Wait, it so happens that I know a better way to pass this `reservationInProgress` then to the `Execute()` method. Please for now make this method parameterless.
+Johnny: Wait, it so happens that I prefer another way of passing this `reservationInProgress` then to the `Execute()` method. Please for now make the `Execute()` method parameterless.
 
 Benjamin: Ok, as you wish, but I thought this would be a good place to pass it.
 
-Johnny: It might look like this, but typically, I want my commands to have parameterless execution methods. This way I can compose them more freely.
+Johnny: It might look like it, but typically, I want my commands to have parameterless execution methods. This way I can compose them more freely.
 
 Benjamin: Ok, so I removed the parameter and the `THEN` section looks like this:
 
 ```csharp
 //THEN
-reservationCommand.Received(1).Execute(reservationInProgress);
-Assert.Equal(expectedReservation, reservationDto);
+reservationCommand.Received(1).Execute();
+Assert.Equal(expectedReservationDto, reservationDto);
 ```
 
 Benjamin: and it doesn't compile of course. So I already know I need to introduce a variable of a type that I have to pretend already exists. Aaaand, I already know it should be a mock, since I verify that it received a call to its `Execute()` method.
@@ -708,9 +724,29 @@ Benjamin: In the `GIVEN` section, I'll add the `reservationCommand` as a mock:
 var reservationCommand = Substitute.For<ReservationCommand>();
 ```
 
-Johnny: Sure, now we need to figure out how to pass this command to the `TicketOffice`. By nature, a command object represents, well, an issued command, so it cannot be created once in the composition root and then passed to the constrructor, because then: 
+and now I don't have this `ReservationCommand` interface so I can create it:
 
-1. it would essentially become a facade, 
+```csharp
+public interface ReservationCommand
+{
+
+}
+```
+
+and the code still doesn't compile, because in the Statement, I invoke `Execute()` method on the command but there's no such method. So I need to have:
+
+```csharp
+public interface ReservationCommand
+{
+  void Execute();
+}
+```
+
+and now everything compiles again.
+
+Johnny: Sure, now we need to figure out how to pass this command to the `TicketOffice`. As we discussed, by nature, a command object represents, well, an issued command, so it cannot be created once in the composition root and then passed to the constrructor, because then:
+
+1. it would essentially become a facade,
 1. we would need to pass the `reservationInProgress` to the `Execute()` method which we wanted to avoid.
 
 Benjamin: Wait, don't tell me... you want to add another factory here?
@@ -719,7 +755,7 @@ Johnny: Yes, that's what I would like to do.
 
 Benjamin: But... that's a second factory in a single Statement. Aren't we, like, overdoing it a little?
 
-Johnny: I understand why you feel that way. Still, this is a consequence of my design choice. We wouldn't need a factory if we went with a facade. In simple apps, I just use a facade and do away with this dilemma. I could also drop the use of collecting parameter patern and then I would only have a factory for commands, but that would mean I would not resolve the command-query separation principle violation and would need to push it further. And, if I used a facade without a collecting parameter, then I would not need any factory at all. To cheer you up, this is an entry point for a use case where we need to wrap some things in abstractions, so I don't expect this many factories in the rest of the code. I treat this part as a sort of anti-corruption layer which protects me from everything imposed by outside of my application logic which I don't want to deal with inside of my application logic.
+Johnny: I understand why you feel that way. Still, this is a consequence of my design choice. We wouldn't need a factory if we went with a facade. In simple apps, I just use a facade and do away with this dilemma. I could also drop the use of collecting parameter patern and then I would only have a factory for commands, but that would mean I would not resolve the command-query separation principle violation and would need to push this violation further into other objects. And, if I used a facade without a collecting parameter, then I would not need any factory at all. To cheer you up, this is an entry point for a use case where we need to wrap some things in abstractions, so I don't expect this many factories in the rest of the code. I treat this part as a sort of anti-corruption layer which protects me from everything imposed by outside of my application logic which I don't want to deal with inside of my application logic.
 
 Benjamin: I will need to trust you on that. I hope it will make things easier later because for now... ugh...
 
@@ -728,13 +764,13 @@ Johnny: Let's introduce the factory. Of course, before we define it, we need to 
 ```csharp
 //GIVEN
 ...
-commandFactory.CreateReservationCommand(requestDto)
+commandFactory.CreateReservationCommand(requestDto, reservationInProgress)
     .Returns(reservationCommand);
 ```
 
 This doesn't compile because we have no commandFactory yet.
 
-Benjamin: Oh, I can see that the factory's `CreateReservationCommand()` is where you decided to pass the DTO. Clever. By leaving the commands's `Execute()` method parameterless, you made it more abstract and made the interface decpoupled from a particular DTO. On the other hand, the command is created in the same scope it is used, so there is literally no issue with passing all the parameters through the factory method.
+Benjamin: Oh, I can see that the factory's `CreateReservationCommand()` is where you decided to pass the DTO that I wanted to pass to the `Execute()` method earlier. Clever. By leaving the commands's `Execute()` method parameterless, you made it more abstract and made the interface decpoupled from a particular DTO. On the other hand, the command is created in the same scope it is used, so there is literally no issue with passing all the parameters through the factory method.
 
 Johnny: That's right. We now know we need a factory, plus that it needs to be a mock, since we configure it to return something when it is used. I propose something like this:
 
@@ -743,7 +779,7 @@ Johnny: That's right. We now know we need a factory, plus that it needs to be a 
 ...
 var commandFactory = Substitute.For<CommandFactory>();
 ...
-commandFactory.CreateReservationCommand(requestDto)
+commandFactory.CreateReservationCommand(requestDto, reservationInProgress)
     .Returns(reservationCommand);
 ```
 
@@ -761,7 +797,9 @@ and let's add the missing `CreateReservationCommand` method:
 ```csharp
 public interface CommandFactory
 {
-  ReservationCommand CreateReservationCommand(ReservationRequestDto requestDto);
+  ReservationCommand CreateReservationCommand(
+    ReservationRequestDto requestDto,
+    ReservationInProgress reservationInProgress);
 }
 ```
 
@@ -780,7 +818,7 @@ public void ShouldXXXXX() //TODO better name
   var expectedReservationDto = Any.Instance<ReservationDto>();
   var reservationCommand = Substitute.For<ReservationCommand>();
   
-  commandFactory.CreateReservationCommand(requestDto)
+  commandFactory.CreateReservationCommand(requestDto, reservationInProgress)
     .Returns(reservationCommand);
   reservationInProgressFactory.FreshInstance().Returns(reservationInProgress);
   reservationInProgress.ToDto().Returns(expectedReservationDto);
@@ -789,12 +827,12 @@ public void ShouldXXXXX() //TODO better name
   var reservationDto = ticketOffice.MakeReservation(requestDto);
 
   //THEN
-  Assert.Equal(expectedReservation, reservationDto);
-  reservationCommand.Received(1).Execute(reservationInProgress);
+  Assert.Equal(expectedReservationDto, reservationDto);
+  reservationCommand.Received(1).Execute();
 }
 ```
 
-Benjamin: and I see one more problem - the command factory is not passed anywhere from the Statement - the production code doesn't know about it.
+Benjamin: I can see that the command factory is not passed anywhere from the Statement - the production code doesn't know about it.
 
 Johnny: Yes, and, lucky us, a factory is something that can have the same lifetime as the `TicketOffice` since just to create it, we don't need to know anything about a request for booking. This is why we can pass it through the constructor of `TicketOffice`. Which means that these two lines:
 
@@ -842,7 +880,7 @@ which forces us to create the `TicketOfficeCommandFactory` class:
 ```csharp
 public class TicketOfficeCommandFactory : CommandFactory
 {
-  ReservationCommand CreateReservationCommand(ReservationRequestDto requestDto)
+  public ReservationCommand CreateReservationCommand(ReservationRequestDto requestDto)
   {
       throw new NotImplementedException();
   }
@@ -851,13 +889,13 @@ public class TicketOfficeCommandFactory : CommandFactory
 
 Benjamin: Hey, this time you gave the class a better name than the previous factory which was called `TodoReservationInProgressFactory`. Why didn't you want to leave it for later this time?
 
-Johnny: This time, I think I have a good idea on how to name this class. Typically, I name concrete classes based on something from their implementation and I find the names hard to find when I don't have this implementation yet. This time I believe I have a name that can last a bit, which is also why I didn't leave a TODO comment next to this name. Still, further work can invalidate my naming and I will be happy to change the name when need arises.
+Johnny: This time, I think I have a better idea on how to name this class. Typically, I name concrete classes based on something from their implementation and I find the names hard to find when I don't have this implementation yet. This time I believe I have a name that can last a bit, which is also why I didn't leave a TODO comment next to this name. Still, further work can invalidate my naming choice and I will be happy to change the name when a need arises. For now, it should suffice.
 
 Anyway, getting back to the Statement, I think we've got it all covered. Let's just give the Statement a good name. Looking at the assertions:
 
 ```csharp
-reservationCommand.Received(1).Execute(reservationInProgress);
-Assert.Equal(expectedReservation, reservationDto);
+reservationCommand.Received(1).Execute();
+Assert.Equal(expectedReservationDto, reservationDto);
 ```
 
 I think we can say:
@@ -869,14 +907,14 @@ ShouldExecuteReservationCommandAndReturnResponseWhenMakingReservation()
 
 Benjamin: Just curious... Didn't you tell me to watch out for the "and" word in Statement names and that it may suggest something it wrong with the scenario.
 
-Johnny: Yes, and in this particular case, there *is* something wrong - the class `TicketOffice` violates the command-query separation principle. This is also why the Statement looks so messy. For this class, however, we don't have a choice since our framework requires this kind of signature. That's also why we are working so hard in this class to introduce the collecting parameter and protect the rest of the design from the violation.
+Johnny: Yes, and in this particular case, there *is* something wrong - the class `TicketOffice` violates the command-query separation principle. This is also why the Statement looks so messy. For this class, however, we don't have a big choice since our framework requires this kind of method signature. That's also why we are working so hard in this class to introduce the collecting parameter and protect the rest of the design from the violation.
 
 Benjamin: Ok, I hope the future Statements will be easier to write than this one.
 
-Johnny: Me too. Let's take a look at the Statement code as it is now:
+Johnny: Me too. Let's take a look at the Statement code as it look like now:
 
 ```csharp
-[Fact] public void 
+[Fact] public void
 ShouldExecuteReservationCommandAndReturnResponseWhenMakingReservation()
 {
   //GIVEN
@@ -888,10 +926,10 @@ ShouldExecuteReservationCommandAndReturnResponseWhenMakingReservation()
   var expectedReservationDto = Any.Instance<ReservationDto>();
   var reservationCommand = Substitute.For<ReservationCommand>();
   
-  commandFactory.CreateReservationCommand(requestDto)
-    .Returns(reservationCommand);
   reservationInProgressFactory.FreshInstance()
     .Returns(reservationInProgress);
+  commandFactory.CreateReservationCommand(requestDto, reservationInProgress)
+    .Returns(reservationCommand);
   reservationInProgress.ToDto()
     .Returns(expectedReservationDto);
 
@@ -899,8 +937,8 @@ ShouldExecuteReservationCommandAndReturnResponseWhenMakingReservation()
   var reservationDto = ticketOffice.MakeReservation(requestDto);
 
   //THEN
-  Assert.Equal(expectedReservation, reservationDto);
-  reservationCommand.Received(1).Execute(reservationInProgress);
+  Assert.Equal(expectedReservationDto, reservationDto);
+  reservationCommand.Received(1).Execute();
 }
 ```
 
@@ -933,10 +971,19 @@ public ReservationDto MakeReservation(ReservationRequestDto requestDto)
 Johnny: Now I can see that the first assertion:
 
 ```csharp
-Assert.Equal(expectedReservation, reservationDto);
+Assert.Equal(expectedReservationDto, reservationDto);
 ```
 
-is failing, because it expects something from the `ReservationInProgress` which can only be received from the factory. Let's just implement the part that is required to pass the first assertion. To do this, I will need to create a field in the `TicketOffice` class based on one of the constructor parameters. So this code:
+is failing, because it expects an `expectedReservationDto` from the `reservationInProgress` but the `reservationInProgress` itself can only be received from the factory:
+
+```csharp
+reservationInProgressFactory.FreshInstance()
+    .Returns(reservationInProgress);
+ reservationInProgress.ToDto()
+    .Returns(expectedReservationDto);
+```
+
+Let's just implement the part that is required to pass the first assertion. To do this, I will need to create a field in the `TicketOffice` class for the factory, based on one of the constructor parameters. So this code:
 
 ```csharp
 public TicketOffice(
@@ -978,8 +1025,10 @@ Benjamin: ...and the first assertion passes.
 Johnny: Yes, and this is clearly not enough. If you look at the production code, we are not doing anything with the `ReservationRequestDto` instance. Thankfully, we have the second assertion:
 
 ```csharp
-reservationCommand.Received(1).Execute(reservationInProgress);
+reservationCommand.Received(1).Execute();
 ```
+
+??????????????????????????????
 
 and this one fails. In order to make it pass, We need to create a command and execute it.
 
@@ -1010,7 +1059,8 @@ and now I can use the factory in the `MakeReservation()` method and pass the req
 
 ```csharp
 var reservationInProgress = _reservationInProgressFactory.FreshInstance();
-var reservationCommand = _commandFactory.CreateReservationCommand(requestDto);
+var reservationCommand = _commandFactory.CreateReservationCommand(
+  requestDto, reservationInProgress);
 return reservationInProgress.ToDto();
 ```
 
@@ -1019,9 +1069,13 @@ At last, I just need to execute the command like this:
 ```csharp
 var reservationInProgress = _reservationInProgressFactory.FreshInstance();
 var reservationCommand = _commandFactory.CreateReservationCommand(requestDto);
-reservationCommand.Execute(reservationInProgress);
+reservationCommand.Execute();
 return reservationInProgress.ToDto();
 ```
+
+Benjamin: Wow, this isn't a lot of code for such a big Statement that we wrote.
+
+??????????????????
 
 
 [^POEAA]: Patterns of enterprise application architecture, M. Fowler.
