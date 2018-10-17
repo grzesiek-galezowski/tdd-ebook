@@ -47,7 +47,7 @@ Using the comments, I divided the class into sections and will describe them in 
 
 There are two things to note about the class signature. The first one is that the class is `sealed` (in Java that would be `final`), i.e. I disallow inheriting from it. This is because I want the ojects of this class to be immutable. On the first sight, sealing the class has nothing to do with immutability. I will explain it in the next chapter when I discuss the aspects of value object design.
 
-THe second thing to note is that the class implements an `IEquatable` interface that adds more strongly typed versions of the `Equals(T object)` method. This is not strictly required as in C#, every object has a default `Equals(Object o)` method, but is typically considered a good practice since it allows e.g. more efficient use of value objects with C# collections such as `Dictionary`[^whyuseequatable].
+The second thing to note is that the class implements an `IEquatable` interface that adds more strongly typed versions of the `Equals(T object)` method. This is not strictly required as in C#, every object has a default `Equals(Object o)` method, but is typically considered a good practice since it allows e.g. more efficient use of value objects with C# collections such as `Dictionary`[^whyuseequatable].
 
 ## Hidden data
 
@@ -156,8 +156,8 @@ public ProductName(string value)
   _value = value;
 }
 
-//another constructo that uses the common initialization
-public ProductName(string model, string onfiguration)
+//another constructor that uses the common initialization
+public ProductName(string model, string configuration)
  : this(model + " " + configuration) //delegation to "common" constructor
 {
 }
@@ -173,7 +173,7 @@ public ProductName(string value)
   _value = value;
 }
 
-public ProductName(string model, string onfiguration)
+public ProductName(string model, string configuration)
  //oops, no delegation to the other constructor
 {
 }
@@ -233,7 +233,7 @@ public ProductName BundleWith(ProductName other)
 Note that the `BundleWith()` method doesn't contain any validations but instead just calls the constructor. It is safe to do so in this case, because we know that:
 
 1. The string will be neither null nor empty, since we are appending values of both product names to the constant value of `"Bundle: "`. The result of such append operation will never give us an empty string or a `null`.
-2. The `_value` fields of both `this` and the `other` product name components must be valid, because if they were not, thease the two product names that contain those values would fail to be created in the first place.
+2. The `_value` fields of both `this` and the `other` product name components must be valid, because if they were not, the two product names that contain those values would fail to be created in the first place.
 
 This was a case where we didn't need the validation because we were sure the input was valid. There may be another case - when it is more convenient for a static factory method to provide a validation on its own. Such validation may be more detailed and helpful as it is in a factory method made for specific case and knows more about what this case is. For example, let's look at  the method we already saw for combining the model and configuration into a product name. If we look at it again (it does not contain any validations yet):
 
@@ -244,7 +244,7 @@ public ProductName CombinedOf(string model, string configuration)
 }
 ```
 
-We may argue that this method would benefit from a specialized set of validations, because probably both model and configuration need to be validated separately (by the way, is sometimes may be a good idea would be to create value objects for model and configuration as well - it depends on where we get them and how we use them). We could then go as far as to throw a different exception for each case, e.g.:
+We may argue that this method would benefit from a specialized set of validations, because probably both model and configuration need to be validated separately (by the way, it sometimes may be a good idea to create value objects for model and configuration as well - it depends on where we get them and how we use them). We could then go as far as to throw a different exception for each case, e.g.:
 
 ```csharp
 public ProductName CombinedOf(string model, string configuration)
@@ -263,7 +263,7 @@ public ProductName CombinedOf(string model, string configuration)
 }
 ```
 
-What if we need the default validation in some cases? We can still put them in a common factory method and invoke it from other factory methods. This looks a bit like going back to the problem with multiple constructors, but I'd argue that this issue is not as serious - in my mind, the problem of validations is easier to spot than mistakenly missing a field assignment as in the case of constructors. You maye have different preferences though.
+What if we need the default validation in some cases? We can still put them in a common factory method and invoke it from other factory methods. This looks a bit like going back to the problem with multiple constructors, but I'd argue that this issue is not as serious - in my mind, the problem of validations is easier to spot than mistakenly missing a field assignment as in the case of constructors. You may have different preferences though.
 
 Remember we asked two questions and I have answered just one of them. Thankfully, the other one - why the constructor is private not public - is much easier to answer now. 
 
@@ -273,7 +273,7 @@ My personal reasons for it are: validation and separating use from construction.
 
 #### Validation
 
-Looking at the constructor of `ProductName` - we already discussed that it does not validate its input. This is OK when the constructor is used internally inside `ProductName` (as I just demonstrated in the previous section), because it can only be called by the code we, as creators of `ProductName` class, can trust. On the other hand, there probably is a lot of code that will create instances of `ProductName`. Some of this code is not even written yet, most of it we don't know, so we cannot trust it. For such code, want it to use the only the "safe" methods that validate input and raise errors, not the constructor.
+Looking at the constructor of `ProductName` - we already discussed that it does not validate its input. This is OK when the constructor is used internally inside `ProductName` (as I just demonstrated in the previous section), because it can only be called by the code we, as creators of `ProductName` class, can trust. On the other hand, there probably is a lot of code that will create instances of `ProductName`. Some of this code is not even written yet, most of it we don't know, so we cannot trust it. For such code, we want to use only the "safe" methods that validate input and raise errors, not the constructor.
 
 #### Separating use from construction[^essentialskills]
 
@@ -377,7 +377,7 @@ private ProductName(string value, string config)
 
 Note that this is an example we mentioned earlier. There is one difference, however. While earlier we assumed that we don't need to hold value and configuration separately inside a `ProductName` instance and concatenated them into a single string when creating an object, this time we assume that we will need this separation between name and configuration later.
 
-After modifying the constructor, the next thing is to to add additional validations to the factory method:
+After modifying the constructor, the next thing is to add additional validations to the factory method:
 
 ```csharp
 public static ProductName CombinedOf(string value, string config)

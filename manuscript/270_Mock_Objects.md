@@ -6,7 +6,7 @@ In this chapter, I won't say anything about the role of mock objects in test-dri
 
 ## A backing example
 
-For the need of this chapter, I will use one toy example. Before I describe it, I need you to know that I don't consider this example a showcase for mock objects. Mocks shine where there are domain-driven interactions between objects and this example is not like that - the interactions here are more implementation-driven. Still, I decided to use it anyway because I consider it something something easy to understand and good enough to discuss some mechanics of mock objects. In the next chapter, I will use the same example as an illustration, but after that, I'm dropping it and going into more interesting stuff.
+For the need of this chapter, I will use one toy example. Before I describe it, I need you to know that I don't consider this example a showcase for mock objects. Mocks shine where there are domain-driven interactions between objects and this example is not like that - the interactions here are more implementation-driven. Still, I decided to use it anyway because I consider it something easy to understand and good enough to discuss some mechanics of mock objects. In the next chapter, I will use the same example as an illustration, but after that, I'm dropping it and going into more interesting stuff.
 
 The example is a single class, called `DataDispatch`, which is responsible for sending received data to a channel (represented by a `Channel` interface). The `Channel` needs to be opened before the data is sent and closed after. `DataDispatch` implements this requirement. Here is the full code for the `DataDispatch` class:
 
@@ -37,7 +37,7 @@ public class DataDispatch
 
 The rest of this chapter will focus on dissecting the behaviors of `DataDispatch` and their context.
 
-I will start describing this context by looking at interfac used by `DataDispatch`.
+I will start describing this context by looking at interface used by `DataDispatch`.
 
 ## Interfaces
 
@@ -84,7 +84,7 @@ Summing it up, there are two "conversations" a `DataDispatch` object is involved
 
 ## Roles
 
-Our conclusion from the last section is that the environment environment in which behaviors of `DataDispatch` take place is comprised of three roles (arrows show the direction of dependencies, or "who sends messages to whom"):
+Our conclusion from the last section is that the environment in which behaviors of `DataDispatch` take place is comprised of three roles (arrows show the direction of dependencies, or "who sends messages to whom"):
 
 ```text
 User -> DataDispatch -> Channel
@@ -183,7 +183,7 @@ From the perspective of `DataDispatch`, it is designed to work with everything t
 There is a tool that fulfills these three requirements better than others I know of and it's called a mock object. Here's how it fulfills the mentioned requirements:
 
 1. Mocks add almost no side effects of its own. Although they do have some hardcoded default behaviors (e.g. when a method returning `int` is called on a mock, it returns `0` by default), but these behaviors are as default and meaningless as they can possibly be. This allows us to put more trust in our Specification.
-1. Mocks are easy to control - every mocking library comes provided with an API for defining pre-canned method call results and for verification of received calls. Having such API provides convenience, at least form my point of view.
+1. Mocks are easy to control - every mocking library comes provided with an API for defining pre-canned method call results and for verification of received calls. Having such API provides convenience, at least from my point of view.
 1. Mocks can be trivial to maintain. While you can write your own mocks (i.e. your own implementation of an interface that allows setting up and verifying calls), mos of us use libraries that generate them, typically using a reflection feature of a programming language (in our case, C#). Typically, mock libraries free us from having to maintain mock implementations, lowering the friction of writing and maintaining our executable Statements.
 
  So let's use a mock in place of `Channel`! This makes our environment of the specified behavior look like this:
