@@ -156,7 +156,7 @@ public ProductName(string value)
   _value = value;
 }
 
-//another constructo that uses the common initialization
+//another constructor that uses the common initialization
 public ProductName(string model, string onfiguration)
  : this(model + " " + configuration) //delegation to "common" constructor
 {
