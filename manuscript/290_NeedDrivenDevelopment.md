@@ -407,7 +407,7 @@ Assert.Equal(expectedReservationDto, reservationDto);
 
 **Benjamin:** So you propose to use more complex solution - isn't that "big design up front"?
 
-**Johnny:** I believe that it isn't. Remember I'm using just *a bit* more complex solution. The cost of implementation is only a bit higher as well as the cost of maintenance in case I'm wrong. If for some peculiar reason someone says tommorow that they don't need the rest of the features at all, the increase in complexity will be negligible taking into account the small size of the overall code base. If, however, we add more features, then using commands will save us some time in the longer run. Thus, given what I know, I am not adding this to support speculative new features, but to make the code easier to modify in the long run[^FowlerSimplicity]. I agree though that choosing just enough complexity for a given moment is a difficult task[^SandroMancussoDesign].
+**Johnny:** I believe that it isn't. Remember I'm using just *a bit* more complex solution. The cost of implementation is only a bit higher as well as the cost of maintenance in case I'm wrong. If for some peculiar reason someone says tommorow that they don't need the rest of the features at all, the increase in complexity will be negligible taking into account the small size of the overall code base. If, however, we add more features, then using commands will save us some time in the longer run. Thus, given what I know, [I am not adding this to support speculative new features, but to make the code easier to modify in the long run](https://martinfowler.com/bliki/Yagni.html). I agree though that [choosing just enough complexity for a given moment is a difficult task](https://www.youtube.com/watch?v=aCLBd3a1rwk).
 
 **Benjamin:** I still don't get it how introducing a command is going to help us here. Typically, a command has an `Execute()` method that typically doesn't return anything. How then will it give us the response that we need to return from the `MakeReservation()`? And also, there's this another issue: how is this command going to be created? It will probably require the request passed as one of its constructor parameters, so we cannot pass the command to the `TicketOffice`'s constructor as the first time we can access the request is when the `MakeReservation()` method is invoked.
 
@@ -1133,7 +1133,4 @@ return reservationInProgress.ToDto();
 
 This is how Johnny and Benjamin accomplished their first Statement using TDD and mock with an outside-in design approach. What will follow in the next chapter is a small retrospective with comments on what these guys did. One thing I'd like to mention now is that the outside-in approach does not rely solely on unit tests, so what you saw here is not the full picture. We will get to that soon.
 
-
 [^POEAA]: Patterns of enterprise application architecture, M. Fowler.
-[^FowlerSimplicity]: TODO Martin Fowler on the YAGNI
-[^SandorMancussoDesign]: TODO Sando Mancuso on design approaches.
