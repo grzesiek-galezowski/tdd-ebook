@@ -1,3 +1,9 @@
+# 17-11-2018
+
+Hi, today I'd like to present to you another chapter of the book. The chapter is called "Test-driving at the input boundary" and tells a story of Johnny and Benjamin writing a more serious application using the outside-in approach (well, at least in part, because they only use unit tests for that, while typically an outside-in TDD approach involves tests on several levels).
+
+Hope you like the new chapter and, as usual, if you have any comments, you can either use leanpub's "contact the author" feature, or write an issue using the book's github page. Using this occasion, I would like to thank the people who decided to raise issues and offer pull requests with typo fixes and other stuff!!!
+
 # 31-01-2018
 
 A new version of the book is available! Notable changes are:
