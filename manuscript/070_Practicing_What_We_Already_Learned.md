@@ -472,9 +472,9 @@ ShouldDisplayEnteredDigits()
 
 **Johnny:** When we talked to Jane, we used examples with real values. These real values were extremely helpful in pinning down the corner cases and uncovering missing scenarios. They were easier to imagine as well, so they were a perfect suit for conversation. If we were automating these examples on acceptance level, we would use those real values as well. When we write unit-level Statements, however, we use a different technique to get this kind of specification more abstract. First of all, let me enumerate the weaknesses of the approach you just used:
 
-1.  Making a method `Enter()` accept an integer value suggests that one can enter more than one digit at once, e.g. `calculator.Enter(123)`, which is not what we want. We could detect such cases and throw exceptions if the value is outside the 0-9 range, but there are better ways when we know we will only be supporting ten digits (0,1,2,3,4,5,6,7,8,9).
-2.  The Statement does not clearly show the relationship between input and output. Of course, in this simple case it's pretty self-evident that the sum is a concatenation of entered digits. In general case, however, we don't want anyone reading our Specification in the future to have to guess such things.
-3.  The name of the Statement suggests that what you wrote is true for any value, while in reality, it's true only for digits other than "0", since the behavior for "0" is different (no matter how many times we enter "0", the result is just "0"). There are some good ways to communicate it.
+1. Making a method `Enter()` accept an integer value suggests that one can enter more than one digit at once, e.g. `calculator.Enter(123)`, which is not what we want. We could detect such cases and throw exceptions if the value is outside the 0-9 range, but there are better ways when we know we will only be supporting ten digits (0,1,2,3,4,5,6,7,8,9).
+1. The Statement does not clearly show the relationship between input and output. Of course, in this simple case it's pretty self-evident that the sum is a concatenation of entered digits. In general case, however, we don't want anyone reading our Specification in the future to have to guess such things.
+1. The name of the Statement suggests that what you wrote is true for any value, while in reality, it's true only for digits other than "0", since the behavior for "0" is different (no matter how many times we enter "0", the result is just "0"). There are some good ways to communicate it.
 
 Hence, I propose the following:
 
@@ -517,7 +517,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 
 **Johnny:** They are methods from a small utility library I'm using when writing unit-level Specifications. `Any.Besides()` returns any value from enumeration besides the one passed as an argument. Hence, the call `Any.Besides(DigitKeys.Zero)` means "any of the values contained in DigitKeys enumeration, but not DigitKeys.Zero".
 
-The `Any.Of()` is simpler -- it just returns any value in an enumeration. 
+The `Any.Of()` is simpler -- it just returns any value in an enumeration.
 
 Note that by saying:
 
@@ -730,7 +730,7 @@ Assert.Equal(Calculator.InitialDisplayedValue.ToString(), displayedResult);
 
 **Benjamin:** But calling `ToString()` on a `string` just returns the same value, what's the point?
 
-**Johnny:** The point is to make the type of whatever's on the left side of `.ToString()` irrelevant. Then I will be able to change that type. Now, that I did this, I can change the implementation, protected by the executable Specification. The new implementation of `Calculator` class will look like this:
+**Johnny:** The point is to make the type of whatever's on the left side of `.ToString()` irrelevant. Then I will be able to change that type without breaking the Statement. The new implementation of `Calculator` class will look like this:
 
 ```csharp
 public class Calculator
@@ -787,15 +787,13 @@ ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipl
 
 **Johnny:** That would be a wise thing to do. When a Statement turns out true without requiring you to change any production code, it's always suspicious. Just like you said, we have to change production code for a second to force this Statement to become false, then undo this modification to make it true again. This isn't as obvious as previously, so let me do it. I will mark all the added lines with `//+` comment so that you can see them easily:
 
-//TODOOOO
-
 ```csharp
 public class Calculator
 {
  public const int InitialValue = 0;
  private int _result = InitialValue;
  string _fakeResult = "0"; //+
-      
+
  public void Enter(DigitKeys digit)
  {
   _result *= 10;
