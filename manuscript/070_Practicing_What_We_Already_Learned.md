@@ -404,7 +404,7 @@ and the implementation here:
 return "0";
 ```
 
-**Johnny:** Good, let's eliminate this duplication by introducing a constant called `InitialDisplayedValue`. The Statement will now look like this:
+**Johnny:** Good, let's eliminate this duplication by introducing a constant called `InitialValue`. The Statement will now look like this:
 
 ```csharp
 [Fact] public void
@@ -414,7 +414,7 @@ ShouldDisplayInitialValueWhenCreated()
 
  var displayedResult = calculator.Display();
 
- Assert.Equal(Calculator.InitialDisplayedValue, displayedResult);
+ Assert.Equal(Calculator.InitialValue, displayedResult);
 }
 ```
 
@@ -423,7 +423,7 @@ and the implementation:
 ```csharp
 public class Calculator
 {
-  public const string InitialDisplayedValue = "0";
+  public const string InitialValue = "0";
   public string Display()
   {
     return InitialValue;
@@ -719,13 +719,13 @@ Isn't this a duplication? I mean, it's not exactly code duiplication, but in bot
 **Johnny:** Well, my first step would be to go to the Statements that use `InitialValue` and use a `ToString()` method there. For example, in the Statement `ShouldDisplayInitialValueWhenCreated()`, I have an assertion:
 
 ```csharp
-Assert.Equal(Calculator.InitialDisplayedValue, displayedResult);
+Assert.Equal(Calculator.InitialValue, displayedResult);
 ```
 
 which I can change to:
 
 ```csharp
-Assert.Equal(Calculator.InitialDisplayedValue.ToString(), displayedResult);
+Assert.Equal(Calculator.InitialValue.ToString(), displayedResult);
 ```
 
 **Benjamin:** But calling `ToString()` on a `string` just returns the same value, what's the point?
