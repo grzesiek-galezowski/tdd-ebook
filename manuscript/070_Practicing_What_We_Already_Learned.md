@@ -404,7 +404,7 @@ and the implementation here:
 return "0";
 ```
 
-**Johnny:** Good, let's eliminate this duplication by introducing a constant called `InitialValue`. The Statement will now look like this:
+**Johnny:** Good, let's eliminate this duplication by introducing a constant called `InitialDisplayedValue`. The Statement will now look like this:
 
 ```csharp
 [Fact] public void
@@ -414,7 +414,7 @@ ShouldDisplayInitialValueWhenCreated()
 
  var displayedResult = calculator.Display();
 
- Assert.Equal(Calculator.InitialValue, displayedResult);
+ Assert.Equal(Calculator.InitialDisplayedValue, displayedResult);
 }
 ```
 
@@ -423,7 +423,7 @@ and the implementation:
 ```csharp
 public class Calculator
 {
-  public const string InitialValue = "0";
+  public const string InitialDisplayedValue = "0";
   public string Display()
   {
     return InitialValue;
@@ -492,7 +492,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
  calculator.Enter(nonZeroDigit);
  calculator.Enter(anyDigit1);
  calculator.Enter(anyDigit2);
-          
+
  //THEN
  Assert.Equal(
   string.Format("{0}{1}{2}", 
@@ -595,12 +595,12 @@ This clearly does not support displaying multiple digits (as we just proved, bec
 public class Calculator
 {
  public const string InitialValue = "0";
- private int _result = InitialValue;
-      
+ private int _result = 0;
+
  public void Enter(DigitKeys digit)
  {
   _result *= 10;
-  _result += (int)digit; 
+  _result += (int)digit;
  }
 
  public string Display()
@@ -621,17 +621,17 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
  var nonZeroDigit = Any.Besides(DigitKeys.Zero);
  var anyDigit1 = Any.Of<DigitKeys>();
  var anyDigit2 = Any.Of<DigitKeys>();
-          
+
  //WHEN
  calculator.Enter(nonZeroDigit);
  calculator.Enter(anyDigit1);
  calculator.Enter(anyDigit2);
-          
+
  //THEN
  Assert.Equal(
-  string.Format("{0}{1}{2}", 
-   (int)nonZeroDigit, 
-   (int)anyDigit1, 
+  string.Format("{0}{1}{2}",
+   (int)nonZeroDigit,
+   (int)anyDigit1,
    (int)anyDigit2
   ),
   calculator.Display()
@@ -649,8 +649,8 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 string StringConsistingOf(params DigitKeys[] digits)
 {
  var result = string.Empty;
-      
- foreach(var digit in digits) 
+
+ foreach(var digit in digits)
  {
   result += (int)digit;
  }
@@ -669,12 +669,12 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
  var nonZeroDigit = Any.Besides(DigitKeys.Zero);
  var anyDigit1 = Any.Of<DigitKeys>();
  var anyDigit2 = Any.Of<DigitKeys>();
-          
+
  //WHEN
  calculator.Enter(nonZeroDigit);
  calculator.Enter(anyDigit1);
  calculator.Enter(anyDigit2);
-          
+
  //THEN
  Assert.Equal(
   StringConsistingOf(nonZeroDigit, anyDigit1, anyDigit2),
@@ -699,6 +699,62 @@ public void Enter(DigitKeys digit)
 
 **Johnny:** Good, now we're pretty sure it works OK. Let's uncomment the lines we just commented out and move forward.
 
+**Benjamin:** But wait, there is one thing that troubles me.
+
+**Johnny:** I think I know - I was wondering if you'd catch it. Go ahead.
+
+**Benjamin:** What troubles me is these two lines:
+
+```csharp
+public const string InitialValue = "0";
+private int _result = 0;
+```
+
+Isn't this a duplication? I mean, it's not exactly code duiplication, but in both lines, the value of `0` has the same intent. Shouldn't we remove this duplication somehow?
+
+**Johnny:** Yes, let's do it. My preference would be to change the `InitialValue` to `int` instead of string and use that. But I can't do it in a single step as I have the two Statements depending on `InitialValue` being a string. if I just changed the type to `int`, I would break those tests asd well as the implementation and I always want to be fixing one thing at a time.
+
+**Benjamin:** So what do we do?
+
+**Johnny:** Well, my first step would be to go to the Statements that use `InitialValue` and use a `ToString()` method there. For example, in the Statement `ShouldDisplayInitialValueWhenCreated()`, I have an assertion:
+
+```csharp
+Assert.Equal(Calculator.InitialDisplayedValue, displayedResult);
+```
+
+which I can change to:
+
+```csharp
+Assert.Equal(Calculator.InitialDisplayedValue.ToString(), displayedResult);
+```
+
+**Benjamin:** But calling `ToString()` on a `string` just returns the same value, what's the point?
+
+**Johnny:** The point is to make the type of whatever's on the left side of `.ToString()` irrelevant. Then I will be able to change that type. Now, that I did this, I can change the implementation, protected by the executable Specification. The new implementation of `Calculator` class will look like this:
+
+```csharp
+public class Calculator
+{
+ public const int InitialValue = 0;
+ private int _result = InitialValue;
+
+ public void Enter(DigitKeys digit)
+ {
+  _result *= 10;
+  _result += (int)digit;
+ }
+
+ public string Display()
+ {
+  return _result.ToString();
+ }
+}
+```
+
+**Benjamin:** Oh, I see. And the Statements are still evaluated as true.
+
+**Johnny:** Yes. Shall we take on another Statement?
+
 ### Statement 3: Calculator should display only one zero digit if it is the only entered digit even if it is entered multiple times 
 
 **Johnny:** Benjamin, this should be easy for you, so go ahead and try it. It is really a variation of the previous Statement.
@@ -711,10 +767,10 @@ ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipl
 {
  //GIVEN
  var calculator = new Calculator();
-      
+
  //WHEN
  calculator.Enter(DigitKeys.Zero);
- calculator.Enter(DigitKeys.Zero);      
+ calculator.Enter(DigitKeys.Zero);
  calculator.Enter(DigitKeys.Zero);
 
  //THEN
@@ -731,10 +787,12 @@ ShouldDisplayOnlyOneZeroDigitWhenItIsTheOnlyEnteredDigitEvenIfItIsEnteredMultipl
 
 **Johnny:** That would be a wise thing to do. When a Statement turns out true without requiring you to change any production code, it's always suspicious. Just like you said, we have to change production code for a second to force this Statement to become false, then undo this modification to make it true again. This isn't as obvious as previously, so let me do it. I will mark all the added lines with `//+` comment so that you can see them easily:
 
+//TODOOOO
+
 ```csharp
 public class Calculator
 {
- public const string InitialValue = "0";
+ public const int InitialValue = 0;
  private int _result = InitialValue;
  string _fakeResult = "0"; //+
       
