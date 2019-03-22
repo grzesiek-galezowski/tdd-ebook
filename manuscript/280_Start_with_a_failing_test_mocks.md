@@ -17,7 +17,7 @@ Pretty much all of these strategies work equally well with Statements that use m
 
 In this chapter, I will be using two concepts that, unfortunately, happen to share the same name: "responsibility". One meaning of responsibility was [coined by Rebecca Wirfs-Brock](http://www.wirfs-brock.com/PDFs/PrinciplesInPractice.pdf) to mean "an obligation to perform a task or know certain information", and the other by Robert C. Martin to mean "a reason to change". To avoid this ambiguity, I will try calling the first one "obligation" and the second one "purpose" in this chapter.
 
-The relationship between the two can be described by the following sentences: 
+The relationship between the two can be described by the following sentences:
 
 1. A class has obligations towards its clients.
 1. The obligations are what the class "promises" to do for its clients.
