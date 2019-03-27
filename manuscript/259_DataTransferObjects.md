@@ -180,7 +180,7 @@ This may seem like a stronger and better decoupling decoupling than using an abs
   printer.Print(document);
   ```
 
-while in the case where the printer accepts a string, the coordinating code must also call the `GetContent()` method.
+  while in the case where the printer accepts a string, the coordinating code must also call the `GetContent()` method.
 
 1. This data-centric approach also limits our ability to use polymorphism. To illustrate this, I would like to go back to the example we used when talking about decoupling by abstracting behavior. There, we had the following line responsible for printing:
 
@@ -188,9 +188,85 @@ while in the case where the printer accepts a string, the coordinating code must
   document.PrintWith(printer);
   ```
 
+  When the document is responsible for deciding how to print, it might make a decision not to print at all. Imagine that our `Document` class implements an interface like this:
+
+  ```csharp
+  public interface Printable
+  {
+      void Print(Printer printer);
+  }
+  ```
+
+  Then we could have another class implementing this interface, e.g. called `IgnoredPrintable` that would have this implementation:
+
+  ```csharp
+  public class IgnoredPrintable : Printable
+  {
+      public void Print(Printer printer)
+      {
+          //deliberately left empty
+      }
+  }
+  ```
+
+  By using this class, we could change the behavior of this code:
+
+  ```csharp
+  document.PrintWith(printer);
+  ```
+
+  without having to change it.
+
+  Now, let's get back to the data-centric approach:
+
+  ```csharp
+  printer.Print(document.GetContent());
+  ```
+
+  Can we use polymorphism in this case to achieve the same result? Well, let's try. Again, let's imagine we have an interface called `Printable`, but this time it is structured like this:
+
+  ```csharp
+  public interface Printable
+  {
+      string GetContent();
+  }
+  ```
+
+  Again, we want to create an implementation that does not print anything, but then we stumble upon a problem:
+
+  ```csharp
+  public class IgnoredPrintable : Printable
+  {
+      public string GetContent()
+      {
+          return ????; //!!!
+      }
+  }
+  ```
+  
+  Note that when implementing the `GetContent()`, we have to return *something*. This is because in this case, the `Printable` implementations don't make the decision whether to print or not. This decision must be made by the code that coordinates the printing logic:
+
+  ```csharp
+  printer.Print(document.GetContent());
+  ```
+
+  It can, e.g. check for null:
+
+  ```csharp
+  if(document.GetContent() != null)
+  {
+    printer.Print();
+  }
+  ```
+
+  but the point is that we cannot leverage the polymorphism of documents to hide this decision. This is because, by decoupling documents from the printing behavior, we lost the ability to hide the implementation of that behavior. By losing the ability to hide the implementation, we also lost the ability to hide the variability of the behavior. Thus, this variability must go somewhere else. This can lead to lots of complexity aggregating in the places that coordinate the use case logic. 
+
+
+
+
 TODO we can use null object
 
-1. more work for coordinators
+1. more work for coordinators - TODO an example with an if
 2. no polymorphism
 3. imagine the string was mutable
 
