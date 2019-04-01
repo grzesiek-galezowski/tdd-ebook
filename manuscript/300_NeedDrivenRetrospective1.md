@@ -18,6 +18,10 @@ A Data Transfer Object is a pattern to describe objects responsible for exchangi
 
 As you might have seen, DTOs are typically just data structures. That may come as surprising, because for several chapters now, I have repeatedly stressed how we should bundle data and behavior together. Isn't this breaking all the rules that I mentioned?
 
+Yes, it does and it does so for good reason. But before I explain that, let's take a look at two ways of decoupling.
+
+# Decoupling through interfaces
+
 In a way, it is and it is because of decoupling. There are two main ways of decoupling.
 
 TODO: every system is procedural at the boundaries.
