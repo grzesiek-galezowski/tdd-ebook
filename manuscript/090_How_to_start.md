@@ -354,7 +354,7 @@ public void TODO()
  trialMessages.HoldOnASecondWhileWeImportYourDatabase();
 
  //THEN
- Assert.True(false); //to remember about it
+ Assert.True(false); //so we don't forget this later
 }
 ```
 
