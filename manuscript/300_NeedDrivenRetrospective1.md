@@ -12,35 +12,41 @@ TODO: read chapter on interface discovery
 
 ## Data Transfer Objects
 
-While looking at the initial data structures, Johnny and Benjamin callded them Data Transfer Objects.
+While looking at the initial data structures, Johnny and Benjamin called them Data Transfer Objects.
 
 A Data Transfer Object is a pattern to describe objects responsible for exchanging information between process boundaries (TODO: confirm with the book). So, we can have DTOs representing input that our process receives and DTOs representing output that our process sends out.
 
-As you might have seen, DTOs are typically just data structures. That may come as surprising, because for several chapters now, I have repeatedly stressed how we should bundle data and behavior together. Isn't this breaking all the rules that I mentioned?
+As you might have seen, DTOs are typically just data structures. That may come as surprising, because for several chapters now, I have repeatedly stressed how I bundle data and behavior together. Isn't this breaking all the principles that I mentioned?
 
-Yes, it does and it does so for good reason. But before I explain that, let's take a look at two ways of decoupling.
+My response to this would be that exchanging information between processes is where these principles do not apply and they do not apply for some good reasons.
 
-# Decoupling through interfaces
+1. It is easier to exchange data than to exchange behavior. If I wanted to send behavior to another process, I would have to send it as data anyway, e.g. in a form of source code. In such case, the other side would need to interpret the source code, provide all the dependencies etc. which could be cumbersome and strongly couple implementations of both processes.
+1. Agreeing on a simple data format makes creating and interpreting the data in different programming languages easier.
+1. Many times, the boundaries between processes are designed as functional boundaries at the same time. In other words, even if one process sends some data to another, both of these processes would not want to execute the same behaviors on the data.
 
-In a way, it is and it is because of decoupling. There are two main ways of decoupling.
+These are some of the reasons why processes send data to each other. And when they do, they typically bundle the data for consistency and performance reasons.
 
-TODO: every system is procedural at the boundaries.
+### DTOs and value objects
 
-DTO:
+While DTOs, similarly to value objects, carry and represent data, their purpose and design constraints are different.
 
-1. Two types of decoupling 
-    1. with interfaces (pure behavior descriptions, decouple from the data)
-    1. with data (decouples from behavior)
-1. As it's very hard to pass behavior and quite easy to pass data, thus typically services exchange data, not behavior.
-1. DTOs are for data interchange between processes
-1. Typically represent an external data contract
-1. Data can be easily serialized into text or bytes and deserialized on the other side.
-1. DTOs can contain values, although this may be hard because these values need to be serializable. This may put some constraints on our value types depending on the parser
-1. differences between DTOs and value objects (value objects can have behavior, DTOs should not, although the line is blurred e.g. when a value objecy is part of a DTO. String contains lots of behaviors but they are not domain-specific). Can DTOs implement equality?
-1. Also, for this reason, application logic should be kept away from DTOs to avoid coupling them to external constract and making serialization/deserialization difficult.
-1. Mapping vs. Wrapping
-1. We do not mock DTOs
-1. input DTOs best read only and immutable but can have builders
+1. Values have value semantics, i.e. they can be compared based on their content. DTOs typically don't have value semantics (if I add value semantics to DTOs, I do it because I find it convenient, not because it's a part of domain model).
+1. Values may contain behavior, even quite complex (see e.g. `string.Replace()`), while DTOs typically contain no behaviors at all.
+1. Despite the previous point, DTOs may contain value objects, as long as these value objects can be reliably serialized and deserialized without loss of information. Values don't typically contain DTOs.
+1. Values represent atomic and well-defined concepts (like text, date, money), while DTOs mostly function as bundles of data.
+
+### DTOs and mocks
+
+As we observed in the example of Johnny and Benjamin writing their first Statement, they did not mock DTO. This is a general rule - a DTO is a set of data, it does not represent an implementation of abstract protocol and does not benefit from  polymorphism the way objects do.
+
+
+
+2. DTOs can contain values, although this may be hard because these values need to be serializable. This may put some constraints on our value types depending on the parser
+3. differences between DTOs and value objects (value objects can have behavior, DTOs should not, although the line is blurred e.g. when a value objecy is part of a DTO. String contains lots of behaviors but they are not domain-specific). Can DTOs implement equality?
+4. Also, for this reason, application logic should be kept away from DTOs to avoid coupling them to external contract and making serialization/deserialization difficult.
+5. Mapping vs. Wrapping
+6.  We do not mock DTOs
+7.  input DTOs best read only and immutable but can have builders
 
 **Johnny:** The suffix `Dto` means that this class represents a Data Transfer Object (in short, DTO)[^POEAA]. Its role is just to transfer data across the process boundaries.
 

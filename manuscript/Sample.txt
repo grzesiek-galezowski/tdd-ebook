@@ -31,7 +31,6 @@
 250_Value_Objects.md
 255_Value_Objects_properties.md
 257_Value objects_general_topics.md
-259_DataTransferObjects.md
 260_Part3Marker.md
 270_Mock_Objects.md
 280_Start_with_a_failing_test_mocks.md
