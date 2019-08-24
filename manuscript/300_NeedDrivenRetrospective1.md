@@ -4,7 +4,25 @@ I suppose there was a lot going on in the last chapter and some things that dema
 
 ## Outside-in development
 
-Johnny and Benjamin started almost entirely at the peripheral, on the inputs
+Johnny and Benjamin started their development almost entirely at the peripherals, at the beginning of the flow of control. This is typical to the outside-in approach to software development. When I started learning to write software this way, I felt it as counter-intuitive. After all, if I started with the inside-most objects, I could run the logic inside them with whatever dependencies they had, because all those dependencies already existed. Looking at the graph below, I could develop and run the logic in `Object1` because it did not require dependencies. Then, I could develop `Object2` because it depends on `Object1` that I already created and I could as well do that with `Object3` because it only depends on `Object2` that I already had. In other words, at any given time, I could run everything I created up to that point.
+
+```
+Object3 -> Object2 -> Object1
+```
+
+The outside-in approach broke this for me, because the objects I had to start with were the ones that had to have dependencies and these dependencies did not exist yet. With outside-in, I would need to start with `Object3`, which could not be instantiated without `Object2`, which, in turn, could not be instantiated without `Object1`.
+
+If this is more difficult, then why bother? My reasons are:
+
+1. By starting from the inputs, I allow my interfaces and protocols to be shaped by a use case rather than by underlying technology. That does not mean I can just ignore the technology stuff, but I consider the use case logic to be the main driver. This way, my protocols tend to be more abstract which in turn enforces higher composability.
+1. Every line of code I introduce is there because the use case needs it. Every method, every interface and class exists because someone else needs it to perform its obligations. This way, I ensure I only implement the stuff that's needed the way the users find it comfortable to use. When going the other way, from the outputs, I designed classes by guessing how they would be used and I later regretted these guesses, because of the rework and complexity they often created.
+
+The uncomfortable feeling of starting from the inputs ("there is nothing I can fully run") could, in my case, be mitigated with the following practices:
+
+1. Using TDD with mocks - TDD allow every little piece of code to be executed well before the whole task completion and mock objects serve as first collaborators that allow this execution to happen.
+1. Slicing the scope vertically (e.g. in acceptance tests and user stories), which allows getting something that works fast enough
+1. higher level tests
+
 This is not true outside-in. True outside-in requires higher-level tests and maybe refactoring in the middle.
 TODO: outside-in + maybe some drawing
 interface discovery
@@ -18,11 +36,11 @@ A Data Transfer Object is a pattern to describe objects responsible for exchangi
 
 As you might have seen, DTOs are typically just data structures. That may come as surprising, because for several chapters now, I have repeatedly stressed how I bundle data and behavior together. Isn't this breaking all the principles that I mentioned?
 
-My response to this would be that exchanging information between processes is where these principles do not apply and they do not apply for some good reasons.
+My response to this would be that exchanging information between processes is where these principles do not apply and that there are some good reasons why.
 
 1. It is easier to exchange data than to exchange behavior. If I wanted to send behavior to another process, I would have to send it as data anyway, e.g. in a form of source code. In such case, the other side would need to interpret the source code, provide all the dependencies etc. which could be cumbersome and strongly couple implementations of both processes.
-1. Agreeing on a simple data format makes creating and interpreting the data in different programming languages easier.
-1. Many times, the boundaries between processes are designed as functional boundaries at the same time. In other words, even if one process sends some data to another, both of these processes would not want to execute the same behaviors on the data.
+2. Agreeing on a simple data format makes creating and interpreting the data in different programming languages easier.
+3. Many times, the boundaries between processes are designed as functional boundaries at the same time. In other words, even if one process sends some data to another, both of these processes would not want to execute the same behaviors on the data.
 
 These are some of the reasons why processes send data to each other. And when they do, they typically bundle the data for consistency and performance reasons.
 
@@ -37,26 +55,51 @@ While DTOs, similarly to value objects, carry and represent data, their purpose 
 
 ### DTOs and mocks
 
-As we observed in the example of Johnny and Benjamin writing their first Statement, they did not mock DTO. This is a general rule - a DTO is a set of data, it does not represent an implementation of abstract protocol and does not benefit from  polymorphism the way objects do.
+As we observed in the example of Johnny and Benjamin writing their first Statement, they did not mock DTOs. This is a general rule - a DTO is a set of data, it does not represent an implementation of an abstract protocol nor does it benefit from  polymorphism the way objects do. Also, it is typically far easier to create an instance of a DTO than a mock of it. Imagine we have the following DTO:
 
+```csharp
+public class LoginDto
+{
+  public LoginDto(string login, string password)
+  {
+    Login = login;
+    Password = password;
+  }
 
+  public string Login { get; }
+  public string Password { get;}
+}
+```
 
-2. DTOs can contain values, although this may be hard because these values need to be serializable. This may put some constraints on our value types depending on the parser
-3. differences between DTOs and value objects (value objects can have behavior, DTOs should not, although the line is blurred e.g. when a value objecy is part of a DTO. String contains lots of behaviors but they are not domain-specific). Can DTOs implement equality?
-4. Also, for this reason, application logic should be kept away from DTOs to avoid coupling them to external contract and making serialization/deserialization difficult.
-5. Mapping vs. Wrapping
-6.  We do not mock DTOs
-7.  input DTOs best read only and immutable but can have builders
+An instance of this class can be created by typing:
 
-**Johnny:** The suffix `Dto` means that this class represents a Data Transfer Object (in short, DTO)[^POEAA]. Its role is just to transfer data across the process boundaries.
+```csharp
+var loginDto = new LoginDto("James", "007");
+```
 
-**Benjamin:** So you mean it is just needed to represent some kind of XML or JSON that is sent to the application?
+If we were to create a mock, we would probably extract an interface:
 
-**Johnny:** Yes, you could say that. The reason people typically place `Dto` in these names is to communicate that these data structures are special - they represent an outside contract and cannot be freely modified like other objects.
+```csharp
+public class ILoginDto
+{
+  public string Login { get; set; }
+  public string Password { get; set;}
+}
+```
 
-**Benjamin:** Does it mean that I can't touch them?
+and then write in our Statement something like this:
 
-**Johnny:** It means that if you did touch them, you'd have to make sure they are still correctly mapped from outside data, like JSON or XML.
+```csharp
+var loginDto = Substitute.For<ILoginDto>();
+loginDto.Login.Returns("James");
+loginDto.Password.Returns("Bond");
+```
+
+Not only is this more verbose, it does not buy us anything. Hence my advice:
+
+A> Do not try to mock DTOs. Create the real thing.
+
+//TODO TODO TODO TODO
 
 
 ## Collecting parameter
@@ -177,3 +220,5 @@ TODO: other ways to test-drive this (higher level tests)
 TODO: Design quality vs. Tests (intro) and what this example told us - verifying and setting up a mock for the same method is violation of the CQS principle, too many mocks - too many dependencies. Too many stubs - violation of TDA principle. These things *may* mean a violation.
 
 Next chapter - a factory
+
+TODO: revise using the term "Stable" in the previous chapters to sync it with Uncle Bob's usage of the term.
