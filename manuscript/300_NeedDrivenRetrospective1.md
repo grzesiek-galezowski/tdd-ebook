@@ -19,11 +19,10 @@ If this is more difficult, then why bother? My reasons are:
 
 The uncomfortable feeling of starting from the inputs ("there is nothing I can fully run") could, in my case, be mitigated with the following practices:
 
-1. Using TDD with mocks - TDD allow every little piece of code to be executed well before the whole task completion and mock objects serve as first collaborators that allow this execution to happen.
-1. Slicing the scope vertically (e.g. in acceptance tests and user stories), which allows getting something that works fast enough
-1. higher level tests
+1. Using TDD with mocks - TDD allows every little piece of code to be executed well before the whole task completion and mock objects serve as first collaborators that allow this execution to happen.
+1. Slicing the scope into smaller vertical parts (e.g. scenarios, stories etc.) that can be implemented faster than a full-blown feature. We have had a taste of this in action when Johnny and Benjamin were developing the calculator in one of the first chapters.
+1. Do not write the first Statement as a unit-level Statement, but instead, write it on a higher-level (e.g. end-to-end or against another architectural boundary), make it work, then refactor the initial structure. This gives us a walking skeleton of sort, which can be built, tested and deployed. As the next features or scenarios are added, these traits are preserved so we can always run what we have mid-development. This approach is what we will be aiming at ultimately, but for this chapter, I will leave it out to only focus on the mocks and OO design.
 
-This is not true outside-in. True outside-in requires higher-level tests and maybe refactoring in the middle.
 TODO: outside-in + maybe some drawing
 interface discovery
 TODO: read chapter on interface discovery
