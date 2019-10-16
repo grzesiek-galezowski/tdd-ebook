@@ -105,7 +105,7 @@ Let's try answering them.
 
 ## Is `ResultInProgress` necessary?
 
-In short - no. There are several alternative designs.
+In short - no. There are at least several alternative designs.
 
 First of all, we might decide to return from the command's `Execute()` method. Then, the command would look like this:
 
@@ -127,8 +127,21 @@ public interface ReservationCommand<T>
 
 but this still leaves a distinction between `void` and non-`void` commands.
 
-Second option - execute command, then query. - we would need to generate the ID beforehand
-Third option os to completely change the design into using command handlers, which you can read about on Steve XXYYZZ blog.
+The second option would be to just let the command execute and then obtain the result using a query. The code of the `MakeReservation()` would look somewhat like this:
+
+```csharp
+var reservationId = _idGenerator.GenerateId();
+var reservationCommand = _factory.CreateReservationCommand(requestDto, reservationId);
+var reservationQuery = _factory.CreateReservationQuery(reservationId);
+
+reservationCommand.Execute();
+return reservationQuery.Make();
+```
+
+Note that in this case, there is nothing like "result in progress", but on the other hand, we need to generate the id for the command, since the query must use the same id. This approach might be attractive if you don't mind that the query might go through database or external service again and if the service you send the reservation to offers a query that meets your needs (it's not always a given).
+
+There are more options, but I'd like to stop here as this is not the main concern of this book.
+
 
 TODO: outside-in + maybe some drawing
 interface discovery
