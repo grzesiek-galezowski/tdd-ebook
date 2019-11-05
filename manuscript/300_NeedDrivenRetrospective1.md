@@ -96,14 +96,19 @@ A> Do not try to mock DTOs in your Statements. Create the real thing.
 
 ## Using a `ReservationInProgress`
 
-A controversial point of the design might be using of the `ResultInProgress`. The core idea of this interface is to collect the data needed to produce a result. To introduce this object, we needed a separate factory, which made the design more complex. Thus, some questions might pop into your mind:
+A controversial point of the design might be the usage of a `ReservationInProgress` class. The core idea of this interface is to collect the data needed to produce a result. To introduce this object, we needed a separate factory, which made the design more complex. Thus, some questions might pop into your mind:
 
-1. Is the `ResultInProgress` really necessary and if not, what are the alternatives?
-1. Is a separate factory for `ResultInProgress` needed?
+1. What exactly is `ReservationInProgress`?
+1. Is the `ReservationInProgress` really necessary and if not, what are the alternatives?
+1. Is a separate factory for `ReservationInProgress` needed?
 
 Let's try answering them.
 
-## Is `ResultInProgress` necessary?
+## What exactly is `ReservationInProgress`?
+
+As mentioned earlier, the intent for this object is to collect data on what happens during the handling of request TODO TODO
+
+## Is `ReservationInProgress` necessary?
 
 In short - no. There are at least several alternative designs.
 
@@ -125,7 +130,7 @@ public interface ReservationCommand<T>
 }
 ```
 
-but this still leaves a distinction between `void` and non-`void` commands.
+but this still leaves a distinction between `void` and non-`void` commands (which some people resolve by parameterizing would-be `void` commands with `bool` and returning `true` at the end).
 
 The second option would be to just let the command execute and then obtain the result using a query. The code of the `MakeReservation()` would look somewhat like this:
 
@@ -138,9 +143,21 @@ reservationCommand.Execute();
 return reservationQuery.Make();
 ```
 
-Note that in this case, there is nothing like "result in progress", but on the other hand, we need to generate the id for the command, since the query must use the same id. This approach might be attractive if you don't mind that the query might go through database or external service again and if the service you send the reservation to offers a query that meets your needs (it's not always a given).
+Note that in this case, there is nothing like "result in progress", but on the other hand, we need to generate the id for the command, since the query must use the same id. This approach might be attractive if you don't mind that the `reservationQuery` might go through database or external service again and if a potential destination for data allows both commands and queries on its interface (it's not always a given).
 
 There are more options, but I'd like to stop here as this is not the main concern of this book.
+
+## Do we need a separate factory for `ReservationInProgress`?
+
+This question can be broken into two parts:
+
+1. Can we use the same factory as for commands?
+2. Do we need a factory at all?
+
+The answer to the first one is: it depends on what the `ReservationInProgress` is coupled to. In the case of train reservation, it is just creating a DTO to be returned to the client. In such case, it does not need any knowledge of the framework that is being used to run the application. This lack of coupling to the framework would allow me to place creating `ReservationInProgress` in the same factory. However, if this class needed to decide e.g. HTTP status codes or create responses required by a specific framework or in a specified format (e.g. JSON or XML), then I would opt, as I did, for separating it from the command factory. This is because command factory belongs to the world of application logic and I want my application logic to be independent of the framework.
+
+THe answer to the second one is: it depends whether you care about specifying the controller behavior on the unit level. If yes, then it may handy to have a factory just to control the creation of `ReservationInProgress`. If you don't want to (e.g. you drive this logic with higher-level Statements, which we will talk about in one of the next parts), then you can decide to just create the object inside the controller method.
+
 
 
 TODO: outside-in + maybe some drawing
