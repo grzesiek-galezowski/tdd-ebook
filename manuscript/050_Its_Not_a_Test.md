@@ -50,7 +50,7 @@ I hope you can see now that what we called "a test" can also be seen as a kind 
 
 In reality, the role of a test, if written before production code, can be broken down even further:
 
-* designing a scenario - is when we specify our requiremnts by giving concrete examples of behaviors we expect
+* designing a scenario - is when we specify our requirements by giving concrete examples of behaviors we expect
 * writing the test code - is when we specify an API through which we want to use the code that we are testing
 * compiling - is when we get feedback on whether the production code has the classes and methods required by the specification we wrote. If it doesn't, the compilation will fail. 
 * execution - is where we get feedback on whether the production code exhibits the behaviors that the specification describes
