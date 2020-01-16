@@ -10,7 +10,7 @@ Johnny and Benjamin started their development almost entirely at the peripherals
 Object3 -> Object2 -> Object1
 ```
 
-The outside-in approach broke this for me, because the objects I had to start with were the ones that had to have dependencies and these dependencies did not exist yet. With outside-in, I would need to start with `Object3`, which could not be instantiated without `Object2`, which, in turn, could not be instantiated without `Object1`.
+The outside-in approach broke this for me because the objects I had to start with were the ones that had to have dependencies and these dependencies did not exist yet. With outside-in, I would need to start with `Object3`, which could not be instantiated without `Object2`, which, in turn, could not be instantiated without `Object1`.
 
 If this is more difficult, then why bother? My reasons are:
 
@@ -22,6 +22,18 @@ The uncomfortable feeling of starting from the inputs ("there is nothing I can f
 1. Using TDD with mocks - TDD allows every little piece of code to be executed well before the whole task completion and mock objects serve as first collaborators that allow this execution to happen.
 1. Slicing the scope into smaller vertical parts (e.g. scenarios, stories etc.) that can be implemented faster than a full-blown feature. We have had a taste of this in action when Johnny and Benjamin were developing the calculator in one of the first chapters.
 1. Do not write the first Statement as a unit-level Statement, but instead, write it on a higher-level (e.g. end-to-end or against another architectural boundary), make it work, then refactor the initial structure. This gives us a walking skeleton of sort, which can be built, tested and deployed. As the next features or scenarios are added, these traits are preserved so we can always run what we have mid-development. This approach is what we will be aiming at ultimately, but for this chapter, I will leave it out to only focus on the mocks and OO design.
+
+## Workflow specification
+
+The Statement about the controller is an example of what Amir Kolsky and Scott Bain call workflow specification. A workflow specification describes how a specified unit of behavior (in our case, a class) interacts with other units by sending messages and receiving answers. In Statements specifying workflow, we describe the purpose and behaviors of the specified class in terms of interacting of mocked roles that other objects play. 
+
+In our case, TODO TODO TODO TODO TODO TODO TODO 
+
+Workflow Statements specify how objects of a class coordinate and delegate work to other objects
+Sustainable TDD blog reference
+TODO: workflow specification
+Seargant, programming by intention
+
 
 ## Data Transfer Objects
 
@@ -96,7 +108,7 @@ A> Do not try to mock DTOs in your Statements. Create the real thing.
 
 ## Using a `ReservationInProgress`
 
-A controversial point of the design might be the usage of a `ReservationInProgress` class. The core idea of this interface is to collect the data needed to produce a result. To introduce this object, we needed a separate factory, which made the design more complex. Thus, some questions might pop into your mind:
+A controversial point of the design in the last chapter might be the usage of a `ReservationInProgress` class. The core idea of this interface is to collect the data needed to produce a result. To introduce this object, we needed a separate factory, which made the design more complex. Thus, some questions might pop into your mind:
 
 1. What exactly is `ReservationInProgress`?
 1. Is the `ReservationInProgress` really necessary and if not, what are the alternatives?
@@ -123,7 +135,7 @@ public interface ReservationInProgressMakingReservationDto : ReservationInProgre
 }
 ```
 
-The whole point is that only the issuer of the command can see the wider interface and when it passes this interface down the call chain, the next object only sees the methods for reporting events. This way, the wider interface can even be tied to a specific technology, as long as the more narrow one is not. For example, If I needed a JSON string response, I might do something like this: 
+The whole point is that only the issuer of the command can see the wider interface and when it passes this interface down the call chain, the next object only sees the methods for reporting events. This way, the wider interface can even be tied to a specific technology, as long as the more narrow one is not. For example, If I needed a JSON string response, I might do something like this:
 
 ```csharp
 public interface ReservationInProgressMakingReservationDto : ReservationInProgress
@@ -190,29 +202,6 @@ The answer to the second one is: it depends whether you care about specifying th
 TODO: outside-in + maybe some drawing
 interface discovery
 TODO: read chapter on interface discovery
-
-//TODO TODO TODO TODO
-
-
-## Collecting parameter
-
-1. Instead of combining parameters, add them somewhere
-2. Simplest - a collection
-3. Advantage, CQS
-4. Advantage: caller has a better control over the identity
-5. Advantage:  Anyone can call methods multiple times or not at all
-6. Disadvantage: Anyone can call a method multiple times or not at all
-7. Problem: return values enforce the "~exactly one~" result as there can always be one value returned. Collecting parameter does not enforce anything.
-8. blurred line between this and builder
-
-TODO: why separate factories?
-
-## Workflow specifications
-
-Workflow Statements specify how objects of a class coordinate and delegate work to other objects
-Sustainable TDD blog reference
-TODO: workflow specification
-Seargant, programming by intention
 
 ## Sources of abstractions
 
