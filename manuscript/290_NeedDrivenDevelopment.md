@@ -315,7 +315,7 @@ We need to assign something to the variable.
 
 **Johnny:** No, there's no need to. DTOs are, by definition, data structures and mocking involves polymorphism which applies to behavior rather than data. Later I will explain it in more details. For now, just accept my word on it.
 
-**Benjamin:** Sooo... if it's not going to be a mock, then let's generate an anonymous valur for it using the `Any.Instance<>()` method.
+**Benjamin:** Sooo... if it's not going to be a mock, then let's generate an anonymous value for it using the `Any.Instance<>()` method.
 
 **Johnny:** That is exactly what I would do.
 
@@ -341,7 +341,7 @@ Assert.True(false);
 
 **Benjamin:** so we change this `false` to `true` and we're done here, right?
 
-**Johnny:** ... Huh?
+**Johnny:** ...Huh?
 
 **Benjamin:** Oh, I was just pulling your leg. What I really wanted to say is let's turn this assertion into something useful.
 

@@ -473,7 +473,7 @@ ShouldDisplayEnteredDigits()
 **Johnny:** When we talked to Jane, we used examples with real values. These real values were extremely helpful in pinning down the corner cases and uncovering missing scenarios. They were easier to imagine as well, so they were a perfect suit for conversation. If we were automating these examples on acceptance level, we would use those real values as well. When we write unit-level Statements, however, we use a different technique to get this kind of specification more abstract. First of all, let me enumerate the weaknesses of the approach you just used:
 
 1. Making a method `Enter()` accept an integer value suggests that one can enter more than one digit at once, e.g. `calculator.Enter(123)`, which is not what we want. We could detect such cases and throw exceptions if the value is outside the 0-9 range, but there are better ways when we know we will only be supporting ten digits (0,1,2,3,4,5,6,7,8,9).
-1. The Statement does not clearly show the relationship between input and output. Of course, in this simple case it's pretty self-evident that the sum is a concatenation of entered digits. In general case, however, we don't want anyone reading our Specification in the future to have to guess such things.
+1. The Statement does not clearly show the relationship between input and output. Of course, in this simple case, it's pretty self-evident that the sum is a concatenation of entered digits. In general case, however, we don't want anyone reading our Specification in the future to have to guess such things.
 1. The name of the Statement suggests that what you wrote is true for any value, while in reality, it's true only for digits other than "0", since the behavior for "0" is different (no matter how many times we enter "0", the result is just "0"). There are some good ways to communicate it.
 
 Hence, I propose the following:
@@ -535,10 +535,10 @@ By the way, this technique of using generated values instead of literals has its
 
 **Johnny:** Yes, this is a convention that I use, not only in writing, but in thinking as well. I like to think about every behavior in terms of three elements: assumptions (given), trigger (when) and expected result (then). Using the words, we can summarize the Statement we are writing in the following way: "**Given** a calculator, **when** I enter some digits, the first one being non-zero, **then** they should all be displayed in the order they were entered". This is also something that I will tell you more about later.
 
-**Benjamin:** Sure, for now I need just enough detail to be able to keep going -- we can talk about the principles, pros and cons later. By the way, the following sequence of casts looks a little bit ugly:
+**Benjamin:** Sure, for now, I need just enough detail to be able to keep going -- we can talk about the principles, pros, and cons later. By the way, the following sequence of casts looks a little bit ugly:
 
 ```csharp
-string.Format("{0}{1}{2}", 
+string.Format("{0}{1}{2}",
  (int)nonZeroDigit, 
  (int)anyDigit1, 
  (int)anyDigit2
@@ -572,7 +572,7 @@ public enum DigitKeys
 
 **Benjamin:** It's difficult to agree with, I mean, I can see the values in the enum, should I really test for something when there's not complexity involved?
 
-**Johnny:** Again, we're not only testing, we're specifying. I will try to give you more arguments later. For now, just bear with me and note that when we get to specify the enum elements, adding such Statement will be almost effortless.
+**Johnny:** Again, we're not only testing, but also we're specifying. I will try to give you more arguments later. For now, just bear with me and note that when we get to specify the enum elements, adding such Statement will be almost effortless.
 
 **Benjamin:** OK.
 
