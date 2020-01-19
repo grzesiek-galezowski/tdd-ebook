@@ -1,6 +1,6 @@
 # Test-driving at the input boundary - a retrospective
 
-I suppose there was a lot going on in the last chapter and some things that demand a deeper dive. The purpose of this chapter is to do a small retrospective on what Johnny and Benjamin did when test-driving a controller for train reservation system.
+I suppose a lot was going on in the last chapter and some things that demand a deeper dive. The purpose of this chapter is to do a small retrospective on what Johnny and Benjamin did when test-driving a controller for the train reservation system.
 
 ## Outside-in development
 
@@ -15,13 +15,13 @@ The outside-in approach broke this for me because the objects I had to start wit
 If this is more difficult, then why bother? My reasons are:
 
 1. By starting from the inputs, I allow my interfaces and protocols to be shaped by a use case rather than by underlying technology. That does not mean I can just ignore the technology stuff, but I consider the use case logic to be the main driver. This way, my protocols tend to be more abstract which in turn enforces higher composability.
-1. Every line of code I introduce is there because the use case needs it. Every method, every interface and class exists because someone else needs it to perform its obligations. This way, I ensure I only implement the stuff that's needed the way the users find it comfortable to use. When going the other way, from the outputs, I designed classes by guessing how they would be used and I later regretted these guesses, because of the rework and complexity they often created.
+1. Every line of code I introduce is there because the use case needs it. Every method, every interface, and class exists because someone else needs it to perform its obligations. This way, I ensure I only implement the stuff that's needed the way the users find it comfortable to use. When going the other way, from the outputs, I designed classes by guessing how they would be used and I later regretted these guesses, because of the rework and complexity they often created.
 
 The uncomfortable feeling of starting from the inputs ("there is nothing I can fully run") could, in my case, be mitigated with the following practices:
 
 1. Using TDD with mocks - TDD allows every little piece of code to be executed well before the whole task completion and mock objects serve as first collaborators that allow this execution to happen.
-1. Slicing the scope into smaller vertical parts (e.g. scenarios, stories etc.) that can be implemented faster than a full-blown feature. We have had a taste of this in action when Johnny and Benjamin were developing the calculator in one of the first chapters.
-1. Do not write the first Statement as a unit-level Statement, but instead, write it on a higher-level (e.g. end-to-end or against another architectural boundary), make it work, then refactor the initial structure. This gives us a walking skeleton of sort, which can be built, tested and deployed. As the next features or scenarios are added, these traits are preserved so we can always run what we have mid-development. This approach is what we will be aiming at ultimately, but for this chapter, I will leave it out to only focus on the mocks and OO design.
+1. Slicing the scope into smaller vertical parts (e.g. scenarios, stories, etc.) that can be implemented faster than a full-blown feature. We have had a taste of this in action when Johnny and Benjamin were developing the calculator in one of the first chapters.
+1. Do not write the first Statement as a unit-level Statement, but instead, write it on a higher-level (e.g. end-to-end or against another architectural boundary), make it work, then refactor the initial structure. This gives us a kind of walking skeleton[^walkingskeleton], which can be built, tested and deployed. As the next features or scenarios are added, these traits are preserved so we can always run what we have mid-development. This approach is what we will be aiming at ultimately, but for this chapter, I will leave it out to only focus on the mocks and OO design.
 
 ## Workflow specification
 
@@ -303,3 +303,5 @@ TODO: Design quality vs. Tests (intro) and what this example told us - verifying
 Next chapter - a factory
 
 TODO: revise using the term "Stable" in the previous chapters to sync it with Uncle Bob's usage of the term.
+
+[^walkingskeleton]: TODO add reference

@@ -4,17 +4,17 @@ Whenever I sat down with someone who was about to write code in a Statement-firs
 
 ## Start with a good name
 
-I already said that a Statement is a description of a behavior expressed in code. A thought process leading to creation of such an executable Statement might look like the following sequence of questions:
+I already said that a Statement is a description of behavior expressed in code. A thought process leading to creating such an executable Statement might look like the following sequence of questions:
 
 1. What is the scope of the behavior I'm trying to specify? Example answer: I'm trying to specify a behavior of a `Calculator` class.
 1. What is the behavior of a `Calculator` class I'm trying to specify? Example answer: it should display all entered digits that are not leading zeroes.
 1. How to specify this behavior through code? Example answer: `[Fact] public void ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes() ...` (i.e. a piece of code).
 
-Note that before writing any code, there are at least two questions that can be answered in human language. Many times answering these questions first before starting to write the code of the Statement makes things easier. Even though, this can still be a challenging process. To apply this advice successfully, some knowledge on how to properly name Statements is required. I know not everybody pays attention to naming their Statements, mainly because the Statements are often considered second-level citizens -- as long as they run and "prove the code doesn't contain defects", they are considered sufficient. We will take a look at some examples of bad names and then I'll go into some rules of good naming.
+Note that before writing any code, there are at least two questions that can be answered in the human language. Many times answering these questions first before starting to write the code of the Statement makes things easier. Even though, this can still be a challenging process. To apply this advice successfully, some knowledge on how to properly name Statements is required. I know not everybody pays attention to naming their Statements, mainly because the Statements are often considered second-level citizens -- as long as they run and "prove the code doesn't contain defects", they are considered sufficient. We will take a look at some examples of bad names and then I'll go into some rules of good naming.
 
 ### Consequences of bad naming
 
-I have seen many people not really caring about how their Statements are named. This is a symptom of treating the Specification as garbage or leftovers -- I consider this approach dangerous, because I have seen it lead to Specifications that are hard to maintain and that look more like lumps of code put together accidentally in a haste than a kind of "living documentation". Imagine that your Specification consists of Statements named like this:
+I have seen many people not caring about how their Statements are named. This is a symptom of treating the Specification as garbage or leftovers -- I consider this approach dangerous because I have seen it lead to Specifications that are hard to maintain and that look more like lumps of code put together accidentally in a haste than a kind of "living documentation". Imagine that your Specification consists of Statements named like this:
 
 - `TrySendPacket()`
 - `TrySendPacket2()`
@@ -25,18 +25,18 @@ I have seen many people not really caring about how their Statements are named. 
 and try for yourself how difficult it is to answer the following questions:
 
 1. How do you know what situation each Statement describes?
-1. How do you know whether the Statement describes a single situation, or several at the same time?
-1. How do you know whether the assertions inside those Statements are really the right ones assuming each Statement was written by someone else or a long time ago?
+1. How do you know whether the Statement describes a single situation or several at the same time?
+1. How do you know whether the assertions inside those Statements are the right ones assuming each Statement was written by someone else or a long time ago?
 1. How do you know whether the Statement should stay or be removed from the Specification when you modify the functionality described by this Statement?
 1. If your changes in production code make a Statement turn false, how do you know whether the Statement is no longer correct or the production code is wrong?
-1. How do you know whether you will not introduce a duplicate Statement for a behavior when adding to a Specification that was originally created by another team member?
+1. How do you know whether you will not introduce a duplicate Statement for a scenario when adding to a Specification that was created by another team member?
 1. How do you estimate, by looking at the runner tool report, whether the fix for a failing Statement will be easy or not?
 1. What do you answer new developers in your team when they ask you "what is this Statement for?"
 1. How do you know when your Specification is complete if you can't tell from the Statement names what behaviors you already have covered and what not?
 
 ### What does a good name contain?
 
-To be of any use, the name of a Statement has to describe its expected behavior. At the minimum, it should describe what happens under what circumstances. Let's take a look at one of the names Steve Freeman and Nat Pryce came up with in their great book [Growing Object-Oriented Software Guided By Tests](http://www.growing-object-oriented-software.com/): 
+To be of any use, the name of a Statement has to describe its expected behavior. At the minimum, it should describe what happens under what circumstances. Let's take a look at one of the names Steve Freeman and Nat Pryce came up with in their great book [Growing Object-Oriented Software Guided By Tests](http://www.growing-object-oriented-software.com/):
 
 ```java
 notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort()
@@ -45,7 +45,7 @@ notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort()
 Note a few things about the name of the Statement:
 
 1. It describes a behavior of an instance of a specific class. Note that it doesn't contain the name of the method that triggers the behavior, because what is specified is not a single method, but the behavior itself (this will be covered in more detail in the coming chapters). The Statement name simply tells what an instance does ("notifies listeners that server is unavailable") under certain circumstances ("when cannot connect to its monitoring port"). It is important for me because I can derive such a description from thinking about the responsibilities of a class without the need to know any of its method signatures or the code that's inside the class. Hence, this is something I can come up with before implementing -- I just need to know why I created this class and build on this knowledge.
-1. The name is relatively long. Really, really, **really** don't worry about it. As long as you are describing a single behavior, I'd say it's fine. I've seen people hesitate to give long names to Statements, because they tried to apply the same rules to those names as to the names of methods in production code. In production code, a long method name can be a sign that the method has too many responsibilities or that insufficient abstraction level is used to describe a functionality and that the name may needlessly reveal implementation details. My opinion is that these two reasons don't apply as much to Statements. In case of Statements, the methods are not invoked by anyone besides the automatic test runner, so they will not obfuscate any code that would need to call them with their long names. In addition, the Statements names need not be as abstract as production code method names - they can reveal more. 
+1. The name is relatively long. Really, really, **really** don't worry about it. As long as you are describing a single behavior, I'd say it's fine. I've seen people hesitate to give long names to Statements because they tried to apply the same rules to those names as to the names of methods in production code. In production code, a long method name can be a sign that the method has too many responsibilities or that insufficient abstraction level is used to describe the functionality and that the name may needlessly reveal implementation details. My opinion is that these two reasons don't apply as much to Statements. In the case of Statements, the methods are not invoked by anyone besides the automatic test runner, so they will not obfuscate any code that would need to call them with their long names. Besides, the Statements' names need not be as abstract as production code method names - they can reveal more.
 
     Alternatively, we could put all the information in a comment instead of the Statement name and leave the name short, like this:
 
@@ -64,11 +64,11 @@ Note a few things about the name of the Statement:
 
     `notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort: FAILED`
 
-    because in such case, a lot of information about the Statement that fails is available from the test runner report.
+    because in such a case, a lot of information about the Statement that fails is available from the test runner report.
 
-3. Using a name that describes a single behavior allows me to find out quickly why the Statement turned false. Let's say a Statement is true when I start refactoring, but at one point it turns false and the report in the runner looks like this: `TrySendingHttpRequest: FAILED` -- it only tells me that an attempt was made to send a HTTP request, but, for instance, doesn't tell me whether the object I specified in that Statement is some kind of sender that should try to send this request under some circumstances, or if it is a receiver that should handle such a request properly. To learn what went wrong, I have to go open the source code of the Statement. On the other hand, when I have a Statement named `ShouldRespondWithAnAckWheneverItReceivesAnHttpRequest`, then if it turns false, I know what's broken -- the object no longer responds with an ACK to an HTTP request. This may be enough to identify which part of the code is at fault and which of my changes made the Statement false.
+1. Using a name that describes a single behavior allows me to find out quickly why the Statement turned false. Let's say a Statement is true when I start refactoring, but at one point it turns false and the report in the runner looks like this: `TrySendingHttpRequest: FAILED` -- it only tells me that an attempt was made to send an HTTP request, but, for instance, doesn't tell me whether the object I specified in that Statement is some kind of sender that should try to send this request under some circumstances, or if it is a receiver that should handle such a request properly. To learn what went wrong, I have to go open the source code of the Statement. On the other hand, when I have a Statement named `ShouldRespondWithAnAckWheneverItReceivesAnHttpRequest`, then if it turns false, I know what's broken -- the object no longer responds with an ACK to an HTTP request. This may be enough to identify which part of the code is at fault and which of my changes made the Statement false.
 
-### My favourite convention
+### My favorite convention
 
 There are many conventions for naming Statements appropriately. My favorite is the one [developed by Dan North](https://dannorth.net/introducing-bdd/), where each Statement name begins with the word `Should`. So for example, I would name a Statement:
 
@@ -86,11 +86,11 @@ public class SortingOperationSpecification
 }
 ```
 
-By writing the above, I say that "Sorting operation *(this is derived from the Specification class name)* should sort all items in ascending order when performed *(this is derived from the name of the Statement)*". 
+By writing the above, I say that "Sorting operation *(this is derived from the Specification class name)* should sort all items in ascending order when performed *(this is derived from the name of the Statement)*".
 
 The word "should" was introduced by Dan to weaken the statement following it and thus to allow questioning what you are stating and ask yourself the question: "should it really?". If this causes uncertainty, then it is high time to talk to a domain expert and make sure you understand well what you need to accomplish. If you are not a native English speaker, the "should" prefix will probably have a weaker influence on you -- this is one of the reasons why I don't insist on you using it. I like it though[^argumentsagainstshould].
 
-When devising a name, it's important to put the main focus on what result or action is expected from an object, not e.g. from one of its methods. If you don't do that, it may quickly become troublesome. As an example, one of my colleagues was specifying a class `UserId` (which consisted of user name and some other information) and wrote the following name for the Statement about the comparison of two identifiers:
+When devising a name, it's important to put the main focus on what result or action is expected from an object, not e.g. from one of its methods. If you don't do that, it may quickly become troublesome. As an example, one of my colleagues was specifying a class `UserId` (which consisted of a user name and some other information) and wrote the following name for the Statement about the comparison of two identifiers:
 
 `EqualOperationShouldFailForTwoInstancesWithTheSameUserName()`.
 
@@ -113,9 +113,9 @@ A few paragraphs ago, I mentioned you shouldn't worry about the length of Statem
 
 This technique can be used as an extension to the previous one (i.e. starting with a good name), by inserting one more question to the question sequence we followed the last time:
 
-1. What is the scope of the behavior I'm trying to specify? Example answer: I'm trying to specify a behavior of a `Calculator` class.
+1. What is the scope of the behavior I'm trying to specify? Example answer: I'm trying to specify the behavior of a `Calculator` class.
 1. What is the behavior of a `Calculator` class I'm trying to specify? Example answer: it should display all entered digits that are not leading zeroes.
-1. **What is the context ("GIVEN") of the behavior, the action ("WHEN") that triggers it and expected reaction ("THEN") of the specified object? Example answer: Given I turn on the calculator, when I enter any digit that's not a 0 followed by any digits, then they should be visible on the display**. 
+1. **What is the context ("GIVEN") of the behavior, the action ("WHEN") that triggers it and the expected reaction ("THEN") of the specified object? Example answer: Given I turn on the calculator, when I enter any digit that's not a 0 followed by any digits, then they should be visible on the display**. 
 1. How to specify this behavior through code? Example answer: `[Fact] public void ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes() ...` (i.e. a piece of code).
 
 Alternatively, it can be used without the naming step, when it's harder to come up with a name than with a GIVEN-WHEN-THEN structure. In other words, a GIVEN-WHEN-THEN structure can be easily derived from a good name and vice versa.
@@ -196,7 +196,7 @@ As we expected, this doesn't compile. Notably, our compiler might point us towar
 1. Variable `usersAreEqual` is both not declared and it does not hold the comparison result.
 1. If this is our first Statement, we might not even have the `User` class defined at all.
 
-The compiler created a kind of a small TODO list for us, which is nice. Note that while we don't have compiling code, filling the gaps to make it compile boils down to making a few trivial declarations and assignments:
+The compiler created a kind of a small TODO list for us, which is nice. Note that while we don't have a compiling piece of code, filling the gaps to make it compile boils down to making a few trivial declarations and assignments:
 
 1. `anyName` can be defined as:
 
@@ -213,7 +213,7 @@ The compiler created a kind of a small TODO list for us, which is nice. Note tha
 1. If class `User` does not yet exist, we can add it by simply stating:
 
     ```csharp
-    public class User 
+    public class User
     {
       public User(string name) {}
     }
@@ -242,20 +242,20 @@ And that's it -- the Statement itself is complete!
 
 ## Start from the end
 
-This is a technique that I suggest to people that seem to have absolutely no idea how to start. I got it from Kent Beck's book Test Driven Development by Example. It seems funny at first glance, but I found it quite powerful at times. The trick is to write the Statement "backwards", i.e. starting with what the result verification (in terms of the *GIVEN-WHEN-THEN* structure, we would say that we start with our *THEN* part).
+This is a technique that I suggest to people that seem to have no idea how to start. I got it from Kent Beck's book Test-Driven Development by Example. It seems funny at first glance, but I found it quite powerful at times. The trick is to write the Statement "backward", i.e. starting with what the result verification (in terms of the *GIVEN-WHEN-THEN* structure, we would say that we start with our *THEN* part).
 
-This works well when we are quite sure of what the outcome of a behavior should be, but not quite so sure of how to get there.
+This works well when we are quite sure of what the outcome in our scenario should be, but not quite so sure of how to get there.
 
 ### Example
 
-Imagine we are writing a class containing the rules for granting or denying access to a reporting functionality. This reporting functionality is based on roles. We have no idea what the API should look like and how to write our Statement, but we do know one thing: in our domain the access can be either granted or denied. Let's take the first case we can think of -- the "access granted" case -- and, starting backwards, begin with the following assertion:
+Imagine we are writing a class containing the rules for granting or denying access to a reporting functionality. This reporting functionality is based on roles. We have no idea what the API should look like and how to write our Statement, but we do know one thing: in our domain, the access can be either granted or denied. Let's take the first case we can think of -- the "access granted" case -- and, as we are moving backward from the end, let's begin with the following assertion:
 
 ```csharp
 //THEN
 Assert.True(accessGranted);
 ```
 
-Ok, that part was easy, but did we make any progress with that? Of course we did -- we now have code that does not compile, with the error caused by the variable `accessGranted`. Now, in contrast to the previous approach where we translated a GIVEN-WHEN-THEN structure into a Statement, our goal is not to make this compile as soon as possible. Instead, we need to answer the question: how do I know whether the access is granted or not? The answer: it is the result of authorization of the allowed role. Ok, so let's just write it down in code, ignoring everything that stands in our way:
+Ok, that part was easy, but did we make any progress with that? Of course we did -- we now have code that does not compile, with the error caused by the variable `accessGranted`. Now, in contrast to the previous approach where we translated a GIVEN-WHEN-THEN structure into a Statement, our goal is not to make this compile as soon as possible. Instead, we need to answer the question: how do I know whether the access is granted or not? The answer: it is the result of the authorization of the allowed role. Ok, so let's just write it down in code, ignoring everything that stands in our way:
 
 ```csharp
 //WHEN
@@ -263,7 +263,7 @@ var accessGranted
  = access.ToReportingIsGrantedTo(roleAllowedToUseReporting);
 ```
 
-For now, try to resist the urge to define a class or variable to make the compiler happy, as that may throw you off the track and steal your focus from what is important. The key to doing TDD successfully is to learn to use something that does not exist yet as if it existed and not worry until really needed.
+For now, try to resist the urge to define a class or variable to make the compiler happy, as that may throw you off the track and steal your focus from what is important. The key to doing TDD successfully is to learn to use something that does not exist yet as if it existed and not worry until needed.
 
 Note that we don't know what `roleAllowedToUseReporting` is, neither do we know what `access` object stands for, but that didn't stop us from writing this line. Also, the `ToReportingIsGrantedTo()` method is just taken off the top of our head. It's not defined anywhere, it just made sense to write it like this, because it is the most direct translation of what we had in mind.
 
@@ -332,7 +332,7 @@ public class FriendlyMessages
 }
 ```
 
-Now, imagine that we want to ship a trial version of the application with some features disabled, one of which being the database import. One of the things we need to do is display a message saying that this is a trial version and that the import feature is locked. We can do this by extracting an interface from the `FriendlyMessages` class and implement this interface in a new class used when the application is run as the trial version. The extracted interface looks like this:
+Now, imagine that we want to ship a trial version of the application with some features disabled, one of which is the database import. One of the things we need to do is display a message saying that this is a trial version and that the import feature is locked. We can do this by extracting an interface from the `FriendlyMessages` class and implement this interface in a new class used when the application is run as the trial version. The extracted interface looks like this:
 
 ```csharp
 public interface Messages
@@ -370,7 +370,7 @@ public class TrialVersionMessages : Messages
 }
 ```
 
-Note that there's only as much implementation in this class as required to compile this code. Still, the Statement won't compile yet. This is because the method `HoldOnASecondWhileWeImportYourDatabase()` takes a string argument and we didn't pass any in the Statement. This makes us ask the question what this argument is and what its role is in the behavior triggered by the `HoldOnASecondWhileWeImportYourDatabase()` method  It looks like it's a user name. Thus, we can add it to the Statement like this:
+Note that there's only as much implementation in this class as required to compile this code. Still, the Statement won't compile yet. This is because the method `HoldOnASecondWhileWeImportYourDatabase()` takes a string argument and we didn't pass any in the Statement. This makes us ask the question of what this argument is and what its role is in the behavior triggered by the `HoldOnASecondWhileWeImportYourDatabase()` method  It looks like it's a user name. Thus, we can add it to the Statement like this:
 
 ```csharp
 [Fact] 
@@ -416,11 +416,11 @@ All what is left is to find a good name for the Statement. This isn't an issue s
 
 ## Summary
 
-When I'm stuck and don't know how to start writing a new failing Statement, the techniques from this chapter help me push things in the right direction. Note that the examples given are simplistic and built on an assumption that there is only one object that takes some kind of input parameter and returns a well defined result. However, this isn't how most of the object-oriented world is built. In that world, we often have objects that communicate with other objects, send messages, invoke methods on each other and these methods often don't have any return values but are instead declared as `void`. Even though, all of the techniques described in this chapter will still work in such case and we'll revisit them as soon as we learn how to do TDD in the larger object-oriented world (after the introduction of the concept of mock objects in Part 2). Here, I tried to keep it simple.
+When I'm stuck and don't know how to start writing a new failing Statement, the techniques from this chapter help me push things in the right direction. Note that the examples given are simplistic and built on an assumption that there is only one object that takes some kind of input parameter and returns a well-defined result. However, this isn't how most of the object-oriented world is built. In that world, we often have objects that communicate with other objects, send messages, invoke methods on each other and these methods often don't have any return values but are instead declared as `void`. Even though, all of the techniques described in this chapter will still work in such a case and we'll revisit them as soon as we learn how to do TDD in the larger object-oriented world (after the introduction of the concept of mock objects in Part 2). Here, I tried to keep it simple.
 
 
 [^argumentsagainstshould]: There are also some arguments against using the word "should", e.g. by Kevlin Henney (see https://www.infoq.com/presentations/testing-communication).
 
-[^differenttestingenums]: This approach of picking a single value out of several ones using `Any.From()` does not always work well with enums. Sometimes a parameterized test (a "theory" in XUnit.NET terminology) is better. This topic will be discussed in one of the the coming chapters.
+[^differenttestingenums]: This approach of picking a single value out of several ones using `Any.From()` does not always work well with enums. Sometimes a parameterized test (a "theory" in XUnit.NET terminology) is better. This topic will be discussed in one of the coming chapters.
 
 [^lookfordetailsinchapter2]: Look for details in chapter 2.

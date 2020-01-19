@@ -10,11 +10,11 @@ I studied in Łódź, a large city in the center of Poland. As probably all oth
 
 Knowing that exams were difficult and that it was hard to learn everything during the semester, the lecturers would sometimes give us exemplary exams from previous years. The questions were different from the actual exams that we were to take, but the structure and kinds of questions asked (practice vs. theory etc.) were similar. We would usually get these exemplary questions before we started learning really hard (which was usually at the end of a semester). Guess what happened then? As you might suspect, we did not use the tests we received just to "verify" or "check" our knowledge after we finished learning. Quite the contrary -- examining those tests was the very first step of our preparation. Why was that so? What use were the tests when we knew we wouldn't know most of the answers?
 
-I guess my lecturers would disagree with me, but I find it quite amusing that what we were really doing back then was similar to "lean software development". Lean is a philosophy where, among other things, there is a rigorous emphasis on eliminating waste. Every feature or product that is produced but is not needed by anyone, is considered a waste. That's because if something is not needed, there is no reason to assume it will ever be needed. In that case the entire feature or product adds no value. Even if it ever *will* be needed, it very likely will require rework to fit the customer's needs at that time. In such case, the work that went into the parts of the original solution that had to be reworked is a waste -- it had a cost, but brought no benefit (I am not talking about such things as customer demos, but finished, polished features or products).
+I guess my lecturers would disagree with me, but I find it quite amusing that what we were really doing back then was similar to "lean software development". Lean is a philosophy where, among other things, there is a rigorous emphasis on eliminating waste. Every feature or product that is produced but is not needed by anyone, is considered a waste. That's because if something is not needed, there is no reason to assume it will ever be needed. In that case, the entire feature or product adds no value. Even if it ever *will* be needed, it very likely will require rework to fit the customer's needs at that time. In such a case, the work that went into the parts of the original solution that had to be reworked is a waste -- it had a cost, but brought no benefit (I am not talking about such things as customer demos, but finished, polished features or products).
 
-So, to eliminate waste, we usually try to "pull features from demand" instead of "pushing them" into a product in hope they can become useful one day. In other words, every feature is there to satisfy a concrete need. If not, the effort is considered wasted and the money drown.
+So, to eliminate waste, we usually try to "pull features from demand" instead of "pushing them" into a product, hoping they can become useful one day. In other words, every feature is there to satisfy a concrete need. If not, the effort is considered wasted and the money drowned.
 
-Going back to the exams example, why can the approach of first looking through the exemplary tests be considered "lean"? That's because, when we treat passing an exam as our goal, then everything that does not put us closer to this goal is considered wasteful. Let's suppose the exam concerns theory only -- why then practice the exercises? It would probably pay off a lot more to study the theoretical side of the topics. Such knowledge could be obtained from those exemplary tests. So, the tests were a kind of specification of what was needed to pass the exam. It allowed us to pull the value (i.e. our knowledge) from the demand (information obtained from realistic tests) rather that push it from the implementation (i.e. learning everything in a course book chapter after chapter).
+Going back to the exams example, why can the approach of first looking through the exemplary tests be considered "lean"? That's because, when we treat passing an exam as our goal, then everything that does not put us closer to this goal is considered wasteful. Let's suppose the exam concerns theory only -- why then practice the exercises? It would probably pay off a lot more to study the theoretical side of the topics. Such knowledge could be obtained from those exemplary tests. So, the tests were a kind of specification of what was needed to pass the exam. It allowed us to pull the value (i.e. our knowledge) from the demand (information obtained from realistic tests) rather that push it from the implementation (i.e. learning everything in a coursebook chapter after chapter).
 
 So the tests became something more. They proved very valuable before the "implementation" (i.e. learning for the exam) because:
 
@@ -25,7 +25,7 @@ That was the value of a test before learning. Note that the tests we would usua
 
 ## Taking it to the software development land
 
-I chose this lengthy metaphor to show you that a writing a "test" is really another way of specifying a requirement or a need and that it's not counter-intuitive to think about it this way -- it occurs in our everyday lives. This is also true in software development. Let's take the following "test" and see what kind of needs it specifies: 
+I chose this lengthy metaphor to show you that a writing a "test" is really another way of specifying a requirement or a need and that it's not counterintuitive to think about it this way -- it occurs in our everyday lives. This is also true in software development. Let's take the following "test" and see what kind of needs it specifies: 
 
 ```csharp
 var reporting = new ReportingFeature();
@@ -38,8 +38,8 @@ Assert.True(reporting.CanBePerformedBy(anyPowerUser));
 Let's look at those (only!) three lines of code and imagine that the production code that makes this "test" pass does not exist yet. What can we learn from these three lines about what this production code needs to supply? Count with me: 
 
 1. We need a reporting feature.
-2. We need to support a notion of users and privileges.
-3. We need to support a concept of power user, who is either an administrator or an auditor.
+2. We need to support the notion of users and privileges.
+3. We need to support the concept of a power user, who is either an administrator or an auditor.
 4. Power users need to be allowed to use the reporting feature (note that it does not specify which other users should or should not be able to use this feature -- we would need a separate "test" for that).
 
 Also, we are already after the phase of designing an API (because the test is already using it) that will fulfill the need. Don't you think this is already quite some information about the application functionality from just three lines of code?
@@ -56,11 +56,11 @@ In reality, the role of a test, if written before production code, can be broken
 * execution - is where we get feedback on whether the production code exhibits the behaviors that the specification describes
 * reading - is where we use the already written specification to obtain knowledge about the production code.
  
-Thus, the name "test" seems like narrowing down what we are doing here too much. My feelings is that maybe a different name would be better - hence the term *specification*.
+Thus, the name "test" seems like narrowing down what we are doing here too much. My feeling is that maybe a different name would be better - hence the term *specification*.
 
-The discovery of tests' role as a specification is quite recent and there is no uniform terminology connected to it yet. Some like to call the process of using tests as specifications *Specification By Example* to say that the tests are examples that help specify and clarify the functionality being developed. Some use the term BDD (*Behavior-Driven Development*) to emphasize that writing tests is really about analysing and describing behaviors. Also, you might encounter different names for some particular elements of this approach, for example, a "test" can be referred to as a "spec", or an "example", or a "behavior description", or a "specification statement" or "a fact about the system" (as you already saw in the chapter on tools, the xUnit.NET framework marks each "test" with a `[Fact]` attribute, suggesting that by writing it, we are stating a single fact about the developed code. By the way, xUnit.NET also allows us to state ‘theories' about our code, but let's leave this topic for another time).
+The discovery of the tests' role as a specification is quite recent and there is no uniform terminology connected to it yet. Some like to call the process of using tests as specifications *Specification By Example* to say that the tests are examples that help specify and clarify the functionality being developed. Some use the term BDD (*Behavior-Driven Development*) to emphasize that writing tests is really about analyzing and describing behaviors. Also, you might encounter different names for some particular elements of this approach, for example, a "test" can be referred to as a "spec", or an "example", or a "behavior description", or a "specification statement" or "a fact about the system" (as you already saw in the chapter on tools, the xUnit.NET framework marks each "test" with a `[Fact]` attribute, suggesting that by writing it, we are stating a single fact about the developed code. By the way, xUnit.NET also allows us to state ‘theories' about our code, but let's leave this topic for another time).
 
-Given this variety in terminology, I'd like to make a deal: to be consistent throughout this book, I will establish a naming convention, but leave you with the freedom to follow your own if you so desire. The reason for this naming convention is pedagogical -- I am not trying to create a movement to change established terms or to invent a new methodology or anything -- my hope is that by using this terminology throughout the book, you'll look at some things differently[^opensourcebook]. So, let's agree that for the sake of this book: 
+Given this variety in terminology, I'd like to make a deal: to be consistent throughout this book, I will establish a naming convention, but leave you with the freedom to follow your own if you so desire. The reason for this naming convention is pedagogical -- I am not trying to create a movement to change established terms or to invent a new methodology or anything -- I hope that by using this terminology throughout the book, you'll look at some things differently[^opensourcebook]. So, let's agree that for the sake of this book:
 
 **Specification Statement** (or simply **Statement**, with a capital 'S')
 
@@ -82,10 +82,10 @@ From time to time I'll refer back to the "traditional" terminology, because it i
 
 ## The differences between executable and "traditional" specifications
 
-You may be familiar with requirements specifications or design specifications that are written in plain English or other spoken language. However, our Specifications differ from them in at least few ways. In particular, the kind of Specification that we create by writing tests:
+You may be familiar with requirements specifications or design specifications that are written in plain English or another spoken language. However, our Specifications differ from them in several ways. In particular, the kind of Specification that we create by writing tests:
 
-1.  Is not *completely* written up-front like many of such "traditional" specs have been written (which doesn't mean it's written after the code is done - more on this in the next chapters).
-2.  Is executable -- you can run it to see whether the code adheres to the specification or not. This lowers the risk of inaccuracies in the Specification and falling our of sync with the production code.
-3.  Is written in source code rather than in spoken language -- which is both good, as the structure and formality of code leave less room for misunderstanding, and challenging, as great care must be taken to keep such specification readable.
+1. Is not *completely* written up-front like many of such "traditional" specs have been written (which doesn't mean it's written after the code is done - more on this in the next chapters).
+1. Is executable -- you can run it to see whether the code adheres to the specification or not. This lowers the risk of inaccuracies in the Specification and falling out of sync with the production code.
+1. Is written in source code rather than in spoken language -- which is both good, as the structure and formality of code leave less room for misunderstanding, and challenging, as great care must be taken to keep such specification readable.
 
 [^opensourcebook]: besides, this book is open source, so if you don't like the terminology, you are free to create a fork and change it to your liking!
