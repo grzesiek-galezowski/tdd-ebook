@@ -1,11 +1,10 @@
 # On Object Composability
 
-In this chapter, I will try to outline briefly why object composability is a goal worth achieving and how it can be achieved. I am going to start with an example of unmaintainable code and will gradually fix its flaws in the next chapters. For now, we are going to fix just one of the flaws, so the code we will end up will not be perfect by any means, still, it will be better by one quality. 
+In this chapter, I will try to outline briefly why object composability is a goal worth achieving and how it can be achieved. I am going to start with an example of an unmaintainable code and will gradually fix its flaws in the next chapters. For now, we are going to fix just one of the flaws, so the code we will end up will not be perfect by any means, still, it will be better by one quality.
 
 In the coming chapters, we will learn more valuable lessons resulting from changing this little piece of code.
 
-Another task for Johnny and Benjamin
-------------------------------------
+## Another task for Johnny and Benjamin
 
 Remember Johnny and Benjamin? Looks like they managed their previous task and are up to something else. Let's listen to their conversation as they are working on another project...
 
@@ -39,9 +38,9 @@ Remember Johnny and Benjamin? Looks like they managed their previous task and ar
 
 Every employee has a pay grade. An employee can be promoted to a higher pay grade, but the mechanics of how that works is something we will not need to deal with.
 
-Normally, every year, everyone gets a raise by 10%. But to encourage behaviors that give an employee a higher pay grade, such employee cannot get raises indefinitely on a given pay grade. Each grade has its associated maximum pay. If this amount of money is reached, an employee does not get a raise anymore until they reach a higher pay grade.
+Normally, every year, everyone gets a raise of 10%. But to encourage behaviors that give an employee a higher pay grade, such an employee cannot get raises indefinitely on a given pay grade. Each grade has its associated maximum pay. If this amount of money is reached, an employee does not get a raise anymore until they reach a higher pay grade.
 
-Additionally, every employee on their 5th anniversary of working for the company, gets a special, one-time bonus which is twice their current payment.
+Additionally, every employee on their 5th anniversary of working for the company gets a special, one-time bonus which is twice their current payment.
 
 **Benjamin:** Looks like the source code repository just finished synchronizing. Let's take a bite at the code!
 
@@ -94,7 +93,7 @@ public class CompanyPolicies : IDisposable
 
 **Benjamin:** What's our assignment?
 
-**Johnny:** First of all, we need to provide our users a choice between an SQL database and a NoSQL one. To achieve our goal, we need to be somehow able to make the `CompanyPolicies` class database type-agnostic. For now, as you can see, the implementation is coupled to the specific `SqlRepository`, because it creates a specific instance itself:
+**Johnny:** First of all, we need to provide our users with a choice between an SQL database and a NoSQL one. To achieve our goal, we need to be somehow able to make the `CompanyPolicies` class database type-agnostic. For now, as you can see, the implementation is coupled to the specific `SqlRepository`, because it creates a specific instance itself:
 
 ```csharp
 public class CompanyPolicies : IDisposable

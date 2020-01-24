@@ -484,7 +484,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 {
  //GIVEN
  var calculator = new Calculator();
- var nonZeroDigit = Any.Besides(DigitKeys.Zero);
+ var nonZeroDigit = Any.OtherThan(DigitKeys.Zero);
  var anyDigit1 = Any.Of<DigitKeys>();
  var anyDigit2 = Any.Of<DigitKeys>();
 
@@ -515,7 +515,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 
 **Benjamin:** Now I get it. So how about the `Any.Besides()` and `Any.Of()`? What do they do?
 
-**Johnny:** They are methods from a small utility library I'm using when writing unit-level Specifications. `Any.Besides()` returns any value from enumeration besides the one passed as an argument. Hence, the call `Any.Besides(DigitKeys.Zero)` means "any of the values contained in DigitKeys enumeration, but not DigitKeys.Zero".
+**Johnny:** They are methods from a small utility library I'm using when writing unit-level Specifications. `Any.OtherThan()` returns any value from enumeration besides the one passed as an argument. Hence, the call `Any.OtherThan(DigitKeys.Zero)` means "any of the values contained in DigitKeys enumeration, but not DigitKeys.Zero".
 
 The `Any.Of()` is simpler -- it just returns any value in an enumeration.
 

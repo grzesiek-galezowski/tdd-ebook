@@ -27,11 +27,11 @@ ShouldPopLastPushedItem()
 }
 ```
 
-In this case, the integer numbers can really be "any" -- the described relationship between input and output is independent of the actual values we use. As we saw in the last chapter, this is the typical case where we would apply Constrained Non-Determinism.
+In this case, the values of the first two integer numbers pushed on the stack doesn't matter -- the described relationship between input and output is independent of the actual values we use. As we saw in the last chapter, this is the typical case where we would apply Constrained Non-Determinism.
 
 Sometimes, however, specified objects exhibit different behaviors based on what is passed to their constructors or methods or what they get by calling other objects. For example:
 
-- in our application we may have a licensing policy where a feature is allowed to be used only when the license is valid, and denied after it has expired. In such case, the behavior before the expiry date is different than after -- the expiry date is the functional behavior boundary.
+- in our application, we may have a licensing policy where a feature is allowed to be used only when the license is valid, and denied after it has expired. In such a case, the behavior before the expiry date is different than after -- the expiry date is the functional behavior boundary.
 - Some shops are open from 10 AM to 6 PM, so if we had a query in our application whether the shop is currently open, we would expect it to be answered differently based on what the current time is. Again, the open and closed dates are functional behavior boundaries.
 - An algorithm calculating the absolute value of an integer number returns the same number for inputs greater than or equal to `0` but negated input for negative numbers. Thus, `0` marks the functional boundary in this case.
 
@@ -47,7 +47,7 @@ There are times when a Statement is true for every value except one (or several
 
 ### Example 1: a single exception from a large set of values
 
-In some countries, some digits are avoided e.g. in floor numbers in some hospitals and hotels due to some local superstitions or just sounding similar to another word that has very negative meaning. One example of this is /tetraphobia/[^tetraphobia], which leads to skipping the digit `4`, as in some languages, it sounds similar to the word "death". In other words, any number containing `4` is avoided and when you enter the building, you might not find a fourth floor (or fourteenth). Let's imagine we have several such rules for our hotels in different parts of the world and we want the software to tell us if a certain digit is allowed by local superstitions. One of these rules is to be implemented by a class called `Tetraphobia`:
+In some countries, some digits are avoided e.g. in floor numbers in some hospitals and hotels due to some local superstitions or just sounding similar to another word that has a very negative meaning. One example of this is /tetraphobia/[^tetraphobia], which leads to skipping the digit `4`, as in some languages, it sounds similar to the word "death". In other words, any number containing `4` is avoided and when you enter the building, you might not find a fourth floor (or fourteenth). Let's imagine we have several such rules for our hotels in different parts of the world and we want the software to tell us if a certain digit is allowed by local superstitions. One of these rules is to be implemented by a class called `Tetraphobia`:
 
 ```csharp
 public class Tetraphobia : LocalSuperstition
@@ -59,7 +59,7 @@ public class Tetraphobia : LocalSuperstition
 }
 ```
 
-It implements the `LocalSuperstition` interface which has an `Allows()` method, so for the sake of compile-correctness we had to create the class and the method. Now that we have it, we want to test-drive the implementation. What Statements do we write?
+It implements the `LocalSuperstition` interface which has an `Allows()` method, so for the sake of compile-correctness, we had to create the class and the method. Now that we have it, we want to test-drive the implementation. What Statements do we write?
 
 Obviously we need a Statement that says what happens when we pass a disallowed digit:
 
@@ -78,7 +78,7 @@ ShouldReject4()
 }
 ```
 
-Note that we use the specific value for which the exceptional behavior takes place. Still, it may be a very good idea to extract `4` into a constant. In one of the previous chapters, I described a technique called **Constant Specification**, where we write an explicit Statement about the value of the named constant and use the named constant itself everywhere else instead of its literal value. So why did I not use this technique this time? The only reason is that this might have looked a little bit silly with such extremely trivial example. In reality, I should have used the named constant. Let's do this exercise now and see what happens.
+Note that we use the specific value for which the exceptional behavior takes place. Still, it may be a very good idea to extract `4` into a constant. In one of the previous chapters, I described a technique called **Constant Specification**, where we write an explicit Statement about the value of the named constant and use the named constant itself everywhere else instead of its literal value. So why did I not use this technique this time? The only reason is that this might have looked a little bit silly with such an extremely trivial example. In reality, I should have used the named constant. Let's do this exercise now and see what happens.
 
 ```csharp
 [Fact] public void
@@ -124,11 +124,11 @@ ShouldAcceptNonSuperstitiousValue()
 }
 ```
 
-and that's it -- I don't usually write more Statements in such cases. There are so many possible input values that it would not be rational to specify all of them. Drawing from Kent Beck's famouns comment from Stack Overflow[^kentconfidence], I think that our job is not to write as many Statements as we can, but as little as possible to truly document the system and give us a desired level of confidence.
+and that's it -- I don't usually write more Statements in such cases. There are so many possible input values that it would not be rational to specify all of them. Drawing from Kent Beck's famous comment from Stack Overflow[^kentconfidence], I think that our job is not to write as many Statements as we can, but as little as possible to truly document the system and give us a desired level of confidence.
 
 ### Example 2: a single exception from a small set of values
 
-The situation is different, however, in when the exceptional value is chosen from a small set -- this is often the case where the input value type is an enumeration. Let's go back to an example from one of our previous chapters, where we specified that there is some kind of reporting feature and it can be accessed by either an administrator role or by an auditor role. Let's modify this example for now and say that only administrators are allowed to access reporting:
+The situation is different, however, when the exceptional value is chosen from a small set -- this is often the case where the input value type is an enumeration. Let's go back to an example from one of our previous chapters, where we specified that there is some kind of reporting feature and it can be accessed by either an administrator role or by an auditor role. Let's modify this example for now and say that only administrators are allowed to access the reporting feature:
 
 ```csharp
 [Fact] public void
@@ -148,7 +148,7 @@ ShouldGrantAdministratorsAccessToReporting()
 
 The approach to this part is no different than what I did in the first example -- I wrote a Statement for the single exceptional value. Time to think about the other Statement -- the one that specifies what should happen for the rest of the roles. I'd like to describe two ways this task can be tackled.
 
-The first way is to do it like in the previous example -- pick a value different than the exceptional one. This time we will use `Any.Besides()` method, which is best suited for enums:
+The first way is to do it like in the previous example -- pick a value different than the exceptional one. This time we will use `Any.OtherThan()` method, which is suited for such a case:
 
 ```csharp
 [Fact] public void
@@ -159,7 +159,7 @@ ShouldDenyAnyRoleOtherThanAdministratorAccessToReporting()
 
  //WHEN
  var accessGranted 
-     = access.ToReportingIsGrantedTo(Any.Besides(Roles.Admin));
+     = access.ToReportingIsGrantedTo(Any.OtherThan(Roles.Admin));
 
  //THEN
  Assert.False(accessGranted);
@@ -171,10 +171,10 @@ This approach has two advantages:
 1. Only one Statement is executed for the "access denied" case, so there is no significant run time penalty.
 2. In case we expand our enum in the future, we don't have to modify this Statement -- the added enum member will get a chance to be picked up.
 
-However, there is also one disadvantage -- we can't be sure the newly added enum member is used in this Statement. In the previous example, we didn't really care that much about the values that were used, because:
+However, there is also one disadvantage -- we can't be sure the newly added enum member is used in this Statement. In the previous example, we didn't care that much about the values that were used, because:
 
-* `char` range was quite large so specifying the behaviors for all the values could prove troublesome and inefficient given our desired confidence level,
-* `char` is a fixed set of values -- we can't expand `char` as we expand enums, so there is no need to worry about the future.
+- `char` range was quite large so specifying the behaviors for all the values could prove troublesome and inefficient given our desired confidence level,
+- `char` is a fixed set of values -- we can't expand `char` as we expand enums, so there is no need to worry about the future.
 
 So what if there are only two more roles except `Roles.Admin`, e.g. `Auditor` and `CasualUser`? In such cases, I sometimes write a Statement that's executed against all the non-exceptional values, using xUnit.net's `[Theory]` attribute that allows me to execute the same Statement code with different sets of arguments. An example here would be:
 
@@ -201,7 +201,7 @@ The Statement above is executed for both `Roles.Auditor` and `Roles.CasualUser`.
 
 ### Example 3: More than one exception
 
-The previous two examples assume there is only one exception to the rule. However, this concept can be extended to more values, as long as it is a finished, discrete set. If there are multiple exceptional values that produce the same behavior, I usually try to cover them all by using the mentioned `[Theory]` feature of xUnit.net. I'll demonstrate it by taking the previous example of granting access and assuming that this time, both administrator and auditor are allowed to use the feature. A Statement for behavior would look like this:
+The previous two examples assume there is only one exception to the rule. However, this concept can be extended to more values, as long as it is a finished, discrete set. If multiple exceptional values produce the same behavior, I usually try to cover them all by using the mentioned `[Theory]` feature of xUnit.net. I'll demonstrate it by taking the previous example of granting access and assuming that this time, both administrators and auditors are allowed to use the feature. A Statement for behavior would look like this:
 
 ```csharp
 [Theory]
@@ -222,29 +222,29 @@ ShouldAllowAccessToReportingBy(Roles role)
 }
 ```
 
-In the last example I used this approach for the non-exceptional values, saying that this is what I sometimes do. However, when specifying multiple exceptions to the rule, this is my default approach -- the nature of the exceptional values is that they are strictly specified, so I want them all to be included in my Specification.
+In the last example, I used this approach for the non-exceptional values, saying that this is what I sometimes do. However, when specifying multiple exceptions to the rule, this is my default approach -- the nature of the exceptional values is that they are strictly specified, so I want them all to be included in my Specification.
 
 This time, I'm not showing you the Statement for non-exceptional values as it follows the approach I outlined in the previous example.
 
 ## Rules valid within boundaries
 
-Sometimes, a behavior varies around a boundary. A simple example would be a rule on how to determine whether someone is adult or not. One is usually considered an adult after reaching a certain age, let's say, of 18. Pretending we operate at the granule of years (not taking months into account), the rule is:
+Sometimes, a behavior varies around a boundary. A simple example would be a rule on how to determine whether someone is an adult or not. One is usually considered an adult after reaching a certain age, let's say, of 18. Pretending we operate at the granule of years (not taking months into account), the rule is:
 
-1.  When one's age in years is less than 18, they are considered not an adult.
-2.  When one's age in years is at least 18, they are considered an adult.
+1. When one's age in years is less than 18, they are considered not an adult.
+1. When one's age in years is at least 18, they are considered an adult.
 
 As you can see, there is a boundary between the two behaviors. The "right edge" of this boundary is 18. Why do I say "right edge"? That is because the boundary always has two edges, which, by the way, also means it has a length. If we assume we are talking about the mentioned adult age rule and that our numerical domain is that of integer numbers, we can as well use `17` instead of `18` as edge value and say that:
 
-1.  When one's age in years is at most 17, they are considered not an adult.
-2.  When one's age in years is more than 17, they are considered an adult.
+1. When one's age in years is at most 17, they are considered not an adult.
+1. When one's age in years is more than 17, they are considered an adult.
 
-So a boundary is not a single number -- it always has a length -- the length between last value of the previous behavior and the first value of the next behavior. In case of our example, the length between `17` (left edge -- last non-adult age) and `18` (right edge -- first adult value) is `1`.
+So a boundary is not a single number -- it always has a length -- the length between last value of the previous behavior and the first value of the next behavior. In the case of our example, the length between `17` (left edge -- last non-adult age) and `18` (right edge -- first adult value) is `1`.
 
-Now, imagine that we are not talking about integer values anymore, but we treat the time as what it really is -- a continuum. Then the right edge value would still be 18 years. But what about the left edge? It would not be possible for it to stay 17 years, as the rule would apply to e.g. 17 years and 1 day as well. So what is the correct right edge value and the correct length of the boundary? Would the left edge need to be 17 years and 11 months? Or 17 years, 11 months, 365/366 days (we have the leap year issue here)? Or maybe 17 years, 11 months, 365/366 days, 23 hours, 59 minutes etc.? This is harder to answer and depends heavily on the context -- it must be answered for each particular case based on the domain and the business needs -- this way we know what kind of precision is expected of us. 
+Now, imagine that we are not talking about integer values anymore, but we treat the time as what it is -- a continuum. Then the right edge value would still be 18 years. But what about the left edge? It would not be possible for it to stay 17 years, as the rule would apply to e.g. 17 years and 1 day as well. So what is the correct right edge value and the correct length of the boundary? Would the left edge need to be 17 years and 11 months? Or 17 years, 11 months, 365/366 days (we have the leap year issue here)? Or maybe 17 years, 11 months, 365/366 days, 23 hours, 59 minutes, etc.? This is harder to answer and depends heavily on the context -- it must be answered for each particular case based on the domain and the business needs -- this way we know what kind of precision is expected of us.
 
-In our Specification, we have to document the boundary length somehow. This brings an interesting question: how to describe the boundary length with Statements? To illustrate this, I want to show you two Statements describing the mentioned adult age calculation expressed using the granule of years (so we leave months, days etc. out). 
+In our Specification, we have to document the boundary length somehow. This brings an interesting question: how to describe the boundary length with Statements? To illustrate this, I want to show you two Statements describing the mentioned adult age calculation expressed using the granule of years (so we leave months, days, etc. out). 
 
-The first Statement is for values smaller than 18 and we want to specify that for the left edge value (i.e. `17`), but calculated in reference to the right edge value (i.e. instead of writing `17`, we write `18-1`):
+The first Statement is for values smaller than 18 and we want to specify that for the left edge value (i.e. `17`), but calculated relative to the right edge value (i.e. instead of writing `17`, we write `18-1`):
 
 ```csharp
 [Fact] public void
@@ -282,9 +282,9 @@ ShouldBeSuccessfulForAgeGreaterThanOrEqualTo18()
 
 There are two things to note about these examples. The first one is that I didn't use any kind of `Any` methods. I use `Any` in cases where I don't have a boundary or when I consider no value from an equivalence class better than others in any particular way. When I specify boundaries, however, instead of using methods like `Any.IntegerGreaterOrEqualTo(18)`, I use the edge values as I find that they more strictly define the boundary and drive the right implementation. Also, explicitly specifying the behaviors for the edge values allows me to document the boundary length.
 
-The second thing to note is the usage of literal constant `18` in the example above. In one of the previous chapter, I described a technique called **Constant Specification** which is about writing an explicit Statement about the value of the named constant and use the named constant everywhere else instead of its literal value. So why didn't I use this technique this time?
+The second thing to note is the usage of literal constant `18` in the example above. In one of the previous chapters, I described a technique called **Constant Specification** which is about writing an explicit Statement about the value of the named constant and use the named constant everywhere else instead of its literal value. So why didn't I use this technique this time?
 
-The only reason is that this might have looked a little bit silly with such extremely trivial example as detecting adult age. In reality, I should have used the named constant in both Statements and it would show the boundary length even more clearly. Let's perform this exercise now and see what happens.
+The only reason is that this might have looked a little bit silly with such an extremely trivial example as detecting adult age. In reality, I should have used the named constant in both Statements and it would show the boundary length even more clearly. Let's perform this exercise now and see what happens.
 
 First, let's document the named constant with the following Statement:
 
@@ -339,9 +339,9 @@ As you can see, the first Statement contains the following expression:
 Age.MinimumAdult - 1
 ```
 
-where `1` is the exact length of the boundary. Like I said, the example is so trivial that it may look silly and funny, however, in real life scenarios, this is a technique I apply anytime, anywhere.
+where `1` is the exact length of the boundary. As I mentioned earlier, the example is so trivial that it may look silly and funny, however, in real-life scenarios, this is a technique I apply anytime, anywhere.
 
-Boundaries may look like they apply only to numeric input, but they occur at many other places. There are boundaries associated with date/time (e.g. the adult age calculation would be this kind of case if we didn't stop at counting years but instead considered time as a continuum -- the decision would need to be made whether we need precision in seconds or maybe in ticks), or strings (e.g. validation of user name where it must be at least 2 characters, or password that must contain at least 2 special characters). They also apply to regular expressions. For example, for a simple regex `\d+`, we would surely specify for at least three values: an empty string, a single digit and a single non-digit.
+Boundaries may look like they apply only to numeric input, but they occur at many other places. There are boundaries associated with date/time (e.g. the adult age calculation would be this kind of case if we didn't stop at counting years but instead considered time as a continuum -- the decision would need to be made whether we need precision in seconds or maybe in ticks), or strings (e.g. validation of user name where it must be at least 2 characters, or password that must contain at least 2 special characters). They also apply to regular expressions. For example, for a simple regex `\d+`, we would surely specify for at least three values: an empty string, a single digit, and a single non-digit.
 
 ## Combination of boundaries -- ranges
 
@@ -349,7 +349,7 @@ The previous examples focused on a single boundary. So, what about a situation 
 
 ### Example -- driving license
 
-Let's consider the following example: we live in a country where a citizen can get a driving license only after their 18th birthday, but before 65th (the government decided that people after 65 may have worse sight and that it's safer not to give them new driving licenses). Let's assume that are trying to develop a class that answers the question whether we can apply for driving license and the values returned by this query are as follows:
+Let's consider the following example: we live in a country where a citizen can get a driving license only after their 18th birthday, but before 65th (the government decided that people after 65 may have worse sight and that it's safer not to give them new driving licenses). Let's assume that are trying to develop a class that answers the question of whether we can apply for a driving license and the values returned by this query is as follows:
 
 1. Age \< 18 -- returns enum value `QueryResults.TooYoung`
 2. 18 \<= age \>= 65 -- returns enum value `QueryResults.AllowedToApply`
@@ -423,9 +423,9 @@ Note that I used 18-1 and 65+1 instead of 17 and 66 to show that 18 and 65 are t
 
 ### Example -- setting an alarm
 
-In the previous example, we were quite lucky because the specified logic was purely functional (i.e. it returned different results based on different inputs). Thanks to this, when writing out theory for the age range of 18-65, we could parameterize input values together with expected results. This is not always the case. For example, let's imagine that we have a `Clock` class that allows us to schedule an alarm. The class allows us to set the hour safely between 0 and 24, otherwise it throws an exception.
+In the previous example, we were quite lucky because the specified logic was purely functional (i.e. it returned different results based on different inputs). Thanks to this, when writing out the theory for the age range of 18-65, we could parameterize input values together with expected results. This is not always the case. For example, let's imagine that we have a `Clock` class that allows us to schedule an alarm. The class allows us to set the hour safely between 0 and 24, otherwise, it throws an exception.
 
-This time, I have to write two parameterized Statements -- one where a value is returned (for valid cases) and one where exception is thrown (for invalid cases). The first would look like this:
+This time, I have to write two parameterized Statements -- one where a value is returned (for valid cases) and one where the exception is thrown (for invalid cases). The first would look like this:
 
 ```csharp
 [Theory]
@@ -466,7 +466,7 @@ ShouldThrowOutOfRangeExceptionWhenTryingToSetAlarmHourOutsideValidRange(
 }
 ```
 
-Other than that, I used exactly the same approach as the last time.
+Other than that, I used the same approach as the last time.
 
 ## Summary
 

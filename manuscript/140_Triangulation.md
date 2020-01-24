@@ -10,7 +10,7 @@ Don't worry if these names don't tell you anything, the techniques are not that 
 
 ## Type the obvious implementation
 
-The first technique simply says: when you know the correct and final implementation to turn a Statement true, then just type it. If the implementation is obvious, this approach makes a lot of sense - after all, the amount of Statements required to specify (and test) a functionality should reflect our desired level of confidence. If this level is very high, we can just type the correct code in response to a single Statement. Let's see it in action on a trivial example of adding two numbers:
+The first technique simply says: when you know the correct and final implementation to turn a Statement true, then just type it. If the implementation is obvious, this approach makes a lot of sense - after all, the number of Statements required to specify (and test) a functionality should reflect our desired level of confidence. If this level is very high, we can just type the correct code in response to a single Statement. Let's see it in action on a trivial example of adding two numbers:
 
 ```csharp
 [Fact] public void
@@ -27,7 +27,7 @@ ShouldAddTwoNumbersTogether()
 }
 ```
 
-You may remember that in one of the previous chapters I wrote that usually we write the simplest production code that would make the Statement true. The mentioned approach would encourage us to just return 8 from the `Of()` method, because it would be sufficient to make the Statement true. Instead of doing that, however, we may decide that the logic is so obvious, that we can just type it in its final form:
+You may remember that in one of the previous chapters I wrote that we usually should write the simplest production code that would make the Statement true. The mentioned approach would encourage us to just return 8 from the `Of()` method because it would be sufficient to make the Statement true. Instead of doing that, however, we may decide that the logic is so obvious, that we can just type it in its final form:
 
 ```csharp
 public class Addition
@@ -39,7 +39,7 @@ public class Addition
 }
 ```
 
-and that's it. Note that I didn't use Constrained Non-Determinism in the Statement, because its use kind of enforces using "type the obvious implementation" approach. This is also one of the reasons that many Statements I wrote so far in the previous chapters were implemented by typing the correct implementation. Just to illustrate it, let's take a look at how the above Statement would look if I used Constrained Non-Determinism:
+and that's it. Note that I didn't use Constrained Non-Determinism in the Statement, because using it kind of enforces using the "type the obvious implementation" approach. This is also one of the reasons that many Statements I wrote so far in the previous chapters were implemented by typing the correct implementation. Just to illustrate it, let's take a look at how the above Statement would look if I used Constrained Non-Determinism:
 
 ```csharp
 [Fact] public void
@@ -58,7 +58,7 @@ ShouldAddTwoNumbersTogether()
 }
 ```
 
-The most obvious implementation that would make this Statement true is the correct implementation - I can't get away with returning a constant value as I could when I didn't use Constrained Non-Determinism. This is because this time I just don't know what the expected result is as it is strictly dependent on the input values which I don't know as well.
+The most obvious implementation that would make this Statement true is the correct implementation -- I can't get away with returning a constant value as I could when I didn't use Constrained Non-Determinism. This is because this time I just don't know what the expected result is as it is strictly dependent on the input values which I don't know as well.
 
 ## Fake it ('til you make it)
 
@@ -66,8 +66,8 @@ The second technique made me smile when I first learned about it. I don't recal
 
 Let's assume we already have a false Statement written and are about to make it true by writing production code. At this moment, we apply *fake it ('till you make it)* in two steps:
 
-1. We start with a "fake it" step. Here, we turn a false Statement true by using the most obivous implementation possible, even if it's not the correct implementation (hence the name of the step - we "fake" the real implementation to "cheat" the Statement). Usually, returning a literal constant is enough at the beginning.
-1. Then we proceed with the "make it" step - we rely on our sense of duplication between the Statement and (fake) implementation to gradually transform both into their more general forms that eliminate this duplication. Usually, we achieve this by changing constants into variables, variables into parameters etc. 
+1. We start with a "fake it" step. Here, we turn a false Statement true by using the most obvious implementation possible, even if it's not the correct implementation (hence the name of the step - we "fake" the real implementation to "cheat" the Statement). Usually, returning a literal constant is enough at the beginning.
+1. Then we proceed with the "make it" step - we rely on our sense of duplication between the Statement and (fake) implementation to gradually transform both into their more general forms that eliminate this duplication. Usually, we achieve this by changing constants into variables, variables into parameters, etc.
 
 An example would be handy just about now, so let's apply *fake it...* to the same addition example as in the *type the obvious implementation* section. The Statement looks the same as before:
 
@@ -112,7 +112,7 @@ public class Addition
 }
 ```
 
-Note the smart trick I did. I changed the duplication between implementation and *expected result* of the Statement to duplication between implementation and *input values* of the Statement. I changed the production code to use 
+Note the smart trick I did. I changed the duplication between implementation and *expected result* of the Statement to duplication between implementation and *input values* of the Statement. I changed the production code to use
 
 ```csharp 
 return 3 + 5;
@@ -124,7 +124,7 @@ exactly because the Statement used these two values like this:
 var sum = addition.Of(3, 5);
 ```
 
-This kind of duplication is different from the previous one in that it can be removed using parameters (this applies not only to input parameters of a method, but basically anything we have access to prior to triggering specified behavior -- constructor parameters, fields etc. in contrast to result which we normally don't know until we invoke the behavior). The duplication of number 3 can be eliminated by changing the production code to use the value passed from the Statement. So this:
+This kind of duplication is different from the previous one in that it can be removed using parameters (this applies not only to input parameters of a method but to anything we have access to before triggering specified behavior -- constructor parameters, fields, etc. in contrast to result which we normally don't know until we invoke the behavior). The duplication of number 3 can be eliminated by changing the production code to use the value passed from the Statement. So this:
 
 ```csharp
 public class Addition
@@ -166,19 +166,19 @@ And that's it - we arrived at the correct implementation. I used a trivial exa
 
 Triangulation is considered the most conservative technique of the described trio, because following it involves the tiniest possible steps to arrive at the right solution. The term *Triangulation* seems mysterious at first - at least it was to me, especially that it didn't bring anything related to software engineering to my mind. The name was taken from [radar triangulation](http://encyclopedia2.thefreedictionary.com/radar+triangulation) where outputs from at least two radars must be used to determine the position of a unit. Also, in radar triangulation, the position is measured indirectly, by combining the following data: range (not position!) between two radars, measurement done by each radar and the positions of the radars (which we know, because we are the ones who put the radars there). From this data, we can derive a triangle, so we can use trigonometry to calculate the position of the third point of the triangle, which is the desired position of the unit (two remaining points are the positions of radars). Such measurement is indirect in nature, because we don't measure the position directly, but calculate it from other helper measurements.
 
-These two characteristics: indirect measurement and using at least two sources of information are at the core of TDD triangulation. Basically, it translates from radars to code like this:
+These two characteristics: indirect measurement and using at least two sources of information are at the core of TDD triangulation. Here's how it can be translated from radars to code:
 
-1. **Indirect measurement**: in code, it means we derive the internal implementation and design of a module from several known examples of its desired externally visible behavior by looking at what varies in these examples and changing the production code so that this variability is handled in a generic way. For example, variability might lead us from changing a constant to a variable, because several different examples use different input values.
-1. **Using at least two sources of information**: in code, it means we start with the simplest possible implementation of a behavior and make it more general **only** when we have two or more different examples of this behavior (i.e. Statements that describe the desired functionality for several different inputs). Then new examples can be added and generalization can be done again. This process is repeated until we reach the desired implementation. Robert C. Martin developed a maxim on this, saying that ["As the tests get more specific, the code gets more generic"](http://blog.cleancoder.com/uncle-bob/2014/12/17/TheCyclesOfTDD.html).
+1. **Indirect measurement**: in code, it means we derive the internal implementation and design of a module from several known examples of its desired externally visible behavior by looking at what varies in these examples and changing the production code so that this variability is handled generically. For example, variability might lead us from changing a constant to a variable, because several different examples use different input values.
+1. **Using at least two sources of information**: in code, it means we start with the simplest possible implementation of behavior and make it more general **only** when we have two or more different examples of this behavior (i.e. Statements that describe the desired functionality for several different inputs). Then new examples can be added and generalization can be done again. This process is repeated until we reach the desired implementation. Robert C. Martin developed a maxim on this, saying that ["As the tests get more specific, the code gets more generic"](http://blog.cleancoder.com/uncle-bob/2014/12/17/TheCyclesOfTDD.html).
 
 Usually, when TDD is showcased on simple examples, triangulation is the primary technique used, so many novices mistakenly believe TDD is all about triangulation. 
 
 I consider it an important technique because:
 
 1. Many TDD practitioners use it and demonstrate it, so I assume you will see it sooner or later and most likely have questions regarding it.
-1. It allows us to arrive at the right implementation by taking really tiny steps (tiniest than any you have seen so far in this book) and I find it very useful when I'm uncertain on how the correct implementation and design should look like.
+1. It allows us to arrive at the right implementation by taking very tiny steps (tiniest than any you have seen so far in this book) and I find it very useful when I'm uncertain about how the correct implementation and design should look like.
 
-### Example 1 - addition of numbers
+### Example 1 - adding numbers
 
 Before I show you a more advanced example of triangulation, I would like to get back to our toy example of adding two integer numbers. This will allow us to see how triangulation differs from the other two techniques mentioned earlier.
 
@@ -205,7 +205,7 @@ public void ShouldAddTwoNumbersTogether(
 }
 ```
 
-Note that we parameterized not only the input values, but also the expected result (`expectedSum`). The first example specifies that `0 + 0 = 0`.
+Note that we parameterized not only the input values but also the expected result (`expectedSum`). The first example specifies that `0 + 0 = 0`.
 
 The implementation, similarly to *fake it ('till you make it)* is, for now, to just return a constant:
 
@@ -219,7 +219,7 @@ public class Addition
 }
 ```
 
-Now, contrary to *fake it...* technique, we don't try to remove duplication between the Statement and the code. Instead, we add another example of the same rule. What do I mean by "the same rule"? Well, we need to consider our axes of variability. In addition, there are two things that can vary - either the first addend, or the second - thus, we have two axes of variability. For our second example, we need to keep one of them unchanged while changing the other. Let's say that we decide to keep the second input value the same as in previous example (which is 0) and change the first value to 1. So this single example:
+Now, contrary to *fake it...* technique, we don't try to remove duplication between the Statement and the code. Instead, we add another example of the same rule. What do I mean by "the same rule"? Well, we need to consider our axes of variability. In the addition operation, two things can vary - either the first addend, or the second - thus, we have two axes of variability. For our second example, we need to keep one of them unchanged while changing the other. Let's say that we decide to keep the second input value the same as in the previous example (which is 0) and change the first value to 1. So this single example:
 
 ```csharp
 [Theory]
@@ -234,7 +234,7 @@ Becomes a set of two examples:
 [InlineData(1,0,1)] //NEW!
 ```
 
-Again, note that the second input value stays the same in both examples and the first one varies. The expected result needs to be different as well, obviously.
+Again, note that the second input value stays the same in both examples and the first one varies. The expected result needs to be different as well.
 
 As for the implementation, we still try to make the Statement true by using as dumb implementation as possible:
 
@@ -314,7 +314,7 @@ public class Addition
 }
 ```
 
-The examples should still be true. By the way, triangulation doesn't force us to take as tiny steps as in this case, however, I wanted to show you that it makes it possible. The ability to take smaller steps when needed is something I value a lot when I use TDD. Anyway, we can notice that each of the conditions ends with exactly the same result, so we don't need the conditions at all. We can remove them and leave only:
+The examples should still be true. By the way, triangulation doesn't force us to take as tiny steps as in this case, however, I wanted to show you that it makes it possible. The ability to take smaller steps when needed is something I value a lot when I use TDD. Anyway, we can notice that each of the conditions ends with the same result, so we don't need the conditions at all. We can remove them and leave only:
 
 ```csharp
 public class Addition
@@ -395,7 +395,7 @@ public class Addition
 }
 ```
 
-Now we can clearly see the pattern. Whatever value of `b` we pass to the `Of()` method, it gets added to `a`. Let's try to generalize, this time using a little bigger step:
+Now we can see the pattern more clearly. Whatever value of `b` we pass to the `Of()` method, it gets added to `a`. Let's try to generalize, this time using a little bigger step:
 
 ```csharp
 public class Addition
@@ -454,11 +454,11 @@ An example of an ASCII art that is expected from our class looks like this:
 
 Note that there are three kinds of symbols:
 
-- `.` means either an empty space (there is no segment there) or a segment that is not lit.
+- `.` means either space (there is no segment there) or a segment that is not lit.
 - `-` means a lit horizontal segment
 - `|` means a lit vertical segment
 
-The functionality we need to implement should allow one to not only display numbers, but to light any combination of segments at will. So, we can decide to not light any segment, thus getting the following output:
+The functionality we need to implement should allow one to not only display numbers but to light any combination of segments at will. So, we can decide to not light any segment, thus getting the following output:
 
 ```
 ...
@@ -478,7 +478,7 @@ Or to light only the upper segment, which leads to the following output:
 ...
 ```
 
-How do we tell our class to light this or that segment? We pass it a string of segment names. The segments are named A,B,C,D,E,F,G and the mapping of each name to a specific segment can be visualized as:
+How do we tell our class to light this or that segment? We pass it a string of segment names. The segments are named A, B, C, D, E, F, G and the mapping of each name to a specific segment can be visualized as:
 
 ```
 .A.
@@ -490,7 +490,7 @@ E.C
 
 So to achieve the described earlier output where only the upper segment is lit, we need to pass the input consisting of `"A"`. If we want to light all segments, we pass `"ABCDEFG"`. If we want to keep all segments turned off, we pass `""` (or a C# equivalent: `string.Empty`).
 
-The last thing I need to say before we begin is that for the sake of this exercise, we focus only on the valid input (e.g. we assume we won't get inputs such as "AAAA", or "abc" or "ZXVN"). Of course, in a real projects invalid input cases should be specified as well.
+The last thing I need to say before we begin is that for the sake of this exercise, we focus only on the valid input (e.g. we assume we won't get inputs such as "AAAA", or "abc" or "ZXVN"). Of course, in real projects, invalid input cases should be specified as well.
 
 Time for the first Statement. For starters, I'm going to specify the case of empty input that results in all segments turned off:
 
@@ -575,7 +575,7 @@ public string[] ConvertToLedArt(string input)
 }
 ```
 
-The implementation is pretty dumb, but now that we have two examples, we are able to spot a pattern. Note that, depending on the input string, there are two possible results that can be returned. All of the rows are the same with the exception of the first row, which, so far, is the only one that depends on the value of `input`. Thus, we can generalize the production code by extracting the duplication into something like this:
+The implementation is pretty dumb, but now that we have two examples, we can spot a pattern. Note that, depending on the input string, two possible results can be returned. All of the rows are the same except the first row, which, so far, is the only one that depends on the value of `input`. Thus, we can generalize the production code by extracting the duplication into something like this:
 
 ```csharp
 public string[] ConvertToLedArt(string input)
@@ -596,7 +596,7 @@ Note that I changed the code so that only the first row depends on the `input`. 
 (input == "A") ? ".-." : "..."
 ```
 
-we can further note that it's only the middle character that changes depending on what we pass. Both left-most character and right-most character of the first row are always `.`. Thus, let's generalize even further, to end up with something like this:
+we can further note that it's only the middle character that changes depending on what we pass. Both the left-most and the right-most character of the first row are always `.`. Thus, let's generalize even further, to end up with something like this:
 
 ```csharp
 public string[] ConvertToLedArt(string input)
@@ -644,7 +644,7 @@ public string[] ConvertToLedArt(string input)
 }
 ```
 
-And we're done triangulating the `A` segment. 
+And we're done triangulating the `A` segment.
 
 #### Additional conclusions from the LED display example
 
@@ -692,7 +692,7 @@ So note that this time, I used the *type the obvious implementation* approach - 
 
 The two lessons from this are:
 
-1. When I stop triangulating along one axis, I may still need to triangulate along others.
+1. When I stop triangulating along one axis, I may still need to triangulate along the others.
 1. Triangulation allows me to take smaller steps when I *need* to and when I don't, I use another approach. There are many things I don't triangulate.
 
 I hope that, by showing you this example, I made a more compelling case for triangulation. I'd like to stop here, leaving the rest of this exercise for the reader.
