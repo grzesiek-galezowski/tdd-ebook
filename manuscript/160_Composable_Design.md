@@ -154,7 +154,7 @@ public class SqlRepository : IDisposable
 
 **Johnny:** Sure, this is an approach that could work and would be worth considering for very serious legacy code, as it does not force us to change the `CompanyPolicies` class at all. However, there are some issues with it. First of all, the `SqlRepository` name would be misleading. Second, look at the `CurrentEmployees()` method -- all it does is delegating a call to the implementation chosen in the constructor. With every new method required of the repository, we'll need to add new delegating methods. In reality, it isn't such a big deal, but maybe we can do better than that?
 
-**Benjamin:** Let me think, let me think... I evaluated the option where `CompanyPolicies` class makes the choice between repositories. I also evaluated the option where we hack the `SqlRepository` to makes this choice. The last option I can think of is leaving this choice to another, "3rd party" code, that would choose the repository to use and pass it to the `CompanyPolicies` via constructor, like this:
+**Benjamin:** Let me think, let me think... I evaluated the option where `CompanyPolicies` class chooses between repositories. I also evaluated the option where we hack the `SqlRepository` to makes this choice. The last option I can think of is leaving this choice to another, "3rd party" code, that would choose the repository to use and pass it to the `CompanyPolicies` via its constructor, like this:
 
 ```csharp
 public class CompanyPolicies : IDisposable
@@ -167,7 +167,7 @@ public class CompanyPolicies : IDisposable
   }
 ```
 
-This way, the `CompanyPolicies` won't know what exactly is passed to it via constructor and we can pass whatever we like -- either an SQL repository or a NoSQL one!
+This way, the `CompanyPolicies` won't know what exactly is passed to it via its constructor and we can pass whatever we like -- either an SQL repository or a NoSQL one!
 
 **Johnny:** Great! This is the option we're looking for! For now, just believe me that this approach will lead us to many good things -- you'll see why later.
 
@@ -177,7 +177,7 @@ This way, the `CompanyPolicies` won't know what exactly is passed to it via cons
 
 ... 10 minutes later
 
-**Benjamin:** Ha ha! Look at this! I am SUPREME!
+**Benjamin:** Haha! Look at this! I am SUPREME!
 
 ```csharp
 public class CompanyPolicies : IDisposable
@@ -208,7 +208,7 @@ public class CompanyPolicies : IDisposable
 
 **Benjamin:** Huh? I thought this is what we were aiming at.
 
-**Johnny:** Yes, with the exception of the `Dispose()` method. Look closely at the `CompanyPolicies` class. it is changed so that it is not responsible for creating a repository for itself, but it still disposes of it. This is could cause problems because `CompanyPolicies` instance does not have any right to assume it is the only object that is using the repository. If so, then it cannot determine the moment when the repository becomes unnecessary and can be safely disposed of.
+**Johnny:** Yes, except the `Dispose()` method. Look closely at the `CompanyPolicies` class. it is changed so that it is not responsible for creating a repository for itself, but it still disposes of it. This is could cause problems because `CompanyPolicies` instance does not have any right to assume it is the only object that is using the repository. If so, then it cannot determine the moment when the repository becomes unnecessary and can be safely disposed of.
 
 **Benjamin:** Ok, I get the theory, but why is this bad in practice? Can you give me an example?
 
@@ -216,7 +216,7 @@ public class CompanyPolicies : IDisposable
 
 **Benjamin:** So who is going to dispose of the repository?
 
-**Johnny:** The same part of the code that creates it, for example the `Main` method. Let me show you an example of how this may look like:
+**Johnny:** The same part of the code that creates it, for example, the `Main` method. Let me show you an example of how this may look like:
 
 ```csharp
 public static void Main(string[] args)
@@ -231,7 +231,7 @@ public static void Main(string[] args)
 }
 ```
 
-This way the repository is created at the start of the program and disposed of at the end. Thanks to this, the `CompanyPolicies` has no disposable fields and it itself does not have to be disposable -- we can just delete the `Dispose()` method:
+This way the repository is created at the start of the program and disposed of at the end. Thanks to this, the `CompanyPolicies` has no disposable fields and it does not have to be disposable itself -- we can just delete the `Dispose()` method:
 
 ```csharp
 //not implementing IDisposable anymore:
@@ -255,7 +255,7 @@ public class CompanyPolicies
 }
 ```
 
-**Benjamin:** Cool. So, what now? Seems we have the `CompanyPolicies` class depending on repository abstraction instead of an actual implementation, like SQL repository. My guess is that we will be able to make another class implementing the interface for NoSQL data access and just pass it through the constructor instead of the original one.
+**Benjamin:** Cool. So, what now? Seems we have the `CompanyPolicies` class depending on a repository abstraction instead of an actual implementation, like SQL repository. I guess we will be able to make another class implementing the interface for NoSQL data access and just pass it through the constructor instead of the original one.
 
 **Johnny:** Yes. For example, look at `CompanyPolicies` component. We can compose it with a repository like this:
 
@@ -271,7 +271,7 @@ var policies
   = new CompanyPolicies(new NoSqlRepository());
 ```
 
-without changing the code of `CompanyPolicies`. This means that `CompanyPolicies` does not need to know what `Repository` exactly it is composed with, as long as this `Repository` follows the required interface and meets expectations of `CompanyPolicies` (e.g. does not throw exceptions when it is not supposed to do so). An implementation of `Repository` may be itself a very complex and composed of another set of classes, for example something like this:
+without changing the code of `CompanyPolicies`. This means that `CompanyPolicies` does not need to know what `Repository` exactly it is composed with, as long as this `Repository` follows the required interface and meets expectations of `CompanyPolicies` (e.g. does not throw exceptions when it is not supposed to do so). An implementation of `Repository` may be itself a very complex and composed of another set of classes, for example, something like this:
 
 ```csharp
 new SqlRepository(
@@ -305,11 +305,10 @@ public interface Repository
 
 **Johnny:** Yeah, but that's something for tomorrow. I'm exhausted today.
 
-A Quick Retrospective
----------------------
+## A Quick Retrospective
 
 In this chapter, Benjamin learned to appreciate composability of an object, i.e. the ability to replace its dependencies, providing different behaviors, without the need to change the code of the object class itself. Thus, an object, given replaced dependencies, starts using the new behaviors without noticing that any change occurred at all.
 
-As I said, the code mentioned has some serious flaws. For now, Johnny and Benjamin did not encounter a desperate need to address those flaws, but this is going to change in the next chapter.
+The code mentioned has some serious flaws. For now, Johnny and Benjamin did not encounter a desperate need to address them.
 
 Also, after we part again with Johnny and Benjamin, we are going to reiterate the ideas they stumble upon in a more disciplined manner.
