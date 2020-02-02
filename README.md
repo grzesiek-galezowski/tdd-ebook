@@ -27,13 +27,10 @@ You need to have an account on leanpub to access epub and mobi formats, but pdf 
 <a href="https://github.com/grzesiek-galezowski/any">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/manuscript/images/webpage/tdd-toolkit.png" />C# (OLD) TDD Toolkit
 </a>&nbsp;
-<a href="https://github.com/grzesiek-galezowski/jfixture#any-method-helpers">
+<a href="https://github.com/grzesiek-galezowski/AutoFixtureGenerator#any-method-helpers">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/manuscript/images/webpage/tdd-toolkit.png" />Java TDD Toolkit
 </a>&nbsp;
 
-<a href="http://plus.google.com/113457358555307974994?prsrc=3" rel="publisher" target="_top" style="text-decoration:none;">
-  <img src="http://ssl.gstatic.com/images/icons/gplus-16.png" alt="Google+" style="border:0;width:16px;height:16px;"/> Google+ Profile
-</a>&nbsp;
 <a href="https://www.facebook.com/tddebook" rel="publisher" target="_top" style="text-decoration:none;">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/manuscript/images/webpage/FB-f-Logo__blue_29.png" alt="Facebook" style="border:0;width:16px;height:16px;"/> Facebook Profile
 </a>
@@ -47,10 +44,11 @@ This ebook is an attempt to create an open-source extensive tutorial on Test-Dri
 The following parts are planned. The current table of content is available on [Leanpub](https://leanpub.com/tdd-ebook).
 
 *  *Part 1: Just The Basics*
-*  *Part 2: Test-Driven Development in Object-Oriented World*
-*  *Part 3: Beyond Objects -- TDD on Higher Levels*
-*  *Part 4: Tools of Test-Driven Developer*
-*  *Part 5: FAQ and Nuances*
+*  *Part 2: Object-oriented primer*
+*  *Part 3: Test-Driven Development in Object-Oriented World*
+*  *Part 4: Beyond Objects -- TDD on Higher Levels*
+*  *Part 5: Tools of Test-Driven Developer*
+*  *Part 6: FAQ and Nuances*
 
 The book is already over 150 pages, but there is still lots to do! Your input is crucial!
 
@@ -74,6 +72,5 @@ conventions if you do not like what I decided on. It's Open Source!
 
  - Cover by Daniel Żołopa
  - PDF, MOBI and EPUB download icons by <a href="http://smithsrus.com/e-book-download-icons/">Yusuke Kamiyamane and Doug Smith</a>, used under <a href="http://creativecommons.org/licenses/by/3.0/">Creative Commons Attribution License</a>.
- - Google+ icon copyright by Google
  - Facebook icon copyright by Facebook
   
