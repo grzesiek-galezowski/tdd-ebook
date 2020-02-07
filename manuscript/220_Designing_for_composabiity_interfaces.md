@@ -1,12 +1,12 @@
 # Interfaces
 
-Some objects are harder to compose with other objects, others are easier. Of course, we are striving for the higher composability. There are numerous factors influencing this. I already discussed some of them indirectly, so time to sum things up and fill in the gaps. This chapter will deal with the role interfaces play in achieving high composability and the next one will deal with the concept of protocols.
+Some objects are harder to compose with other objects, others are easier. Of course, we are striving for higher composability. Numerous factors influence this. I already discussed some of them indirectly, so time to sum things up and fill in the gaps. This chapter will deal with the role interfaces play in achieving high composability and the next one will deal with the concept of protocols.
 
 ## Classes vs interfaces
 
-As we said, a sender is composed with a recipient by obtaining a reference to it. Also, we said that we want our senders to be able to send messages to many different recipients. This is, of course, done using polymorphism. 
+As we said, a sender is composed with a recipient by obtaining a reference to it. Also, we said that we want our senders to be able to send messages to many different recipients. This is, of course, done using polymorphism.
 
-So, one of the questions we have to ask ourselves in our quest for high composability is: on what should a sender depend on to be able to work with as many recipients as possible? Should it depend on classes or interfaces? In other words, when we plug in an object as a message receipient like this:
+So, one of the questions we have to ask ourselves in our quest for high composability is: on what should a sender depend on to be able to work with as many recipients as possible? Should it depend on classes or interfaces? In other words, when we plug in an object as a message recipient like this:
 
 ```csharp
 public Sender(Recipient recipient)
@@ -19,7 +19,7 @@ Should the `Recipient` be a class or an interface?
 
 If we assume that `Recipient` is a class, we can get the composability we want by deriving another class from it and implementing abstract methods or overriding virtual ones. However, depending on a class as a base type for a recipient has the following disadvantages:
 
-1. The recipient class may have some real dependencies. For example, if our `Recipient` depends on Windows Communication Foundation (WCF) stack, then all classes depending directly on `Recipient` will indirectly depend on WCF, including our `Sender`. The more damaging version of this problem is where such a `Recipient` class does something like opening a network connection in a constructor -- the subclasses are unable to prevent it, no matter if they like it or not, because a subclass has to call a superclass' constructor.
+1. The recipient class may have some real dependencies. For example, if our `Recipient` depends on Windows Communication Foundation (WCF) stack, then all classes depending directly on `Recipient` will indirectly depend on WCF, including our `Sender`. The more damaging version of this problem is where such a `Recipient` class does something like opening a network connection in a constructor -- the subclasses are unable to prevent it, no matter if they like it or not because a subclass has to call a superclass' constructor.
 1. `Recipient`'s constructor must be invoked by any class deriving from it, which may be smaller or bigger trouble, depending on what kind of parameters the constructor accepts and what it does.
 1. In languages that support single inheritance only, deriving from `Recipient` class uses up the only inheritance slot, constraining our design.
 1. We must make sure to mark all the methods of `Recipient` class as `virtual` to enable overriding them by subclasses. otherwise, we won't have full composability. Subclasses will not be able to redefine all of the `Recipient` behaviors, so they will be very constrained in what they can do.
@@ -38,7 +38,7 @@ As you may have already guessed from the previous chapters, we are taking the id
 
 Did I just say that composability is "one of the top priorities" in our design approach? Wow, that's quite a statement, isn't it? Unfortunately for me, it also lets you raise the following argument: "Hey, interfaces are not the most extreme way of achieving composability! What about e.g. C\# events feature? Or callbacks that are supported by some other languages? Wouldn't it make the classes even more context-independent and composable, if we connected them through events or callbacks, not interfaces?"
 
-Actually, it would, but it would also strip us from another very important aspect of our design approach that I did not mention explicitly until now. This aspect is: roles. When we use interfaces, we can say that each interface stands for a role for a real object to play. When these roles are explicit, they help design and describe the communication between objects.
+Yes, it would, but it would also strip us from another very important aspect of our design approach that I did not mention explicitly until now. This aspect is: roles. When we use interfaces, we can say that each interface stands for a role for a real object to play. When these roles are explicit, they help design and describe the communication between objects.
 
 Let's look at an example of how not defining explicit roles can remove some clarity from the design. This is a sample method that sends some messages to two recipients held as interfaces:
 
@@ -71,19 +71,19 @@ public void SendSomethingToRecipients()
 }
 ```
 
-We can see that in the second case we are losing the notion of which message belongs to which recipient -- each callback is standalone from the point of view of the sender. This is unfortunate, because in our design approach, we want to highlight the roles each recipient plays in the communication, to make it readable and logical. Also, ironically, decoupling using events or callbacks can make composability harder. This is because roles tell us which sets of behaviors belong together and thus, need to change together. If each behavior is triggered using a separate event or callback, an overhead is placed on us to remember which behaviors should be changed together, and which ones can change independently.
+We can see that in the second case we are losing the notion of which message belongs to which recipient -- each callback is standalone from the sender's point of view. This is unfortunate because, in our design approach, we want to highlight the roles each recipient plays in the communication, to make it readable and logical. Also, ironically, decoupling using events or callbacks can make composability harder. This is because roles tell us which sets of behaviors belong together and thus, need to change together. If each behavior is triggered using a separate event or callback, an overhead is placed on us to remember which behaviors should be changed together, and which ones can change independently.
 
-This does not mean that events or callbacks are bad. It's just that they are not fit for replacing interfaces -- in reality, their purpose is a little bit different. We use events or callbacks not to tell somebody to do something, but to indicate what happened (that's why we call them events, after all...). This fits well the observer pattern we already talked about in the previous chapter. So, instead of using observer objects, we may consider using events or callbacks instead (as in everything, there are some tradeoffs for each of the solutions). In other words, events and callbacks have their use in the composition, but they are fit for a case so specific, that they cannot be treated as a default choice. The advantage of interfaces is that they bind together messages that represent a coherent abstractions and convey roles in the communication. This improves readability and clarity.
+This does not mean that events or callbacks are bad. It's just that they are not fit for replacing interfaces -- in reality, their purpose is a little bit different. We use events or callbacks not to tell somebody to do something, but to indicate what happened (that's why we call them events, after all...). This fits well with the observer pattern we already talked about in the previous chapter. So, instead of using observer objects, we may consider using events or callbacks instead (as in everything, there are some tradeoffs for each of the solutions). In other words, events and callbacks have their use in composition, but they are fit for a case so specific, that they cannot be treated as a default choice. The advantage of interfaces is that they bind together messages that represent coherent abstractions and convey roles in the communication. This improves readability and clarity.
 
 ## Small interfaces
 
 Ok, so we said that he interfaces are "the way to go" for reaching the strong composability we're striving for. Does merely using interfaces guarantee us that the composability will be strong? The answer is "no" -- while using interfaces as "slots" is a necessary step in the right direction, it alone does not produce the best composability.
 
-One of the other things we need to consider is the size of interfaces. Let's state one thing that is obvious in regard to this:
+One of the other things we need to consider is the size of interfaces. Let's state one thing that is obvious regarding this:
 
-**All other things equal, smaller interfaces (i.e. with less methods) are easier to implement than bigger interfaces.**
+**All other things equal, smaller interfaces (i.e. with fewer methods) are easier to implement than bigger interfaces.**
 
-The obvious conclusion from this is that if we want to have really strong composability, our "slots", i.e. interfaces, have to be as small as possible (but not smaller -- see previous section on interfaces vs events/callbacks). Of course, we cannot achieve this by blindly removing methods from interfaces, because this would break classes that use these methods e.g. when someone is using an interface implementation like this:
+The obvious conclusion from this is that if we want to have strong composability, our "slots", i.e. interfaces, have to be as small as possible (but not smaller -- see the previous section on interfaces vs events/callbacks). Of course, we cannot achieve this by blindly removing methods from interfaces, because this would break classes that use these methods e.g. when someone is using an interface implementation like this:
 
 ```csharp
 public void Process(Recipient recipient)
@@ -93,9 +93,9 @@ public void Process(Recipient recipient)
 }
 ```
 
-It is impossible to remove either of the methods from the `Recipient` interface, because it would cause a compile error saying that we are trying to use a method that does not exist.
+It is impossible to remove either of the methods from the `Recipient` interface because it would cause a compile error saying that we are trying to use a method that does not exist.
 
-So, what do we do then? We try to separate groups of methods used by different senders and move them to separate interfaces, so that each sender has access only to the methods it needs. After all, a class can implement more than one interface, like this:
+So, what do we do then? We try to separate groups of methods used by different senders and move them to separate interfaces so that each sender has access only to the methods it needs. After all, a class can implement more than one interface, like this:
 
 ```csharp
 public class ImplementingObject
@@ -162,7 +162,7 @@ public class InMemoryOrganizationalStructure
 }
 ```
 
-In this approach, we create more interfaces (which some of you may not like), but that shouldn't bother us much, because in return, each interface is easier to implement (because the number of methods to implement is smaller than in case of one big interface). This means that composability is enhanced, which is what we want the most. 
+In this approach, we create more interfaces (which some of you may not like), but that shouldn't bother us much because, in return, each interface is easier to implement (because the number of methods to implement is smaller than in case of one big interface). This means that composability is enhanced, which is what we want the most.
 
 It pays off. For example, one day, we may get a requirement that all writes to the organizational structure (i.e. the admin-related operations) have to be traced. In such case, all we have to do is to create a proxy class implementing `OrganizationalStructureAdminCommands` interface, which wraps the original class' methods with a notification to an observer (that can be either the trace that is required or anything else we like):
 
@@ -205,7 +205,7 @@ and each of those interfaces should be given only the methods that are needed fr
 
 #### Interfaces should depend on abstractions, not implementation details
 
-It is tempting to think that every interface is an abstraction by definition. I believe otherwise -- while interfaces abstract away the concrete type of the class that implements it, they may still contain some other things not abstracted that are basically implementation details. Let's look at the following interface:
+It is tempting to think that every interface is an abstraction by definition. I believe otherwise -- while interfaces abstract away the concrete type of the class that implements it, they may still contain some other things not abstracted that are implementation details. Let's look at the following interface:
 
 ```csharp
 public interface Basket
@@ -215,7 +215,7 @@ public interface Basket
 }
 ```
 
-See the arguments of those methods? `SqlConnection` is a library object for interfacing directly with SQL Server database, so it is a very concrete dependency. `SecurityPrincipal` is one of the core classes of .NET's authorization library that works with users database on local system or Active Directory. So again, a very concrete dependency. With dependencies like that, it will be very hard to write other implementations of this interface, because we will be forced to drag around concrete dependencies and mostly will not be able to work around that if we want something different. Thus, we may say that these concrete types I mentioned are implementation details exposed in the interface. Thus, this interface is a failed abstraction. It is essential to abstract these implementation details away, e.g. like this:
+See the arguments of those methods? `SqlConnection` is a library object for interfacing directly with an SQL Server database, so it is a very concrete dependency. `SecurityPrincipal` is one of the core classes of .NET's authorization library that works with a user database on a local system or in Active Directory. So again, a very concrete dependency. With dependencies like that, it will be very hard to write other implementations of this interface, because we will be forced to drag around concrete dependencies and mostly will not be able to work around that if we want something different. Thus, we may say that these concrete types I mentioned are implementation details exposed in the interface. Thus, this interface is a failed abstraction. It is essential to abstract these implementation details away, e.g. like this:
 
 ```csharp
 public interface Basket
@@ -225,7 +225,7 @@ public interface Basket
 }
 ```
 
-This is better. For example, as `ProductOutput` is a higher level abstraction (most probably an interface, as we discussed earlier) no implementation of the `WriteTo` method must be tied to any particular storage kind. This means that we are more free to develop different implementations of this method. In addition, each implementation of the `WriteTo` method is more useful as it can be reused with different kinds of `ProductOutput`s.
+This is better. For example, as `ProductOutput` is a higher-level abstraction (most probably an interface, as we discussed earlier) no implementation of the `WriteTo` method must be tied to any particular storage kind. This means that we have more freedom to develop different implementations of this method. Also, each implementation of the `WriteTo` method is more useful as it can be reused with different kinds of `ProductOutput`s.
 
 Another example might be a data interface, i.e. an interface with getters and setters only. Looking at this example:
 
@@ -240,7 +240,7 @@ public interface Employee
 }
 ```
 
-in how many different ways can we implement such interface? Not many -- the only question we can answer differently in different implementations of `Employee` is: "what is the data storage?". Everything besides this question is exposed, making this a very poor abstraction. As a matter of fact, this is similar to what Johnny and Benjamin were battling in the payroll system, when they wanted to introduce another kind of employee -- a contractor employee. Thus, most probably, a better abstraction would be something like this:
+in how many different ways can we implement such an interface? Not many -- the only question we can answer differently in different implementations of `Employee` is: "what is the data storage?". Everything besides this question is exposed, making this a very poor abstraction. This is similar to what Johnny and Benjamin were battling in the payroll system when they wanted to introduce another kind of employee -- a contractor employee. Thus, most probably, a better abstraction would be something like this:
 
 ```csharp
 public interface Employee
