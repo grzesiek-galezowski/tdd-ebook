@@ -31,14 +31,14 @@ AnObject anObject = _objects[key];
 
 then its hash code is calculated again and only when the hash codes match are the key objects compared for equality.
 
-Thus, in order to successfully retrieve an object from a dictionary with a key, this key object must meet the following conditions in regard to the key we previously used to put the object in:
+Thus, to successfully retrieve an object from a dictionary with a key, this key object must meet the following conditions regarding the key we previously used to put the object in:
 
 1. The `GetHashCode()` method of the key used to retrieve the object must return the same hash code as that of the key used to insert the object did during the insertion,
 1. The `Equals()` method must indicate that both the key used to insert the object and the key used to retrieve it are equal.
 
 The bottom line is: if any of the two conditions is not met, we cannot expect to get the item we inserted.
 
-I mentioned in the previous chapter that hash code of a value object is calculated based on its state. A conclusion from this is that each time we change the state of a value object, its hash code changes as well. So, let's assume our `KeyObject` allows changing its state, e.g. by using a method `SetName()`. Thus, we can do the following:
+I mentioned in the previous chapter that the hash code of a value object is calculated based on its state. A conclusion from this is that each time we change the state of a value object, its hash code changes as well. So, let's assume our `KeyObject` allows changing its state, e.g. by using a method `SetName()`. Thus, we can do the following:
 
 ```csharp
 KeyObject key = KeyObject.With("name");
@@ -120,9 +120,9 @@ I saw many, many issues in production code caused by the mutability of Java `Dat
 
 ### Thread safety
 
-When mutable values are shared between threads, there is a risk that they are changed by several threads at the same time or modified by one thread while being read by another. This can cause data corruption. Like I mentioned, value objects tend to be created many times in many places and passed inside methods or returned as results a lot - this seems to be their nature. Thus, this risk of data corruption or inconsistency raises.
+When mutable values are shared between threads, there is a risk that they are changed by several threads at the same time or modified by one thread while being read by another. This can cause data corruption. As I mentioned, value objects tend to be created many times in many places and passed inside methods or returned as results a lot - this seems to be their nature. Thus, this risk of data corruption or inconsistency raises.
 
-Imagine our code took hold of a value object of type `Credentials`, containing username and password. In addition, let's assume `Credentials` objects are mutable. If so, one thread may accidentally modify the object while it is used by another thread, leading to data inconsistency. So, provided we need to pass login and password separately to a third-party security mechanism, we may run into the following:
+Imagine our code took hold of a value object of type `Credentials`, containing username and password. Also, let's assume `Credentials` objects are mutable. If so, one thread may accidentally modify the object while it is used by another thread, leading to data inconsistency. So, provided we need to pass login and password separately to a third-party security mechanism, we may run into the following:
 
 ```csharp
 public void LogIn(Credentials credentials)
@@ -135,15 +135,15 @@ public void LogIn(Credentials credentials)
 }
 ```
 
-On the other hand, when an object is immutable, there are no multithreading concerns. If a piece of data is read-only, it can be safely read by as many threads as we like. After all, no one is able to modify the state of an object, so there is no possibility of inconsistency[^functionallanguages].
+On the other hand, when an object is immutable, there are no multithreading concerns. If a piece of data is read-only, it can be safely read by as many threads as we like. After all, no one can modify the state of an object, so there is no possibility of inconsistency[^functionallanguages].
 
 ### If not mutability, then what?
 
 For the reasons I described, I consider immutability a crucial aspect of value object design and in this book, when I talk about value objects, I assume they are immutable.
 
-Still there is one question that remains unanswered: what about a situation when I really want to:
+Still, there is one question that remains unanswered: what about a situation when I need to:
 
-* replace all occurences of letter 'r' in a string to letter 'l'?
+* replace all occurrences of letter 'r' in a string to letter 'l'?
 * move a date forward by five days?
 * add a file name to an absolute directory path to form an absolute file path (e.g. "C:\" + "myFile.txt" = "C:\myFile.txt")?
 
@@ -178,7 +178,7 @@ AbsoluteFilePath newPath = oldPath + FileName.Value("file.txt");
 //oldPath is "C:\Directory", newPath is "C:\Directory\file.txt"
 ```
 
-So, again, anytime we want to have a value based on a previous value, instead of modifying the previous object, we create a new object with desired state.
+So, again, anytime we want to have a value based on a previous value, instead of modifying the previous object, we create a new object with the desired state.
 
 ### Immutability gotchas
 
@@ -234,7 +234,7 @@ _exchangeRates = new List<ExchangeRate>(exchangeRates);
 
 #### Inheritable dependencies can surprise you!
 
-Another gotcha has to do with objects of types which can be subclassed (i.e. are not `sealed`). Let's take a look at the example of a class called `DateWithZone`, representing a date with a time zone. Let's say that this class has a dependency on another class called `ZoneId` and is defined as such:
+Another gotcha has to do with objects of types that can be subclassed (i.e. are not `sealed`). Let's take a look at the example of a class called `DateWithZone`, representing a date with a time zone. Let's say that this class has a dependency on another class called `ZoneId` and is defined as such:
 
 ```csharp
 public sealed class DateWithZone : IEquatable<DateWithZone>
@@ -289,7 +289,7 @@ public class EvilZoneId : ZoneId
 }
 ```
 
-When calling `GetHashCode()` on an instance of this class multiple times, it's going to return 1,2,3,4,5,6,7... and so on. This is because the `_i` field is in fact a piece of mutable state and it is modified every time we request a hash code. Now, I assume no sane person would write code like this, but on the other hand, the language does not restrict it. So assuming such an evil class would come to existence in a code base that uses the `DateWithZone`, let's see what could be the consequence on this type.
+When calling `GetHashCode()` on an instance of this class multiple times, it's going to return 1,2,3,4,5,6,7... and so on. This is because the `_i` field is in fact a piece of mutable state and it is modified every time we request a hash code. Now, I assume no sane person would write code like this, but on the other hand, the language does not restrict it. So assuming such an evil class would come to existence in a code base that uses the `DateWithZone`, let's see what could be the consequences.
 
 First, let's imagine someone doing the following:
 
@@ -320,18 +320,18 @@ There are more gotchas (e.g. a similar one applied to generic types), but I'll l
 
 ## Handling of variability
 
-As in ordinary objects, there can be some variability in the world of values. For example, money can be dollars, pounds, zlotys (Polish money), euros etc. Another example of something that can be modelled as a value are path values (you know, `C:\Directory\file.txt` or `/usr/bin/sh`) -  there can be absolute paths, relative paths, paths to files and paths pointing to directories, we can have unix paths and Windows paths.
+As in ordinary objects, there can be some variability in the world of values. For example, money can be dollars, pounds, zlotys (Polish money), euros, etc. Another example of something that can be modeled as a value is path values (you know, `C:\Directory\file.txt` or `/usr/bin/sh`) -  there can be absolute paths, relative paths, paths to files and paths pointing to directories, we can have Unix paths and Windows paths.
 
-Contrary to ordinary objects, however, where we solved variability by using interfaces and different implementations (e.g. we had an `Alarm` interface with implementing classes such as `LoudAlarm` or `SilentAlarm`), in the world values we do it differenly. Taking the alarms I just mentioned as an example, we can say that the different kinds of alarms varied in how they fulfilled the responsibility of signaling that they were turned on (we said they responded to the same message with -- sometimes entirely -- different behaviors). Variability in the world of values is typically not behavioral in the same way as in case of objects. Let's consider the following examples:
+Contrary to ordinary objects, however, where we solved variability by using interfaces and different implementations (e.g. we had an `Alarm` interface with implementing classes such as `LoudAlarm` or `SilentAlarm`), in the world values we do it differently. Taking the alarms I just mentioned as an example, we can say that the different kinds of alarms varied in how they fulfilled the responsibility of signaling that they were turned on (we said they responded to the same message with -- sometimes entirely -- different behaviors). Variability in the world of values is typically not behavioral in the same way as in the case of objects. Let's consider the following examples:
 
-1. Money can be dollars, punds, zlotys etc., and the different kinds of currencies differ in what exchange rates are applied to them (e.g. "how many dollars do I get from 10 Euros and how many from 10 Pounds?"), which is not a behavioral distinction. Thus, polymorphism does not fit this case.
+1. Money can be dollars, pounds, zlotys, etc., and the different kinds of currencies differ in what exchange rates are applied to them (e.g. "how many dollars do I get from 10 Euros and how many from 10 Pounds?"), which is not a behavioral distinction. Thus, polymorphism does not fit this case.
 1. Paths can be absolute and relative, pointing to files and directories. They differ in what operations can be applied to them. E.g. we can imagine that for paths pointing to files, we can have an operation called `GetFileName()`, which doesn't make sense for a path pointing to a directory. While this is a behavioral distinction, we cannot say that "directory path" and a "file path" are variants of the same abstraction - rather, that are two different abstractions. Thus, polymorphism does not seem to be the answer here either.
-1. Sometimes, we may want to have a behavioral distinction, like in the following example. We have a value class representing product names and  we want to write in several different formats depending on situation.
+1. Sometimes, we may want to have a behavioral distinction, like in the following example. We have a value class representing product names and we want to write in several different formats depending on the situation.
 
 How do we model this variability? I usually consider three basic approaches, each applicable in different contexts:
 
 * implicit - which would apply to the money example,
-* explicit - which would fit the paths case nicely,
+* explicit - which would fit the case of paths nicely,
 * delegated - which would fit the case of product names.
 
 Let me give you a longer description of each of these approaches.
@@ -340,7 +340,7 @@ Let me give you a longer description of each of these approaches.
 
 Let's go back to the example of modeling money using value objects[^tddbyexample]. Money can have different currencies, but we don't want to treat each currency in any special way. The only things that are impacted by currency are rates by which we exchange them for other currencies. We want the rest of our program to be unaware of which currency it's dealing with at the moment (it may even work with several values, each of different currency, at the same time, during one calculation or another business operation).
 
-This leads us to making the differencies between currencies implicit, i.e. we will have a single type called `Money`, which will not expose its currency at all. We only have to tell what the currency is when we create an instance:
+This leads us to make the differences between currencies implicit, i.e. we will have a single type called `Money`, which will not expose its currency at all. We only have to tell what the currency is when we create an instance:
 
 ```csharp
 Money tenPounds = Money.Pounds(10);
@@ -372,7 +372,7 @@ To sum up, we designed the `Money` type so that the variability of currency is i
 
 There are times, however, when we want the variability to be explicit, i.e. modeled using different types. Filesystem paths are a good example.
 
-For starters, let's imagine we have the following method for creating a backup archives that accepts a destination path (for now as a string - we'll get to path objects later) as its input parameter:
+For starters, let's imagine we have the following method for creating backup archives that accepts a destination path (for now as a string - we'll get to path objects later) as its input parameter:
 
 ```csharp
 void Backup(string destinationPath);
@@ -381,7 +381,7 @@ void Backup(string destinationPath);
 This method has one obvious drawback - its signature doesn't tell anything about the characteristics of the destination path, which begs some questions:
 
 * Should it be an absolute path, or a relative path. If relative, then relative to what?
-* Should the path contain a file name for the backup file, or should it be just a directory path and file name will be given according to some kind of pattern (e.g. a word "backup" + current timestamp)?
+* Should the path contain a file name for the backup file, or should it be just a directory path and a filename will be given according to some kind of pattern (e.g. a word "backup" + the current timestamp)?
 * Or maybe the file name in the path is optional and if none is given, then a default name is used?
 
 These questions suggest that the current design doesn't convey the intention explicitly enough. We can try to work around it by changing the name of the parameter to hint the constraints, like this:
@@ -392,7 +392,7 @@ void Backup(string absoluteFilePath);
 
 but the effectiveness of that is based solely on someone reading the argument name and besides, before a path (passed as a string) reaches this method, it is usually passed around several times and it's very hard to keep track of what is inside this string, so it becomes easy to mess things up and pass e.g. a relative path where an absolute one is expected. The compiler does not enforce any constraints. More than that, one can pass an argument that's not even a path, because a `string` can contain any arbitrary content.
 
-Looks to me like a good situation to introduce a value object, but what kind of type or types should we introduce? Surely, we could create a single type called `Path`[^javahaspath] that would have methods like `IsAbsolute()`, `IsRelative()`, `IsFilePath()` and `IsDirectoryPath()` (i.e. it would handle the variability implicitly), which would solve (only - we'll see that shortly) one part of the problem - the signature would be:
+It looks to me like a good situation to introduce a value object, but what kind of type or types should we introduce? Surely, we could create a single type called `Path`[^javahaspath] that would have methods like `IsAbsolute()`, `IsRelative()`, `IsFilePath()` and `IsDirectoryPath()` (i.e. it would handle the variability implicitly), which would solve (only - we'll see that shortly) one part of the problem - the signature would be:
 
 ```csharp
 void Backup(Path absoluteFilePath);
@@ -406,11 +406,11 @@ and we would not be able to pass an arbitrary string, only an instance of a `Pat
 Path path = Path.Value(@"C:\C:\C:\C:\//\/\/");
 ```
 
-Such factory method could throw an exception at the time of path object creation. This is important - previously, when we did not have the value object, we could assign garbage to a string, pass it between several objects and get an exception from the `Backup()` method. Now, that we modeled paths as value objects, there is a high probability that the `Path` type will be used as early as possible in the chain of calls. Thanks to this and to the validation inside the factory method, we will get an exception much closer to the place where the mistake was made, not at the end of the call chain.
+Such a factory method could throw an exception at the time of path object creation. This is important - previously, when we did not have the value object, we could assign garbage to a string, pass it between several objects and get an exception from the `Backup()` method. Now, that we modeled paths as value objects, there is a high probability that the `Path` type will be used as early as possible in the chain of calls. Thanks to this and the validation inside the factory method, we will get an exception much closer to the place where the mistake was made, not at the end of the call chain.
 
 So yeah, introducing a general `Path` value object might solve some problems, but not all of them. Still, the signature of the `Backup()` method does not signal that the path expected must be an absolute path to a file, so one may pass a relative path or a path to a directory, even though only one kind of path is acceptable.
 
-In this case, the varying properties of paths are not just an obstacle, a problem to solve, like in case of money. They are they key differentiating factor in choosing whether a behavior is appropriate for a value or not. In such case, it makes a lot of sense to create several different value types, each representing a different set of path constraints.
+In this case, the varying properties of paths are not just an obstacle, a problem to solve, like in case of money. They are the key differentiating factor in choosing whether a behavior is appropriate for a value or not. In such a case, it makes a lot of sense to create several different value types, each representing a different set of path constraints.
 
 Thus, we may decide to introduce types like[^atmafilesystem2]:
 
@@ -425,7 +425,7 @@ Having all these types, we can now change the signature of the `Backup()` method
 void Backup(AbsoluteFilePath path);
 ```
 
-Note that we don't have to explain the constraints with the name of the argument - we can just call it `path`, because the type already says what needs to be said. And by the way, no one will be able to pass e.g. a `RelativeDirPath` now by accident, not to mention an arbitrary string.
+Note that we don't have to explain the constraints with the name of the argument - we can just call it `path` because the type already says what needs to be said. And by the way, no one will be able to pass e.g. a `RelativeDirPath` now by accident, not to mention an arbitrary string.
 
 Making variability among values explicit by creating separate types usually leads us to introduce some conversion methods between these types where such conversion is legal. For example, when all we've got is an `AbsoluteDirPath`, but we still want to invoke the `Backup()` method, we need to convert our path to an `AbsoluteFilePath` by adding a file name, that can be represented by a value objects itself (let's call its class `FileName`). In C#, we can use operator overloading for some of the conversions, e.g. the `+` operator would do nicely for appending a file name to a directory path. The code that does the conversion would then look like this:
 
@@ -438,17 +438,17 @@ FileName fileName = ...
 AbsoluteFilePath filePath = dirPath + fileName;
 ```
 
-Of course, we create conversion methods only where they makes sense from the point of view of the domain we are modelling. We wouldn't put a conversion method inside `AbsoluteDirectoryPath` that would combine it with another `AbsoluteDirectoryPath`[^pathscomplex].
+Of course, we create conversion methods only where they make sense from the point of view of the domain we are modeling. We wouldn't put a conversion method inside `AbsoluteDirectoryPath` that would combine it with another `AbsoluteDirectoryPath`[^pathscomplex].
 
 ### Delegated variability
 
-Finally, we can achieve variability by delegating the varying behavior to an interface and have a value object accept that interface implementation as a method parameter. An example of this would be the `Product` class from the previous chapter that had the following method declared:
+Finally, we can achieve variability by delegating the varying behavior to an interface and have the value object accept that interface implementation as a method parameter. An example of this would be the `Product` class from the previous chapter that had the following method declared:
 
 ```csharp
 public string ToString(Format format);
 ```
 
-where `Format` was an interface and we passed different implementations of this interface to this method, e.g. `ScreenFormat` or `ReportingFormat`. Note that having the `Format` as a method parameter instead of e.g. a constructor parameter allows us to uphold the value semantics, because `Format` is not part of the object but rather a "guest helper". Thanks to this, we are free from dillemas such as "is the name 'laptop' formatted for screen equal to 'laptop' formatted for a report?"
+where `Format` was an interface and we passed different implementations of this interface to this method, e.g. `ScreenFormat` or `ReportingFormat`. Note that having the `Format` as a method parameter instead of e.g. a constructor parameter allows us to uphold the value semantics because `Format` is not part of the object but rather a "guest helper". Thanks to this, we are free from dilemmas such as "is the name 'laptop' formatted for screen equal to 'laptop' formatted for a report?"
 
 ### Summing up the implicit vs explicit vs delegated discussion
 
@@ -456,7 +456,7 @@ Note that while in the first example (the one with money), making the variabilit
 
 If we choose the implicit approach, we can treat all variations the same, since they are all of the same type. If we decide on the explicit approach, we end up with several types that are usually incompatible and we allow conversions between them where such conversions make sense. This is useful when we want some pieces of our program to be explicitly compatible with only one of the variations.
 
-I must say I find delegated variability a rare case (formatting the conversion to string is a typical example) and throughout my entire career I had maybe one or two situations where I had to resort to it. However, some libraries use this approach and in your particular domain or type of applications such cases may be much more typical.
+I must say I find delegated variability a rare case (formatting the conversion to string is a typical example) and throughout my entire career, I had maybe one or two situations where I had to resort to it. However, some libraries use this approach and in your particular domain or type of applications such cases may be much more typical.
 
 ## Special values
 

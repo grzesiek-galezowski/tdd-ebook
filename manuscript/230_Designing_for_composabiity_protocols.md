@@ -515,7 +515,7 @@ public class HiddenSession : Session
 }
 ```
 
-The clients of this code will not notice this change at all. When we are not forced to return anything, we are more free to do as we like. Again, "Tell, don't ask".
+The clients of this code will not notice this change at all. When we are not forced to return anything, we are more free to do as we like. Again, "tell, don't ask".
 
 ## Protocols should be small and abstract
 
