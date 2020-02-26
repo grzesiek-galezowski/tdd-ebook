@@ -1,8 +1,8 @@
 # Value object anatomy
 
-In the previous chapter, we saw a value object - `ProductName` in action. In this chapter, we'll  study its anatomy - line by line, field by field, method after method. After doing this, you'll hopefully have a better feel of some of the more general properties of value objects.
+In the previous chapter, we saw a value object - `ProductName` in action. In this chapter, we'll study its anatomy - line by line, field by field, method after method. After doing this, you'll hopefully have a better feel of some of the more general properties of value objects.
 
-Let's begin our examination by taking a look at the definition of the type `ProductName` from the previous chapter (the code I will show you is not legal C# - I omitted method bodies, putting `;` after each method declaration. I did this because it would be a lot of code to grasp otherwise and I don't necessary want to delve into the code of each method). Each section of the `ProductName` class definition is marked with a comment. These comments mark the topics we'll be discussing throughout this chapter.
+Let's begin our examination by taking a look at the definition of the type `ProductName` from the previous chapter (the code I will show you is not legal C# - I omitted method bodies, putting a `;` after each method declaration. I did this because it would be a lot of code to grasp otherwise and I don't necessarily want to delve into the code of each method). Each section of the `ProductName` class definition is marked with a comment. These comments mark the topics we'll be discussing throughout this chapter.
 
 So here is the promised definition of `ProductName`:
 
@@ -45,9 +45,9 @@ Using the comments, I divided the class into sections and will describe them in 
 
 ## Class signature
 
-There are two things to note about the class signature. The first one is that the class is `sealed` (in Java that would be `final`), i.e. I disallow inheriting from it. This is because I want the ojects of this class to be immutable. On the first sight, sealing the class has nothing to do with immutability. I will explain it in the next chapter when I discuss the aspects of value object design.
+There are two things to note about the class signature. The first one is that the class is `sealed` (in Java that would be `final`), i.e. I disallow inheriting from it. This is because I want the objects of this class to be immutable. At first sight, sealing the class has nothing to do with immutability. I will explain it in the next chapter when I discuss the aspects of value object design.
 
-The second thing to note is that the class implements an `IEquatable` interface that adds more strongly typed versions of the `Equals(T object)` method. This is not strictly required as in C#, every object has a default `Equals(Object o)` method, but is typically considered a good practice since it allows e.g. more efficient use of value objects with C# collections such as `Dictionary`[^whyuseequatable].
+The second thing to note is that the class implements an `IEquatable` interface that adds more strongly typed versions of the `Equals(T object)` method. This is not strictly required as in C#, every object has a default `Equals(Object o)` method, but is typically considered good practice since it allows e.g. more efficient use of value objects with C# collections such as `Dictionary`[^whyuseequatable].
 
 ## Hidden data
 
@@ -60,11 +60,11 @@ private string _value;
  Only the methods we publish can be used to operate on the state. This is useful for three things:
 
 1. To restrict allowed operations to what we think makes sense to do with a product name. Everything else (i.e. what we think does not make sense to do) is not allowed. 
-2. To achieve immutability of `ProductName` instances (more on why we want the type to be immutable later), which means that when we create an instance, we cannot modify it. If the `_value` field was public, everyone could modify the state of `ProductName` instance by writing something like:
+1. To achieve immutability of `ProductName` instances (more on why we want the type to be immutable later), which means that when we create an instance, we cannot modify it. If the `_value` field was public, everyone could modify the state of `ProductName` instance by writing something like:
   ```csharp
   productName.data = "something different";
   ```
-3. To protect against creating a product name with an invalid state. When creating a product name, we have to pass a string with containing a name through a static `For()` method that can perform the validation (more on this later). If there are no other ways we can set the name, we can rest assured that the validation will happen every time someone wants to create a `ProductName`.
+1. To protect against creating a product name with an invalid state. When creating a product name, we have to pass a string containing a name through a static `For()` method that can perform the validation (more on this later). If there are no other ways we can set the name, we can rest assured that the validation will happen every time someone wants to create a `ProductName`.
 
 ## Hidden constructor
 
@@ -88,7 +88,7 @@ Let's answer them one by one.
 
 The `ProductName` class contains a special static factory method, called `For()`. It invokes the constructor and handles all input parameter validations[^isnullorempty]. An example implementation could be:
 
-```
+```csharp
 public static ProductName For(string value)
 {
   if(string.IsNullOrWhiteSpace(value))
@@ -105,49 +105,49 @@ public static ProductName For(string value)
 }
 ```
 
-There are several reasons for not exposing a constructor directly, but use a static factory method instead. Below, I briefly describe some of them. 
+There are several reasons for not exposing a constructor directly but use a static factory method instead. Below, I briefly describe some of them.
 
 #### Explaining intention
 
 Just like factories, static factory methods help explaining intention, because, unlike constructors, they can have names, while constructors have the constraint of being named after their class[^constructorsdynamic]. One can argue that the following:
-   
+
  ```csharp
  ProductName.For("super laptop X112")
  ```
-   
+
  is not that more readable than:
-      
+
  ```csharp
  new ProductName("super laptop X112");
  ```
-   
- but note that in our example, we have a single, simple factory method. The benefit would be more visible when we would need to support an additional way of creating a product name. Let's assume that in above example of "super laptop X112", the "super laptop" is a model and "X112" is a specific configuration (since the same laptop models are often sold in several different configurations, with more or less RAM, different operating systems etc.) and we find it comfortable to pass these two pieces of information as separate arguments in some places (e.g. because we may obtain them from different sources) and let the `ProductName` combine them. If we used a constructor for that, we would write:
-   
+
+ but note that in our example, we have a single, simple factory method. The benefit would be more visible when we would need to support an additional way of creating a product name. Let's assume that in above example of "super laptop X112", the "super laptop" is a model and "X112" is a specific configuration (since the same laptop models are often sold in several different configurations, with more or less RAM, different operating systems, etc.) and we find it comfortable to pass these two pieces of information as separate arguments in some places (e.g. because we may obtain them from different sources) and let the `ProductName` combine them. If we used a constructor for that, we would write:
+
  ```csharp
  // assume model is "super laptop"
  // and configuration is "X112"
  new ProductName(model, configuration)
  ```
-   
+
  On the other hand, we can craft a factory method and say:
 
  ```csharp
  ProductName.CombinedOf(model, configuration)
- ```   
-   
+ ```
+
  which reads more fluently. Or, if we like to be super explicit:
-   
+
  ```csharp
  ProductName.FromModelAndConfig(model, configuration)
  ```
 
- which is not my favourite way of writing code, because I don't like repeating the same information in method name and argument names. I wanted to show you that we can do this if we want though.
+ which is not my favorite way of writing code, because I don't like repeating the same information in method name and argument names. I wanted to show you that we can do this if we want though.
 
-I met a lot developers that find using factory methods somehow unfamiliar, but the good news is that factory methods for value objects are getting more and more mainstream. Just to give you two examples, `TimeSpan` type in C# uses them (e.g. we can write `TimeSpan.FromSeconds(12)` and `Period` type in Java (e.g. `Period.ofNanos(2222)`). 
+I met a lot of developers that find using factory methods somehow unfamiliar, but the good news is that factory methods for value objects are getting more and more mainstream. Just to give you two examples, `TimeSpan` type in C# uses them (e.g. we can write `TimeSpan.FromSeconds(12)` and `Period` type in Java (e.g. `Period.ofNanos(2222)`).
 
 #### Ensuring consistent initialization of objects
 
-In case where we have different ways of initializing an object that share a common part (i.e. whichever way we choose, part of the initialization must always be done the same), having several constructors that delegate to one common seems like a good idea. For example, we can have two constructors, one delegating to the other, that holds a common initialization logic:
+In the case where we have different ways of initializing an object that all share a common part (i.e. whichever way we choose, part of the initialization must always be done the same), having several constructors that delegate to one common seems like a good idea. For example, we can have two constructors, one delegating to the other, that holds a common initialization logic:
 
 ```csharp
 // common initialization logic
@@ -165,7 +165,7 @@ public ProductName(string model, string configuration)
 
 Thanks to this, the field `_value` is initialized in a single place and we have no duplication.
 
-The issue with this approach is this binding between constructors is not enforced - we can use it if we want, otherwise we can skip it. For example, we can as well use a totally separate set of fields in each constructor:
+The issue with this approach is this binding between constructors is not enforced - we can use it if we want, otherwise, we can skip it. For example, we can as well use a separate set of fields in each constructor:
 
 ```csharp
 public ProductName(string value)
@@ -179,7 +179,7 @@ public ProductName(string model, string configuration)
 }
 ```
 
-which leaves room for mistakes - we might forget to initialize all the fields all the time and allow creating objects with invalid state.
+which leaves room for mistakes - we might forget to initialize all the fields all the time and allow creating objects with an invalid state.
 
 I argue that using several static factory methods while leaving just a single constructor is safer in that it enforces every object creation to pass through this single constructor. This constructor can then ensure all fields of the object are properly initialized. There is no way in such case that we can bypass this constructor in any of the static factory methods, e.g.:
 
@@ -218,7 +218,7 @@ public static ProductName For(string value)
 }
 ```
 
-and note that it contains some input validation, while the constructor did not. Is it a wise decision to move the validation to such a method and leave constructor for just assigning fields? The answer to this questions depends on the answer to another one: are there cases where we do not want to validate constructor arguments? If no, then the validation should go to the constructor, as its purpose is to ensure an object is properly initialized.
+and note that it contains some input validation, while the constructor did not. Is it a wise decision to move the validation to such a method and leave constructor only for assigning fields? The answer to this question depends on the answer to another one: are there cases where we do not want to validate constructor arguments? If no, then the validation should go to the constructor, as its purpose is to ensure an object is properly initialized.
 
 Apparently, there are cases when we want to keep validations out of the constructor. Consider the following case: we want to create bundles of two product names as one. For this purpose, we introduce a new method on `ProductName`, called `BundleWith()`, which takes another product name:
 
@@ -230,12 +230,12 @@ public ProductName BundleWith(ProductName other)
 }
 ```
 
-Note that the `BundleWith()` method doesn't contain any validations but instead just calls the constructor. It is safe to do so in this case, because we know that:
+Note that the `BundleWith()` method doesn't contain any validations but instead just calls the constructor. It is safe to do so in this case because we know that:
 
-1. The string will be neither null nor empty, since we are appending values of both product names to the constant value of `"Bundle: "`. The result of such append operation will never give us an empty string or a `null`.
-2. The `_value` fields of both `this` and the `other` product name components must be valid, because if they were not, the two product names that contain those values would fail to be created in the first place.
+1. The string will be neither null nor empty since we are appending the values of both product names to the constant value of `"Bundle: "`. The result of such an append operation will never give us an empty string or a `null`.
+2. The `_value` fields of both `this` and the `other` product name components must be valid because if they were not, the two product names that contain those values would fail to be created in the first place.
 
-This was a case where we didn't need the validation because we were sure the input was valid. There may be another case - when it is more convenient for a static factory method to provide a validation on its own. Such validation may be more detailed and helpful as it is in a factory method made for specific case and knows more about what this case is. For example, let's look at  the method we already saw for combining the model and configuration into a product name. If we look at it again (it does not contain any validations yet):
+This was a case where we didn't need the validation because we were sure the input was valid. There may be another case - when it is more convenient for a static factory method to provide validation on its own. Such validation may be more detailed and helpful as it is in a factory method made for a specific case and knows more about what this case is. For example, let's look at the method we already saw for combining the model and configuration into a product name. If we look at it again (it does not contain any validations yet):
 
 ```csharp
 public ProductName CombinedOf(string model, string configuration)
@@ -244,7 +244,7 @@ public ProductName CombinedOf(string model, string configuration)
 }
 ```
 
-We may argue that this method would benefit from a specialized set of validations, because probably both model and configuration need to be validated separately (by the way, it sometimes may be a good idea to create value objects for model and configuration as well - it depends on where we get them and how we use them). We could then go as far as to throw a different exception for each case, e.g.:
+We may argue that this method would benefit from a specialized set of validations because probably both model and configuration need to be validated separately (by the way, it sometimes may be a good idea to create value objects for model and configuration as well - it depends on where we get them and how we use them). We could then go as far as to throw a different exception for each case, e.g.:
 
 ```csharp
 public ProductName CombinedOf(string model, string configuration)
@@ -265,11 +265,11 @@ public ProductName CombinedOf(string model, string configuration)
 
 What if we need the default validation in some cases? We can still put them in a common factory method and invoke it from other factory methods. This looks a bit like going back to the problem with multiple constructors, but I'd argue that this issue is not as serious - in my mind, the problem of validations is easier to spot than mistakenly missing a field assignment as in the case of constructors. You may have different preferences though.
 
-Remember we asked two questions and I have answered just one of them. Thankfully, the other one - why the constructor is private not public - is much easier to answer now. 
+Remember we asked two questions and I have answered just one of them. Thankfully, the other one - why the constructor is private, not public - is much easier to answer now.
 
 ### Why private and not public?
 
-My personal reasons for it are: validation and separating use from construction.
+My reasons for it are: validation and separating use from construction.
 
 #### Validation
 
@@ -277,7 +277,7 @@ Looking at the constructor of `ProductName` - we already discussed that it does 
 
 #### Separating use from construction[^essentialskills]
 
-I already mentioned that most of the time, we do not want to use polymorphism for values, as they do not play any roles that other objects can fill. Even though, I consider it wise to reserve some degree of flexibility to be able to change our decision more easily in the future, especially when the cost of the flexibility is very low. 
+I already mentioned that most of the time, we do not want to use polymorphism for values, as they do not play any roles that other objects can fill. Even though, I consider it wise to reserve some degree of flexibility to be able to change our decision more easily in the future, especially when the cost of the flexibility is very low.
 
 Static factory methods provide more flexibility when compared to constructors. For example, when we have a static factory method like this:
 
@@ -293,7 +293,7 @@ and all our code depends on it for creating product names rather than on the con
 
 ## String conversion methods
 
-The overridden version of `ToString()` usually returns the internally held value or its string representation. It can be used to interact with third party APIs or other code that does not know about our `ProductName` type. For example, if we want to save the product name inside the database, the database API has no idea about `ProductName`, but rather accepts library types such as strings, numbers etc. In such case, we can use `ToString()` to make passing the product name possible:
+The overridden version of `ToString()` usually returns the internally held value or its string representation. It can be used to interact with a third party APIs or other code that does not know about our `ProductName` type. For example, if we want to save the product name inside the database, the database API has no idea about `ProductName`, but rather accepts library types such as strings, numbers, etc. In such a case, we can use `ToString()` to make passing the product name possible:
 
 ```csharp
 // let's assume that we have a variable 
@@ -309,7 +309,7 @@ database.Save(dataRecord);
 
 Things get more complicated when a value object has multiple fields or when it wraps another type like `DateTime` or an `int` - we may have to implement other accessor methods to obtain this data. `ToString()` can then be used for diagnostic purposes to allow printing user-friendly data dump.
 
-Apart from the overridden `ToString()`, our `ProductName` type has an overload with signature `ToString(Format format)`. This version of `ToString()` is not inherited from any other class, so it's a method we made to fit our goals. The `ToString()` name is used only out of convenience, as the name is good enough to describe what the method does and it feels familiar. Its purpose is to  be able to format the product name differently for different outputs, e.g. reports and on-screen printing. True, we could introduce a special method for each of the cases (e.g. `ToStringForScreen()` and `ToStringForReport()`), but that could make the `ProductName` know too much about how it is used - we would have to extend the type with new methods every time we wanted to print it differently. Instead, the `ToString()` accepts a `Format` (which is an interface,  by the way) which gives us a bit more flexibility.
+Apart from the overridden `ToString()`, our `ProductName` type has an overload with signature `ToString(Format format)`. This version of `ToString()` is not inherited from any other class, so it's a method we made to fit our goals. The `ToString()` name is used only out of convenience, as the name is good enough to describe what the method does and it feels familiar. Its purpose is to be able to format the product name differently for different outputs, e.g. reports and on-screen printing. True, we could introduce a special method for each of the cases (e.g. `ToStringForScreen()` and `ToStringForReport()`), but that could make the `ProductName` know too much about how it is used - we would have to extend the type with new methods every time we wanted to print it differently. Instead, the `ToString()` accepts a `Format` (which is an interface,  by the way) which gives us a bit more flexibility.
 
 When we need to print the product name on screen, we can say:
 
@@ -334,7 +334,7 @@ ProductName.For("a").Equals(ProductName.For("a"));
 ProductName.For("a") == ProductName.For("a");
 ```
 
-to return `true`, since the state of the compared objects is the same despite them being separate instances in terms of references. In Java, of course, we can only override `equals()` method - we are unable to override equality operators as their behavior is fixed to comparing references (with the exception of primitive types), but Java programmers are so used to this, that it's rarely a problem.
+to return `true`, since the state of the compared objects is the same despite them being separate instances in terms of references. In Java, of course, we can only override `equals()` method - we are unable to override equality operators as their behavior is fixed to comparing references (except primitive types), but Java programmers are so used to this, that it's rarely a problem.
 
 One thing to note about the implementation of `ProductName` is that it implements `IEquatable<ProductName>` interface. In C#, overriding this interface when we want to have value semantics is considered a good practice. The `IEquatable<T>` interface is what forces us to create a strongly typed `Equals()` method:
 
@@ -342,9 +342,9 @@ One thing to note about the implementation of `ProductName` is that it implement
 public bool Equals(ProductName other);
 ```
 
-while the one inherited from `object` accepts an `object` as a parameter. The use and existence of `IEquatable<T>` interface is mostly C#-specific, so I won't go into the details here, but you can always [look it up in the documentation](https://msdn.microsoft.com/en-us/library/ms131187.aspx). 
+while the one inherited from `object` accepts an `object` as a parameter. The use and existence of `IEquatable<T>` interface are mostly C#-specific, so I won't go into the details here, but you can always [look it up in the documentation](https://msdn.microsoft.com/en-us/library/ms131187.aspx).
 
-When we override `Equals()`, the `GetHashCode()` method needs to be overridden as well. The rule is that all objects that are considered equal should return the same hash code and all objects considered not equal should return different hash codes. The reason is that hash codes are used to intentify objects in hash tables or hash sets - these data structures won't work properly with values if `GetHashCode()` is not properly implemented. That would be too bad, because values are often used as keys in various hash-based dictionaries.
+When we override `Equals()`, the `GetHashCode()` method needs to be overridden as well. The rule is that all objects that are considered equal should return the same hash code and all objects considered not equal should return different hash codes. The reason is that hash codes are used to identify objects in hash tables or hash sets - these data structures won't work properly with values if `GetHashCode()` is not properly implemented. That would be too bad because values are often used as keys in various hash-based dictionaries.
 
 ## The return of investment
 
@@ -355,13 +355,13 @@ Looking into the `ProductName` anatomy, it may seem like it's a lot of code just
 To answer that, I'd like to get back to our original problem with product names and remind you that I introduced a value object to limit the impact of some changes that could occur to the codebase where product names are used. As it's been a long time, here are the changes that we wanted to impact our code as little as possible:
 
 1. Changing the comparison of product names to case-insensitive
-2. Changing the comparison to take into account not only a product name, but also a configuration in which a product is sold.
+2. Changing the comparison to take into account not only a product name but also a configuration in which a product is sold.
 
 Let's find out whether introducing a value object would pay off in these cases.
 
 ### First change - case-insensitivity
 
-This one is easy to perform - we just have to modify the equality operators, `Equals()` and `GetHashCode()` operations, so that they treat names with the same content in different letter case equal. I won't go over the code now as it's not too interesting, I hope you imagine how that implementation would look like. We would need to change all comparisons between strings to use an option to ignore case, e.g. `OrdinalIgnoreCase`. This would need to happen only inside the `ProductName` class as it's the only one that knows how what it means for two product names to be equal. This means that the encapsulation we've introduced with out `ProductName` class has paid off.
+This one is easy to perform - we just have to modify the equality operators, `Equals()` and `GetHashCode()` operations, so that they treat names with the same content in different letter case equal. I won't go over the code now as it's not too interesting, I hope you imagine how that implementation would look like. We would need to change all comparisons between strings to use an option to ignore case, e.g. `OrdinalIgnoreCase`. This would need to happen only inside the `ProductName` class as it's the only one that knows how what it means for two product names to be equal. This means that the encapsulation we've introduced without `ProductName` class has paid off.
 
 ### Second change - additional identifier
 
@@ -405,13 +405,13 @@ The last part of this change is to modify equality operators, `Equals()` and `Ge
 
 ## Summary
 
-So far, we have talked about value objects using a specific example of product names. I hope you now have a feel of how such objects can be useful. The next chapter will complement the description of value objects by explaining some of their general properties.   
+So far, we have talked about value objects using a specific example of product names. I hope you now have a feel of how such objects can be useful. The next chapter will complement the description of value objects by explaining some of their general properties.
 
-[^isnullorempty]: By the way, the code contains a call to `IsNullOrEmpty()`. There are several valid arguments against using this method, e.g. by Mark Seemann (http://blog.ploeh.dk/2014/11/18/the-isnullorwhitespace-trap/), but in this case, I put it in to make the code shorter as the validation logic itself is not that important at the moment. 
+[^isnullorempty]: By the way, the code contains a call to `IsNullOrEmpty()`. There are several valid arguments against using this method, e.g. by Mark Seemann (http://blog.ploeh.dk/2014/11/18/the-isnullorwhitespace-trap/), but in this case, I put it in to make the code shorter as the validation logic itself is not that important at the moment.
 
 [^essentialskills]: A. Shalloway et al., Essential Skills For The Agile Developer.
 
-[^constructorsdynamic]: This is literally true for languages like Java, C# or C++. There are other languages (like Ruby), with different rules regarding object construction. Still, the original argument - that the naming of methods responsible for object creation is constrained - holds.
+[^constructorsdynamic]: This is true for languages like Java, C# or C++. There are other languages (like Ruby), with different rules regarding object construction. Still, the original argument - that the naming of methods responsible for object creation is constrained - holds.
 
 [^whyuseequatable]: https://stackoverflow.com/questions/2734914/whats-the-difference-between-iequatable-and-just-overriding-object-equals
 

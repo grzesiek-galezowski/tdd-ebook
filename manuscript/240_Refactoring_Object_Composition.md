@@ -772,7 +772,7 @@ public ConfigurationUpdates ConfigurationUpdates(
 }
 ```
 
-Note that the `TracedConfigurationUpdates` is not important from the point of view of composition -- it is pure infrastructure code, not a new domain rule. Because of that, it may be a good idea to hide it inside the factory method.
+Note that the `TracedConfigurationUpdates` is not important from the point of view of the composition -- it is pure infrastructure code, not a new domain rule. Because of that, it may be a good idea to hide it inside the factory method.
 
 ## Summary
 

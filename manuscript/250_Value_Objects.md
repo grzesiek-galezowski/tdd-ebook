@@ -2,13 +2,13 @@
 
 I spent several chapters talking about composing objects in a web where real implementation was hidden and only interfaces were exposed. These objects exchanged messages and modeled roles in our domain.
 
-However, this is just one part of object-oriented design approach that I'm trying to explain. Another part of the object-oriented world, complementary to what we have been talking about, are values. They have their own set of design constraints and ideas, so most of the concepts from the previous chapters do not apply to them,or apply in a different way.
+However, this is just one part of the object-oriented design approach that I'm trying to explain. Another part of the object-oriented world, complementary to what we have been talking about are value objects. They have their own set of design constraints and ideas, so most of the concepts from the previous chapters do not apply to them, or apply differently.
 
-## What is a value?
+## What is a value object?
 
-In short, values are usually seen as immutable quantities, measurements[^goosvalues] or other objects that are compared by their content, not their identity. There are some examples of values in the libraries of our programming languages. For example, `String` class in Java or C# is a value, because it is immutable and every two strings are considered equal when they contain the same data. Other examples are the primitive types that are built-in into most programming languages, like numbers or characters.
+In short, values are usually seen as immutable quantities, measurements[^goosvalues] or other objects that are compared by their content, not their identity. There are some examples of values in the libraries of our programming languages. For example, `String` class in Java or C# is a value object because it is immutable and every two strings are considered equal when they contain the same data. Other examples are the primitive types that are built-in into most programming languages, like numbers or characters.
 
-Most of the values that are shipped with general-purpose libraries are quite primitive or general. There are many times, however, when we want to model a domain abstraction as a value. Some examples include date and time (which nowadays is usually a part of the standard library, because it is usable in so many domains), money, temperature, but also things such as file paths or resource identifiers.
+Most of the values that are shipped with general-purpose libraries are quite primitive or general. There are many times, however, when we want to model a domain abstraction as a value object. Some examples include date and time (which nowadays is usually a part of the standard library, because it is usable in so many domains), money, temperature, but also things such as file paths or resource identifiers.
 
 As you may have already spotted when reading this book, I'm really bad at explaining things without examples, so here is one:
 
@@ -53,11 +53,11 @@ From now on, let's put the money concept aside and focus only on the product nam
 
 To support new requirements, we have to find all places where we use the product name (by the way, an IDE will not help us much in this search, because we would be searching for all the occurrences of type `string`) and make the same change. Every time we need to do something like this (i.e. we have to make the same change in multiple places an there is a non-zero possibility we'll miss at least one of those places), it means that we have introduced redundancy. Remember? We talked about redundancy when discussing factories and mentioned that redundancy is about conceptual duplication that forces us to make the same change (not literally, but conceptually) in several places.
 
-Al Shalloway coined a humouristic "law" regarding redundancy, called *The Shalloway's Law*, which says:
+Al Shalloway coined a humorous "law" regarding redundancy, called *The Shalloway's Law*, which says:
 
 > Whenever the same change needs to be applied in N places and N > 1, Shalloway will find at most N-1 such places.
 
-An example of an application of this law would be:
+An example application of this law would be:
 
 > Whenever the same change needs to be applied in 4 places, Shalloway will find at most 3 such places.
 
@@ -98,7 +98,7 @@ This deals with the problem, at least for now, but in the long run, it can cause
 
 1. [It will be very hard](http://www.netobjectives.com/blogs/shalloway%E2%80%99s-law-and-shalloway%E2%80%99s-principle) to find all these places and chances are you'll miss at least one. This is an easy way for a bug to creep in.
 1. Even if this time you'll be able to find and correct all the places, every time the domain logic for product name comparisons changes (e.g. we'll have to use `InvariantIgnoreCase` option instead of `OrdinalIgnoreCase` for some reasons, or handle the case I mentioned earlier where comparison includes an identifier of a product), you'll have to do it over. And Shalloway's Law applies the same every time. In other words, you're not making things better.
-1. Everyone who adds new logic that needs to compare product names in the future, will have to remember that character case is ignored in such comparisons. Thus, they will need to keep in mind that they should use `OrdinalIgnoreCase` option whenever they add new comparisons somewhere in the code. If you want to know my opinion, accidental violation of this convention in a team that has either a fair size or more than minimal staff turnover rate is just a matter of time.
+1. Everyone who adds new logic that needs to compare product names in the future will have to remember that character case is ignored in such comparisons. Thus, they will need to keep in mind that they should use `OrdinalIgnoreCase` option whenever they add new comparisons somewhere in the code. If you want to know my opinion, accidental violation of this convention in a team that has either a fair size or more than minimal staff turnover rate is just a matter of time.
 1. Also, there are other changes that will be tied to the concept of product name equality in a different way (for example, hash sets and hash tables use hash codes to help find the right objects) and you'll need to find those places and make changes there as well.
 
 So, as you can see, this approach does not make things any better. It is this approach that led us to the trouble we are trying to get away in the first place.
@@ -113,7 +113,7 @@ if(ProductNameComparison.AreEqual(productName, productName2))
 ..
 ```
 
-Note that the details of what it means to compare two product names is now hidden inside the newly created static `AreEqual()` method. This method has become the only place that has knowledge of these details and each time the comparison needs to be changed, we have to modify this method alone. The rest of the code just calls this method without knowing what it does, so it won't need to change. This frees us from having to search and modify this code each time the comparison logic changes.
+Note that the details of what it means to compare two product names are now hidden inside the newly created static `AreEqual()` method. This method has become the only place that knows these details and each time the comparison needs to be changed, we have to modify this method alone. The rest of the code just calls this method without knowing what it does, so it won't need to change. This frees us from having to search and modify this code each time the comparison logic changes.
 
 However, while it protects us from the change of comparison logic indeed, it's still not enough. Why? Because the concept of a product name is still not encapsulated - a product name is still a `string` and it allows us to do everything with it that we can do with any other `string`, even when it does not make sense for product names. This is because, in the domain of the problem, product names are not sequences of characters (which `strings`s are), but an abstraction with a special set of rules applicable to it. By failing to model this abstraction appropriately, we can run into a situation where another developer who starts adding some new code may not even notice that product names need to be compared differently than other strings and just use the default comparison of a `string` type.
 
