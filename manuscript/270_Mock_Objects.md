@@ -1,6 +1,6 @@
 # Mock Objects as a testing tool
 
-Remember one of the first chapters of this book, where I introduced mock objects and mentioned that I had lied to you about their true purpose and nature? Now that we have a lot more knowledge on object-oriented design (at least on a specific, opinionated view on it), we can truly understand where mocks come from and what thay are for.
+Remember one of the first chapters of this book, where I introduced mock objects and mentioned that I had lied to you about their true purpose and nature? Now that we have a lot more knowledge of object-oriented design (at least on a specific, opinionated view on it), we can truly understand where mocks come from and what they are for.
 
 In this chapter, I won't say anything about the role of mock objects in test-driving object-oriented code yet. For now, I want to focus on justifying their place in the context of testing objects written in the style that I described in part 2.
 
@@ -37,7 +37,7 @@ public class DataDispatch
 
 The rest of this chapter will focus on dissecting the behaviors of `DataDispatch` and their context.
 
-I will start describing this context by looking at interface used by `DataDispatch`.
+I will start describing this context by looking at the interface used by `DataDispatch`.
 
 ## Interfaces
 
@@ -52,7 +52,7 @@ public interface Channel
 }
 ```
 
-An implementation of `Channel` is passed into the constructor of `DataDispatch`. In other words, `DataDispatch` can be composed with anything that implements `Channel` interface. At least from compiler point of view. This is because, as I mentioned in the last part, for two composed objects to be able to work together successfully, interfaces are not enough. They also have to establish and follow a protocol.
+An implementation of `Channel` is passed into the constructor of `DataDispatch`. In other words, `DataDispatch` can be composed with anything that implements `Channel` interface. At least from the compiler's point of view. This is because, as I mentioned in the last part, for two composed objects to be able to work together successfully, interfaces are not enough. They also have to establish and follow a protocol.
 
 ## Protocols
 
@@ -66,7 +66,7 @@ The first protocol is between `DataDispatch` and the code that uses it, i.e. the
 dataDispatch.Send(messageInBytes);
 ```
 
-or there would be no reason for `DataDispatch` to exist. Looking further into this protocol, we can note that `DataDispatch` does not require too much from its users -- it doesn't have any kind of return value. The only feedback it gives to the code that uses it is rethrowing any exception raised by a channel, so the user code must be prepared to handle the exception. Note that `DataDispatch` neither knows nor defines the kinds of exceptions that can be thrown. This is a responsibility of a particular channel implementation. The same goes for deciding under which condition should an exception be thrown.
+or there would be no reason for `DataDispatch` to exist. Looking further into this protocol, we can note that `DataDispatch` does not require too much from its users -- it doesn't have any kind of return value. The only feedback it gives to the code that uses it is rethrowing any exception raised by a channel, so the user code must be prepared to handle the exception. Note that `DataDispatch` neither knows nor defines the kinds of exceptions that can be thrown. This is the responsibility of a particular channel implementation. The same goes for deciding under which condition should an exception be thrown.
 
 ### Protocol between `DataDispatch` and `Channel`
 
@@ -123,7 +123,7 @@ The behaviors of `DataDispatch` defined in terms of this context are:
   AND close the connection anyway
   ```
 
-For the remainder of this chapter I will focus on the first behavior as our goal for now is not to create a complete Specification of DataDispatch class, but rather to observe some mechanics of mock objects as a testing tool.
+For the remainder of this chapter, I will focus on the first behavior as our goal for now, is not to create a complete Specification of DataDispatch class, but rather to observe some mechanics of mock objects as a testing tool.
 
 ## Filling in the roles
 
@@ -153,7 +153,7 @@ Next, who is going to be the user of the `DataDispatch` class? For this question
 Statement body -> DataDispatch (concrete class) -> Channel?
 ```
 
-Now, the last element is to decide who is going to play the role of channel. We can express this problem with the following, unfinished Statement (I marked all the current unknowns with a double question mark: `??`):
+Now, the last element is to decide who is going to play the role of a channel. We can express this problem with the following, unfinished Statement (I marked all the current unknowns with a double question mark: `??`):
 
 ```csharp
 [Fact] public void
@@ -196,7 +196,7 @@ Note that the only part of this environment that comes from production code is t
 
 ## Using a mock channel
 
-I hope you remember the NSubstitute library for creating mock objects that I introduced way back at the beginning of the book. We can use it now to quickly create an implementation of `Channel` that behaves the way we like, allows easy verification of protocol and between `Dispatch` and `Channel` and introduces as minimal number of side effects as possible.
+I hope you remember the NSubstitute library for creating mock objects that I introduced way back at the beginning of the book. We can use it now to quickly create an implementation of `Channel` that behaves the way we like, allows easy verification of protocol and between `Dispatch` and `Channel` and introduces the minimal number of side effects.
 
 By using this mock to fill the gaps in our Statement, this is what we end up with:
 
@@ -272,8 +272,8 @@ The Statement will turn false (i.e. will fail).
 
 What we did in the above example was to put our `DataDispatch` in a context that was most trustworthy, convenient and frictionless for us to use in our Statement.
 
-Some say that specifying object interactions in context of mocks is "specifying in isolation" and that providing such mock dependencies is "isolating" the class from its "real" dependencies. I don't identify with this point of view very much. From the point of view of a specified class, mocks are yet another context -- they are neither better, nor worse, they are neither more nor less real than other contexts we want to put our `Dispatch` in. Sure, this is not the context in which it runs in production, but we may have other situations than mere production work -- e.g. we may have a special context for demos, where we count sent packets and show the throughput on a GUI screen. We may also have a debugging context that in each method, before passing the control to a production code, writes a trace message to a log. The `DataDispatch` class may be used in the production code in several contexts at the same time. We may dispatch data through network, to a database and to a file all at the same time in our application and the `DataDispatch` class may be used in all these scenarios, each time connected to a different implementation of `Channel` and used by a different piece of code.
+Some say that specifying object interactions in the context of mocks is "specifying in isolation" and that providing such mock dependencies is "isolating" the class from its "real" dependencies. I don't identify with this point of view very much. From the point of view of a specified class, mocks are yet another context -- they are neither better, nor worse, they are neither more nor less real than other contexts we want to put our `Dispatch` in. Sure, this is not the context in which it runs in production, but we may have other situations than mere production work -- e.g. we may have a special context for demos, where we count sent packets and show the throughput on a GUI screen. We may also have a debugging context that in each method, before passing the control to production code, writes a trace message to a log. The `DataDispatch` class may be used in the production code in several contexts at the same time. We may dispatch data through the network, to a database and a file all at the same time in our application and the `DataDispatch` class may be used in all these scenarios, each time connected to a different implementation of `Channel` and used by a different piece of code.
 
 ## Summary
 
-The goal of this chapter was only to show you how mock objects fit into testing code written in a "tell don't ask" style, focusing on roles, responsibilities, behaviors, interfaces and protocols of objects. This example was meant as something you could easily understand, not as a showcase for TDD using mocks. For one more chapter, we will work on this toy example and then I will try to show you how I apply mock objects in more interesting cases.
+The goal of this chapter was only to show you how mock objects fit into testing code written in a "tell don't ask" style, focusing on roles, responsibilities, behaviors, interfaces, and protocols of objects. This example was meant as something you could easily understand, not as a showcase for TDD using mocks. For one more chapter, we will work on this toy example and then I will try to show you how I apply mock objects in more interesting cases.

@@ -2,7 +2,7 @@
 
 A> ## Status: under development
 A>
-A> I am in progress of writing this part. Still, there are several chapters that are already available for reading and pretty stable. I look forward to receiving your feedback!
+A> I am in progress of writing this part. Still, several chapters are already available for reading and pretty stable. I look forward to receiving your feedback!
 
 So far, we've talked a lot about the object-oriented world, consisting of objects that exhibit the following properties:
 
@@ -13,12 +13,12 @@ So far, we've talked a lot about the object-oriented world, consisting of object
 
 The world of objects is complemented by the world of values that exhibit the following characteristics:
 
-1. Values represent quantities, measurements and other discrete pieces of data that we want to name, combine with each other, transform and pass along. Examples are: dates, strings, money, time durations, path values, numbers, etc.
+1. Values represent quantities, measurements and other discrete pieces of data that we want to name, combine, transform and pass along. Examples are dates, strings, money, time durations, path values, numbers, etc.
 1. Values are compared based on their data, not their references. Two values containing the same data are considered equal.
 1. Values are immutable - when we want to have a value like another one, but with one aspect changed, we create a new value containing this change based on the previous value and the previous value remains unchanged.
 1. Values do not (typically) rely on polymorphism - if we have several value types that need to be used interchangeably, the usual strategy is to provide explicit conversion methods between those types.
 
-There are times when choosing whether something should be an object or a value poses a problem (I ran into situations when I modelled the same concept as a value in one application and as an object in another), so there is no strict rule on how to choose and, additionally, different people have different preferences.
+There are times when choosing whether something should be an object or a value poses a problem (I ran into situations when I modeled the same concept as a value in one application and as an object in another), so there is no strict rule on how to choose and, additionally, different people have different preferences.
 
 This joint world is the world we are going to fit mock objects and other TDD practices into in the next part.
 
