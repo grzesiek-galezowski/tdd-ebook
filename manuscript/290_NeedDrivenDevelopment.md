@@ -1,10 +1,10 @@
 # Test-driving at the input boundary
 
-In this chapter, we'll be joining Johnny and Benjamin again as they try to test-drive a system starting from its input boundaries. This will hopefully show a picture of how abstractions are pulled from need and how roles are invented at the boundary of a system. The further chapters will explore domain model. This example makes several assumptions:
+In this chapter, we'll be joining Johnny and Benjamin again as they try to test-drive a system starting from its input boundaries. This will hopefully show a picture of how abstractions are pulled from need and how roles are invented at the boundary of a system. The further chapters will explore the domain model. This example makes several assumptions:
 
 1. In this story, Johnny is a super programmer, who never makes mistakes. In real-life TDD, people make mistakes and correct them, sometimes they go back and forth thinking about tests and design. Here, Johnny gets everything right the first time. Although I know this is a drop on realism, I hope that it will help my readers in observing how some TDD mechanics work. This is also why Johnny and Benjamin will not need to refactor anything in this chapter.
 1. There will be no Statements written on higher than unit level. This means that Johnny and Benjamin will do TDD using unit-level Statements only. This is why they will need to do some things they could avoid if they could write a higher-level Statement. A separate part of this book will cover working with different levels of Statements at the same time.
-1. This chapter (and several next ones) will avoid the topic of working with any I/O, randomness and other hard to test stuff. For now I want to focus on test-driving pure code-based logic.
+1. This chapter (and several next ones) will avoid the topic of working with any I/O, randomness and other hard to test stuff. For now, I want to focus on test-driving pure code-based logic.
 
 With all of that out of our way, let's join Johnny and Benjamin and see what kind of issue they are dealing with and how they try to solve it using TDD.
 
@@ -12,17 +12,17 @@ With all of that out of our way, let's join Johnny and Benjamin and see what kin
 
 **Johnny:** What do you think about trains, Benjamin?
 
-**Benjamin:** Are you asking because I was travelling by train yesterday to get here? Well, I like it, especially after some of the changes that happened over the recent years. I truly think that today's railways are modern and passenger-friendly.
+**Benjamin:** Are you asking because I was traveling by train yesterday to get here? Well, I like it, especially after some of the changes that happened over the recent years. I truly think that today's railways are modern and passenger-friendly.
 
 **Johnny:** And about the seat reservation process?
 
 **Benjamin:** Oh yeah, that... I mean, why didn't they still automate the process? Is this even thinkable that in the 21st century I cannot reserve a seat through the internet?
 
-**Johnny:** I kinda hoped you'd say that, because our next assignment is to do exactly that.
+**Johnny:** I kinda hoped you'd say that because our next assignment is to do exactly that.
 
 **Benjamin:** You mean reserving seats through the internet?
 
-**Johnny:** Yes, the railroads company hired us.
+**Johnny:** Yes, the railroad company hired us.
 
 **Benjamin:** You're kidding me, right?
 
@@ -80,15 +80,15 @@ public class ReservationRequestDto
 
 **Johnny:** The client tells us how many seats we need to reserve, but doesn't tell us where. This is why there's only a `seatCount` parameter. We are the ones who determine which seats to pick.
 
-**Benjamin:** So if a couple wants to reserve two steas, they can be in different coaches?
+**Benjamin:** So if a couple wants to reserve two seats, they can be in different coaches?
 
 **Johnny:** Yes, however, there are some preference rules that we need to code in, like, if we can, a single reservation should have all seats in the same coach. I'll fill you in on the rules later as for now we're not going to need them.
 
 ### Response
 
-**Benjamin:** Do we return something back to the client?
+**Benjamin:** Do we return something to the client?
 
-**Johnny:** Yes, we need to return a response, which, guess what, is also a DTO. This response represents the reservation made:
+**Johnny:** Yes, we need to return a response, which, no surprise, is also a DTO. This response represents the reservation made:
 
 ```csharp
 public class ReservationDto
@@ -111,7 +111,7 @@ public class ReservationDto
 
 **Benjamin:** OK, I can see that there's a train ID, which is... the same as the one in the request, I suppose?
 
-**Johnny:** Right. It's used to correlate request and response.
+**Johnny:** Right. It's used to correlate the request and the response.
 
 **Benjamin:** ...and there is a reservation ID that is probably assigned by our application.
 
@@ -201,7 +201,7 @@ public class Application
 
 **Benjamin:** Good to see it doesn't require us to use any fancy reflection-based mechanism for composing objects.
 
-**Johnny:** Yes, we're lucky about that. We can just create the objects with `new` operator and pass them to the framework. Another important information is that we have a single `TicketOffice` instance to handle all the requests. This means that we cannot store any state related to a single request inside this instance as it will come into conflict with other requests.
+**Johnny:** Yes, we're lucky about that. We can just create the objects with the `new` operator and pass them to the framework. Another important information is that we have a single `TicketOffice` instance to handle all the requests. This means that we cannot store any state related to a single request inside this instance as it will come into conflict with other requests.
 
 ## Writing the first Statement
 
@@ -213,7 +213,7 @@ public class Application
 
 **Benjamin:** I don't think I understand what you're talking about. Do you mean this "outside-in" approach that you mentioned yesterday?
 
-**Johnny:** Yes and don't worry if you didn't get what I said, I will explain as we go. For now, the only thing I mean by it is that we will follow the path of the request as it comes from the outside of our application and start implementing at the first place that where the request is not handled as it should be. Specifically, this means we start at:
+**Johnny:** Yes and don't worry if you didn't get what I said, I will explain as we go. For now, the only thing I mean by it is that we will follow the path of the request as it comes from the outside of our application and start implementing in the first place where the request is not handled as it should be. Specifically, this means we start at:
 
 ```csharp
 public class TicketOffice
@@ -229,7 +229,7 @@ public class TicketOffice
 
 **Johnny:** Because this is the place nearest to the request entry point where the behavior differs from the one we expect. As soon as the request reaches this point, its handling will stop and an exception will be thrown. We need to alter this code if we want the request to go any further.
 
-**Benjamin:** I see... so... if we didn't have the request deserialization code in place already, we'd start there, because that would be the first place where the request would stuck on its way towards it goal, right?
+**Benjamin:** I see... so... if we didn't have the request deserialization code in place already, we'd start there because that would be the first place where the request would get stuck on its way towards its goal, right?
 
 **Johnny:** Yes, you got it.
 
@@ -243,7 +243,7 @@ public class TicketOffice
 
 **Johnny:** Sure, as you wish.
 
-**Benjamin:** The first thing I need to do is to add an empty Specification for the TicketOffice class:
+**Benjamin:** The first thing I need to do is to add an empty Specification for the `TicketOffice` class:
 
 ```csharp
 public class TicketOfficeSpecification
@@ -289,13 +289,13 @@ ticketOffice.MakeReservation(requestDto);
 
 uses a variable `requestDto` that does not exist. Let's generate it using our IDE!
 
-**Benjamin:** By the way, I wanted to ask about this exact line. Making it compile is something we need to do to move on. Weren't we supposed to add a `TODO` comment for things we need to get back to, like we did with the Statement name, which was:
+**Benjamin:** By the way, I wanted to ask about this exact line. Making it compile is something we need to do to move on. Weren't we supposed to add a `TODO` comment for things we need to get back to? Just as we did with the Statement name, which was:
 
 ```csharp
 public void ShouldXXXXX() //TODO better name
 ```
 
-**Johnny:** My opinion is that this is not necessary, because the compiler, by failing on this line, has already creeated a sort of TODO item for us, just not on our TODO list but on compile error log. This is different than e.g. the need to change a method name, which the compiler will not remind us about.
+**Johnny:** My opinion is that this is not necessary, because the compiler, by failing on this line, has already created a sort of TODO item for us, just not on our TODO list but the compiler error log. This is different than e.g. the need to change a method name, which the compiler will not remind us about.
 
 **Benjamin:** So my TODO list is composed of compile errors, false Statements and the items I manually mark as `TODO`? Is this how I should understand it?
 
@@ -313,7 +313,7 @@ We need to assign something to the variable.
 
 **Benjamin:** You mean we don't mock DTOs?
 
-**Johnny:** No, there's no need to. DTOs are, by definition, data structures and mocking involves polymorphism which applies to behavior rather than data. Later I will explain it in more details. For now, just accept my word on it.
+**Johnny:** No, there's no need to. DTOs are, by definition, data structures and mocking involves polymorphism which applies to behavior rather than data. Later I will explain it in more detail. For now, just accept my word on it.
 
 **Benjamin:** Sooo... if it's not going to be a mock, then let's generate an anonymous value for it using the `Any.Instance<>()` method.
 
@@ -405,21 +405,21 @@ Assert.Equal(expectedReservationDto, reservationDto);
 
 **Johnny:** That's still better than not compiling, isn't it?
 
-**Benjamin:** Well, if you put it this way... Now our problem is that the expected value from the assertion is something the production code doesn't know about - this is just something we created in our Statement. This means that this assertion does not assert the outcome of the behavior of production code. How do we solve this?
+**Benjamin:** Well, if you put it this way... Now our problem is that the expected value from the assertion is something the production code doesn't know about - this is just something we created in our Statement. This means that this assertion does not assert the outcome of the behavior of the production code. How do we solve this?
 
-**Johnny:** This is where we need to exercise our design skills to introduce some new collaborators. This task is hard at the boundaries of application logic, since we need to draw the collaborators not from the domain, but rather think about design patterns that will allow us to reach our goals. Every time we enter our application logic, we do so from a perspective of a use case. In this particular example, our use case is "making a reservation". A use case is typically represented by either a method in a facade[^FacadePattern] or a command object[^CommandPattern]. Commands are a bit more complex, but more scalable. If making a reservation was our only use case, it probably wouldn't make sense to use it. But as we already have more high priority requests for features, I believe we can assume that commands will be a better fit.
+**Johnny:** This is where we need to exercise our design skills to introduce some new collaborators. This task is hard at the boundaries of application logic where we need to draw the collaborators, not from the domain, but rather think about design patterns that will allow us to reach our goals. Every time we enter our application logic, we do so from a perspective of a use case. In this particular example, our use case is "making a reservation". A use case is typically represented by either a method in a facade[^FacadePattern] or a command object[^CommandPattern]. Commands are a bit more complex, but more scalable. If making a reservation was our only use case, it probably wouldn't make sense to use it. But as we already have more high priority requests for features, I believe we can assume that commands will be a better fit.
 
-**Benjamin:** So you propose to use more complex solution - isn't that "big design up front"?
+**Benjamin:** So you propose to use a more complex solution - isn't that "big design up front"?
 
-**Johnny:** I believe that it isn't. Remember I'm using just *a bit* more complex solution. The cost of implementation is only a bit higher as well as the cost of maintenance in case I'm wrong. If for some peculiar reason someone says tommorow that they don't need the rest of the features at all, the increase in complexity will be negligible taking into account the small size of the overall code base. If, however, we add more features, then using commands will save us some time in the longer run. Thus, given what I know, [I am not adding this to support speculative new features, but to make the code easier to modify in the long run](https://martinfowler.com/bliki/Yagni.html). I agree though that [choosing just enough complexity for a given moment is a difficult task](https://www.youtube.com/watch?v=aCLBd3a1rwk).
+**Johnny:** I believe that it isn't. Remember I'm using just *a bit* more complex solution. The cost of implementation is only a bit higher as well as the cost of maintenance in case I'm wrong. If for some peculiar reason someone says tomorrow that they don't need the rest of the features at all, the increase in complexity will be negligible taking into account the small size of the overall codebase. If, however, we add more features, then using commands will save us some time in the longer run. Thus, given what I know, [I am not adding this to support speculative new features, but to make the code easier to modify in the long run](https://martinfowler.com/bliki/Yagni.html). I agree though that [choosing just enough complexity for a given moment is a difficult task](https://www.youtube.com/watch?v=aCLBd3a1rwk).
 
 **Benjamin:** I still don't get it how introducing a command is going to help us here. Typically, a command has an `Execute()` method that doesn't return anything. How then will it give us the response that we need to return from the `MakeReservation()`? And also, there's this another issue: how is this command going to be created? It will probably require the request passed as one of its constructor parameters. This means we cannot just pass the command to the `TicketOffice`'s constructor as the first time we can access the request is when the `MakeReservation()` method is invoked.
 
-**Johnny:** Yes, I agree with you in both of your concerns. Thankfully, when you choose to go with commands, typically there are standard solutions to the problems you mentioned. The commands can be created using factories and they can convey their results using a pattern called *collecting parameter*[^KerievskyCollectingParameter] - we will pass an object inside the command to gather all the events from handling the use case and then be able to prepare a response for us.
+**Johnny:** Yes, I agree with both of your concerns. Thankfully, when you choose to go with commands, typically there are standard solutions to the problems you mentioned. The commands can be created using factories and they can convey their results using a pattern called *collecting parameter*[^KerievskyCollectingParameter] - we will pass an object inside the command to gather all the events from handling the use case and then be able to prepare a response for us.
 
 ### Introducing a reservation in progress collaborator
 
-**Johnny**: Let's start with the collecting parameter, which will represent a domain concept of a reservation in progress. We need it to collect the data necessary to build a response DTO. Thus, what we currently know about it is that it's going to be converted to a response DTO at the very end. All of the three objects: the command, the collecting parameter and the factory, are collaborators, so they will be mocks in our Statement.
+**Johnny**: Let's start with the collecting parameter, which will represent a domain concept of a reservation in progress. We need it to collect the data necessary to build a response DTO. Thus, what we currently know about it is that it's going to be converted to a response DTO at the very end. All of the three objects: the command, the collecting parameter, and the factory, are collaborators, so they will be mocks in our Statement.
 
 **Benjamin:** Ok, lead the way.
 
@@ -501,13 +501,13 @@ public void ShouldXXXXX() //TODO better name
 
 **Johnny:** I was about to suggest it. Here.
 
-**Benjamin:** Thanks. Looking at this Statement, we have this `ReservationInProgress` all set up and created, but this mock of ours is not passed to the `TicketOffice` at all. So how should the `TicketOffice` use our pre-configured `reservationInProgress`?
+**Benjamin:** Thanks. Looking at this Statement, we have this `ReservationInProgress` all setup and created, but this mock of ours is not passed to the `TicketOffice` at all. So how should the `TicketOffice` use our pre-configured `reservationInProgress`?
 
 **Johnny:** Remember our discussion about separating object use from construction?
 
 **Benjamin:** Yeah, I guess I know what you're getting at. The `TicketOffice` should somehow get an already created `ReservationInProgress` object from the outside. It can get it e.g. through a constructor or from a factory.
 
-**Johnny:** Yes, and if you look at the lifetime scope of our `TicketOffice`, which is created once at the start of the application, it can't really accept a `ReservationInProgress` through a constructor, because every time a new reservation request is made, we want to have a new `ReservationInProgress`, so passing it through a `TicketOffice` constructor would force us to create a new `TicketOffice` every time as well. Thus, the solution that better fits our current situation is...
+**Johnny:** Yes, and if you look at the lifetime scope of our `TicketOffice`, which is created once at the start of the application, it can't accept a `ReservationInProgress` through a constructor, because every time a new reservation request is made, we want to have a new `ReservationInProgress`, so passing it through a `TicketOffice` constructor would force us to create a new `TicketOffice` every time as well. Thus, the solution that better fits our current situation is...
 
 **Benjamin:** A factory, right? You're suggesting that instead of passing a `ReservationInProgress` through a constructor, we should rather pass something that knows how to create `ReservationInProgress` instances?
 
@@ -515,7 +515,7 @@ public void ShouldXXXXX() //TODO better name
 
 **Benjamin:** Ok, so how to write it in the Statement?
 
-**Johnny:** First, write what you really need. The factory needs to be a mock, because we need to configure it so that when asked, it returns our `ReservationInProgress` mock. So let's write that return configuration first, pretending we already have the factory available in our Statement body.
+**Johnny:** First, write only what you need. The factory needs to be a mock because we need to configure it so that when asked, it returns our `ReservationInProgress` mock. So let's write that return configuration first, pretending we already have the factory available in our Statement body.
 
 **Benjamin:** Let me see... right, that should do it:
 
@@ -527,7 +527,7 @@ reservationInProgressFactory.FreshInstance().Returns(reservationInProgress);
 
 **Johnny:** Nice. Now the code does not compile, because we don't have a `reservationInProgressFactory`. So let's create it.
 
-**Benjamin:** And, like you said earlier, it should be a mock. Then this will be the definition:
+**Benjamin:** And, as you said earlier, it should be a mock. Then this will be the definition:
 
 ```csharp
 var reservationInProgressFactory = Substitute<ReservationInProgressFactory>();
@@ -537,7 +537,7 @@ For the need of this line of code, I pretended that I have an interface called `
 
 **Johnny:** (smiles)
 
-**Benjamin:** Allright. Here:
+**Benjamin:** Alright. Here:
 
 ```csharp
 public interface ReservationInProgressRepository
@@ -615,13 +615,13 @@ public class Application
 
 **Benjamin:** But what should we pass? We have an interface, but no class of which we could make an instance.
 
-**Johnny:** We need to create the class. Typically, if I have an idea about the name of the required class, I create the class by that name. If I don't have any idea on how to call it yet, I can call it e.g. `TodoReservationInProgressFactory` and leave a TODO comment to get back to it later. For now, we just need this class to compile the code. It's still out of scope of our current Statement.
+**Johnny:** We need to create the class. Typically, if I have an idea about the name of the required class, I create the class by that name. If I don't have any idea on how to call it yet, I can call it e.g. `TodoReservationInProgressFactory` and leave a TODO comment to get back to it later. For now, we just need this class to compile the code. It's still out of the scope of our current Statement.
 
 **Benjamin:** So maybe We could pass a `null` so that we have `new TicketOffice(null)`?
 
-**Johnny:** We could, but that's not my favourite option. I typically just create the class. One of the reasons is that the class will need to implement an interface to compile and then we will need to introduce a methods which will, by default, throw a `NotImplementedException` and these exceptions will end up on my TODO list as well.
+**Johnny:** We could, but that's not my favorite option. I typically just create the class. One of the reasons is that the class will need to implement an interface to compile and then we will need to introduce a method which will, by default, throw a `NotImplementedException` and these exceptions will end up on my TODO list as well.
 
-**Benjamin:** Ok, that sounds reasonable for me. So this line:
+**Benjamin:** Ok, that sounds reasonable to me. So this line:
 
 ```csharp
 new TicketOffice(/* compile error - instance missing */)
@@ -667,7 +667,7 @@ public TicketOffice(ReservationInProgressFactory reservationInProgressFactory)
 
 here, we could already assign the constructor parameter to a field, but it's also OK to do it later.
 
-**Benjamin:** Let's so it later, I wonder how far we can get delaying work like this.
+**Benjamin:** Let's do it later, I wonder how far we can get delaying work like this.
 
 ### Introducing a command collaborator
 
@@ -703,7 +703,7 @@ the only interaction between a `TicketOffice` and `ReservationInProgress` it des
 
 **Benjamin:** So what do you propose?
 
-**Johnny:** Remember our discussion from several minutes ago? Usually, when I push a use case-related logic to another object at the system boundary, I pick from among the Facade pattern and the Command pattern. Fadaces are simpler but less scalable, while commands are way more scalable and composable but a new command object needs to be created by the application each time a use case is triggered and a new command class needs to be created by a programmer when support for a new use case is added to the system.
+**Johnny:** Remember our discussion from several minutes ago? Usually, when I push a use case-related logic to another object at the system boundary, I pick from among the Facade pattern and the Command pattern. Facades are simpler but less scalable, while commands are way more scalable and composable but a new command object needs to be created by the application each time a use case is triggered and a new command class needs to be created by a programmer when support for a new use case is added to the system.
 
 **Benjamin:** Ok, I already know that you prefer commands.
 
@@ -715,7 +715,7 @@ the only interaction between a `TicketOffice` and `ReservationInProgress` it des
 
 **Benjamin:** We want the `TicketOffice` to execute the command, obviously..?
 
-**Johnny:** Right, let's write this in form of expectation.
+**Johnny:** Right, let's write this in a form of expectation.
 
 **Benjamin:** Ok, I'd write something like this:
 
@@ -725,7 +725,7 @@ reservationCommand.Received(1).Execute(reservationInProgress);
 
 I already passed the `reservationInProgress` as the command will need to fill it.
 
-**Johnny:** Wait, it so happens that I prefer another way of passing this `reservationInProgress` to the `Execute()` method. Please for now make the `Execute()` method parameterless.
+**Johnny:** Wait, it so happens that I prefer another way of passing this `reservationInProgress` to the `Execute()` method. Please, for now, make the `Execute()` method parameterless.
 
 **Benjamin:** As you wish, but I thought this would be a good place to pass it.
 
@@ -739,7 +739,7 @@ reservationCommand.Received(1).Execute();
 Assert.Equal(expectedReservationDto, reservationDto);
 ```
 
-and it doesn't compile of course. So I already know that, to have this command, I need to introduce a variable of a type that I have to pretend already exists. Aaaand, I already know it should be a mock, since I verify that it received a call to its `Execute()` method.
+and it doesn't compile of course. So I already know that, to have this command, I need to introduce a variable of a type that I have to pretend already exists. Aaaand, I already know it should be a mock since I verify that it received a call to its `Execute()` method.
 
 **Johnny:** (nods)
 
@@ -758,7 +758,7 @@ public interface ReservationCommand
 }
 ```
 
-and the code still doesn't compile, because in the Statement, I expect to receive a call to an `Execute()` method on the command but there's no such method. I can fix it by adding this method on the command interface:
+and the code still doesn't compile because in the Statement, I expect to receive a call to an `Execute()` method on the command but there's no such method. I can fix it by adding this method on the command interface:
 
 ```csharp
 public interface ReservationCommand
@@ -780,7 +780,7 @@ and now everything compiles again.
 
 **Johnny:** Yes, that's what I would like to do.
 
-**Benjamin:** But... that's a second factory in a single Statement. Aren't we, like, overdoing it a little?
+**Benjamin:** But... that's the second factory in a single Statement. Aren't we, like, overdoing it a little?
 
 **Johnny:** I understand why you feel that way. Still, this is a consequence of my design choice. We wouldn't need a command factory if we went with a facade. In simple apps, I just use a facade and do away with this dilemma. I could also drop the use of collecting parameter pattern and then I wouldn't need a factory for reservations in progress, but that would mean I would not resolve the command-query separation principle violation and would need to push this violation further into my code. To cheer you up, this is an entry point for a use case where we need to wrap some things in abstractions, so I don't expect this many factories in the rest of the code. I treat this part as a sort of anti-corruption layer which protects me from everything imposed by outside of my application logic which I don't want to deal with inside of my application logic.
 
@@ -797,9 +797,9 @@ commandFactory.CreateReservationCommand(requestDto, reservationInProgress)
 
 This doesn't compile because we have no `commandFactory` yet.
 
-**Benjamin:** Oh, I can see that the factory's `CreateReservationCommand()` is where you decided to pass the `reservationInProgress` that I wanted to pass to the `Execute()` method earlier. Clever. By leaving the commands's `Execute()` method parameterless, you made it more abstract and made the interface decpoupled from any particular argument types. On the other hand, the command is created in the same scope it is used, so there is literally no issue with passing all the parameters through the factory method.
+**Benjamin:** Oh, I can see that the factory's `CreateReservationCommand()` is where you decided to pass the `reservationInProgress` that I wanted to pass to the `Execute()` method earlier. Clever. By leaving the commands's `Execute()` method parameterless, you made it more abstract and made the interface decoupled from any particular argument types. On the other hand, the command is created in the same scope it is used, so there is literally no issue with passing all the parameters through the factory method.
 
-**Johnny:** That's right. We now know we need a factory, plus that it needs to be a mock, since we configure it to return a command when it is asked for one. I propose something like this:
+**Johnny:** That's right. We now know we need a factory, plus that it needs to be a mock since we configure it to return a command when it is asked for one. I propose something like this:
 
 ```csharp
 //GIVEN
@@ -916,7 +916,7 @@ public class TicketOfficeCommandFactory : CommandFactory
 
 **Benjamin:** Hey, this time you gave the class a better name than the previous factory which was called `TodoReservationInProgressFactory`. Why didn't you want to leave it for later this time?
 
-**Johnny:** This time, I think I have a better idea on how to name this class. Typically, I name concrete classes based on something from their implementation and I find the names hard to find when I don't have this implementation yet. This time I believe I have a name that can last a bit, which is also why I didn't leave a TODO comment next to this name. Still, further work can invalidate my naming choice and I will be happy to change the name when the need arises. For now, it should suffice.
+**Johnny:** This time, I think I have a better idea of how to name this class. Typically, I name concrete classes based on something from their implementation and I find the names hard to find when I don't have this implementation yet. This time I believe I have a name that can last a bit, which is also why I didn't leave a TODO comment next to this name. Still, further work can invalidate my naming choice and I will be happy to change the name when the need arises. For now, it should suffice.
 
 ### Giving the Statement a name
 
@@ -978,7 +978,7 @@ ShouldExecuteReservationCommandAndReturnResponseWhenMakingReservation()
 }
 ```
 
-**Johnny:** I think it is complete, but we won't know that until we see the assertions failing and then passing. For now, the implementation of `MakeReservation()` method throws an exception and this exception makes our Statement stop at the `WHEN` stage, not even getting to the assertions.
+**Johnny:** I think it is complete, but we won't know that until we see the assertions failing and then passing. For now, the implementation of the  `MakeReservation()` method throws an exception and this exception makes our Statement stop at the `WHEN` stage, not even getting to the assertions.
 
 **Benjamin:** But I can't just put the right implementation in yet, right? This is what you have always told me.
 
@@ -1064,7 +1064,7 @@ return reservationInProgress.ToDto();
 reservationCommand.Received(1).Execute();
 ```
 
-and this one fails. In order to make it pass, We need to create a command and execute it.
+and this one fails. To make it pass, We need to create a command and execute it.
 
 ### Making the Statement true - the second assertion
 
@@ -1076,7 +1076,7 @@ and this one fails. In order to make it pass, We need to create a command and ex
 
 **Johnny:** anyway, we still need this assertion to pass.
 
-**Benjamin:** Let me do this. So to create a command, we need the command factory. This factory is already passed to `TicketOffice` via its constructor, so we need to assign it to a field, because as of now, the constructor looks like this:
+**Benjamin:** Let me do this. So to create a command, we need the command factory. This factory is already passed to `TicketOffice` via its constructor, so we need to assign it to a field because as of now, the constructor looks like this:
 
 ```csharp
 public TicketOffice(
@@ -1123,7 +1123,7 @@ return reservationInProgress.ToDto();
 
 **Benjamin:** Wow, this isn't a lot of code for such a big Statement that we wrote.
 
-**Johnny:** Yeah, the real complexity is not even in the lines of code, but the amount of dependencies that we had to drag inside. Note that we have two factories in here. Each factory is a dependency and it creates another dependency. This is better visible in the Statement than in the production method and this is why I find it a good idea to pay close attention to how a Statement is growing and using it as a feedback mechanism for the quality of my design. For this particular class, the design issue we observe in the Statement can't be helped a lot since, as I mentioned, this is the boundary where we need to wrap things in abstractions.
+**Johnny:** Yeah, the real complexity is not even in the lines of code, but the number of dependencies that we had to drag inside. Note that we have two factories in here. Each factory is a dependency and it creates another dependency. This is better visible in the Statement than in the production method and this is why I find it a good idea to pay close attention to how a Statement is growing and using it as a feedback mechanism for the quality of my design. For this particular class, the design issue we observe in the Statement can't be helped a lot since, as I mentioned, this is the boundary where we need to wrap things in abstractions.
 
 **Benjamin:** You'll have to explain this bit about design quality a bit more later.
 

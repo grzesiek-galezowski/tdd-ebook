@@ -6,7 +6,7 @@ I suppose a lot was going on in the last chapter and some things that demand a d
 
 Johnny and Benjamin started their development almost entirely at the peripherals, at the beginning of the flow of control. This is typical to the outside-in approach to software development. When I started learning to write software this way, I felt it as counter-intuitive. After all, if I started with the inside-most objects, I could run the logic inside them with whatever dependencies they had, because all those dependencies already existed. Looking at the graph below, I could develop and run the logic in `Object1` because it did not require dependencies. Then, I could develop `Object2` because it depends on `Object1` that I already created and I could as well do that with `Object3` because it only depends on `Object2` that I already had. In other words, at any given time, I could run everything I created up to that point.
 
-```
+```text
 Object3 -> Object2 -> Object1
 ```
 
@@ -32,7 +32,7 @@ In our case, TODO TODO TODO TODO TODO TODO TODO
 Workflow Statements specify how objects of a class coordinate and delegate work to other objects
 Sustainable TDD blog reference
 TODO: workflow specification
-Seargant, programming by intention
+Sergeant, programming by intention
 
 
 ## Data Transfer Objects
@@ -45,7 +45,7 @@ As you might have seen, DTOs are typically just data structures. That may come a
 
 My response to this would be that exchanging information between processes is where these principles do not apply and that there are some good reasons why.
 
-1. It is easier to exchange data than to exchange behavior. If I wanted to send behavior to another process, I would have to send it as data anyway, e.g. in a form of source code. In such case, the other side would need to interpret the source code, provide all the dependencies etc. which could be cumbersome and strongly couple implementations of both processes.
+1. It is easier to exchange data than to exchange behavior. If I wanted to send behavior to another process, I would have to send it as data anyway, e.g. in a form of source code. In such a  case, the other side would need to interpret the source code, provide all the dependencies etc. which could be cumbersome and strongly couple implementations of both processes.
 2. Agreeing on a simple data format makes creating and interpreting the data in different programming languages easier.
 3. Many times, the boundaries between processes are designed as functional boundaries at the same time. In other words, even if one process sends some data to another, both of these processes would not want to execute the same behaviors on the data.
 
