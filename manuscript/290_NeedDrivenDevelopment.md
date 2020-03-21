@@ -907,7 +907,9 @@ which in turn forces us to create the `TicketOfficeCommandFactory` class:
 ```csharp
 public class TicketOfficeCommandFactory : CommandFactory
 {
-  public ReservationCommand CreateReservationCommand(ReservationRequestDto requestDto)
+  public ReservationCommand CreateReservationCommand(
+    ReservationRequestDto requestDto,
+    ReservationInProgress reservationInProgress)
   {
       throw new NotImplementedException();
   }
@@ -1114,7 +1116,7 @@ But this code is not complete yet - I still need to execute the created command 
 
 ```csharp
 var reservationInProgress = _reservationInProgressFactory.FreshInstance();
-var reservationCommand = _commandFactory.CreateReservationCommand(requestDto);
+var reservationCommand = _commandFactory.CreateReservationCommand(requestDto, reservationInProgress);
 reservationCommand.Execute();
 return reservationInProgress.ToDto();
 ```
