@@ -145,9 +145,9 @@ so it has a coach name and a seat number, and we have a list of these in our res
 
 **Benjamin:** Ok. So we need all these data structures we just went through to deserialize some kind of JSON or XML input into them?
 
-**Johnny:** Yes, but we don't have to write the code to do it. As I mentioned earlier, This part is already done. 
+**Johnny:** Yes, but we don't have to write the code to do it. As I mentioned earlier, This part is already done.
 
-**Benjamin**: Lucky us. 
+**Benjamin**: Lucky us.
 
 **Johnny**: Our work starts from the point where the deserialized data is passed to the application logic as a DTO. The request entry point is in a class called `TicketOffice`:
 
@@ -343,7 +343,7 @@ Assert.True(false);
 
 **Johnny:** ...Huh?
 
-**Benjamin:** Oh, I was just pulling your leg. What I really wanted to say is let's turn this assertion into something useful.
+**Benjamin:** Oh, I was just pulling your leg. What I really wanted to say is: let's turn this assertion into something useful.
 
 **Johnny:** Phew, don't scare me like that. Yes, this assertion needs to be rewritten. And it so happens that when we look at the following line:
 
@@ -359,7 +359,7 @@ public ReservationDto MakeReservation(ReservationRequestDto requestDto)
 
 In our Statement, we don't do anything with it.
 
-**Benjamin:** Ok, let me guess, you want me go to the Statement, assign this return value to a variable and then assert its equality to... what exactly?
+**Benjamin:** Ok, let me guess, you want me to go to the Statement, assign this return value to a variable and then assert its equality to... what exactly?
 
 **Johnny:** For now, to an expected value, which we don't know yet what's going to be, but we will worry about it later when it really blocks us.
 
@@ -431,7 +431,7 @@ Assert.Equal(expectedReservationDto, reservationDto);
 reservationInProgress.ToDto().Returns(expectedReservationDto);
 ```
 
-Of course, we don't have the `reservationInProgress` yet, so now we need to introduce it. As I explained earlier, this needs to be a mock, because otherwise, we wouldn't be able to call `Returns()` on it:
+Of course, we don't have the `reservationInProgress` yet, so we need to introduce it. As I explained earlier, this needs to be a mock, because otherwise, we wouldn't be able to call `Returns()` on it:
 
 ```csharp
 ///GIVEN
@@ -557,7 +557,7 @@ public interface ReservationInProgressRepository
 
 Good, the compiler doesn't complain anymore, but the Statement fails with a `NotImplementedException`.
 
-**Johnny:** Yes, this is because the current body of the `MakeReservation()` method of the  `TicketOffice` class looks like this:
+**Johnny:** Yes, this is because the current body of the `MakeReservation()` method of the `TicketOffice` class looks like this:
 
 ```csharp
 public ReservationDto MakeReservation(ReservationRequestDto requestDto) 
@@ -739,7 +739,7 @@ reservationCommand.Received(1).Execute();
 Assert.Equal(expectedReservationDto, reservationDto);
 ```
 
-and it doesn't compile of course. So I already know that, to have this command, I need to introduce a variable of a type that I have to pretend already exists. Aaaand, I already know it should be a mock since I verify that it received a call to its `Execute()` method.
+and it doesn't compile of course. So I already know that to have this command, I need to introduce a variable of a type that I have to pretend already exists. Aaaand, I already know it should be a mock since I verify that it received a call to its `Execute()` method.
 
 **Johnny:** (nods)
 

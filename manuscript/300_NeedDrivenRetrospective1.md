@@ -1,10 +1,10 @@
 # Test-driving at the input boundary - a retrospective
 
-I suppose a lot was going on in the last chapter and some things that demand a deeper dive. The purpose of this chapter is to do a small retrospective on what Johnny and Benjamin did when test-driving a controller for the train reservation system.
+I suppose a lot was going on in the last chapter and some things that demand a deeper dive. The purpose of this chapter is to do a small retrospective of what Johnny and Benjamin did when test-driving a controller for the train reservation system.
 
 ## Outside-in development
 
-Johnny and Benjamin started their development almost entirely at the peripherals, at the beginning of the flow of control. This is typical to the outside-in approach to software development. When I started learning to write software this way, I felt it as counter-intuitive. After all, if I started with the inside-most objects, I could run the logic inside them with whatever dependencies they had, because all those dependencies already existed. Looking at the graph below, I could develop and run the logic in `Object1` because it did not require dependencies. Then, I could develop `Object2` because it depends on `Object1` that I already created and I could as well do that with `Object3` because it only depends on `Object2` that I already had. In other words, at any given time, I could run everything I created up to that point.
+Johnny and Benjamin started their development almost entirely at the peripherals of the system, at the beginning of the flow of control. This is typical of the outside-in approach to software development. It took me a while to get used to it. After all, if I had started with the inside-most objects, I could run the logic inside them with whatever dependencies they had, because all those dependencies already existed. Looking at the graph below, I could develop and run the logic in `Object1` because it did not require dependencies. Then, I could develop `Object2` because it depends on `Object1` that I already created and I could as well do that with `Object3` because it only depends on `Object2` that I already had. At any given time, I could run everything I created up to that point.
 
 ```text
 Object3 -> Object2 -> Object1
@@ -12,18 +12,20 @@ Object3 -> Object2 -> Object1
 
 The outside-in approach broke this for me because the objects I had to start with were the ones that had to have dependencies and these dependencies did not exist yet. With outside-in, I would need to start with `Object3`, which could not be instantiated without `Object2`, which, in turn, could not be instantiated without `Object1`.
 
-If this is more difficult, then why bother? My reasons are:
+If this feels difficult, then why bother? - you may ask. My reasons are:
 
-1. By starting from the inputs, I allow my interfaces and protocols to be shaped by a use case rather than by underlying technology. That does not mean I can just ignore the technology stuff, but I consider the use case logic to be the main driver. This way, my protocols tend to be more abstract which in turn enforces higher composability.
-1. Every line of code I introduce is there because the use case needs it. Every method, every interface, and class exists because someone else needs it to perform its obligations. This way, I ensure I only implement the stuff that's needed the way the users find it comfortable to use. When going the other way, from the outputs, I designed classes by guessing how they would be used and I later regretted these guesses, because of the rework and complexity they often created.
+1. By starting from the inputs and going inside, I allow my interfaces and protocols to be shaped by use cases rather than by the underlying technology. That does not mean I can just ignore the technology stuff, but I consider the use case logic to be the main driver. This way, my protocols tend to be more abstract which in turn enforces higher composability.
+1. Every line of code I introduce is there because the use case needs it. Every method, every interface, and class exists because there already exists someone who needs it to perform its obligations. This way, I ensure I only implement the stuff that's needed and that it is shaped the way the users find it comfortable to use. Until I started using this approach, I would start from the inside of the system and I would design classes by guessing how they would be used and I would later regret these guesses, because of the rework and complexity they would often create.
 
-The uncomfortable feeling of starting from the inputs ("there is nothing I can fully run") could, in my case, be mitigated with the following practices:
+I found I can mitigate the uncomfortable feeling of starting from the inputs ("there is nothing I can fully run") with the following practices:
 
 1. Using TDD with mocks - TDD allows every little piece of code to be executed well before the whole task completion and mock objects serve as first collaborators that allow this execution to happen.
-1. Slicing the scope into smaller vertical parts (e.g. scenarios, stories, etc.) that can be implemented faster than a full-blown feature. We have had a taste of this in action when Johnny and Benjamin were developing the calculator in one of the first chapters.
-1. Do not write the first Statement as a unit-level Statement, but instead, write it on a higher-level (e.g. end-to-end or against another architectural boundary), make it work, then refactor the initial structure. This gives us a kind of walking skeleton[^walkingskeleton], which can be built, tested and deployed. As the next features or scenarios are added, these traits are preserved so we can always run what we have mid-development. This approach is what we will be aiming at ultimately, but for this chapter, I will leave it out to only focus on the mocks and OO design.
+1. Slicing the scope of work into smaller vertical parts (e.g. scenarios, stories, etc.) that can be implemented faster than a full-blown feature. We have had a taste of this in action when Johnny and Benjamin were developing the calculator in one of the first chapters of this book.
+1. Not writing the first Statement as a unit-level Statement, but instead, writing it on a higher-level (e.g. end-to-end or against another architectural boundary). I could then make this bigger Statement work, then refactor the initial objects as well as their roles and responsibilities, out of this small piece of working code. Only after having this initial structure in place would I start using class-level Statements with mocks. This approach is what we will be aiming at eventually, but for this chapter, I wanted to focus on the mocks and OO design, so I left this part out.
 
 ## Workflow specification
+
+TODO: finish this
 
 The Statement about the controller is an example of what Amir Kolsky and Scott Bain call workflow specification. A workflow specification describes how a specified unit of behavior (in our case, a class) interacts with other units by sending messages and receiving answers. In Statements specifying workflow, we describe the purpose and behaviors of the specified class in terms of interacting of mocked roles that other objects play. 
 
@@ -33,6 +35,10 @@ Workflow Statements specify how objects of a class coordinate and delegate work 
 Sustainable TDD blog reference
 TODO: workflow specification
 Sergeant, programming by intention
+TODO: outside-in + maybe some drawing
+interface discovery
+TODO: read chapter on interface discovery
+
 
 
 ## Data Transfer Objects
@@ -120,7 +126,7 @@ Let's try answering them.
 
 As mentioned earlier, the intent for this object is to collect data on what happens during the handling of a command, so that the issuer of the command can act on that data (e.g. use it to create a response). Speaking in patterns language, this is an implementation of a Collecting Parameter pattern.
 
-There is something I do often that I did not put in the example for the sake of simplicity. When I implement a collecting parameter, I typically make it implement two interfaces - one more narrow and the other one - wider. Let me show them: 
+There is something I do often that I did not put in the example for the sake of simplicity. When I implement a collecting parameter, I typically make it implement two interfaces - one more narrow and the other one - wider. Let me show them:
 
 ```csharp
 public interface ReservationInProgress
@@ -195,13 +201,9 @@ This question can be broken into two parts:
 1. Can we use the same factory as for commands?
 2. Do we need a factory at all?
 
-The answer to the first one is: it depends on what the `ReservationInProgress` is coupled to. In the case of train reservation, it is just creating a DTO to be returned to the client. In such case, it does not need any knowledge of the framework that is being used to run the application. This lack of coupling to the framework would allow me to place creating `ReservationInProgress` in the same factory. However, if this class needed to decide e.g. HTTP status codes or create responses required by a specific framework or in a specified format (e.g. JSON or XML), then I would opt, as I did, for separating it from the command factory. This is because command factory belongs to the world of application logic and I want my application logic to be independent of the framework I use.
+The answer to the first one is: it depends on what the `ReservationInProgress` is coupled to. In the case of a train reservation, it is just creating a DTO to be returned to the client. In such a case, it does not need any knowledge of the framework that is being used to run the application. This lack of coupling to the framework would allow me to place creating `ReservationInProgress` in the same factory. However, if this class needed to decide e.g. HTTP status codes or create responses required by a specific framework or in a specified format (e.g. JSON or XML), then I would opt, as I did, for separating it from the command factory. This is because the command factory belongs to the world of application logic and I want my application logic to be independent of the framework I use.
 
 The answer to the second one is: it depends whether you care about specifying the controller behavior on the unit level. If yes, then it may handy to have a factory just to control the creation of `ReservationInProgress`. If you don't want to (e.g. you drive this logic with higher-level Statements, which we will talk about in one of the next parts), then you can decide to just create the object inside the controller method.
-
-TODO: outside-in + maybe some drawing
-interface discovery
-TODO: read chapter on interface discovery
 
 ## Sources of abstractions
 
@@ -226,7 +228,7 @@ TODO: composing commands - why Execute() is parameterless
 "**Benjamin:** Oh, I can see that the factory's `CreateReservationCommand()` is where you decided to pass the `reservationInProgress` that I wanted to pass to the `Execute()` method earlier. Clever. By leaving the commands's `Execute()` method parameterless, you made it more abstract and made the interface decpoupled from any particular argument types. On the other hand, the command is created in the same scope it is used, so there is literally no issue with passing all the parameters through the factory method.
 "
 
-"**Johnny:** This is where we need to exercise our design skills to introduce some new collaborators. This task is hard at the boundaries of application logic, since we need to draw the collaborators not from the domain, but rather think about design patterns that will allow us to reach our goals. Every time we enter our application logic, we do so from a perspective of a use case. In this particular example, our use case is "making a reservation". A use case is typically represented by either a method in a facade[^FacadePattern] or a command object[^CommandPattern]. Commands are a bit more complex, but more scalable. If making a reservation was our only use case, it probably wouldn't make sense to use it. But as we already have more high priority requests for features, I believe we can assume that commands will be a better fit.
+"**Johnny:** This is where we need to exercise our design skills to introduce some new collaborators. This task is hard at the boundaries of application logic, since we need to draw the collaborators, not from the domain, but rather think about design patterns that will allow us to reach our goals. Every time we enter our application logic, we do so from a perspective of a use case. In this particular example, our use case is "making a reservation". A use case is typically represented by either a method in a facade[^FacadePattern] or a command object[^CommandPattern]. Commands are a bit more complex, but more scalable. If making a reservation was our only use case, it probably wouldn't make sense to use it. But as we already have more high priority requests for features, I believe we can assume that commands will be a better fit.
 "
 
 "**Johnny**: Let's start with the collecting parameter, which will represent a domain concept of a reservation in progress. We need it to collect the data necessary to build a response DTO. Thus, what we currently know about it is that it's going to be converted to a response DTO at the very end. All of the three objects: the command, the collecting parameter and the factory, are collaborators, so they will be mocks in our Statement."
