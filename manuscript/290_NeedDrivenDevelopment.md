@@ -407,7 +407,7 @@ Assert.Equal(expectedReservationDto, reservationDto);
 
 **Benjamin:** Well, if you put it this way... Now our problem is that the expected value from the assertion is something the production code doesn't know about - this is just something we created in our Statement. This means that this assertion does not assert the outcome of the behavior of the production code. How do we solve this?
 
-**Johnny:** This is where we need to exercise our design skills to introduce some new collaborators. This task is hard at the boundaries of application logic where we need to draw the collaborators, not from the domain, but rather think about design patterns that will allow us to reach our goals. Every time we enter our application logic, we do so from a perspective of a use case. In this particular example, our use case is "making a reservation". A use case is typically represented by either a method in a facade[^FacadePattern] or a command object[^CommandPattern]. Commands are a bit more complex, but more scalable. If making a reservation was our only use case, it probably wouldn't make sense to use it. But as we already have more high priority requests for features, I believe we can assume that commands will be a better fit.
+**Johnny:** This is where we need to exercise our design skills to introduce some new collaborators. This task is hard at the boundaries of application logic where we need to draw the collaborators, not from the domain, but rather think about design patterns that will allow us to reach our goals. Every time we enter our application logic, we do so with a specific use case in mind. In this particular example, our use case is "making a reservation". A use case is typically represented by either a method in a facade[^FacadePattern] or a command object[^CommandPattern]. Commands are a bit more complex but more scalable. If making a reservation was our only use case, it probably wouldn't make sense to use it. But as we already have more high priority requests for features, I believe we can assume that commands will be a better fit.
 
 **Benjamin:** So you propose to use a more complex solution - isn't that "big design up front"?
 
@@ -729,9 +729,9 @@ I already passed the `reservationInProgress` as the command will need to fill it
 
 **Benjamin:** As you wish, but I thought this would be a good place to pass it.
 
-**Johnny:** It might look like it, but typically, I want my commands to have parameterless execution methods. This way I can compose them more freely.
+**Johnny:** It might look like it, but typically, I want my commands to have parameterless execution methods. This way I can compose them more freely, using patterns such as decorator.
 
-**Benjamin:** I removed the parameter and now the `THEN` section looks like this:
+**Benjamin:** As you wish. I removed the parameter and now the `THEN` section looks like this:
 
 ```csharp
 //THEN
@@ -782,7 +782,7 @@ and now everything compiles again.
 
 **Benjamin:** But... that's the second factory in a single Statement. Aren't we, like, overdoing it a little?
 
-**Johnny:** I understand why you feel that way. Still, this is a consequence of my design choice. We wouldn't need a command factory if we went with a facade. In simple apps, I just use a facade and do away with this dilemma. I could also drop the use of collecting parameter pattern and then I wouldn't need a factory for reservations in progress, but that would mean I would not resolve the command-query separation principle violation and would need to push this violation further into my code. To cheer you up, this is an entry point for a use case where we need to wrap some things in abstractions, so I don't expect this many factories in the rest of the code. I treat this part as a sort of anti-corruption layer which protects me from everything imposed by outside of my application logic which I don't want to deal with inside of my application logic.
+**Johnny:** I understand why you feel that way. Still, this is a consequence of my design choice. We wouldn't need a command factory if we went with a facade. In simple apps, I just use a facade and do away with this dilemma. I could also drop the use of the collecting parameter pattern and then I wouldn't need a factory for reservations in progress, but that would mean I would not resolve the command-query separation principle violation and would need to push this violation further into my code. To cheer you up, this is an entry point for a use case where we need to wrap some things in abstractions, so I don't expect this many factories in the rest of the code. I treat this part as a sort of adapting layer which protects me from everything imposed by outside of my application logic which I don't want to deal with inside of my application logic.
 
 **Benjamin:** I will need to trust you on that. I hope it will make things easier later because for now... ugh...
 

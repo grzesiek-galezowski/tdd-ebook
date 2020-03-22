@@ -21,43 +21,33 @@ I found I can mitigate the uncomfortable feeling of starting from the inputs ("t
 
 1. Using TDD with mocks - TDD allows every little piece of code to be executed well before the whole task completion and mock objects serve as first collaborators that allow this execution to happen.
 1. Slicing the scope of work into smaller vertical parts (e.g. scenarios, stories, etc.) that can be implemented faster than a full-blown feature. We have had a taste of this in action when Johnny and Benjamin were developing the calculator in one of the first chapters of this book.
-1. Not writing the first Statement as a unit-level Statement, but instead, writing it on a higher-level (e.g. end-to-end or against another architectural boundary). I could then make this bigger Statement work, then refactor the initial objects as well as their roles and responsibilities, out of this small piece of working code. Only after having this initial structure in place would I start using class-level Statements with mocks. This approach is what we will be aiming at eventually, but for this chapter, I wanted to focus on the mocks and OO design, so I left this part out.
+1. Not starting with a unit-level Statement, but instead, writing on a higher-level (e.g. end-to-end or against another architectural boundary). I could then make this bigger Statement work, then refactor the initial objects out of this small piece of working code. Only after having this initial structure in place would I start using class-level Statements with mocks. This approach is what we will be aiming at eventually, but for this chapter, I wanted to focus on the mocks and OO design, so I left this part out.
 
 ## Workflow specification
 
-TODO: finish this
+The Statement about the controller is an example of what Amir Kolsky and Scott Bain call a workflow Statement[^workflowspecification]. This kind of Statement describes how a specified unit of behavior (in our case, an object) interacts with other units by sending messages and receiving answers. In Statements specifying workflow, we describe the purpose and behaviors of the specified class in terms of its interaction with mock objects, by specifying the return values of some methods and asserting that other methods should be called.
 
-The Statement about the controller is an example of what Amir Kolsky and Scott Bain call workflow specification. A workflow specification describes how a specified unit of behavior (in our case, a class) interacts with other units by sending messages and receiving answers. In Statements specifying workflow, we describe the purpose and behaviors of the specified class in terms of interacting of mocked roles that other objects play. 
+For example, in the Statement Johnny and Benjamin wrote in the last chapter, they described how a command factory reacts when asked for a new command and they also asserted on the call to the command's `Execute()` method.
 
-In our case, TODO TODO TODO TODO TODO TODO TODO 
+TODO an aside: should I verify that the factory got called? (was this covered in the last chapter?)
 
-Workflow Statements specify how objects of a class coordinate and delegate work to other objects
-Sustainable TDD blog reference
-TODO: workflow specification
-Sergeant, programming by intention
-TODO: outside-in + maybe some drawing
-interface discovery
-TODO: read chapter on interface discovery
-
-
-
-## Data Transfer Objects
+## Data Transfer Objects and TDD
 
 While looking at the initial data structures, Johnny and Benjamin called them Data Transfer Objects.
 
-A Data Transfer Object is a pattern to describe objects responsible for exchanging information between process boundaries (TODO: confirm with the book). So, we can have DTOs representing input that our process receives and DTOs representing output that our process sends out.
+A Data Transfer Object is a pattern to describe objects responsible for exchanging information between processes[^PEAA]. So, we can have DTOs representing input that our process receives and DTOs representing output that our process sends out.
 
-As you might have seen, DTOs are typically just data structures. That may come as surprising, because for several chapters now, I have repeatedly stressed how I bundle data and behavior together. Isn't this breaking all the principles that I mentioned?
+As you might have seen, DTOs are typically just data structures. That may come as surprising, because for several chapters now, I have repeatedly stressed how I prefer to bundle data and behavior together. Isn't this breaking all the principles that I mentioned?
 
 My response to this would be that exchanging information between processes is where these principles do not apply and that there are some good reasons why.
 
-1. It is easier to exchange data than to exchange behavior. If I wanted to send behavior to another process, I would have to send it as data anyway, e.g. in a form of source code. In such a  case, the other side would need to interpret the source code, provide all the dependencies etc. which could be cumbersome and strongly couple implementations of both processes.
+1. It is easier to exchange data than to exchange behavior. If I wanted to send behavior to another process, I would have to send it as data anyway, e.g. in a form of source code. In such a  case, the other side would need to interpret the source code, provide all the dependencies, etc. which could be cumbersome and strongly couple implementations of both processes.
 2. Agreeing on a simple data format makes creating and interpreting the data in different programming languages easier.
 3. Many times, the boundaries between processes are designed as functional boundaries at the same time. In other words, even if one process sends some data to another, both of these processes would not want to execute the same behaviors on the data.
 
 These are some of the reasons why processes send data to each other. And when they do, they typically bundle the data for consistency and performance reasons.
 
-### DTOs and value objects
+### DTOs vs value objects
 
 While DTOs, similarly to value objects, carry and represent data, their purpose and design constraints are different.
 
@@ -112,6 +102,43 @@ Not only is this more verbose, it does not buy us anything. Hence my advice:
 
 A> Do not try to mock DTOs in your Statements. Create the real thing.
 
+### Creating DTOs in Statements
+
+As DTOs tend to bundle data, creating them might be a significant effort as there might sometimes be lots of fields we would need to initialize in each test. I summarized my advice on dealing with this as the priority-ordered list below:
+
+1. Limit the reach of your DTOs in production code. As a rule of thumb, the less types and methods know about them, the better.
+1. Use constrained non-determinism if you don't need specific data in DTOs for your current Statement.
+1. Use patterns such as factory methods or builders to hide away the complexity and provide some good default values for the parts you don't care about.
+
+## Interface discovery and the sources of abstractions
+
+As promised, the last chapter included some interface discovery, even though it wasn't your typical way of applying this approach.
+
+The goal was to decouple from the framework, so if there was domain knowledge here, this would be a problem
+Command/UseCase - pattern, (services layer)
+CommandFactory - pattern
+ReservationInProgress - pattern/domain
+ReservationInProgressFactory - pattern
+TODO: sources of abstraction - here, it's mainly architecture, but there is ReservationInProgress
+
+## So should I write unit-level Statements for my controllers?
+
+Uncle Bob did not
+These tests are repeatable
+I like it to monitor dependencies that my controllers have
+
+
+TODO: other ways to test-drive this (higher level tests)
+
+## Design quality vs Statements
+
+TODO: Design quality vs. Tests (intro) and what this example told us - verifying and setting up a mock for the same method is violation of the CQS principle, too many mocks - too many dependencies. Too many stubs - violation of TDA principle. These things *may* mean a violation.
+
+Next chapter - a factory
+
+TODO: revise using the term "Stable" in the previous chapters to sync it with Uncle Bob's usage of the term.
+
+
 ## Using a `ReservationInProgress`
 
 A controversial point of the design in the last chapter might be the usage of a `ReservationInProgress` class. The core idea of this interface is to collect the data needed to produce a result. To introduce this object, we needed a separate factory, which made the design more complex. Thus, some questions might pop into your mind:
@@ -165,7 +192,7 @@ public interface ReservationCommand
 }
 ```
 
-This would do the job for the task at hand, but would make the `ReservationCommand` break the command-query separation principle, which I like to uphold as much as I can. Also, the `ReservationCommand` interface would become much less reusable. If our application was to support different commands, each returning a different type of result, we could not have a single interface for all of them. This in turn would make it more difficult to decorate the commands using the decorator pattern. We might try to fix this by making the command generic:
+This would do the job for the task at hand but would make the `ReservationCommand` break the command-query separation principle, which I like to uphold as much as I can. Also, the `ReservationCommand` interface would become much less reusable. If our application was to support different commands, each returning a different type of result, we could not have a single interface for all of them. This, in turn, would make it more difficult to decorate the commands using the decorator pattern. We might try to fix this by making the command generic:
 
 ```csharp
 public interface ReservationCommand<T>
@@ -205,105 +232,6 @@ The answer to the first one is: it depends on what the `ReservationInProgress` i
 
 The answer to the second one is: it depends whether you care about specifying the controller behavior on the unit level. If yes, then it may handy to have a factory just to control the creation of `ReservationInProgress`. If you don't want to (e.g. you drive this logic with higher-level Statements, which we will talk about in one of the next parts), then you can decide to just create the object inside the controller method.
 
-## Sources of abstractions
-
-The goal was to decouple from the framework, so if there was domain knowledge here, this would be a problem
-Command/UseCase - pattern, (services layer)
-CommandFactory - pattern
-ReservationInProgress - pattern/domain
-ReservationInProgressFactory - pattern
-TODO: sources of abstraction - here, it's mainly architecture, but there is ReservationInProgress
-
-## Maintaining a composition root
-
-TODO: maintaining composition root to make the Statement run - don't spend too much time on it
-
-## Factories and commands
-
-TODO: why separate factories?
-TODO: why commands? -> Fowler's command oriented API~~
-TODO: give example of controller test from my solution to Ploeh kata
-TODO: composing commands - why Execute() is parameterless
-
-"**Benjamin:** Oh, I can see that the factory's `CreateReservationCommand()` is where you decided to pass the `reservationInProgress` that I wanted to pass to the `Execute()` method earlier. Clever. By leaving the commands's `Execute()` method parameterless, you made it more abstract and made the interface decpoupled from any particular argument types. On the other hand, the command is created in the same scope it is used, so there is literally no issue with passing all the parameters through the factory method.
-"
-
-"**Johnny:** This is where we need to exercise our design skills to introduce some new collaborators. This task is hard at the boundaries of application logic, since we need to draw the collaborators, not from the domain, but rather think about design patterns that will allow us to reach our goals. Every time we enter our application logic, we do so from a perspective of a use case. In this particular example, our use case is "making a reservation". A use case is typically represented by either a method in a facade[^FacadePattern] or a command object[^CommandPattern]. Commands are a bit more complex, but more scalable. If making a reservation was our only use case, it probably wouldn't make sense to use it. But as we already have more high priority requests for features, I believe we can assume that commands will be a better fit.
-"
-
-"**Johnny**: Let's start with the collecting parameter, which will represent a domain concept of a reservation in progress. We need it to collect the data necessary to build a response DTO. Thus, what we currently know about it is that it's going to be converted to a response DTO at the very end. All of the three objects: the command, the collecting parameter and the factory, are collaborators, so they will be mocks in our Statement."
-
-TODO: overdesign (and Sandro Mancuso version - compare with code and dependencies count, query count), anticorruption layer, mapping vs. wrapping. Wrapping is a little bit harder to maintain in case domain model follows the data, but is more convenient when domain model diverges from the data model.
-
-```csharp
-[Fact] public void
-ShouldExecuteReservationCommandAndReturnResponseWhenMakingReservation()
-{
-  //GIVEN
-  var requestDto = Any.Instance<ReservationRequestDto>();
-  var commandFactory = Substitute.For<CommandFactory>();
-  var reservationInProgressFactory = Substitute<ReservationInProgressFactory>();
-  var reservationInProgress = Substitute.For<ReservationInProgress>();
-  var expectedReservationDto = Any.Instance<ReservationDto>();
-  var reservationCommand = Substitute.For<ReservationCommand>();
-
-  var ticketOffice = new TicketOffice(
-    reservationInProgressFactory,
-    commandFactory);
-
-  reservationInProgressFactory.FreshInstance()
-    .Returns(reservationInProgress);
-  commandFactory.CreateReservationCommand(requestDto, reservationInProgress)
-    .Returns(reservationCommand);
-  reservationInProgress.ToDto()
-    .Returns(expectedReservationDto);
-
-  //WHEN
-  var reservationDto = ticketOffice.MakeReservation(requestDto);
-
-  //THEN
-  Assert.Equal(expectedReservationDto, reservationDto);
-  reservationCommand.Received(1).Execute();
-}
-```
-
-```csharp
-[Fact] public void
-ShouldExecuteReservationCommandAndReturnResponseWhenMakingReservation()
-{
-  //GIVEN
-  var requestDto = Any.Instance<ReservationRequestDto>();
-  var expectedReservationDto = Any.Instance<ReservationDto>();
-  var ticketOffice = new TicketOffice(
-    facade);
-
-  facade.MakeReservation(requestDto).Returns(expectedReservationDto);
-
-  //WHEN
-  var reservationDto = ticketOffice.MakeReservation(requestDto);
-
-  //THEN
-  Assert.Equal(expectedReservationDto, reservationDto);
-}
-```
-
-No value unless we intend to catch some exceptions here. The next class has to handle the DTO.
-
-## So should I write unit-level Statements for my controllers?
-
-Uncle Bob did not
-These tests are repeatable
-I like it to monitor dependencies that my controllers have
-
-
-TODO: other ways to test-drive this (higher level tests)
-
-## Design quality vs Statements
-
-TODO: Design quality vs. Tests (intro) and what this example told us - verifying and setting up a mock for the same method is violation of the CQS principle, too many mocks - too many dependencies. Too many stubs - violation of TDA principle. These things *may* mean a violation.
-
-Next chapter - a factory
-
-TODO: revise using the term "Stable" in the previous chapters to sync it with Uncle Bob's usage of the term.
-
 [^walkingskeleton]: TODO add reference
+[^workflowspecification]: http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html
+[^PEAA]: Patterns of Enterprise Application Architecture, Martin Fowler
