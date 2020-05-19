@@ -797,7 +797,7 @@ commandFactory.CreateReservationCommand(requestDto, reservationInProgress)
 
 This doesn't compile because we have no `commandFactory` yet.
 
-**Benjamin:** Oh, I can see that the factory's `CreateReservationCommand()` is where you decided to pass the `reservationInProgress` that I wanted to pass to the `Execute()` method earlier. Clever. By leaving the commands's `Execute()` method parameterless, you made it more abstract and made the interface decoupled from any particular argument types. On the other hand, the command is created in the same scope it is used, so there is literally no issue with passing all the parameters through the factory method.
+**Benjamin:** Oh, I can see that the factory's `CreateReservationCommand()` is where you decided to pass the `reservationInProgress` that I wanted to pass to the `Execute()` method earlier. Clever. By leaving the command's `Execute()` method parameterless, you made it more abstract and made the interface decoupled from any particular argument types. On the other hand, the command is created in the same scope it is used, so there is literally no issue with passing all the parameters through the factory method.
 
 **Johnny:** That's right. We now know we need a factory, plus that it needs to be a mock since we configure it to return a command when it is asked for one. I propose something like this:
 

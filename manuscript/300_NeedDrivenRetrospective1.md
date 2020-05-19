@@ -12,7 +12,7 @@ Object3 -> Object2 -> Object1
 
 The outside-in approach broke this for me because the objects I had to start with were the ones that had to have dependencies and these dependencies did not exist yet. With outside-in, I would need to start with `Object3`, which could not be instantiated without `Object2`, which, in turn, could not be instantiated without `Object1`.
 
-If this feels difficult, then why bother? - you may ask. My reasons are:
+If this feels difficult, then why bother? -- you may ask. My reasons are:
 
 1. By starting from the inputs and going inside, I allow my interfaces and protocols to be shaped by use cases rather than by the underlying technology. That does not mean I can just ignore the technology stuff, but I consider the use case logic to be the main driver. This way, my protocols tend to be more abstract which in turn enforces higher composability.
 1. Every line of code I introduce is there because the use case needs it. Every method, every interface, and class exists because there already exists someone who needs it to perform its obligations. This way, I ensure I only implement the stuff that's needed and that it is shaped the way the users find it comfortable to use. Until I started using this approach, I would start from the inside of the system and I would design classes by guessing how they would be used and I would later regret these guesses, because of the rework and complexity they would often create.
@@ -106,7 +106,7 @@ A> Do not try to mock DTOs in your Statements. Create the real thing.
 
 As DTOs tend to bundle data, creating them might be a significant effort as there might sometimes be lots of fields we would need to initialize in each test. I summarized my advice on dealing with this as the priority-ordered list below:
 
-1. Limit the reach of your DTOs in production code. As a rule of thumb, the less types and methods know about them, the better.
+1. Limit the reach of your DTOs in the production code. As a rule of thumb, the less types and methods know about them, the better.
 1. Use constrained non-determinism if you don't need specific data in DTOs for your current Statement.
 1. Use patterns such as factory methods or builders to hide away the complexity and provide some good default values for the parts you don't care about.
 
@@ -128,7 +128,7 @@ These tests are repeatable
 I like it to monitor dependencies that my controllers have
 
 
-TODO: other ways to test-drive this (higher level tests)
+TODO: other ways to test-drive this (higher-level tests)
 
 ## Design quality vs Statements
 
