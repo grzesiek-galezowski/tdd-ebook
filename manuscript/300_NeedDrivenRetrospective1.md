@@ -159,7 +159,8 @@ When wrapping, I have another object that holds a reference to the DTO and all t
 
 ```csharp
 var user = new User(userDto);
-user.AssignResource(resource);
+//...
+user.Assign(resource);
 ```
 
 I consider this approach simpler but more limited. I find that it encourages me to shape the domain objects in a similar way the DTOs are designed (because one object wraps one DTO).
@@ -168,14 +169,19 @@ When mapping, I unpack the DTO and pass specific parts into my domain object:
 
 ```csharp
 var user = new User(userDto.Name, userDto.Surname, new Address(userDto.City, userDto.Street));
-user.AssignResource(resource);
+//...
+user.Assign(resource);
 ```
 
-This approach requires me to rewrite data, but in exchange, leaves me more room to shape my domain objects independent of the DTO structure[^mapperpattern]. In the example above, I was able to introduce an `Address` abstraction even though the DTO does not have an explicit field related to addresses.
+This approach requires me to rewrite data into new objects field by field, but in exchange, leaves me more room to shape my domain objects independent of the DTO structure[^mapperpattern]. In the example above, I was able to introduce an `Address` abstraction even though the DTO does not have an explicit field containing an address.
 
 How does all of this help me avoid the tediousness of creating DTOs? Well, the less objects and methods know about a DTO, the less Statements will need to know about it as well, which leads to less places where I need to create and initialize one.
 
-#### Use constrained non-determinism if you don't need specific data in DTOs for your current Statement.
+#### Use constrained non-determinism if you don't need specific data in DTOs for your current Statement
+
+In some Statements where we need to create DTOs, the specific values held inside it don't matter to me. I care only about *some* data being there. This is a perfect match for constrained non-...
+
+TODO example
 
 
 #### Use patterns such as factory methods or builders to hide away the complexity and provide some good default values for the parts you don't care about.
