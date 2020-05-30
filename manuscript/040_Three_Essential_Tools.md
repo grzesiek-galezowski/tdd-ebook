@@ -436,7 +436,7 @@ public Order AnonymousOrder()
 
 Now, that's better. Not only did we make the test shorter, we also provided a hint to the reader that the actual values used to create an order don't matter from the perspective of tested order-processing logic. Hence the name `AnonymousOrder()`.
 
-By the way, wouldn't it be nice if we didn't have to provide the anonymous objects ourselves, but could rely on another library to generate these for us? Susprise, surprise, there is one! It's called [**Autofixture**](https://github.com/AutoFixture/AutoFixture). It is an example of a so-called anonymous values generator (although its creator likes to say that it is also an implementation of the Test Data Builder pattern, but let's skip this discussion here). 
+By the way, wouldn't it be nice if we didn't have to provide the anonymous objects ourselves, but could rely on another library to generate these for us? Surprise, surprise, there is one! It's called [**Autofixture**](https://github.com/AutoFixture/AutoFixture). It is an example of a so-called anonymous values generator (although its creator likes to say that it is also an implementation of the Test Data Builder pattern, but let's skip this discussion here). 
 
 After changing our test to use AutoFixture, we arrive at the following:
 

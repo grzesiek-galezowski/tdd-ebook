@@ -25,11 +25,55 @@ I found I can mitigate the uncomfortable feeling of starting from the inputs ("t
 
 ## Workflow specification
 
-The Statement about the controller is an example of what Amir Kolsky and Scott Bain call a workflow Statement[^workflowspecification]. This kind of Statement describes how a specified unit of behavior (in our case, an object) interacts with other units by sending messages and receiving answers. In Statements specifying workflow, we describe the purpose and behaviors of the specified class in terms of its interaction with mock objects, by specifying the return values of some methods and asserting that other methods should be called.
+The Statement about the controller is an example of what Amir Kolsky and Scott Bain call a workflow Statement[^workflowspecification]. This kind of Statement describes how a specified unit of behavior (in our case, an object) interacts with other units by sending messages and receiving answers. In Statements specifying workflow, we document the intended purpose and behaviors of the specified class in terms of its interaction with other roles in the system. We use mock objects to play these roles by specifying the return values of some methods and asserting that other methods are called.
 
 For example, in the Statement Johnny and Benjamin wrote in the last chapter, they described how a command factory reacts when asked for a new command and they also asserted on the call to the command's `Execute()` method.
 
-TODO an aside: should I verify that the factory got called? (was this covered in the last chapter?)
+### Should I verify that the factory got called?
+
+In the last Statement, you might have notices that some interactions are verified (using the `.Received()` syntax) while some are only set up to return something. An example of the latter is a factory, e.g. `reservationInProgressFactory.FreshInstance().Returns(reservationInProgress)`. You may question why Johnny and Benjamin did not put something like `reservationInProgressFactory.Received(1).FreshInstance()` in the Statement.
+
+The reason is, the factory is just a function -- it is not supposed to have any side-effects. As such, I can call it many times in the code without altering the expected behavior. For example, if the code of the `MakeReservation()` method Johnny and Benjamin were test-driving did not look like this:
+
+```csharp
+var reservationInProgress = _reservationInProgressFactory.FreshInstance();
+var reservationCommand = _commandFactory.CreateReservationCommand(requestDto, reservationInProgress);
+reservationCommand.Execute();
+return reservationInProgress.ToDto();
+```
+
+but like this:
+
+```csharp
+var reservationInProgress = _reservationInProgressFactory.FreshInstance();
+reservationInProgress = _reservationInProgressFactory.FreshInstance();
+reservationInProgress = _reservationInProgressFactory.FreshInstance();
+reservationInProgress = _reservationInProgressFactory.FreshInstance();
+var reservationCommand = _commandFactory.CreateReservationCommand(requestDto, reservationInProgress);
+reservationCommand.Execute();
+return reservationInProgress.ToDto();
+```
+
+The behavior of this method would still be correct. Sure, it would do some needless lines of code, but when writing Statements, I care about behavior, not lines of code. I leave more freedom to the implementation and try not to overspecify.
+
+On the other hand, consider the command -- it is supposed to have a side effect, because I expect it to alter some kind of reservation registry in the end. So if I sent the `Execute()` message more than once:
+
+```csharp
+var reservationInProgress = _reservationInProgressFactory.FreshInstance();
+var reservationCommand = _commandFactory.CreateReservationCommand(requestDto, reservationInProgress);
+reservationCommand.Execute();
+reservationCommand.Execute();
+reservationCommand.Execute();
+reservationCommand.Execute();
+reservationCommand.Execute();
+return reservationInProgress.ToDto();
+```
+
+then it would alter the behavior -- maybe by reserving more seats than the user requested, maybe by throwing an error from the second `Execute()`... This is why I want to strictly specify how many times the `Execute()` message should be sent:
+
+```csharp
+reservationCommand.Received(1).Execute();
+```
 
 ## Data Transfer Objects and TDD
 
@@ -51,14 +95,15 @@ These are some of the reasons why processes send data to each other. And when th
 
 While DTOs, similarly to value objects, carry and represent data, their purpose and design constraints are different.
 
-1. Values have value semantics, i.e. they can be compared based on their content. DTOs typically don't have value semantics (if I add value semantics to DTOs, I do it because I find it convenient, not because it's a part of domain model).
-1. Values may contain behavior, even quite complex (see e.g. `string.Replace()`), while DTOs typically contain no behaviors at all.
-1. Despite the previous point, DTOs may contain value objects, as long as these value objects can be reliably serialized and deserialized without loss of information. Values don't typically contain DTOs.
+1. Values have value semantics, i.e. they can be compared based on their content. This is one of the core principles of their design. DTOs don't need to have value semantics (if I add value semantics to DTOs, I do it because I find it convenient for some reason, not because it's a part of domain model).
+1. DTOs must be easily serializable and deserializable from some kind of data exchange format (i.e. JSON or XML).
+1. Values may contain behavior, even quite complex (an example of this would be the `Replace()` method of the `String` class), while DTOs typically contain no behavior at all.
+1. Despite the previous point, DTOs may contain value objects, as long as these value objects can be reliably serialized and deserialized without loss of information. Value objects don't contain DTOs.
 1. Values represent atomic and well-defined concepts (like text, date, money), while DTOs mostly function as bundles of data.
 
 ### DTOs and mocks
 
-As we observed in the example of Johnny and Benjamin writing their first Statement, they did not mock DTOs. This is a general rule - a DTO is a set of data, it does not represent an implementation of an abstract protocol nor does it benefit from  polymorphism the way objects do. Also, it is typically far easier to create an instance of a DTO than a mock of it. Imagine we have the following DTO:
+As we observed in the example of Johnny and Benjamin writing their first Statement, they did not mock DTOs. This is a general rule -- a DTO is a piece of data, it does not represent an implementation of an abstract protocol nor does it benefit from polymorphism the way objects do. Also, it is typically far easier to create an instance of a DTO than to mock it. Imagine we have the following DTO:
 
 ```csharp
 public class LoginDto
@@ -85,12 +130,12 @@ If we were to create a mock, we would probably extract an interface:
 ```csharp
 public class ILoginDto
 {
-  public string Login { get; set; }
-  public string Password { get; set;}
+  public string Login { get; }
+  public string Password { get; }
 }
 ```
 
-and then write in our Statement something like this:
+and then write something like this in our Statement:
 
 ```csharp
 var loginDto = Substitute.For<ILoginDto>();
@@ -98,17 +143,42 @@ loginDto.Login.Returns("James");
 loginDto.Password.Returns("Bond");
 ```
 
-Not only is this more verbose, it does not buy us anything. Hence my advice:
+Not only is this more verbose, it also does not buy us anything. Hence my advice:
 
 A> Do not try to mock DTOs in your Statements. Create the real thing.
 
 ### Creating DTOs in Statements
 
-As DTOs tend to bundle data, creating them might be a significant effort as there might sometimes be lots of fields we would need to initialize in each test. I summarized my advice on dealing with this as the priority-ordered list below:
+As DTOs tend to bundle data, creating them for specific Statements might be a chore as there might sometimes be several fields we would need to initialize in each Statement. How do I approach creating instances of DTOs to avoid this? I summarized my advice on dealing with this as the priority-ordered list below:
 
-1. Limit the reach of your DTOs in the production code. As a rule of thumb, the less types and methods know about them, the better.
-1. Use constrained non-determinism if you don't need specific data in DTOs for your current Statement.
-1. Use patterns such as factory methods or builders to hide away the complexity and provide some good default values for the parts you don't care about.
+#### Limit the reach of your DTOs in the production code
+
+As a rule of thumb, the less types and methods know about them, the better. DTOs represent an external application contract. They are also contrained by some rules mentioned earlier (like easiness of serialization), so they cannot evolve the same way normal objects do. Thus, I try to limit the number of objects that know about DTOs to a necessary minimum. I use one of the two strategies: wrapping or mapping.
+
+When wrapping, I have another object that holds a reference to the DTO and all the other pieces of logic interact with this wrapping object:
+
+```csharp
+var user = new User(userDto);
+user.AssignResource(resource);
+```
+
+I consider this approach simpler but more limited. I find that it encourages me to shape the domain objects in a similar way the DTOs are designed (because one object wraps one DTO).
+
+When mapping, I unpack the DTO and pass specific parts into my domain object:
+
+```csharp
+var user = new User(userDto.Name, userDto.Surname, new Address(userDto.City, userDto.Street));
+user.AssignResource(resource);
+```
+
+This approach requires me to rewrite data, but in exchange, leaves me more room to shape my domain objects independent of the DTO structure[^mapperpattern]. In the example above, I was able to introduce an `Address` abstraction even though the DTO does not have an explicit field related to addresses.
+
+How does all of this help me avoid the tediousness of creating DTOs? Well, the less objects and methods know about a DTO, the less Statements will need to know about it as well, which leads to less places where I need to create and initialize one.
+
+#### Use constrained non-determinism if you don't need specific data in DTOs for your current Statement.
+
+
+#### Use patterns such as factory methods or builders to hide away the complexity and provide some good default values for the parts you don't care about.
 
 ## Interface discovery and the sources of abstractions
 
@@ -124,7 +194,7 @@ TODO: sources of abstraction - here, it's mainly architecture, but there is Rese
 ## So should I write unit-level Statements for my controllers?
 
 Uncle Bob did not
-These tests are repeatable
+These Statements are repeatable
 I like it to monitor dependencies that my controllers have
 
 
@@ -235,3 +305,4 @@ The answer to the second one is: it depends whether you care about specifying th
 [^walkingskeleton]: TODO add reference
 [^workflowspecification]: http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html
 [^PEAA]: Patterns of Enterprise Application Architecture, Martin Fowler
+[^mapperpattern]: https://martinfowler.com/eaaCatalog/mapper.html

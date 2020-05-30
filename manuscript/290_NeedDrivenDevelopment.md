@@ -527,7 +527,7 @@ reservationInProgressFactory.FreshInstance().Returns(reservationInProgress);
 
 **Johnny:** Nice. Now the code does not compile, because we don't have a `reservationInProgressFactory`. So let's create it.
 
-**Benjamin:** And, as you said earlier, it should be a mock. Then this will be the definition:
+**Benjamin:** And, as you said earlier, it should be a mock object. Then this will be the definition:
 
 ```csharp
 var reservationInProgressFactory = Substitute.For<ReservationInProgressFactory>();
