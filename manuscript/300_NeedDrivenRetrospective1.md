@@ -85,7 +85,7 @@ As you might have seen, DTOs are typically just data structures. That may come a
 
 My response to this would be that exchanging information between processes is where these principles do not apply and that there are some good reasons why.
 
-1. It is easier to exchange data than to exchange behavior. If I wanted to send behavior to another process, I would have to send it as data anyway, e.g. in a form of source code. In such a  case, the other side would need to interpret the source code, provide all the dependencies, etc. which could be cumbersome and strongly couple implementations of both processes.
+1. It is easier to exchange data than to exchange behavior. If I wanted to send behavior to another process, I would have to send it as data anyway, e.g. in a form of source code. In such a case, the other side would need to interpret the source code, provide all the dependencies, etc. which could be cumbersome and strongly couple implementations of both processes.
 2. Agreeing on a simple data format makes creating and interpreting the data in different programming languages easier.
 3. Many times, the boundaries between processes are designed as functional boundaries at the same time. In other words, even if one process sends some data to another, both of these processes would not want to execute the same behaviors on the data.
 
@@ -153,9 +153,9 @@ As DTOs tend to bundle data, creating them for specific Statements might be a ch
 
 #### Limit the reach of your DTOs in the production code
 
-As a rule of thumb, the less types and methods know about them, the better. DTOs represent an external application contract. They are also contrained by some rules mentioned earlier (like easiness of serialization), so they cannot evolve the same way normal objects do. Thus, I try to limit the number of objects that know about DTOs to a necessary minimum. I use one of the two strategies: wrapping or mapping.
+As a rule of thumb, the fewer types and methods know about them, the better. DTOs represent an external application contract. They are also constrained by some rules mentioned earlier (like the ease of serialization), so they cannot evolve the same way normal objects do. Thus, I try to limit the number of objects that know about DTOs to a necessary minimum. I use one of the two strategies: wrapping or mapping.
 
-When wrapping, I have another object that holds a reference to the DTO and all the other pieces of logic interact with this wrapping object:
+When wrapping, I have another object that holds a reference to the DTO and then all the other pieces of logic interact with this wrapping object instead of directly with a DTO:
 
 ```csharp
 var user = new User(userDto);
@@ -163,9 +163,9 @@ var user = new User(userDto);
 user.Assign(resource);
 ```
 
-I consider this approach simpler but more limited. I find that it encourages me to shape the domain objects in a similar way the DTOs are designed (because one object wraps one DTO).
+I consider this approach simpler but more limited. I find that it encourages me to shape the domain objects similarly to how the DTOs are designed (because one object wraps one DTO).
 
-When mapping, I unpack the DTO and pass specific parts into my domain object:
+When mapping, I unpack the DTO and pass specific parts into my domain objects:
 
 ```csharp
 var user = new User(userDto.Name, userDto.Surname, new Address(userDto.City, userDto.Street));
@@ -173,18 +173,63 @@ var user = new User(userDto.Name, userDto.Surname, new Address(userDto.City, use
 user.Assign(resource);
 ```
 
-This approach requires me to rewrite data into new objects field by field, but in exchange, leaves me more room to shape my domain objects independent of the DTO structure[^mapperpattern]. In the example above, I was able to introduce an `Address` abstraction even though the DTO does not have an explicit field containing an address.
+This approach requires me to rewrite data into new objects field by field, but in exchange leaving me more room to shape my domain objects independent of the DTO structure[^mapperpattern]. In the example above, I was able to introduce an `Address` abstraction even though the DTO does not have an explicit field containing the address.
 
-How does all of this help me avoid the tediousness of creating DTOs? Well, the less objects and methods know about a DTO, the less Statements will need to know about it as well, which leads to less places where I need to create and initialize one.
+How does all of this help me avoid the tediousness of creating DTOs? Well, the fewer objects and methods know about a DTO, the fewer Statements will need to know about it as well, which leads to fewer places where I need to create and initialize one.
 
 #### Use constrained non-determinism if you don't need specific data in DTOs for your current Statement
 
-In some Statements where we need to create DTOs, the specific values held inside it don't matter to me. I care only about *some* data being there. This is a perfect match for constrained non-...
+In many Statements where I need to create DTOs, the specific values held inside it don't matter to me. I care only about *some* data being there. This is a perfect match for constrained non-determinism. I can just create an anonymous instance and use it, which I find easier than assigning field by field.
 
-TODO example
+As an example, look at this line from the Statement Johnny and Benjamin wrote in the last chapter:
+
+```csharp
+var requestDto = Any.Instance<ReservationRequestDto>();
+```
+
+In that Statement, they did not need to care about the exact values held by the DTO, so they just created an anonymous instance. In this particular case, using constrained non-determinism not only simplified the creation of the DTO, but it even allowed them to completely decouple the Statement from the DTO's structure.
+
+#### Use patterns such as factory methods or builders to hide away the complexity and provide some good default values for the parts you don't care about
+
+When all else fails, I use factory methods and builders to ease the pain of creating DTOs.
+
+A factory method can be useful if there is single distinguishing factor about the particular instance that I want to create. For example:
+
+```csharp
+public UserDto AnyUserWith(params Privilege[] privileges)
+{
+  var dto = Any.Instance<UserDto>();
+  dto.Privileges = privileges;
+  return dto;
+}
+```
+
+This method creates any user with a particular set of privileges. Note that I utilized constrained non-determinism as well in this method, which helped me a bit. If this is not possible, I try to come up with some sort of "safe default" values for each of the fields.
+
+I like factory methods, but the more flexibility I need, the more I gravitate towards test data builders[^natprycetestdatabuilder].
+
+A builder leaves me much more flexibility with how I set up my DTOs. The typical syntax for using a builder you can find on the internet[^ploehtestdatabuilder] looks like this:
+
+```csharp
+var user = new UserBuilder().WithName("Johnny").WithAge("43").Build();
+```
+
+Note that the value for each field is configured separately. Typically, the builder holds some kind of default values for the fields I don't specify:
+
+```csharp
+var user = new UserBuilder().WithName("Johnny").Build(); //some safe default age will be used
+```
+
+I am not showing an example implementation on purpose, because one of the further chapters will include a longer discussion on this topic.
+
+///////////////////////// TODO
 
 
-#### Use patterns such as factory methods or builders to hide away the complexity and provide some good default values for the parts you don't care about.
+
+
+
+
+
 
 ## Interface discovery and the sources of abstractions
 
@@ -312,3 +357,5 @@ The answer to the second one is: it depends whether you care about specifying th
 [^workflowspecification]: http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html
 [^PEAA]: Patterns of Enterprise Application Architecture, Martin Fowler
 [^mapperpattern]: https://martinfowler.com/eaaCatalog/mapper.html
+[^natprycetestdatabuilder]: http://www.natpryce.com/articles/000714.html
+[^ploehtestdatabuilder]: https://blog.ploeh.dk/2017/08/15/test-data-builders-in-c/

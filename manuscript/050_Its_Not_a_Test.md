@@ -50,13 +50,13 @@ I hope you can see now that what we called "a test" can also be seen as a kind 
 
 In reality, the role of a test, if written before production code, can be broken down even further:
 
-* designing a scenario - is when we specify our requirements by giving concrete examples of behaviors we expect
-* writing the test code - is when we specify an API through which we want to use the code that we are testing
-* compiling - is when we get feedback on whether the production code has the classes and methods required by the specification we wrote. If it doesn't, the compilation will fail. 
-* execution - is where we get feedback on whether the production code exhibits the behaviors that the specification describes
-* reading - is where we use the already written specification to obtain knowledge about the production code.
+* designing a scenario -- is when we specify our requirements by giving concrete examples of behaviors we expect
+* writing the test code -- is when we specify an API through which we want to use the code that we are testing
+* compiling -- is when we get feedback on whether the production code has the classes and methods required by the specification we wrote. If it doesn't, the compilation will fail. 
+* execution -- is where we get feedback on whether the production code exhibits the behaviors that the specification describes
+* reading -- is where we use the already written specification to obtain knowledge about the production code.
  
-Thus, the name "test" seems like narrowing down what we are doing here too much. My feeling is that maybe a different name would be better - hence the term *specification*.
+Thus, the name "test" seems like narrowing down what we are doing here too much. My feeling is that maybe a different name would be better -- hence the term *specification*.
 
 The discovery of the tests' role as a specification is quite recent and there is no uniform terminology connected to it yet. Some like to call the process of using tests as specifications *Specification By Example* to say that the tests are examples that help specify and clarify the functionality being developed. Some use the term BDD (*Behavior-Driven Development*) to emphasize that writing tests is really about analyzing and describing behaviors. Also, you might encounter different names for some particular elements of this approach, for example, a "test" can be referred to as a "spec", or an "example", or a "behavior description", or a "specification statement" or "a fact about the system" (as you already saw in the chapter on tools, the xUnit.NET framework marks each "test" with a `[Fact]` attribute, suggesting that by writing it, we are stating a single fact about the developed code. By the way, xUnit.NET also allows us to state ‘theories' about our code, but let's leave this topic for another time).
 
@@ -84,7 +84,7 @@ From time to time I'll refer back to the "traditional" terminology, because it i
 
 You may be familiar with requirements specifications or design specifications that are written in plain English or another spoken language. However, our Specifications differ from them in several ways. In particular, the kind of Specification that we create by writing tests:
 
-1. Is not *completely* written up-front like many of such "traditional" specs have been written (which doesn't mean it's written after the code is done - more on this in the next chapters).
+1. Is not *completely* written up-front like many of such "traditional" specs have been written (which doesn't mean it's written after the code is done -- more on this in the next chapters).
 1. Is executable -- you can run it to see whether the code adheres to the specification or not. This lowers the risk of inaccuracies in the Specification and falling out of sync with the production code.
 1. Is written in source code rather than in spoken language -- which is both good, as the structure and formality of code leave less room for misunderstanding, and challenging, as great care must be taken to keep such specification readable.
 

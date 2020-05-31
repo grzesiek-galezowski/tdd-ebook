@@ -45,7 +45,7 @@ notifiesListenersThatServerIsUnavailableWhenCannotConnectToItsMonitoringPort()
 Note a few things about the name of the Statement:
 
 1. It describes a behavior of an instance of a specific class. Note that it doesn't contain the name of the method that triggers the behavior, because what is specified is not a single method, but the behavior itself (this will be covered in more detail in the coming chapters). The Statement name simply tells what an instance does ("notifies listeners that server is unavailable") under certain circumstances ("when cannot connect to its monitoring port"). It is important for me because I can derive such a description from thinking about the responsibilities of a class without the need to know any of its method signatures or the code that's inside the class. Hence, this is something I can come up with before implementing -- I just need to know why I created this class and build on this knowledge.
-1. The name is relatively long. Really, really, **really** don't worry about it. As long as you are describing a single behavior, I'd say it's fine. I've seen people hesitate to give long names to Statements because they tried to apply the same rules to those names as to the names of methods in production code. In production code, a long method name can be a sign that the method has too many responsibilities or that insufficient abstraction level is used to describe the functionality and that the name may needlessly reveal implementation details. My opinion is that these two reasons don't apply as much to Statements. In the case of Statements, the methods are not invoked by anyone besides the automatic test runner, so they will not obfuscate any code that would need to call them with their long names. Besides, the Statements' names need not be as abstract as production code method names - they can reveal more.
+1. The name is relatively long. Really, really, **really** don't worry about it. As long as you are describing a single behavior, I'd say it's fine. I've seen people hesitate to give long names to Statements because they tried to apply the same rules to those names as to the names of methods in production code. In production code, a long method name can be a sign that the method has too many responsibilities or that insufficient abstraction level is used to describe the functionality and that the name may needlessly reveal implementation details. My opinion is that these two reasons don't apply as much to Statements. In the case of Statements, the methods are not invoked by anyone besides the automatic test runner, so they will not obfuscate any code that would need to call them with their long names. Besides, the Statements' names need not be as abstract as production code method names -- they can reveal more.
 
     Alternatively, we could put all the information in a comment instead of the Statement name and leave the name short, like this:
 
@@ -286,7 +286,7 @@ Now for the `roleAllowedToUseReporting`. The first question that comes to mind w
 var roleAllowedToUseReporting = Any.Of(Roles.Admin, Roles.Auditor);
 ```
 
-And so, working our way backwards, we have arrived at the final solution (in the code below, I already gave the Statement a name - this is the last step):
+And so, working our way backward, we have arrived at the final solution (in the code below, I already gave the Statement a name -- this is the last step):
 
 ```csharp
 [Fact] public void

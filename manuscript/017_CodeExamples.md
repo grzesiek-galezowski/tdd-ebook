@@ -34,9 +34,9 @@ For example brevity, I chose to use the `var` keyword in the examples. This keyw
 var x = 123; //x inferred as integer
 ```
 
-Of course, this is no dynamic typing by any means - everything is resolved at compile time.
+Of course, this is no dynamic typing by any means -- everything is resolved at compile time.
 
-One more thing - `var` keyword can only be used when the type can be inferred, so ocassionally, you will see me declaring types explicitly as in:
+One more thing -- `var` keyword can only be used when the type can be inferred, so occasionally, you will see me declaring types explicitly as in:
 
 ```csharp
 List<string> list = null; //list cannot be inferred
@@ -107,7 +107,7 @@ One of the biggest difference between Java and C# is how they treat generics. Fi
 
 The other difference is that in C# there is no type erasure as there is in Java. C# code retains all the generic information at runtime. This impacts how most generic APIs are declared and used in C#.
 
-A generic class definition and creation in Java and C# is roughly the same. There is, however, difference on the method level. A generic method in Java is typically written as:
+A generic class definition and creation in Java and C# are roughly the same. There is, however, a difference on a method level. A generic method in Java is typically written as:
 
 ```java
 public <T> List<T> createArrayOf(Class<T> type) {

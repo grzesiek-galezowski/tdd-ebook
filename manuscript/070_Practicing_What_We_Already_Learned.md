@@ -291,7 +291,7 @@ ShouldDisplay0WhenCreated()
 }
 ```
 
-**Benjamin:** I see. Now the calculator is not created anywhere. I need to create it somewhere now or it will not compile - this is how I know that it's my next step. Is this how it works?
+**Benjamin:** I see. Now the calculator is not created anywhere. I need to create it somewhere now or it will not compile -- this is how I know that it's my next step. Is this how it works?
 
 **Johnny:** Yes, you are catching on quickly.
 
@@ -495,9 +495,9 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 
  //THEN
  Assert.Equal(
-  string.Format("{0}{1}{2}", 
-   (int)nonZeroDigit, 
-   (int)anyDigit1, 
+  string.Format("{0}{1}{2}",
+   (int)nonZeroDigit,
+   (int)anyDigit1,
    (int)anyDigit2
   ),
   calculator.Display()
@@ -513,7 +513,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 
 **Johnny:** It is supposed to be an enumeration (note that it does not exist yet, we just assume that we have it) to hold all the possible digits a user can enter, which are from the range of 0-9. This is to ensure that the user will not write `calculator.Enter(123)`. Instead of allowing our users to enter any number and then detecting errors, we are giving them a choice from among only the valid values.
 
-**Benjamin:** Now I get it. So how about the `Any.Besides()` and `Any.Of()`? What do they do?
+**Benjamin:** Now I get it. So how about the `Any.OtherThan()` and `Any.Of()`? What do they do?
 
 **Johnny:** They are methods from a small utility library I'm using when writing unit-level Specifications. `Any.OtherThan()` returns any value from enumeration besides the one passed as an argument. Hence, the call `Any.OtherThan(DigitKeys.Zero)` means "any of the values contained in DigitKeys enumeration, but not DigitKeys.Zero".
 
@@ -522,7 +522,7 @@ The `Any.Of()` is simpler -- it just returns any value in an enumeration.
 Note that by saying:
 
 ```csharp
- var nonZeroDigit = Any.Besides(DigitKeys.Zero);
+ var nonZeroDigit = Any.OtherThan(DigitKeys.Zero);
  var anyDigit1 = Any.Of<DigitKeys>();
  var anyDigit2 = Any.Of<DigitKeys>();
 ```
@@ -570,7 +570,7 @@ public enum DigitKeys
 
 **Johnny:** This is a specification we are writing, remember? It should say somewhere which digits we support, shouldn't it?
 
-**Benjamin:** It's difficult to agree with, I mean, I can see the values in the enum, should I really test for something when there's not complexity involved?
+**Benjamin:** It's difficult to agree with, I mean, I can see the values in the enum, should I test for something when there's not complexity involved?
 
 **Johnny:** Again, we're not only testing but also we're specifying. I will try to give you more arguments later. For now, just bear with me and note that when we get to specify the enum elements, adding such a Statement will be almost effortless.
 
@@ -618,7 +618,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 {
  //GIVEN
  var calculator = new Calculator();
- var nonZeroDigit = Any.Besides(DigitKeys.Zero);
+ var nonZeroDigit = Any.OtherThan(DigitKeys.Zero);
  var anyDigit1 = Any.Of<DigitKeys>();
  var anyDigit2 = Any.Of<DigitKeys>();
 
@@ -666,7 +666,7 @@ ShouldDisplayAllEnteredDigitsThatAreNotLeadingZeroes()
 {
  //GIVEN
  var calculator = new Calculator();
- var nonZeroDigit = Any.Besides(DigitKeys.Zero);
+ var nonZeroDigit = Any.OtherThan(DigitKeys.Zero);
  var anyDigit1 = Any.Of<DigitKeys>();
  var anyDigit2 = Any.Of<DigitKeys>();
 
@@ -701,7 +701,7 @@ public void Enter(DigitKeys digit)
 
 **Benjamin:** But wait, there is one thing that troubles me.
 
-**Johnny:** I think I know - I was wondering if you'd catch it. Go ahead.
+**Johnny:** I think I know -- I was wondering if you'd catch it. Go ahead.
 
 **Benjamin:** What troubles me is these two lines:
 

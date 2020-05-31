@@ -53,7 +53,7 @@ Test-first allowed me to avoid the following situations where Statements cheated
 
 ### 1. Accidental omission of including a Statement in a Specification
 
-It's usually insufficient to just write the code of a Statement - we also have to let the test runner know that a method we wrote is a Statement (not e.g. just a helper method) and it needs to be evaluated, i.e. ran by the runner. 
+It's usually insufficient to just write the code of a Statement -- we also have to let the test runner know that a method we wrote is a Statement (not e.g. just a helper method) and it needs to be evaluated, i.e. ran by the runner. 
 
 Most xUnit frameworks have some kind of mechanism to mark methods as Statements, whether by using attributes (C#, e.g. `[Fact]`) or annotations (Java, e.g `@Test`), or by using macros (C and C++), or by using a naming convention. We have to use such a mechanism to let the runner know that it should execute such methods.
 
@@ -70,7 +70,7 @@ public class CalculatorSpecification
 }
 ```
 
-There is a chance that we forget to decorate a method with the `[Fact]` attribute - in such case, this method is never executed by the test runner. However funny it may sound, this is exactly what happened to me several times. Let's take the above Statement as an example and imagine that we are writing this Statement post-factum as a unit test in an environment that has, let's say, more than thirty Statements already written and passing. We have written the code and now we are just creating test after test to ensure the code works. Test -- pass, test -- pass, test -- pass. When I execute tests, I almost always run more than one at a time, since it's easier for me than selecting what to evaluate each time. Besides, I get more confidence this way that I don't make a mistake and break something that is already working. Let's imagine we are doing the same here. Then the workflow is really: Test -- all pass, test -- all pass, test -- all pass... 
+There is a chance that we forget to decorate a method with the `[Fact]` attribute -- in such a case, this method is never executed by the test runner. However funny it may sound, this is exactly what happened to me several times. Let's take the above Statement as an example and imagine that we are writing this Statement post-factum as a unit test in an environment that has, let's say, more than thirty Statements already written and passing. We have written the code and now we are just creating test after test to ensure the code works. Test -- pass, test -- pass, test -- pass. When I execute tests, I almost always run more than one at a time, since it's easier for me than selecting what to evaluate each time. Besides, I get more confidence this way that I don't make a mistake and break something that is already working. Let's imagine we are doing the same here. Then the workflow is really: Test -- all pass, test -- all pass, test -- all pass... 
 
 Over time, I have learned to use code snippets mechanism of my IDE to generate a template body for my Statements. Still, in the early days, I have occasionally written something like this:
 
@@ -89,7 +89,7 @@ public class CalculatorSpecification
 
 As you can see, the `[Fact]` attribute is missing, which means this Statement will not be executed. This has happened not only because of not using code generators -- sometimes -- to create a new Statement -- it made sense to copy-paste an existing Statement, change the name and few lines of code[^copypaste]. I didn't always remember to include the `[Fact]` attribute in the copied source code. The compiler was not complaining as well.
 
-The reason I didn't see my mistake was that I was running more than one test at a time - when I got a green bar (i.e. all Statements proven true), I assumed that the Statement I just wrote works as well. It was unattractive for me to search for each new Statement in the list and make sure it's there. The more important reason, however, was that the absence of the `[Fact]` attribute did not disturb my workflow: test -- all pass, test -- all pass, test -- all pass... In other words, my process did not give me any feedback that I made a mistake. So, in such a case, what I end up with is a Statement that not only will never be proven false -- **it won't be evaluated at all**.
+The reason I didn't see my mistake was that I was running more than one test at a time -- when I got a green bar (i.e. all Statements proven true), I assumed that the Statement I just wrote works as well. It was unattractive for me to search for each new Statement in the list and make sure it's there. The more important reason, however, was that the absence of the `[Fact]` attribute did not disturb my workflow: test -- all pass, test -- all pass, test -- all pass... In other words, my process did not give me any feedback that I made a mistake. So, in such a case, what I end up with is a Statement that not only will never be proven false -- **it won't be evaluated at all**.
 
 How does treating tests as Statements and evaluating them before making them true help here? The fundamental difference is that the workflow of TDD is: test -- fail -- pass, test -- fail -- pass, test -- fail -- pass... In other words, we expect each Statement to be proven false at least once. So every time we miss the "fail" stage, we get feedback from our process that something suspicious is happening. This allows us to investigate and fix the problem if necessary.
 
@@ -125,7 +125,7 @@ public void ShouldRecognizeTimeSlotAboveMaximumAllowedAsInvalid()
 
 Note how the method `PerformForTimeSlotIn()`, which triggers the specified behavior, is accidentally called *before* value of `timeSlotAboveMaximumAllowed` is set up and thus, this value is not taken into account at the moment when the validation is executed. If, for example, we make a mistake in the implementation of the `Validation` class so that it returns `false` for values below the maximum and not above, such mistake may go unnoticed, because the Statement will always be true.
 
-Again, this is a toy example - I just used it as an illustration of something that can happen when dealing with more complex cases.
+Again, this is a toy example -- I just used it as an illustration of something that can happen when dealing with more complex cases.
 
 ### 3. Using static data inside the production code
 
@@ -176,7 +176,7 @@ And goes on with the scenario. When we execute it, it passes -- cool... not. Ok,
 private static string xmlText; //note the static keyword!
 ```
 
-It's a static field, which means that its value is retained between instances. What the...? Well, well, here's what happened: the author of this class applied a small optimization. He thought: "In this app, the configuration is only modified by members of the support staff and to do it, they have to shut down the system, so, there is no need to read the XML file every time an XmlConfiguration object is created. I can save some CPU cycles and I/O operations by reading it only once when the first object is created. Later objects will just use the same XML!". Good for him, not so good for us. Why? Because, depending on the order in which the Statements are evaluated, either the original XML string will be used for all Statements or your custom one! Thus the Statements in this Specification may pass or fail for the wrong reason - because they accidentally use the wrong XML. 
+It's a static field, which means that its value is retained between instances. What the...? Well, well, here's what happened: the author of this class applied a small optimization. He thought: "In this app, the configuration is only modified by members of the support staff and to do it, they have to shut down the system, so, there is no need to read the XML file every time an XmlConfiguration object is created. I can save some CPU cycles and I/O operations by reading it only once when the first object is created. Later objects will just use the same XML!". Good for him, not so good for us. Why? Because, depending on the order in which the Statements are evaluated, either the original XML string will be used for all Statements or your custom one! Thus the Statements in this Specification may pass or fail for the wrong reason -- because they accidentally use the wrong XML. 
 
 Starting development from a Statement that we expect to fail may help when such a Statement passes even though the behavior it describes is not implemented yet.
 
@@ -211,7 +211,7 @@ What is the equivalent of the marked steps in the Statement-first approach? Ther
 
 ## Summary
 
-In this chapter, I tried to show you that the choice of *when* we write our Specification often makes a huge difference and that there are numerous benefits of starting with a Statement. When we consider the Specification as what it really is - not only as a suite of tests that check runtime correctness - then the Statement-first approach becomes less awkward and less counter-intuitive.
+In this chapter, I tried to show you that the choice of *when* we write our Specification often makes a huge difference and that there are numerous benefits of starting with a Statement. When we consider the Specification as what it really is -- not only as a suite of tests that check runtime correctness -- then the Statement-first approach becomes less awkward and less counter-intuitive.
 
 [^copypaste]: I know copy-pasting code is considered harmful and we shouldn't be doing that. When writing unit-level Statements, I make some exceptions from that rule. This will be explained in further parts.
 
