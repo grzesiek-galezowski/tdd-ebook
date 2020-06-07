@@ -222,44 +222,6 @@ var user = new UserBuilder().WithName("Johnny").Build(); //some safe default age
 
 I am not showing an example implementation on purpose, because one of the further chapters will include a longer discussion on this topic.
 
-///////////////////////// TODO
-
-
-
-
-
-
-
-
-## Interface discovery and the sources of abstractions
-
-As promised, the last chapter included some interface discovery, even though it wasn't your typical way of applying this approach.
-
-The goal was to decouple from the framework, so if there was domain knowledge here, this would be a problem
-Command/UseCase - pattern, (services layer)
-CommandFactory - pattern
-ReservationInProgress - pattern/domain
-ReservationInProgressFactory - pattern
-TODO: sources of abstraction - here, it's mainly architecture, but there is ReservationInProgress
-
-## So should I write unit-level Statements for my controllers?
-
-Uncle Bob did not
-These Statements are repeatable
-I like it to monitor dependencies that my controllers have
-
-
-TODO: other ways to test-drive this (higher-level tests)
-
-## Design quality vs Statements
-
-TODO: Design quality vs. Tests (intro) and what this example told us - verifying and setting up a mock for the same method is violation of the CQS principle, too many mocks - too many dependencies. Too many stubs - violation of TDA principle. These things *may* mean a violation.
-
-Next chapter - a factory
-
-TODO: revise using the term "Stable" in the previous chapters to sync it with Uncle Bob's usage of the term.
-
-
 ## Using a `ReservationInProgress`
 
 A controversial point of the design in the last chapter might be the usage of a `ReservationInProgress` class. The core idea of this interface is to collect the data needed to produce a result. To introduce this object, we needed a separate factory, which made the design more complex. Thus, some questions might pop into your mind:
@@ -270,7 +232,7 @@ A controversial point of the design in the last chapter might be the usage of a 
 
 Let's try answering them.
 
-## What exactly is `ReservationInProgress`?
+### What exactly is `ReservationInProgress`?
 
 As mentioned earlier, the intent for this object is to collect data on what happens during the handling of a command, so that the issuer of the command can act on that data (e.g. use it to create a response). Speaking in patterns language, this is an implementation of a Collecting Parameter pattern.
 
@@ -300,7 +262,7 @@ public interface ReservationInProgressMakingReservationDto : ReservationInProgre
 
 and only the controller would know about that. The rest of the classes using the narrow interface would interact with it happily without ever knowing that it is meant to produce JSON output.
 
-## Is `ReservationInProgress` necessary?
+### Is `ReservationInProgress` necessary?
 
 In short - no, although I find it useful. There are at least several alternative designs.
 
@@ -342,7 +304,7 @@ Note that in this case, there is nothing like "result in progress", but on the o
 
 There are more options, but I'd like to stop here as this is not the main concern of this book.
 
-## Do we need a separate factory for `ReservationInProgress`?
+### Do we need a separate factory for `ReservationInProgress`?
 
 This question can be broken into two parts:
 
@@ -352,6 +314,43 @@ This question can be broken into two parts:
 The answer to the first one is: it depends on what the `ReservationInProgress` is coupled to. In the case of a train reservation, it is just creating a DTO to be returned to the client. In such a case, it does not need any knowledge of the framework that is being used to run the application. This lack of coupling to the framework would allow me to place creating `ReservationInProgress` in the same factory. However, if this class needed to decide e.g. HTTP status codes or create responses required by a specific framework or in a specified format (e.g. JSON or XML), then I would opt, as I did, for separating it from the command factory. This is because the command factory belongs to the world of application logic and I want my application logic to be independent of the framework I use.
 
 The answer to the second one is: it depends whether you care about specifying the controller behavior on the unit level. If yes, then it may handy to have a factory just to control the creation of `ReservationInProgress`. If you don't want to (e.g. you drive this logic with higher-level Statements, which we will talk about in one of the next parts), then you can decide to just create the object inside the controller method.
+
+///////////////////////// TODO
+
+
+
+
+
+
+
+
+## Interface discovery and the sources of abstractions
+
+As promised, the last chapter included some interface discovery, even though it wasn't your typical way of applying this approach.
+
+The goal was to decouple from the framework, so if there was domain knowledge here, this would be a problem
+Command/UseCase - pattern, (services layer)
+CommandFactory - pattern
+ReservationInProgress - pattern/domain
+ReservationInProgressFactory - pattern
+TODO: sources of abstraction - here, it's mainly architecture, but there is ReservationInProgress
+
+## So should I write unit-level Statements for my controllers?
+
+Uncle Bob did not
+These Statements are repeatable
+I like it to monitor dependencies that my controllers have
+
+
+TODO: other ways to test-drive this (higher-level tests)
+
+## Design quality vs Statements
+
+TODO: Design quality vs. Tests (intro) and what this example told us - verifying and setting up a mock for the same method is violation of the CQS principle, too many mocks - too many dependencies. Too many stubs - violation of TDA principle. These things *may* mean a violation.
+
+Next chapter - a factory
+
+TODO: revise using the term "Stable" in the previous chapters to sync it with Uncle Bob's usage of the term.
 
 [^walkingskeleton]: TODO add reference
 [^workflowspecification]: http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html
