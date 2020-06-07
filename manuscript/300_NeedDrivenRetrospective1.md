@@ -191,7 +191,7 @@ In that Statement, they did not need to care about the exact values held by the 
 
 #### Use patterns such as factory methods or builders
 
-When all else fails, I use factory methods and builders to ease the pain of creating DTOs to hide away the complexity and provide some good default values for the parts I don't care about
+When all else fails, I use factory methods and builders to ease the pain of creating DTOs to hide away the complexity and provide some good default values for the parts I don't care about.
 
 A factory method can be useful if there is a single distinguishing factor about the particular instance that I want to create. For example:
 
