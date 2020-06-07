@@ -177,7 +177,7 @@ This approach requires me to rewrite data into new objects field by field, but i
 
 How does all of this help me avoid the tediousness of creating DTOs? Well, the fewer objects and methods know about a DTO, the fewer Statements will need to know about it as well, which leads to fewer places where I need to create and initialize one.
 
-#### Use constrained non-determinism if you don't need specific data in DTOs for your current Statement
+#### Use constrained non-determinism if you don't need specific data
 
 In many Statements where I need to create DTOs, the specific values held inside it don't matter to me. I care only about *some* data being there. This is a perfect match for constrained non-determinism. I can just create an anonymous instance and use it, which I find easier than assigning field by field.
 
@@ -189,11 +189,11 @@ var requestDto = Any.Instance<ReservationRequestDto>();
 
 In that Statement, they did not need to care about the exact values held by the DTO, so they just created an anonymous instance. In this particular case, using constrained non-determinism not only simplified the creation of the DTO, but it even allowed them to completely decouple the Statement from the DTO's structure.
 
-#### Use patterns such as factory methods or builders to hide away the complexity and provide some good default values for the parts you don't care about
+#### Use patterns such as factory methods or builders
 
-When all else fails, I use factory methods and builders to ease the pain of creating DTOs.
+When all else fails, I use factory methods and builders to ease the pain of creating DTOs to hide away the complexity and provide some good default values for the parts I don't care about
 
-A factory method can be useful if there is single distinguishing factor about the particular instance that I want to create. For example:
+A factory method can be useful if there is a single distinguishing factor about the particular instance that I want to create. For example:
 
 ```csharp
 public UserDto AnyUserWith(params Privilege[] privileges)
