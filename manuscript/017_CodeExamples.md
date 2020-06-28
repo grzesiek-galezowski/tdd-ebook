@@ -6,7 +6,7 @@ The language of choice for code examples is C#, however, I made some exception f
 
 ### Dropping "I" from interface names
 
-Personally, I am not a big fan of using `ISomething` as interface name, so I decided to drop the `I` even though most C# developers expect to see it. I hope you can forgive me this one.
+I am not a big fan of using `ISomething` as an interface name, so I decided to drop the `I` even though most C# developers expect to see it. I hope you can forgive on this one.
 
 ### Idiomatic C\#
 
@@ -18,7 +18,7 @@ Some people like it, some not. I decided to stick to the convention of putting a
 
 ## Notes for Java users
 
-The language of choice for code examples is C#. That said, I wanted the book to be as technology-agnostic as possible, to allow especially Java programmers to benefit from it. I tried using a minimum number of C#-specific features and in several places even made remarks targeted at Java users to make it easier for them. Still, there are some things I could not avoid. That's why I wrote up a list containing several of the differences between Java and C# that Java users could benefit from knowing when reading the book.
+The language of choice for the code examples is C#. That said, I wanted the book to be as technology-agnostic as possible, to allow especially Java programmers to benefit from it. I tried using a minimum number of C#-specific features and in several places even made remarks targeted at Java users to make it easier for them. Still, there are some things I could not avoid. That's why I wrote up a list containing several of the differences between Java and C# that Java users could benefit from knowing when reading the book.
 
 ### Naming conventions
 

@@ -31,9 +31,11 @@ For example, in the Statement Johnny and Benjamin wrote in the last chapter, the
 
 ### Should I verify that the factory got called?
 
-In the last Statement, you might have notices that some interactions are verified (using the `.Received()` syntax) while some are only set up to return something. An example of the latter is a factory, e.g. `reservationInProgressFactory.FreshInstance().Returns(reservationInProgress)`. You may question why Johnny and Benjamin did not put something like `reservationInProgressFactory.Received(1).FreshInstance()` in the Statement.
+You might have noticed in the same Statement that some interactions are verified (using the `.Received()` syntax) while some are only set up to return something. An example of the latter is a factory, e.g. `reservationInProgressFactory.FreshInstance().Returns(reservationInProgress)`. You may question why Johnny and Benjamin did not write something like `reservationInProgressFactory.Received().FreshInstance()` at the end.
 
-The reason is, the factory is just a function -- it is not supposed to have any side-effects. As such, I can call it many times in the code without altering the expected behavior. For example, if the code of the `MakeReservation()` method Johnny and Benjamin were test-driving did not look like this:
+The reason is, the factory is just a function -- it is not supposed to have any side-effects. As such, calling the factory is not the goal of the behavior I specify -- it will always be a means to an end. The goal of this behavior is to execute the command and return its result. If I didn't need a factory to achieve that, it wouldn't exist.
+
+Also, I can call the factory many times in the code without altering the expected behavior. For example, if the code of the `MakeReservation()` method Johnny and Benjamin were test-driving did not look like this:
 
 ```csharp
 var reservationInProgress = _reservationInProgressFactory.FreshInstance();
@@ -54,7 +56,7 @@ reservationCommand.Execute();
 return reservationInProgress.ToDto();
 ```
 
-The behavior of this method would still be correct. Sure, it would do some needless lines of code, but when writing Statements, I care about behavior, not lines of code. I leave more freedom to the implementation and try not to overspecify.
+The behavior of this method would still be correct. Sure, it would do some needless work, but when writing Statements, I care about externally visible behavior, not how the flow is structured. I leave more freedom to the implementation and try not to overspecify.
 
 On the other hand, consider the command -- it is supposed to have a side effect, because I expect it to alter some kind of reservation registry in the end. So if I sent the `Execute()` message more than once:
 
@@ -74,6 +76,21 @@ then it would alter the behavior -- maybe by reserving more seats than the user 
 ```csharp
 reservationCommand.Received(1).Execute();
 ```
+
+This approach is what Steve Freeman and Nat Pryce call "Allow queries; expect commands"[^GOOS].
+
+## Interface discovery and the sources of abstractions
+
+=====================TODO
+
+As promised, the last chapter included some interface discovery, even though it wasn't your typical way of applying this approach.
+
+The goal was to decouple from the framework, so if there was domain knowledge here, this would be a problem
+Command/UseCase - pattern, (services layer)
+CommandFactory - pattern
+ReservationInProgress - pattern/domain
+ReservationInProgressFactory - pattern
+TODO: sources of abstraction - here, it's mainly architecture, but there is ReservationInProgress
 
 ## Data Transfer Objects and TDD
 
@@ -224,7 +241,7 @@ I am not showing an example implementation on purpose, because one of the furthe
 
 ## Using a `ReservationInProgress`
 
-A controversial point of the design in the last chapter might be the usage of a `ReservationInProgress` class. The core idea of this interface is to collect the data needed to produce a result. To introduce this object, we needed a separate factory, which made the design more complex. Thus, some questions might pop into your mind:
+A controversial point of the design in the last chapter might be the usage of a `ReservationInProgress` class. The core idea of this abstraction is to collect the data needed to produce a result. To introduce this object, we needed a separate factory, which made the design more complex. Thus, some questions might pop into your mind:
 
 1. What exactly is `ReservationInProgress`?
 1. Is the `ReservationInProgress` really necessary and if not, what are the alternatives?
@@ -236,7 +253,7 @@ Let's try answering them.
 
 As mentioned earlier, the intent for this object is to collect data on what happens during the handling of a command, so that the issuer of the command can act on that data (e.g. use it to create a response). Speaking in patterns language, this is an implementation of a Collecting Parameter pattern.
 
-There is something I do often that I did not put in the example for the sake of simplicity. When I implement a collecting parameter, I typically make it implement two interfaces - one more narrow and the other one - wider. Let me show them:
+There is something I often do, but I did not put in the example for the sake of simplicity. When I implement a collecting parameter, I typically make it implement two interfaces -- one more narrow and the other one -- wider. Let me show them to you:
 
 ```csharp
 public interface ReservationInProgress
@@ -251,7 +268,7 @@ public interface ReservationInProgressMakingReservationDto : ReservationInProgre
 }
 ```
 
-The whole point is that only the issuer of the command can see the wider interface and when it passes this interface down the call chain, the next object only sees the methods for reporting events. This way, the wider interface can even be tied to a specific technology, as long as the more narrow one is not. For example, If I needed a JSON string response, I might do something like this:
+The whole point is that only the issuer of the command can see the wider interface and when it passes this interface down the call chain, the next object only sees the methods for reporting events. This way, the wider interface can even be tied to a specific technology, as long as the narrower one is not. For example, If I needed a JSON string response, I might do something like this:
 
 ```csharp
 public interface ReservationInProgressMakingReservationDto : ReservationInProgress
@@ -260,11 +277,11 @@ public interface ReservationInProgressMakingReservationDto : ReservationInProgre
 }
 ```
 
-and only the controller would know about that. The rest of the classes using the narrow interface would interact with it happily without ever knowing that it is meant to produce JSON output.
+and only the controller object would know about that. The rest of the classes using the narrower interface would interact with it happily without ever knowing that it is meant to produce JSON output.
 
 ### Is `ReservationInProgress` necessary?
 
-In short - no, although I find it useful. There are at least several alternative designs.
+In short -- no, although I find it useful. There are at least several alternative designs.
 
 First of all, we might decide to return from the command's `Execute()` method. Then, the command would look like this:
 
@@ -297,10 +314,10 @@ reservationCommand.Execute();
 return reservationQuery.Make();
 ```
 
-Note that in this case, there is nothing like "result in progress", but on the other hand, we need to generate the id for the command, since the query must use the same id. This approach might be attractive provided 
+Note that in this case, there is nothing like "result in progress", but on the other hand, we need to generate the id for the command, since the query must use the same id. This approach might be attractive provided that:
 
-1. You don't mind that the `reservationQuery` might go through database or external service again 
-1. A potential destination for data allows both commands and queries on its interface (it's not always a given).
+1. You don't mind that the `reservationQuery` might go through database or external service once during the command, and again during the query.
+1. A potential destination API for data allows executing both commands and queries on on the data (it's not always a given).
 
 There are more options, but I'd like to stop here as this is not the main concern of this book.
 
@@ -311,29 +328,9 @@ This question can be broken into two parts:
 1. Can we use the same factory as for commands?
 2. Do we need a factory at all?
 
-The answer to the first one is: it depends on what the `ReservationInProgress` is coupled to. In the case of a train reservation, it is just creating a DTO to be returned to the client. In such a case, it does not need any knowledge of the framework that is being used to run the application. This lack of coupling to the framework would allow me to place creating `ReservationInProgress` in the same factory. However, if this class needed to decide e.g. HTTP status codes or create responses required by a specific framework or in a specified format (e.g. JSON or XML), then I would opt, as I did, for separating it from the command factory. This is because the command factory belongs to the world of application logic and I want my application logic to be independent of the framework I use.
+The answer to the first one is: it depends on what the `ReservationInProgress` is coupled to. In this specific example, it is just creating a DTO to be returned to the client. In such a case, it does not need any knowledge of the framework that is being used to run the application. This lack of coupling to the framework would allow me to place creating `ReservationInProgress` in the same factory. However, if this class needed to decide e.g. HTTP status codes or create responses required by a specific framework or in a specified format (e.g. JSON or XML), then I would opt, as I did, for separating it from the command factory. This is because the command factory belongs to the world of application logic and I want my application logic to be independent of the framework or the transport protocols I use.
 
-The answer to the second one is: it depends whether you care about specifying the controller behavior on the unit level. If yes, then it may handy to have a factory just to control the creation of `ReservationInProgress`. If you don't want to (e.g. you drive this logic with higher-level Statements, which we will talk about in one of the next parts), then you can decide to just create the object inside the controller method.
-
-///////////////////////// TODO
-
-
-
-
-
-
-
-
-## Interface discovery and the sources of abstractions
-
-As promised, the last chapter included some interface discovery, even though it wasn't your typical way of applying this approach.
-
-The goal was to decouple from the framework, so if there was domain knowledge here, this would be a problem
-Command/UseCase - pattern, (services layer)
-CommandFactory - pattern
-ReservationInProgress - pattern/domain
-ReservationInProgressFactory - pattern
-TODO: sources of abstraction - here, it's mainly architecture, but there is ReservationInProgress
+The answer to the second question is: it depends whether you care about specifying the controller behavior on the unit level. If yes, then it may handy to have a factory just to control the creation of `ReservationInProgress`. If you don't want to (e.g. you drive this logic with higher-level Statements, which we will talk about in one of the next parts), then you can decide to just create the object inside the controller method.
 
 ## So should I write unit-level Statements for my controllers?
 
@@ -358,3 +355,4 @@ TODO: revise using the term "Stable" in the previous chapters to sync it with Un
 [^mapperpattern]: https://martinfowler.com/eaaCatalog/mapper.html
 [^natprycetestdatabuilder]: http://www.natpryce.com/articles/000714.html
 [^ploehtestdatabuilder]: https://blog.ploeh.dk/2017/08/15/test-data-builders-in-c/
+[^GOOS]: Steve Freeman, Nat Pryce, Growing Object Oriented Software Guided By Tests
