@@ -35,8 +35,8 @@
 270_Mock_Objects.md
 280_Start_with_a_failing_test_mocks.md
 290_NeedDrivenDevelopment.md
-End.md
 300_NeedDrivenRetrospective1.md
+End.md
 310_Test_Driving_Factories.md
 400_Dealing_with_3rd_party.md
 990_Further_reading.md

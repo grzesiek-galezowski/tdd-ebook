@@ -1,4 +1,4 @@
-# Test-driving at the input boundary - a retrospective
+# Test-driving at the input boundary -- a retrospective
 
 I suppose a lot was going on in the last chapter and some things that demand a deeper dive. The purpose of this chapter is to do a small retrospective of what Johnny and Benjamin did when test-driving a controller for the train reservation system.
 
@@ -12,14 +12,14 @@ Object3 -> Object2 -> Object1
 
 The outside-in approach broke this for me because the objects I had to start with were the ones that had to have dependencies and these dependencies did not exist yet. With outside-in, I would need to start with `Object3`, which could not be instantiated without `Object2`, which, in turn, could not be instantiated without `Object1`.
 
-If this feels difficult, then why bother? -- you may ask. My reasons are:
+"If this feels difficult, then why bother?" you might ask. My reasons are:
 
 1. By starting from the inputs and going inside, I allow my interfaces and protocols to be shaped by use cases rather than by the underlying technology. That does not mean I can just ignore the technology stuff, but I consider the use case logic to be the main driver. This way, my protocols tend to be more abstract which in turn enforces higher composability.
 1. Every line of code I introduce is there because the use case needs it. Every method, every interface, and class exists because there already exists someone who needs it to perform its obligations. This way, I ensure I only implement the stuff that's needed and that it is shaped the way the users find it comfortable to use. Until I started using this approach, I would start from the inside of the system and I would design classes by guessing how they would be used and I would later regret these guesses, because of the rework and complexity they would often create.
 
 I found I can mitigate the uncomfortable feeling of starting from the inputs ("there is nothing I can fully run") with the following practices:
 
-1. Using TDD with mocks - TDD allows every little piece of code to be executed well before the whole task completion and mock objects serve as first collaborators that allow this execution to happen.
+1. Using TDD with mocks -- TDD allows every little piece of code to be executed well before the whole task completion and mock objects serve as first collaborators that allow this execution to happen.
 1. Slicing the scope of work into smaller vertical parts (e.g. scenarios, stories, etc.) that can be implemented faster than a full-blown feature. We have had a taste of this in action when Johnny and Benjamin were developing the calculator in one of the first chapters of this book.
 1. Not starting with a unit-level Statement, but instead, writing on a higher-level (e.g. end-to-end or against another architectural boundary). I could then make this bigger Statement work, then refactor the initial objects out of this small piece of working code. Only after having this initial structure in place would I start using class-level Statements with mocks. This approach is what we will be aiming at eventually, but for this chapter, I wanted to focus on the mocks and OO design, so I left this part out.
 
@@ -78,19 +78,6 @@ reservationCommand.Received(1).Execute();
 ```
 
 This approach is what Steve Freeman and Nat Pryce call "Allow queries; expect commands"[^GOOS].
-
-## Interface discovery and the sources of abstractions
-
-=====================TODO
-
-As promised, the last chapter included some interface discovery, even though it wasn't your typical way of applying this approach.
-
-The goal was to decouple from the framework, so if there was domain knowledge here, this would be a problem
-Command/UseCase - pattern, (services layer)
-CommandFactory - pattern
-ReservationInProgress - pattern/domain
-ReservationInProgressFactory - pattern
-TODO: sources of abstraction - here, it's mainly architecture, but there is ReservationInProgress
 
 ## Data Transfer Objects and TDD
 
@@ -330,24 +317,27 @@ This question can be broken into two parts:
 
 The answer to the first one is: it depends on what the `ReservationInProgress` is coupled to. In this specific example, it is just creating a DTO to be returned to the client. In such a case, it does not need any knowledge of the framework that is being used to run the application. This lack of coupling to the framework would allow me to place creating `ReservationInProgress` in the same factory. However, if this class needed to decide e.g. HTTP status codes or create responses required by a specific framework or in a specified format (e.g. JSON or XML), then I would opt, as I did, for separating it from the command factory. This is because the command factory belongs to the world of application logic and I want my application logic to be independent of the framework or the transport protocols I use.
 
-The answer to the second question is: it depends whether you care about specifying the controller behavior on the unit level. If yes, then it may handy to have a factory just to control the creation of `ReservationInProgress`. If you don't want to (e.g. you drive this logic with higher-level Statements, which we will talk about in one of the next parts), then you can decide to just create the object inside the controller method.
+The answer to the second question is: it depends whether you care about specifying the controller behavior on the unit level. If yes, then it may handy to have a factory just to control the creation of `ReservationInProgress`. If you don't want to (e.g. you drive this logic with higher-level Statements, which we will talk about in one of the next parts), then you can decide to just create the object inside the controller method. And
 
-## So should I write unit-level Statements for my controllers?
+#### So should I write unit-level Statements for my controllers?
 
-Uncle Bob did not
-These Statements are repeatable
-I like it to monitor dependencies that my controllers have
+As I mentioned, it's up to you. As controllers often serve as adapters between a framework and the application logic, they are constrained by the framework and so there is not a lot of value in driving their design with unit-level Statements. It might be more accurate to say thay these Statements are examples of *integration Statements* because they often describe how the application is integrated into a framework rather than the logic itself.
 
+An alternative to specifying the integration on the unit level could be driving it with higher-level Statements (which I will be talking about in detail in the coming chapters). For example, I might write a Statement describing how my application works end-to-end, then write a controller (or another framework adapter) code without a dedicated Statement for it and then use unit-level Statements to drive the application logic. When the end-to-end Statement passes, it means that the integration works.
 
-TODO: other ways to test-drive this (higher-level tests)
+There are some preconditions for this approach to work, but I will cover them when talking about higher-level Statements in the further chapters.
 
-## Design quality vs Statements
+## Interface discovery and the sources of abstractions
 
-TODO: Design quality vs. Tests (intro) and what this example told us - verifying and setting up a mock for the same method is violation of the CQS principle, too many mocks - too many dependencies. Too many stubs - violation of TDA principle. These things *may* mean a violation.
+As promised, the last chapter included some interface discovery, even though it wasn't a typical way of applying this approach. This is because, as I mentioned, the goal of the Statement was to describe integration between the framework and the application code. Still, writing the Statement allowed Johnny and Benjamin to discover what their controller needs from the application to pass all the necessary data to it and to get the result without violating the command-query separation principle.
 
-Next chapter - a factory
+The different abstractions Johnny pulled into existence were driven by:
 
-TODO: revise using the term "Stable" in the previous chapters to sync it with Uncle Bob's usage of the term.
+- his need to convert to a different programming style (command-query separation principle, "tell, don't ask"...),
+- his knowledge about design patterns,
+- his experience with similar problems.
+
+Had he lacked these things, he would have probably written the simplest thing that would come to his mind and then changed the design when after learning more.
 
 [^walkingskeleton]: TODO add reference
 [^workflowspecification]: http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html
