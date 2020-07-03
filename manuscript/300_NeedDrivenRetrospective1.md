@@ -1,16 +1,16 @@
 # Test-driving at the input boundary -- a retrospective
 
-I suppose a lot was going on in the last chapter and some things that demand a deeper dive. The purpose of this chapter is to do a small retrospective of what Johnny and Benjamin did when test-driving a controller for the train reservation system.
+A lot of things happened in the last chapter and I feel some of them deserve a deeper dive. The purpose of this chapter is to do a small retrospective of what Johnny and Benjamin did when test-driving a controller for the train reservation system.
 
 ## Outside-in development
 
-Johnny and Benjamin started their development almost entirely at the peripherals of the system, at the beginning of the flow of control. This is typical of the outside-in approach to software development. It took me a while to get used to it. After all, if I had started with the inside-most objects, I could run the logic inside them with whatever dependencies they had, because all those dependencies already existed. Looking at the graph below, I could develop and run the logic in `Object1` because it did not require dependencies. Then, I could develop `Object2` because it depends on `Object1` that I already created and I could as well do that with `Object3` because it only depends on `Object2` that I already had. At any given time, I could run everything I created up to that point.
+Johnny and Benjamin started their development almost entirely at the peripherals of the system, at the beginning of the flow of control. This is typical of the outside-in approach to software development. It took me a while to get used to it. After all, I thought, if I had started with the objects at the end of the flow, I could run the logic inside them with whatever dependencies they had, because all those dependencies would have already existed. Looking at the graph below, I could develop and run the logic in `Object1` because it did not require dependencies. Then, I could develop `Object2` because it depends on `Object1` that I already created and I could as well do that with `Object3` because it only depends on `Object2` that I already had. At any given time, I could run everything I created up to that point.
 
 ```text
 Object3 -> Object2 -> Object1
 ```
 
-The outside-in approach broke this for me because the objects I had to start with were the ones that had to have dependencies and these dependencies did not exist yet. With outside-in, I would need to start with `Object3`, which could not be instantiated without `Object2`, which, in turn, could not be instantiated without `Object1`.
+The outside-in approach contradicted this habit because the objects I had to start with were the ones that had to have dependencies and these dependencies did not exist yet. With outside-in, I would need to start with `Object3`, which could not be instantiated without `Object2`, which, in turn, could not be instantiated without `Object1`.
 
 "If this feels difficult, then why bother?" you might ask. My reasons are:
 
@@ -20,8 +20,8 @@ The outside-in approach broke this for me because the objects I had to start wit
 I found I can mitigate the uncomfortable feeling of starting from the inputs ("there is nothing I can fully run") with the following practices:
 
 1. Using TDD with mocks -- TDD allows every little piece of code to be executed well before the whole task completion and mock objects serve as first collaborators that allow this execution to happen.
-1. Slicing the scope of work into smaller vertical parts (e.g. scenarios, stories, etc.) that can be implemented faster than a full-blown feature. We have had a taste of this in action when Johnny and Benjamin were developing the calculator in one of the first chapters of this book.
-1. Not starting with a unit-level Statement, but instead, writing on a higher-level (e.g. end-to-end or against another architectural boundary). I could then make this bigger Statement work, then refactor the initial objects out of this small piece of working code. Only after having this initial structure in place would I start using class-level Statements with mocks. This approach is what we will be aiming at eventually, but for this chapter, I wanted to focus on the mocks and OO design, so I left this part out.
+1. Slicing the scope of work into smaller vertical parts (e.g. scenarios, stories, etc.) that can be implemented faster than a full-blown feature. We had a taste of this in action when Johnny and Benjamin were developing the calculator in one of the first chapters of this book.
+1. Not starting with a unit-level Statement, but instead, writing on a higher-level (e.g. end-to-end or against another architectural boundary). I could then make this bigger Statement work, then refactor the initial objects out of this small piece of working code. Only after having this initial structure in place would I start using unit-level Statements with mocks. This approach is what we will be aiming at eventually, but for this chapter, I wanted to focus on the mocks and OO design, so I left this part out.
 
 ## Workflow specification
 
@@ -31,11 +31,12 @@ For example, in the Statement Johnny and Benjamin wrote in the last chapter, the
 
 ### Should I verify that the factory got called?
 
-You might have noticed in the same Statement that some interactions are verified (using the `.Received()` syntax) while some are only set up to return something. An example of the latter is a factory, e.g. `reservationInProgressFactory.FreshInstance().Returns(reservationInProgress)`. You may question why Johnny and Benjamin did not write something like `reservationInProgressFactory.Received().FreshInstance()` at the end.
+You might have noticed in the same Statement that some interactions are verified (using the `.Received()` syntax) while some are only set up to return something. An example of the latter is a factory, e.g. `reservationInProgressFactory.FreshInstance().Returns(reservationInProgress)`. You may question why Johnny and Benjamin did not write something like  
+`reservationInProgressFactory.Received().FreshInstance()` at the end.
 
-The reason is, the factory is just a function -- it is not supposed to have any side-effects. As such, calling the factory is not the goal of the behavior I specify -- it will always be a means to an end. The goal of this behavior is to execute the command and return its result. If I didn't need a factory to achieve that, it wouldn't exist.
+One reason is that the factory resembles a function -- it is not supposed to have any side-effects. As such, calling the factory is not a goal of the behavior I specify -- it will always be only a means to an end. For example, the goal of this behavior Johnny and Benjamin specified was to execute the command and return its result. The factory was brought to existence to make getting there easier.
 
-Also, I can call the factory many times in the code without altering the expected behavior. For example, if the code of the `MakeReservation()` method Johnny and Benjamin were test-driving did not look like this:
+This also means that I can call the factory many times in the implementation without altering the expected behavior. For example, if the code of the `MakeReservation()` method Johnny and Benjamin were test-driving did not look like this:
 
 ```csharp
 var reservationInProgress = _reservationInProgressFactory.FreshInstance();
@@ -77,7 +78,7 @@ then it would alter the behavior -- maybe by reserving more seats than the user 
 reservationCommand.Received(1).Execute();
 ```
 
-This approach is what Steve Freeman and Nat Pryce call "Allow queries; expect commands"[^GOOS].
+This approach is not paying attention to functions but strictly specifying side-effects is what Steve Freeman and Nat Pryce call "Allow queries; expect commands"[^GOOS].
 
 ## Data Transfer Objects and TDD
 
@@ -87,13 +88,13 @@ A Data Transfer Object is a pattern to describe objects responsible for exchangi
 
 As you might have seen, DTOs are typically just data structures. That may come as surprising, because for several chapters now, I have repeatedly stressed how I prefer to bundle data and behavior together. Isn't this breaking all the principles that I mentioned?
 
-My response to this would be that exchanging information between processes is where these principles do not apply and that there are some good reasons why.
+My response to this would be that exchanging information between processes is where the mentioned principles do not apply and that there are some good reasons why.
 
 1. It is easier to exchange data than to exchange behavior. If I wanted to send behavior to another process, I would have to send it as data anyway, e.g. in a form of source code. In such a case, the other side would need to interpret the source code, provide all the dependencies, etc. which could be cumbersome and strongly couple implementations of both processes.
 2. Agreeing on a simple data format makes creating and interpreting the data in different programming languages easier.
 3. Many times, the boundaries between processes are designed as functional boundaries at the same time. In other words, even if one process sends some data to another, both of these processes would not want to execute the same behaviors on the data.
 
-These are some of the reasons why processes send data to each other. And when they do, they typically bundle the data for consistency and performance reasons.
+These are some of the reasons why processes send data to each other. And when they do, they typically bundle the data into bigger structures for consistency and performance reasons.
 
 ### DTOs vs value objects
 
@@ -155,7 +156,7 @@ A> Do not try to mock DTOs in your Statements. Create the real thing.
 
 As DTOs tend to bundle data, creating them for specific Statements might be a chore as there might sometimes be several fields we would need to initialize in each Statement. How do I approach creating instances of DTOs to avoid this? I summarized my advice on dealing with this as the priority-ordered list below:
 
-#### Limit the reach of your DTOs in the production code
+#### 1. Limit the reach of your DTOs in the production code
 
 As a rule of thumb, the fewer types and methods know about them, the better. DTOs represent an external application contract. They are also constrained by some rules mentioned earlier (like the ease of serialization), so they cannot evolve the same way normal objects do. Thus, I try to limit the number of objects that know about DTOs to a necessary minimum. I use one of the two strategies: wrapping or mapping.
 
@@ -181,7 +182,7 @@ This approach requires me to rewrite data into new objects field by field, but i
 
 How does all of this help me avoid the tediousness of creating DTOs? Well, the fewer objects and methods know about a DTO, the fewer Statements will need to know about it as well, which leads to fewer places where I need to create and initialize one.
 
-#### Use constrained non-determinism if you don't need specific data
+#### 2. Use constrained non-determinism if you don't need specific data
 
 In many Statements where I need to create DTOs, the specific values held inside it don't matter to me. I care only about *some* data being there. This is a perfect match for constrained non-determinism. I can just create an anonymous instance and use it, which I find easier than assigning field by field.
 
@@ -193,7 +194,7 @@ var requestDto = Any.Instance<ReservationRequestDto>();
 
 In that Statement, they did not need to care about the exact values held by the DTO, so they just created an anonymous instance. In this particular case, using constrained non-determinism not only simplified the creation of the DTO, but it even allowed them to completely decouple the Statement from the DTO's structure.
 
-#### Use patterns such as factory methods or builders
+#### 3. Use patterns such as factory methods or builders
 
 When all else fails, I use factory methods and builders to ease the pain of creating DTOs to hide away the complexity and provide some good default values for the parts I don't care about.
 
