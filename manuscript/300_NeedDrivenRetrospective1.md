@@ -178,7 +178,7 @@ var user = new User(userDto.Name, userDto.Surname, new Address(userDto.City, use
 user.Assign(resource);
 ```
 
-This approach requires me to rewrite data into new objects field by field, but in exchange leaving me more room to shape my domain objects independent of the DTO structure[^mapperpattern]. In the example above, I was able to introduce an `Address` abstraction even though the DTO does not have an explicit field containing the address.
+This approach requires me to rewrite data into new objects field by field, but in exchange, it leaves me more room to shape my domain objects independent of the DTO structure[^mapperpattern]. In the example above, I was able to introduce an `Address` abstraction even though the DTO does not have an explicit field containing the address.
 
 How does all of this help me avoid the tediousness of creating DTOs? Well, the fewer objects and methods know about a DTO, the fewer Statements will need to know about it as well, which leads to fewer places where I need to create and initialize one.
 
@@ -196,7 +196,7 @@ In that Statement, they did not need to care about the exact values held by the 
 
 #### 3. Use patterns such as factory methods or builders
 
-When all else fails, I use factory methods and builders to ease the pain of creating DTOs to hide away the complexity and provide some good default values for the parts I don't care about.
+When all else fails, I use factory methods and test data builders to ease the pain of creating DTOs to hide away the complexity and provide some good default values for the parts I don't care about.
 
 A factory method can be useful if there is a single distinguishing factor about the particular instance that I want to create. For example:
 
@@ -209,11 +209,11 @@ public UserDto AnyUserWith(params Privilege[] privileges)
 }
 ```
 
-This method creates any user with a particular set of privileges. Note that I utilized constrained non-determinism as well in this method, which helped me a bit. If this is not possible, I try to come up with some sort of "safe default" values for each of the fields.
+This method creates any user with a particular set of privileges. Note that I utilized constrained non-determinism as well in this method, which spared me some initialization code. If this is not possible, I try to come up with some sort of "safe default" values for each of the fields.
 
 I like factory methods, but the more flexibility I need, the more I gravitate towards test data builders[^natprycetestdatabuilder].
 
-A builder leaves me much more flexibility with how I set up my DTOs. The typical syntax for using a builder you can find on the internet[^ploehtestdatabuilder] looks like this:
+A test data builder is a special object that allows me to create an object with some default values, but allows me to customize the default recipee according to which the object is created. It leaves me much more flexibility with how I set up my DTOs. The typical syntax for using a builder you can find on the internet[^ploehtestdatabuilder] looks like this:
 
 ```csharp
 var user = new UserBuilder().WithName("Johnny").WithAge("43").Build();
@@ -225,7 +225,7 @@ Note that the value for each field is configured separately. Typically, the buil
 var user = new UserBuilder().WithName("Johnny").Build(); //some safe default age will be used
 ```
 
-I am not showing an example implementation on purpose, because one of the further chapters will include a longer discussion on this topic.
+I am not showing an example implementation on purpose, because one of the further chapters will include a longer discussion on test data builders.
 
 ## Using a `ReservationInProgress`
 
@@ -239,7 +239,7 @@ Let's try answering them.
 
 ### What exactly is `ReservationInProgress`?
 
-As mentioned earlier, the intent for this object is to collect data on what happens during the handling of a command, so that the issuer of the command can act on that data (e.g. use it to create a response). Speaking in patterns language, this is an implementation of a Collecting Parameter pattern.
+As mentioned earlier, the intent for this object is to collect information about processing a command, so that the issuer of the command can act on that information (e.g. use it to create a response) when processing finishes. Speaking in patterns language, this is an implementation of a Collecting Parameter pattern[^CollectingParameter].
 
 There is something I often do, but I did not put in the example for the sake of simplicity. When I implement a collecting parameter, I typically make it implement two interfaces -- one more narrow and the other one -- wider. Let me show them to you:
 
@@ -247,7 +247,7 @@ There is something I often do, but I did not put in the example for the sake of 
 public interface ReservationInProgress
 {
    void Success(SomeData data);
-   //...other methods for reporting events
+   //... methods for reporting other events
 }
 
 public interface ReservationInProgressMakingReservationDto : ReservationInProgress
@@ -256,16 +256,16 @@ public interface ReservationInProgressMakingReservationDto : ReservationInProgre
 }
 ```
 
-The whole point is that only the issuer of the command can see the wider interface and when it passes this interface down the call chain, the next object only sees the methods for reporting events. This way, the wider interface can even be tied to a specific technology, as long as the narrower one is not. For example, If I needed a JSON string response, I might do something like this:
+The whole point is that only the issuer of the command can see the wider interface (`ReservationInProgressMakingReservationDto`) and when it passes this interface down the call chain, the next object only sees the methods for reporting events (`ReservationInProgress`). This way, the wider interface can even be tied to a specific technology, as long as the narrower one is not. For example, If I needed a JSON string response, I might do something like this:
 
 ```csharp
-public interface ReservationInProgressMakingReservationDto : ReservationInProgress
+public interface ReservationInProgressMakingReservationJson : ReservationInProgress
 {
   string ToJsonString();
 }
 ```
 
-and only the controller object would know about that. The rest of the classes using the narrower interface would interact with it happily without ever knowing that it is meant to produce JSON output.
+and only the command issuer (in our case, the controller object) would know about that. The rest of the classes using the narrower interface would interact with it happily without ever knowing that it is meant to produce JSON output.
 
 ### Is `ReservationInProgress` necessary?
 
@@ -291,7 +291,7 @@ public interface ReservationCommand<T>
 
 but this still leaves a distinction between `void` and non-`void` commands (which some people resolve by parameterizing would-be `void` commands with `bool` and returning `true` at the end).
 
-The second option would be to just let the command execute and then obtain the result using a query (which, similarly to a command, may be a separate object). The code of the `MakeReservation()` would look somewhat like this:
+The second option to avoid a collecting parameter would be to just let the command execute and then obtain the result by querying the state that was modified by the command (similarly to a command, a query may be a separate object). The code of the `MakeReservation()` would look somewhat like this:
 
 ```csharp
 var reservationId = _idGenerator.GenerateId();
@@ -305,7 +305,7 @@ return reservationQuery.Make();
 Note that in this case, there is nothing like "result in progress", but on the other hand, we need to generate the id for the command, since the query must use the same id. This approach might be attractive provided that:
 
 1. You don't mind that the `reservationQuery` might go through database or external service once during the command, and again during the query.
-1. A potential destination API for data allows executing both commands and queries on on the data (it's not always a given).
+1. The state that is modified by the command is queryable (i.e. a potential destination API for data allows executing both commands and queries on the data). It's not always a given.
 
 There are more options, but I'd like to stop here as this is not the main concern of this book.
 
@@ -316,15 +316,15 @@ This question can be broken into two parts:
 1. Can we use the same factory as for commands?
 2. Do we need a factory at all?
 
-The answer to the first one is: it depends on what the `ReservationInProgress` is coupled to. In this specific example, it is just creating a DTO to be returned to the client. In such a case, it does not need any knowledge of the framework that is being used to run the application. This lack of coupling to the framework would allow me to place creating `ReservationInProgress` in the same factory. However, if this class needed to decide e.g. HTTP status codes or create responses required by a specific framework or in a specified format (e.g. JSON or XML), then I would opt, as I did, for separating it from the command factory. This is because the command factory belongs to the world of application logic and I want my application logic to be independent of the framework or the transport protocols I use.
+The answer to the first one is: it depends on what the `ReservationInProgress` is coupled to. In this specific example, it is just creating a DTO to be returned to the client. In such a case, it does not necessarily need any knowledge of the framework that is being used to run the application. This lack of coupling to the framework would allow me to place creating `ReservationInProgress` in the same factory. However, if this class needed to decide e.g. HTTP status codes or create responses required by a specific framework or in a specified format (e.g. JSON or XML), then I would opt, as Johnny and Benjamin did, for separating it from the command factory. This is because the command factory belongs to the world of application logic and I want my application logic to be independent of the framework, the transport protocols and the payload formats that I use.
 
-The answer to the second question is: it depends whether you care about specifying the controller behavior on the unit level. If yes, then it may handy to have a factory just to control the creation of `ReservationInProgress`. If you don't want to (e.g. you drive this logic with higher-level Statements, which we will talk about in one of the next parts), then you can decide to just create the object inside the controller method. And
+The answer to the second question (whether we need a factory at all) is: it depends whether you care about specifying the controller behavior on the unit level. If yes, then it may be handy to have a factory just to control the creation of `ReservationInProgress`. If you don't want to (e.g. you drive this logic with higher-level Statements, which we will talk about in one of the next parts), then you can decide to just create the object inside the controller method or even make the controller implement the `ReservationInProgress` interface (though if you did that, you would need to make sure a single controller is not shared between multiple requests, as it would contain mutable state).
 
-#### So should I write unit-level Statements for my controllers?
+#### Should I specify the controller behavior on the unit level?
 
-As I mentioned, it's up to you. As controllers often serve as adapters between a framework and the application logic, they are constrained by the framework and so there is not a lot of value in driving their design with unit-level Statements. It might be more accurate to say thay these Statements are examples of *integration Statements* because they often describe how the application is integrated into a framework rather than the logic itself.
+As I mentioned, it's up to you. As controllers often serve as adapters between a framework and the application logic, they are constrained by the framework and so there is not that much value in driving their design with unit-level Statements. It might be more accurate to say that these Statements are examples of *integration Statements* because they often describe how the application is integrated into a framework rather than the logic itself.
 
-An alternative to specifying the integration on the unit level could be driving it with higher-level Statements (which I will be talking about in detail in the coming chapters). For example, I might write a Statement describing how my application works end-to-end, then write a controller (or another framework adapter) code without a dedicated Statement for it and then use unit-level Statements to drive the application logic. When the end-to-end Statement passes, it means that the integration works.
+An alternative to specifying the integration on the unit level could be driving it with higher-level Statements (which I will be talking about in detail in the coming chapters). For example, I might write a Statement describing how my application works end-to-end, then write a controller (or another framework adapter) code without a dedicated unit-level Statement for it and then use unit-level Statements to drive the application logic. When the end-to-end Statement passes, it means that the integration works.
 
 There are some preconditions for this approach to work, but I will cover them when talking about higher-level Statements in the further chapters.
 
@@ -340,6 +340,14 @@ The different abstractions Johnny pulled into existence were driven by:
 
 Had he lacked these things, he would have probably written the simplest thing that would come to his mind and then changed the design when after learning more.
 
+## Do I need all of this to do TDD?
+
+TODO
+
+## What's next?
+
+This chapter hopefully connected all the missing dots of the last one. The next chapter will focus on test-driving object creation, which I will show you using a factory as an example.
+
 [^walkingskeleton]: TODO add reference
 [^workflowspecification]: http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html
 [^PEAA]: Patterns of Enterprise Application Architecture, Martin Fowler
@@ -347,3 +355,4 @@ Had he lacked these things, he would have probably written the simplest thing th
 [^natprycetestdatabuilder]: http://www.natpryce.com/articles/000714.html
 [^ploehtestdatabuilder]: https://blog.ploeh.dk/2017/08/15/test-data-builders-in-c/
 [^GOOS]: Steve Freeman, Nat Pryce, Growing Object Oriented Software Guided By Tests
+[^CollectingParameter]: https://wiki.c2.com/?CollectingParameter
