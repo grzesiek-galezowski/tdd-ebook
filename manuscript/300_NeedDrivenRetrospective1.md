@@ -40,7 +40,8 @@ This also means that I can call the factory many times in the implementation wit
 
 ```csharp
 var reservationInProgress = _reservationInProgressFactory.FreshInstance();
-var reservationCommand = _commandFactory.CreateReservationCommand(requestDto, reservationInProgress);
+var reservationCommand = _commandFactory.CreateReservationCommand(
+  requestDto, reservationInProgress);
 reservationCommand.Execute();
 return reservationInProgress.ToDto();
 ```
@@ -52,7 +53,8 @@ var reservationInProgress = _reservationInProgressFactory.FreshInstance();
 reservationInProgress = _reservationInProgressFactory.FreshInstance();
 reservationInProgress = _reservationInProgressFactory.FreshInstance();
 reservationInProgress = _reservationInProgressFactory.FreshInstance();
-var reservationCommand = _commandFactory.CreateReservationCommand(requestDto, reservationInProgress);
+var reservationCommand = _commandFactory.CreateReservationCommand(
+  requestDto, reservationInProgress);
 reservationCommand.Execute();
 return reservationInProgress.ToDto();
 ```
@@ -63,7 +65,8 @@ On the other hand, consider the command -- it is supposed to have a side effect,
 
 ```csharp
 var reservationInProgress = _reservationInProgressFactory.FreshInstance();
-var reservationCommand = _commandFactory.CreateReservationCommand(requestDto, reservationInProgress);
+var reservationCommand = _commandFactory.CreateReservationCommand(
+  requestDto, reservationInProgress);
 reservationCommand.Execute();
 reservationCommand.Execute();
 reservationCommand.Execute();
