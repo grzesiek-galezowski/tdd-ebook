@@ -4,13 +4,15 @@ A lot of things happened in the last chapter and I feel some of them deserve a d
 
 ## Outside-in development
 
-Johnny and Benjamin started their development almost entirely at the peripherals of the system, at the beginning of the flow of control. This is typical of the outside-in approach to software development. It took me a while to get used to it. After all, I thought, if I had started with the objects at the end of the flow, I could run the logic inside them with whatever dependencies they had, because all those dependencies would have already existed. Looking at the graph below, I could develop and run the logic in `Object1` because it did not require dependencies. Then, I could develop `Object2` because it depends on `Object1` that I already created and I could as well do that with `Object3` because it only depends on `Object2` that I already had. At any given time, I could run everything I created up to that point.
+Johnny and Benjamin started their development almost entirely at the peripherals of the system, at the beginning of the flow of control. This is typical of the outside-in approach to software development. It took me a while to get used to it. To illustrate it, let's consider a system of three classes, where `Object3` depends on `Object2` and `Object2` depends on `Object1`:
 
 ```text
 Object3 -> Object2 -> Object1
 ```
 
-The outside-in approach contradicted this habit because the objects I had to start with were the ones that had to have dependencies and these dependencies did not exist yet. With outside-in, I would need to start with `Object3`, which could not be instantiated without `Object2`, which, in turn, could not be instantiated without `Object1`.
+Before adopting the outside-in approach, my habit was to start with the objects at the end of the dependency chain (which would typically be at the end of the control flow as well) because I had everything I needed to run and check them. Looking at the graph above, I could develop and run the logic in `Object1` because it did not require dependencies. Then, I could develop `Object2` because it depends on `Object1` that I already created and I could then do that with `Object3` because it only depends on `Object2` that I already had. At any given time, I could run everything I created up to that point.
+
+The outside-in approach contradicted this habit of mine, because the objects I had to start with were the ones that had to have dependencies and these dependencies did not exist yet. With outside-in, I would need to start with `Object3`, which could not be instantiated without `Object2`, which, in turn, could not be instantiated without `Object1`.
 
 "If this feels difficult, then why bother?" you might ask. My reasons are:
 
