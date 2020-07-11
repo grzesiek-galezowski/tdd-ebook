@@ -10,7 +10,7 @@ Johnny and Benjamin started their development almost entirely at the peripherals
 Object3 -> Object2 -> Object1
 ```
 
-Before adopting the outside-in approach, my habit was to start with the objects at the end of the dependency chain (which would typically be at the end of the control flow as well) because I had everything I needed to run and check them. Looking at the graph above, I could develop and run the logic in `Object1` because it did not require dependencies. Then, I could develop `Object2` because it depends on `Object1` that I already created and I could then do that with `Object3` because it only depends on `Object2` that I already had. At any given time, I could run everything I created up to that point.
+Before adopting the outside-in approach, my habit was to start with the objects at the end of the dependency chain (which would typically be at the end of the control flow as well) because I had everything I needed to run and check them. Looking at the graph above, I could develop and run the logic in `Object1` because it did not require dependencies. Then, I could develop `Object2` because it depends on `Object1` that I already created and I could then do that with `Object3` because it depends only on `Object2` that I already had. At any given time, I could run everything I created up to that point.
 
 The outside-in approach contradicted this habit of mine, because the objects I had to start with were the ones that had to have dependencies and these dependencies did not exist yet. With outside-in, I would need to start with `Object3`, which could not be instantiated without `Object2`, which, in turn, could not be instantiated without `Object1`.
 
