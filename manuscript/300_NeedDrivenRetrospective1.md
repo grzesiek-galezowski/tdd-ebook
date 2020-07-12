@@ -12,33 +12,33 @@ Object3 -> Object2 -> Object1
 
 Before adopting the outside-in approach, my habit was to start with the objects at the end of the dependency chain (which would typically be at the end of the control flow as well) because I had everything I needed to run and check them. Looking at the graph above, I could develop and run the logic in `Object1` because it did not require dependencies. Then, I could develop `Object2` because it depends on `Object1` that I already created and I could then do that with `Object3` because it depends only on `Object2` that I already had. At any given time, I could run everything I created up to that point.
 
-The outside-in approach contradicted this habit of mine, because the objects I had to start with were the ones that had to have dependencies and these dependencies did not exist yet. With outside-in, I would need to start with `Object3`, which could not be instantiated without `Object2`, which, in turn, could not be instantiated without `Object1`.
+The outside-in approach contradicted this habit of mine, because the objects I had to start with were the ones that had to have dependencies and these dependencies did not exist yet. Looking at the example above, I would need to start with `Object3`, which could not be instantiated without `Object2`, which, in turn, could not be instantiated without `Object1`.
 
 "If this feels difficult, then why bother?" you might ask. My reasons are:
 
-1. By starting from the inputs and going inside, I allow my interfaces and protocols to be shaped by use cases rather than by the underlying technology. That does not mean I can just ignore the technology stuff, but I consider the use case logic to be the main driver. This way, my protocols tend to be more abstract which in turn enforces higher composability.
-1. Every line of code I introduce is there because the use case needs it. Every method, every interface, and class exists because there already exists someone who needs it to perform its obligations. This way, I ensure I only implement the stuff that's needed and that it is shaped the way the users find it comfortable to use. Until I started using this approach, I would start from the inside of the system and I would design classes by guessing how they would be used and I would later regret these guesses, because of the rework and complexity they would often create.
+1. By starting from the inputs and going inside, I allow my interfaces and protocols to be shaped by use cases rather than by the underlying technology. That does not mean I can always ignore the technology stuff, but I consider the use case logic to be the main driver. This way, my protocols tend to be more abstract which in turn enforces higher composability.
+1. Every line of code I introduce is there because the use case needs it. Every method, every interface, and class exists because there already exists someone who needs it to perform its obligations. This way, I ensure I only implement the stuff that's needed and that it is shaped the way the users find it comfortable to use. Before adpoting this approach, I would start from the inside of the system and I would design classes by guessing how they would be used and I would later regret these guesses, because of the rework and complexity they would often create.
 
-I found I can mitigate the uncomfortable feeling of starting from the inputs ("there is nothing I can fully run") with the following practices:
+For me, these pros outweigh the cons. Moreover, I found I can mitigate the uncomfortable feeling of starting from the inputs ("there is nothing I can fully run") with the following practices:
 
-1. Using TDD with mocks -- TDD allows every little piece of code to be executed well before the whole task completion and mock objects serve as first collaborators that allow this execution to happen.
+1. Using TDD with mocks -- TDD encourages every little piece of code to be executed well before the whole task completion and mock objects serve as the first collaborators that allow this execution to happen.
 1. Slicing the scope of work into smaller vertical parts (e.g. scenarios, stories, etc.) that can be implemented faster than a full-blown feature. We had a taste of this in action when Johnny and Benjamin were developing the calculator in one of the first chapters of this book.
-1. Not starting with a unit-level Statement, but instead, writing on a higher-level (e.g. end-to-end or against another architectural boundary). I could then make this bigger Statement work, then refactor the initial objects out of this small piece of working code. Only after having this initial structure in place would I start using unit-level Statements with mocks. This approach is what we will be aiming at eventually, but for this chapter, I wanted to focus on the mocks and OO design, so I left this part out.
+1. Not starting with a unit-level Statement, but instead, writing on a higher-level first (e.g. end-to-end or against another architectural boundary). I could then make this bigger Statement work, then refactor the initial objects out of this small piece of working code. Only after having this initial structure in place would I start using unit-level Statements with mocks. This approach is what I will be aiming at eventually, but for this chapter and several more chapters, I want to focus on the mocks and OO design, so I left this part for later.
 
 ## Workflow specification
 
 The Statement about the controller is an example of what Amir Kolsky and Scott Bain call a workflow Statement[^workflowspecification]. This kind of Statement describes how a specified unit of behavior (in our case, an object) interacts with other units by sending messages and receiving answers. In Statements specifying workflow, we document the intended purpose and behaviors of the specified class in terms of its interaction with other roles in the system. We use mock objects to play these roles by specifying the return values of some methods and asserting that other methods are called.
 
-For example, in the Statement Johnny and Benjamin wrote in the last chapter, they described how a command factory reacts when asked for a new command and they also asserted on the call to the command's `Execute()` method.
+For example, in the Statement Johnny and Benjamin wrote in the last chapter, they described how a command factory reacts when asked for a new command and they also asserted on the call to the command's `Execute()` method. That was a description of a workflow.
 
 ### Should I verify that the factory got called?
 
-You might have noticed in the same Statement that some interactions are verified (using the `.Received()` syntax) while some are only set up to return something. An example of the latter is a factory, e.g. `reservationInProgressFactory.FreshInstance().Returns(reservationInProgress)`. You may question why Johnny and Benjamin did not write something like  
+You might have noticed in the same Statement that some interactions were verified (using the `.Received()` syntax) while some were only set up to return something. An example of the latter is a factory, e.g. `reservationInProgressFactory.FreshInstance().Returns(reservationInProgress)`. You may question why Johnny and Benjamin did not write something like  
 `reservationInProgressFactory.Received().FreshInstance()` at the end.
 
-One reason is that the factory resembles a function -- it is not supposed to have any side-effects. As such, calling the factory is not a goal of the behavior I specify -- it will always be only a means to an end. For example, the goal of this behavior Johnny and Benjamin specified was to execute the command and return its result. The factory was brought to existence to make getting there easier.
+One reason is that a factory resembles a function -- it is not supposed to have any visible side-effects. As such, calling the factory is not a goal of the behavior I specify -- it will always be only a means to an end. For example, the goal of this behavior Johnny and Benjamin specified was to execute the command and return its result. The factory was brought to existence to make getting there easier.
 
-This also means that I can call the factory many times in the implementation without altering the expected behavior. For example, if the code of the `MakeReservation()` method Johnny and Benjamin were test-driving did not look like this:
+This also means that I allow the factory method to be called many times in the implementation without altering the expected behavior in the Statement. For example, if the code of the `MakeReservation()` method Johnny and Benjamin were test-driving did not look like this:
 
 ```csharp
 var reservationInProgress = _reservationInProgressFactory.FreshInstance();
@@ -51,17 +51,19 @@ return reservationInProgress.ToDto();
 but like this:
 
 ```csharp
+// Repeated multiple times:
 var reservationInProgress = _reservationInProgressFactory.FreshInstance();
 reservationInProgress = _reservationInProgressFactory.FreshInstance();
 reservationInProgress = _reservationInProgressFactory.FreshInstance();
 reservationInProgress = _reservationInProgressFactory.FreshInstance();
+
 var reservationCommand = _commandFactory.CreateReservationCommand(
   requestDto, reservationInProgress);
 reservationCommand.Execute();
 return reservationInProgress.ToDto();
 ```
 
-The behavior of this method would still be correct. Sure, it would do some needless work, but when writing Statements, I care about externally visible behavior, not how the flow is structured. I leave more freedom to the implementation and try not to overspecify.
+then the behavior of this method would still be correct. Sure, it would do some needless work, but when writing Statements, I care about externally visible behavior, not lines of production code. I leave more freedom to the implementation and try not to overspecify.
 
 On the other hand, consider the command -- it is supposed to have a side effect, because I expect it to alter some kind of reservation registry in the end. So if I sent the `Execute()` message more than once:
 
@@ -77,19 +79,21 @@ reservationCommand.Execute();
 return reservationInProgress.ToDto();
 ```
 
-then it would alter the behavior -- maybe by reserving more seats than the user requested, maybe by throwing an error from the second `Execute()`... This is why I want to strictly specify how many times the `Execute()` message should be sent:
+then it could possibly alter the behavior -- maybe by reserving more seats than the user requested, maybe by throwing an error from the second `Execute()`... This is why I want to strictly specify how many times the `Execute()` message should be sent:
 
 ```csharp
 reservationCommand.Received(1).Execute();
 ```
 
-This approach is not paying attention to functions but strictly specifying side-effects is what Steve Freeman and Nat Pryce call "Allow queries; expect commands"[^GOOS].
+The approach to specifying functions and side-effects I described above is what Steve Freeman and Nat Pryce call "Allow queries; expect commands"[^GOOS].
 
 ## Data Transfer Objects and TDD
 
 While looking at the initial data structures, Johnny and Benjamin called them Data Transfer Objects.
 
-A Data Transfer Object is a pattern to describe objects responsible for exchanging information between processes[^PEAA]. So, we can have DTOs representing input that our process receives and DTOs representing output that our process sends out.
+//TODOOOOOOOOOOOOOO
+
+A Data Transfer Object is a pattern to describe objects responsible for exchanging information between processes[^PEAA]. As processes cannot really exchange objects, the purpose of DTOs is to be serialized and deserialized into some kind fo payload that is then tranfered. So, we can have DTOs representing input that our process receives and DTOs representing output that our process sends out.
 
 As you might have seen, DTOs are typically just data structures. That may come as surprising, because for several chapters now, I have repeatedly stressed how I prefer to bundle data and behavior together. Isn't this breaking all the principles that I mentioned?
 
