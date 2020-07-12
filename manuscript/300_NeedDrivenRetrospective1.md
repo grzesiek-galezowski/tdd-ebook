@@ -91,17 +91,15 @@ The approach to specifying functions and side-effects I described above is what 
 
 While looking at the initial data structures, Johnny and Benjamin called them Data Transfer Objects.
 
-//TODOOOOOOOOOOOOOO
-
-A Data Transfer Object is a pattern to describe objects responsible for exchanging information between processes[^PEAA]. As processes cannot really exchange objects, the purpose of DTOs is to be serialized and deserialized into some kind fo payload that is then tranfered. So, we can have DTOs representing input that our process receives and DTOs representing output that our process sends out.
+A Data Transfer Object is a pattern to describe objects responsible for exchanging information between processes[^PEAA]. As processes cannot really exchange objects, the purpose of DTOs is to be serialized into some kind of payload that is then transferred to another process which deserializes the data. So, we can have DTOs representing output that our process sends out and  and DTOs representing input that our process receives.
 
 As you might have seen, DTOs are typically just data structures. That may come as surprising, because for several chapters now, I have repeatedly stressed how I prefer to bundle data and behavior together. Isn't this breaking all the principles that I mentioned?
 
-My response to this would be that exchanging information between processes is where the mentioned principles do not apply and that there are some good reasons why.
+My response to this would be that exchanging information between processes is where the mentioned principles do not apply and that there are some good reasons why data is exchanged between processes.
 
 1. It is easier to exchange data than to exchange behavior. If I wanted to send behavior to another process, I would have to send it as data anyway, e.g. in a form of source code. In such a case, the other side would need to interpret the source code, provide all the dependencies, etc. which could be cumbersome and strongly couple implementations of both processes.
 2. Agreeing on a simple data format makes creating and interpreting the data in different programming languages easier.
-3. Many times, the boundaries between processes are designed as functional boundaries at the same time. In other words, even if one process sends some data to another, both of these processes would not want to execute the same behaviors on the data.
+3. Many times, the boundaries between processes are designed as functional boundaries at the same time. In other words, even if one process sends some data to another, both of these processes would not want to execute the same behavior on the data.
 
 These are some of the reasons why processes send data to each other. And when they do, they typically bundle the data into bigger structures for consistency and performance reasons.
 
@@ -109,7 +107,7 @@ These are some of the reasons why processes send data to each other. And when th
 
 While DTOs, similarly to value objects, carry and represent data, their purpose and design constraints are different.
 
-1. Values have value semantics, i.e. they can be compared based on their content. This is one of the core principles of their design. DTOs don't need to have value semantics (if I add value semantics to DTOs, I do it because I find it convenient for some reason, not because it's a part of domain model).
+1. Values have value semantics, i.e. they can be compared based on their content. This is one of the core principles of their design. DTOs don't need to have value semantics (if I add value semantics to DTOs, I do it because I find it convenient for some reason, not because it's a part of the domain model).
 1. DTOs must be easily serializable and deserializable from some kind of data exchange format (i.e. JSON or XML).
 1. Values may contain behavior, even quite complex (an example of this would be the `Replace()` method of the `String` class), while DTOs typically contain no behavior at all.
 1. Despite the previous point, DTOs may contain value objects, as long as these value objects can be reliably serialized and deserialized without loss of information. Value objects don't contain DTOs.
@@ -139,7 +137,7 @@ An instance of this class can be created by typing:
 var loginDto = new LoginDto("James", "007");
 ```
 
-If we were to create a mock, we would probably extract an interface:
+If we were to create a mock, we would probably need to extract an interface:
 
 ```csharp
 public class ILoginDto
@@ -167,7 +165,7 @@ As DTOs tend to bundle data, creating them for specific Statements might be a ch
 
 #### 1. Limit the reach of your DTOs in the production code
 
-As a rule of thumb, the fewer types and methods know about them, the better. DTOs represent an external application contract. They are also constrained by some rules mentioned earlier (like the ease of serialization), so they cannot evolve the same way normal objects do. Thus, I try to limit the number of objects that know about DTOs to a necessary minimum. I use one of the two strategies: wrapping or mapping.
+As a rule of thumb, the fewer types and methods know about them, the better. DTOs represent an external application contract. They are also constrained by some rules mentioned earlier (like the ease of serialization), so they cannot evolve the same way normal objects do. Thus, I try to limit the number of objects that know about DTOs in my application to a necessary minimum. I use one of the two strategies: wrapping or mapping.
 
 When wrapping, I have another object that holds a reference to the DTO and then all the other pieces of logic interact with this wrapping object instead of directly with a DTO:
 
@@ -177,7 +175,7 @@ var user = new User(userDto);
 user.Assign(resource);
 ```
 
-I consider this approach simpler but more limited. I find that it encourages me to shape the domain objects similarly to how the DTOs are designed (because one object wraps one DTO).
+I consider this approach simpler but more limited. I find that it encourages me to shape the domain objects similarly to how the DTOs are designed (because one object wraps one DTO). I usually start with this approach when the external contract is close enough to my domain model and move to the other strategy -- mapping -- when the relationship starts getting more complex.
 
 When mapping, I unpack the DTO and pass specific parts into my domain objects:
 
@@ -193,9 +191,9 @@ How does all of this help me avoid the tediousness of creating DTOs? Well, the f
 
 #### 2. Use constrained non-determinism if you don't need specific data
 
-In many Statements where I need to create DTOs, the specific values held inside it don't matter to me. I care only about *some* data being there. This is a perfect match for constrained non-determinism. I can just create an anonymous instance and use it, which I find easier than assigning field by field.
+In many Statements where I need to create DTOs, the specific values held inside it don't matter to me. I care only about *some* data being there. For situations like this, I like using constrained non-determinism. I can just create an anonymous instance and use it, which I find easier than assigning field by field.
 
-As an example, look at this line from the Statement Johnny and Benjamin wrote in the last chapter:
+As an example, look at the following line from the Statement Johnny and Benjamin wrote in the last chapter:
 
 ```csharp
 var requestDto = Any.Instance<ReservationRequestDto>();
@@ -222,7 +220,7 @@ This method creates any user with a particular set of privileges. Note that I ut
 
 I like factory methods, but the more flexibility I need, the more I gravitate towards test data builders[^natprycetestdatabuilder].
 
-A test data builder is a special object that allows me to create an object with some default values, but allows me to customize the default recipee according to which the object is created. It leaves me much more flexibility with how I set up my DTOs. The typical syntax for using a builder you can find on the internet[^ploehtestdatabuilder] looks like this:
+A test data builder is a special object that allows me to create an object with some default values, but allows me to customize the default recipe according to which the object is created. It leaves me much more flexibility with how I set up my DTOs. The typical syntax for using a builder that you can find on the internet[^ploehtestdatabuilder] looks like this:
 
 ```csharp
 var user = new UserBuilder().WithName("Johnny").WithAge("43").Build();
@@ -248,7 +246,7 @@ Let's try answering them.
 
 ### What exactly is `ReservationInProgress`?
 
-As mentioned earlier, the intent for this object is to collect information about processing a command, so that the issuer of the command can act on that information (e.g. use it to create a response) when processing finishes. Speaking in patterns language, this is an implementation of a Collecting Parameter pattern[^CollectingParameter].
+As mentioned earlier, the intent for this object is to collect information about processing a command, so that the issuer of the command (in our case, a controller object) can act on that information (e.g. use it to create a response) when processing finishes. Speaking in patterns language, this is an implementation of a Collecting Parameter pattern[^CollectingParameter].
 
 There is something I often do, but I did not put in the example for the sake of simplicity. When I implement a collecting parameter, I typically make it implement two interfaces -- one more narrow and the other one -- wider. Let me show them to you:
 
@@ -274,7 +272,7 @@ public interface ReservationInProgressMakingReservationJson : ReservationInProgr
 }
 ```
 
-and only the command issuer (in our case, the controller object) would know about that. The rest of the classes using the narrower interface would interact with it happily without ever knowing that it is meant to produce JSON output.
+and only the command issuer (in our case, the controller object) would know about that. The rest of the classes using the narrower interface would interact with it happily without ever knowing that it is meant to produce a JSON output.
 
 ### Is `ReservationInProgress` necessary?
 
@@ -298,7 +296,7 @@ public interface ReservationCommand<T>
 }
 ```
 
-but this still leaves a distinction between `void` and non-`void` commands (which some people resolve by parameterizing would-be `void` commands with `bool` and returning `true` at the end).
+but this still leaves a distinction between `void` and non-`void` commands (which some people resolve by parameterizing would-be `void` commands with `bool` and always returning `true` at the end).
 
 The second option to avoid a collecting parameter would be to just let the command execute and then obtain the result by querying the state that was modified by the command (similarly to a command, a query may be a separate object). The code of the `MakeReservation()` would look somewhat like this:
 
@@ -311,10 +309,10 @@ reservationCommand.Execute();
 return reservationQuery.Make();
 ```
 
-Note that in this case, there is nothing like "result in progress", but on the other hand, we need to generate the id for the command, since the query must use the same id. This approach might be attractive provided that:
+Note that in this case, there is nothing like "result in progress", but on the other hand, we need to generate the id for the command, as the query must use the same id. This approach might be attractive provided that:
 
-1. You don't mind that the `reservationQuery` might go through database or external service once during the command, and again during the query.
-1. The state that is modified by the command is queryable (i.e. a potential destination API for data allows executing both commands and queries on the data). It's not always a given.
+1. You don't mind that store your changes in a database or external service, your logic might need to access it twice -- once during the command, and again during the query.
+2. The state that is modified by the command is queryable (i.e. a potential destination API for data allows executing both commands and queries on the data). It's not always a given.
 
 There are more options, but I'd like to stop here as this is not the main concern of this book.
 
@@ -325,15 +323,17 @@ This question can be broken into two parts:
 1. Can we use the same factory as for commands?
 2. Do we need a factory at all?
 
-The answer to the first one is: it depends on what the `ReservationInProgress` is coupled to. In this specific example, it is just creating a DTO to be returned to the client. In such a case, it does not necessarily need any knowledge of the framework that is being used to run the application. This lack of coupling to the framework would allow me to place creating `ReservationInProgress` in the same factory. However, if this class needed to decide e.g. HTTP status codes or create responses required by a specific framework or in a specified format (e.g. JSON or XML), then I would opt, as Johnny and Benjamin did, for separating it from the command factory. This is because the command factory belongs to the world of application logic and I want my application logic to be independent of the framework, the transport protocols and the payload formats that I use.
+The answer to the first one is: it depends on what the `ReservationInProgress` is coupled to. In this specific example, it is just creating a DTO to be returned to the client. In such a case, it does not necessarily need any knowledge of the framework that is being used to run the application. This lack of coupling to the framework would allow me to place creating `ReservationInProgress` in the same factory. However, if this class needed to decide e.g. HTTP status codes or create responses required by a specific framework or in a specified format (e.g. JSON or XML), then I would opt, as Johnny and Benjamin did, for separating it from the command factory. This is because the command factory belongs to the world of application logic and I want my application logic to be independent of the framework, the transport protocols, and the payload formats that I use.
 
-The answer to the second question (whether we need a factory at all) is: it depends whether you care about specifying the controller behavior on the unit level. If yes, then it may be handy to have a factory just to control the creation of `ReservationInProgress`. If you don't want to (e.g. you drive this logic with higher-level Statements, which we will talk about in one of the next parts), then you can decide to just create the object inside the controller method or even make the controller implement the `ReservationInProgress` interface (though if you did that, you would need to make sure a single controller is not shared between multiple requests, as it would contain mutable state).
+The answer to the second question (whether we need a factory at all) is: it depends whether you care about specifying the controller behavior on the unit level. If yes, then it may be handy to have a factory just to control the creation of `ReservationInProgress`. If you don't want to (e.g. you drive this logic with higher-level Statements, which we will talk about in one of the next parts), then you can decide to just create the object inside the controller method or even make the controller itself implement the `ReservationInProgress` interface (though if you did that, you would need to make sure a single controller instance is not shared between multiple requests, as it would contain mutable state).
 
 #### Should I specify the controller behavior on the unit level?
 
-As I mentioned, it's up to you. As controllers often serve as adapters between a framework and the application logic, they are constrained by the framework and so there is not that much value in driving their design with unit-level Statements. It might be more accurate to say that these Statements are examples of *integration Statements* because they often describe how the application is integrated into a framework rather than the logic itself.
+As I mentioned, it's up to you. As controllers often serve as adapters between a framework and the application logic, they are constrained by the framework and so there is not that much value in driving their design with unit-level Statements. It might be more accurate to say that these Statements are examples of *integration Statements* because they often describe how the application is integrated into a framework rather.
 
-An alternative to specifying the integration on the unit level could be driving it with higher-level Statements (which I will be talking about in detail in the coming chapters). For example, I might write a Statement describing how my application works end-to-end, then write a controller (or another framework adapter) code without a dedicated unit-level Statement for it and then use unit-level Statements to drive the application logic. When the end-to-end Statement passes, it means that the integration works.
+An alternative to specifying the integration on the unit level could be driving it with higher-level Statements (which I will be talking about in detail in the coming chapters). For example, I might write a Statement describing how my application works end-to-end, then write a controller (or another framework adapter) code without a dedicated unit-level Statement for it and then use unit-level Statements to drive the application logic. When the end-to-end Statement passes, it means that the integration that my controller was to provide, works.
+
+//TODOOOOOOO
 
 There are some preconditions for this approach to work, but I will cover them when talking about higher-level Statements in the further chapters.
 
