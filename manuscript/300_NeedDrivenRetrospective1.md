@@ -180,7 +180,12 @@ I consider this approach simpler but more limited. I find that it encourages me 
 When mapping, I unpack the DTO and pass specific parts into my domain objects:
 
 ```csharp
-var user = new User(userDto.Name, userDto.Surname, new Address(userDto.City, userDto.Street));
+var user = new User(
+  userDto.Name, 
+  userDto.Surname, 
+  new Address(
+    userDto.City, 
+    userDto.Street));
 //...
 user.Assign(resource);
 ```
@@ -229,7 +234,8 @@ var user = new UserBuilder().WithName("Johnny").WithAge("43").Build();
 Note that the value for each field is configured separately. Typically, the builder holds some kind of default values for the fields I don't specify:
 
 ```csharp
-var user = new UserBuilder().WithName("Johnny").Build(); //some safe default age will be used
+//some safe default age will be used when not specified: 
+var user = new UserBuilder().WithName("Johnny").Build();
 ```
 
 I am not showing an example implementation on purpose, because one of the further chapters will include a longer discussion on test data builders.
@@ -257,16 +263,18 @@ public interface ReservationInProgress
    //... methods for reporting other events
 }
 
-public interface ReservationInProgressMakingReservationDto : ReservationInProgress
+public interface ReservationInProgressMakingReservationDto 
+  : ReservationInProgress
 {
   ReservationDto ToDto();
 }
 ```
 
-The whole point is that only the issuer of the command can see the wider interface (`ReservationInProgressMakingReservationDto`) and when it passes this interface down the call chain, the next object only sees the methods for reporting events (`ReservationInProgress`). This way, the wider interface can even be tied to a specific technology, as long as the narrower one is not. For example, If I needed a JSON string response, I might do something like this:
+The whole point is that only the issuer of the command can see the wider interface  (`ReservationInProgressMakingReservationDto`) and when it passes this interface down the call chain, the next object only sees the methods for reporting events (`ReservationInProgress`). This way, the wider interface can even be tied to a specific technology, as long as the narrower one is not. For example, If I needed a JSON string response, I might do something like this:
 
 ```csharp
-public interface ReservationInProgressMakingReservationJson : ReservationInProgress
+public interface ReservationInProgressMakingReservationJson
+  : ReservationInProgress
 {
   string ToJsonString();
 }
@@ -302,7 +310,8 @@ The second option to avoid a collecting parameter would be to just let the comma
 
 ```csharp
 var reservationId = _idGenerator.GenerateId();
-var reservationCommand = _factory.CreateReservationCommand(requestDto, reservationId);
+var reservationCommand = _factory.CreateReservationCommand(
+  requestDto, reservationId);
 var reservationQuery = _factory.CreateReservationQuery(reservationId);
 
 reservationCommand.Execute();

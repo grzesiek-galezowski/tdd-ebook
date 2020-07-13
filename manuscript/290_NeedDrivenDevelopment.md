@@ -530,7 +530,8 @@ reservationInProgressFactory.FreshInstance().Returns(reservationInProgress);
 **Benjamin:** And, as you said earlier, it should be a mock object. Then this will be the definition:
 
 ```csharp
-var reservationInProgressFactory = Substitute.For<ReservationInProgressFactory>();
+var reservationInProgressFactory 
+  = Substitute.For<ReservationInProgressFactory>();
 ```
 
 For the need of this line of code, I pretended that I have an interface called `ReservationInProgressFactory`, and, let me guess, you want me to introduce this interface now?
@@ -579,14 +580,16 @@ public ReservationDto MakeReservation(ReservationRequestDto requestDto)
 **Benjamin:** Ok, so I'll add it. The Statement will change in this place:
 
 ```csharp
-var reservationInProgressFactory = Substitute.For<ReservationInProgressFactory>();
+var reservationInProgressFactory 
+  = Substitute.For<ReservationInProgressFactory>();
 var ticketOffice = new TicketOffice();
 ```
 
 to:
 
 ```csharp
-var reservationInProgressFactory = Substitute.For<ReservationInProgressFactory>();
+var reservationInProgressFactory 
+  = Substitute.For<ReservationInProgressFactory>();
 var ticketOffice = new TicketOffice(reservationInProgressFactory);
 ```
 
@@ -679,7 +682,8 @@ public void ShouldXXXXX() //TODO better name
 {
   //WHEN
   var requestDto = Any.Instance<ReservationRequestDto>();
-  var reservationInProgressFactory = Substitute.For<ReservationInProgressFactory>();
+  var reservationInProgressFactory 
+    = Substitute.For<ReservationInProgressFactory>();
   var ticketOffice = new TicketOffice(reservationInProgressFactory);
   var reservationInProgress = Substitute.For<ReservationInProgress>();
   var expectedReservationDto = Any.Instance<ReservationDto>();
@@ -839,7 +843,8 @@ public void ShouldXXXXX() //TODO better name
   //WHEN
   var requestDto = Any.Instance<ReservationRequestDto>();
   var commandFactory = Substitute.For<CommandFactory>();
-  var reservationInProgressFactory = Substitute.For<ReservationInProgressFactory>();
+  var reservationInProgressFactory 
+    = Substitute.For<ReservationInProgressFactory>();
   var ticketOffice = new TicketOffice(reservationInProgressFactory);
   var reservationInProgress = Substitute.For<ReservationInProgress>();
   var expectedReservationDto = Any.Instance<ReservationDto>();
@@ -955,7 +960,8 @@ ShouldExecuteReservationCommandAndReturnResponseWhenMakingReservation()
   //GIVEN
   var requestDto = Any.Instance<ReservationRequestDto>();
   var commandFactory = Substitute.For<CommandFactory>();
-  var reservationInProgressFactory = Substitute.For<ReservationInProgressFactory>();
+  var reservationInProgressFactory 
+    = Substitute.For<ReservationInProgressFactory>();
   var reservationInProgress = Substitute.For<ReservationInProgress>();
   var expectedReservationDto = Any.Instance<ReservationDto>();
   var reservationCommand = Substitute.For<ReservationCommand>();
