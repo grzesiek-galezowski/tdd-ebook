@@ -331,15 +331,13 @@ The answer to the second question (whether we need a factory at all) is: it depe
 
 As I mentioned, it's up to you. As controllers often serve as adapters between a framework and the application logic, they are constrained by the framework and so there is not that much value in driving their design with unit-level Statements. It might be more accurate to say that these Statements are examples of *integration Statements* because they often describe how the application is integrated into a framework rather.
 
-An alternative to specifying the integration on the unit level could be driving it with higher-level Statements (which I will be talking about in detail in the coming chapters). For example, I might write a Statement describing how my application works end-to-end, then write a controller (or another framework adapter) code without a dedicated unit-level Statement for it and then use unit-level Statements to drive the application logic. When the end-to-end Statement passes, it means that the integration that my controller was to provide, works.
+An alternative to specifying the integration on the unit level could be driving it with higher-level Statements (which I will be talking about in detail in the coming parts of this book). For example, I might write a Statement describing how my application works end-to-end, then write a controller (or another framework adapter) code without a dedicated unit-level Statement for it and then use unit-level Statements to drive the application logic. When the end-to-end Statement passes, it means that the integration that my controller was to provide, works.
 
-//TODOOOOOOO
-
-There are some preconditions for this approach to work, but I will cover them when talking about higher-level Statements in the further chapters.
+There are some preconditions for this approach to work, but I will cover them when talking about higher-level Statements in the further parts of this book.
 
 ## Interface discovery and the sources of abstractions
 
-As promised, the last chapter included some interface discovery, even though it wasn't a typical way of applying this approach. This is because, as I mentioned, the goal of the Statement was to describe integration between the framework and the application code. Still, writing the Statement allowed Johnny and Benjamin to discover what their controller needs from the application to pass all the necessary data to it and to get the result without violating the command-query separation principle.
+As promised, the previous chapter included some interface discovery, even though it wasn't a typical way of applying this approach. This is because, as I mentioned, the goal of the Statement was to describe integration between the framework and the application code. Still, writing the Statement allowed Johnny and Benjamin to discover what their controller needs from the application to pass all the necessary data to it and to get the result without violating the command-query separation principle.
 
 The different abstractions Johnny pulled into existence were driven by:
 
@@ -347,17 +345,19 @@ The different abstractions Johnny pulled into existence were driven by:
 - his knowledge about design patterns,
 - his experience with similar problems.
 
-Had he lacked these things, he would have probably written the simplest thing that would come to his mind and then changed the design when after learning more.
+Had he lacked these things, he would have probably written the simplest thing that would come to his mind and then changed the design after learning more.
 
 ## Do I need all of this to do TDD?
 
-TODO
+The last chapter might have left you confused. If you are wondering whether you need to use controllers, collecting parameters, commands and factories in order to do TDD, than my answer is *no*. Moreover, there are many debates on the internet whether these particular patterns are the right ones to use and even I don't like using controllers with problems such as this one (although I used it because this is what many web frameworks offer as a default choice).
+
+All if that is needed to understand the example, but the most important lesson is that, while making the design decisions was up to Johnny and Benjamin's knowledge and experience, writing the Statement code *informed* these design decisions, helping them distribute the responsibilities across collaborating objects.
 
 ## What's next?
 
 This chapter hopefully connected all the missing dots of the last one. The next chapter will focus on test-driving object creation, which I will show you using a factory as an example.
 
-[^walkingskeleton]: TODO add reference
+[^walkingskeleton]: https://wiki.c2.com/?WalkingSkeleton
 [^workflowspecification]: http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html
 [^PEAA]: Patterns of Enterprise Application Architecture, Martin Fowler
 [^mapperpattern]: https://martinfowler.com/eaaCatalog/mapper.html
