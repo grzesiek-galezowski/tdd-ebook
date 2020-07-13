@@ -33,7 +33,13 @@ For example, in the Statement Johnny and Benjamin wrote in the last chapter, the
 
 ### Should I verify that the factory got called?
 
-You might have noticed in the same Statement that some interactions were verified (using the `.Received()` syntax) while some were only set up to return something. An example of the latter is a factory, e.g. `reservationInProgressFactory.FreshInstance().Returns(reservationInProgress)`. You may question why Johnny and Benjamin did not write something like  
+You might have noticed in the same Statement that some interactions were verified (using the `.Received()` syntax) while some were only set up to return something. An example of the latter is a factory, e.g. 
+
+```csharp
+reservationInProgressFactory.FreshInstance().Returns(reservationInProgress);`
+```
+
+You may question why Johnny and Benjamin did not write something like  
 `reservationInProgressFactory.Received().FreshInstance()` at the end.
 
 One reason is that a factory resembles a function -- it is not supposed to have any visible side-effects. As such, calling the factory is not a goal of the behavior I specify -- it will always be only a means to an end. For example, the goal of this behavior Johnny and Benjamin specified was to execute the command and return its result. The factory was brought to existence to make getting there easier.
@@ -270,7 +276,8 @@ public interface ReservationInProgressMakingReservationDto
 }
 ```
 
-The whole point is that only the issuer of the command can see the wider interface  (`ReservationInProgressMakingReservationDto`) and when it passes this interface down the call chain, the next object only sees the methods for reporting events (`ReservationInProgress`). This way, the wider interface can even be tied to a specific technology, as long as the narrower one is not. For example, If I needed a JSON string response, I might do something like this:
+The whole point is that only the issuer of the command can see the wider interface  
+(`ReservationInProgressMakingReservationDto`) and when it passes this interface down the call chain, the next object only sees the methods for reporting events (`ReservationInProgress`). This way, the wider interface can even be tied to a specific technology, as long as the narrower one is not. For example, If I needed a JSON string response, I might do something like this:
 
 ```csharp
 public interface ReservationInProgressMakingReservationJson
