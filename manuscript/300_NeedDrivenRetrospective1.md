@@ -351,7 +351,7 @@ Had he lacked these things, he would have probably written the simplest thing th
 
 The last chapter might have left you confused. If you are wondering whether you need to use controllers, collecting parameters, commands and factories in order to do TDD, than my answer is *no*. Moreover, there are many debates on the internet whether these particular patterns are the right ones to use and even I don't like using controllers with problems such as this one (although I used it because this is what many web frameworks offer as a default choice).
 
-All if that is needed to understand the example, but the most important lesson is that, while making the design decisions was up to Johnny and Benjamin's knowledge and experience, writing the Statement code *informed* these design decisions, helping them distribute the responsibilities across collaborating objects.
+I needed all of this stuff to create an example that resembles a real-life problem. The most important lesson though is that, while making the design decisions was up to Johnny and Benjamin's knowledge and experience, writing the Statement code before the implementation *informed* these design decisions, helping them distribute the responsibilities across collaborating objects.
 
 ## What's next?
 
