@@ -1,12 +1,12 @@
 # Test-driving at the input boundary
 
-In this chapter, we'll be joining Johnny and Benjamin again as they try to test-drive a system starting from its input boundaries. This will hopefully show a picture of how abstractions are pulled from need and how roles are invented at the boundary of a system. The further chapters will explore the domain model. This example makes several assumptions:
+In this chapter, we'll be joining Johnny and Benjamin again as they try to test-drive a system starting from its input boundaries. This will hopefully demonstrate how abstractions are pulled from need and how roles are invented at the boundary of a system. The further chapters will explore the domain model. This example makes several assumptions:
 
-1. In this story, Johnny is a super programmer, who never makes mistakes. In real-life TDD, people make mistakes and correct them, sometimes they go back and forth thinking about tests and design. Here, Johnny gets everything right the first time. Although I know this is a drop on realism, I hope that it will help my readers in observing how some TDD mechanics work. This is also why Johnny and Benjamin will not need to refactor anything in this chapter.
+1. In this story, Johnny is a super-programmer, who never makes mistakes. In real-life TDD, people make mistakes and correct them, sometimes they go back and forth thinking about tests and design. Here, Johnny gets everything right the first time. Although I know this is a drop on realism, I hope that it will help my readers in observing how some TDD mechanics work. This is also why Johnny and Benjamin will not need to refactor anything in this chapter.
 1. There will be no Statements written on higher than unit level. This means that Johnny and Benjamin will do TDD using unit-level Statements only. This is why they will need to do some things they could avoid if they could write a higher-level Statement. A separate part of this book will cover working with different levels of Statements at the same time.
-1. This chapter (and several next ones) will avoid the topic of working with any I/O, randomness and other hard to test stuff. For now, I want to focus on test-driving pure code-based logic.
+1. This chapter (and several next ones) will avoid the topic of working with any I/O, randomness, and other hard-to-test stuff. For now, I want to focus on test-driving pure code-based logic.
 
-With all of that out of our way, let's join Johnny and Benjamin and see what kind of issue they are dealing with and how they try to solve it using TDD.
+With this out of our way, let's join Johnny and Benjamin and see what kind of issue they are dealing with and how they try to solve it using TDD.
 
 ## Fixing the ticket office
 
@@ -26,11 +26,11 @@ With all of that out of our way, let's join Johnny and Benjamin and see what kin
 
 **Benjamin:** You're kidding me, right?
 
-**Johnny:** No, I'm being really honest.
+**Johnny:** No, I'm telling the truth.
 
 **Benjamin:** No way.
 
-**Johnny:** Take your smartphone and check your e-mail, I already forwarded the details to you.
+**Johnny:** Take your smartphone and check your e-mail. I already forwarded the details to you.
 
 **Benjamin:** Hey, that looks legit. Why didn't you tell me earlier?
 
@@ -40,7 +40,7 @@ With all of that out of our way, let's join Johnny and Benjamin and see what kin
 
 **Benjamin:** do we have any sort of requirements, stories or whatever to work with?
 
-**Johnny:** Yes, I'll explain some as I walk you through the input and output data structures. This will be enough to get us going.
+**Johnny:** Yes, I'll explain some as I walk you through the input and output data structures. It will be enough to get us going.
 
 ### Request
 
@@ -49,13 +49,13 @@ With all of that out of our way, let's join Johnny and Benjamin and see what kin
 ```csharp
 public class ReservationRequestDto
 {
-  public readonly string trainId;
-  public readonly uint seatCount;
+  public readonly string TrainId;
+  public readonly uint SeatCount;
 
   public ReservationRequestDto(string trainId, uint seatCount)
   {
-    this.trainId = trainId;
-    this.seatCount = seatCount;
+    TrainId = trainId;
+    SeatCount = seatCount;
   }
 }
 ```
@@ -72,39 +72,39 @@ public class ReservationRequestDto
 
 **Johnny:** It means that if you did touch them, you'd have to make sure they are still correctly mapped from outside data, like JSON or XML.
 
-**Benjamin:** So I'd better not mess with them. Cool, and what about the ID?
+**Benjamin:** So I'd better not mess with them. Cool, and what about the train ID?
 
-**Johnny:** It represents a train. The client application that uses the backend that we'll write will understand these IDs use them to communicate with us.
+**Johnny:** It represents a train. The client application that uses the backend that we'll write will understand these IDs and use them to communicate with us.
 
 **Benjamin:** Cool, what's next?
 
-**Johnny:** The client tells us how many seats we need to reserve, but doesn't tell us where. This is why there's only a `seatCount` parameter. We are the ones who determine which seats to pick.
+**Johnny:** The client application tells our service how many seats it needs to reserve, but doesn't say where. This is why there's only a `seatCount` parameter. Our service must determine which seats to pick.
 
 **Benjamin:** So if a couple wants to reserve two seats, they can be in different coaches?
 
-**Johnny:** Yes, however, there are some preference rules that we need to code in, like, if we can, a single reservation should have all seats in the same coach. I'll fill you in on the rules later as for now we're not going to need them.
+**Johnny:** Yes, however, there are some preference rules that we need to code in, like, if we can, a single reservation should have all seats in the same coach. I'll fill you in on the rules later.
 
 ### Response
 
-**Benjamin:** Do we return something to the client?
+**Benjamin:** Do we return something to the client app?
 
-**Johnny:** Yes, we need to return a response, which, no surprise, is also a DTO. This response represents the reservation made:
+**Johnny:** Yes, we need to return a response, which, no surprise, is also modeled in the code as a DTO. This response represents the reservation made:
 
 ```csharp
 public class ReservationDto
 {
-  public readonly string trainId;
-  public readonly string reservationId;
-  public readonly List<TicketDto> perSeatTickets;
+  public readonly string TrainId;
+  public readonly string ReservationId;
+  public readonly List<TicketDto> PerSeatTickets;
 
   public ReservationDto(
     string trainId,
     List<TicketDto> perSeatTickets,
     string reservationId)
   {
-    this.trainId = trainId;
-    this.perSeatTickets = perSeatTickets;
-    this.reservationId = reservationId;
+    TrainId = trainId;
+    PerSeatTickets = perSeatTickets;
+    ReservationId = reservationId;
   }
 }
 ```
@@ -113,24 +113,24 @@ public class ReservationDto
 
 **Johnny:** Right. It's used to correlate the request and the response.
 
-**Benjamin:** ...and there is a reservation ID that is probably assigned by our application.
+**Benjamin:** ...and there is a reservation ID - does our service generate that?
 
-**Johnny:** correct.
+**Johnny:** Correct.
 
-**Benjamin:** but the `perSeatTickets` field... it is a list of `TicketDto`, which as I understand is one of our custom types. Where is it?
+**Benjamin:** but the `PerSeatTickets` field... it is a list of `TicketDto`, which as I understand is one of our custom types. Where is it?
 
-**Johnny:** Oh, yeah, forgot to show it to you. `TicketDto` is defined as:
+**Johnny:** Oh, yeah, I forgot to show it to you. `TicketDto` is defined as:
 
 ```csharp
 public class TicketDto
 {
-  public readonly string coach;
-  public readonly int seatNumber;
+  public readonly string Coach;
+  public readonly int SeatNumber;
 
   public TicketDto(string coach, int seatNumber)
   {
-    this.coach = coach;
-    this.seatNumber = seatNumber;
+    Coach = coach;
+    SeatNumber = seatNumber;
   }
 }
 ```
@@ -139,17 +139,17 @@ so it has a coach name and a seat number, and we have a list of these in our res
 
 **Benjamin:** Ok, so a single reservation can contain many tickets and each ticket is for a single place in a specific coach, right?
 
-**Johnny:** Correct.
+**Johnny:** Yes.
 
 ### Ticket Office class
 
-**Benjamin:** Ok. So we need all these data structures we just went through to deserialize some kind of JSON or XML input into them?
+**Benjamin:** The classes we just saw - are they representations of some kind of JSON or XML?
 
-**Johnny:** Yes, but we don't have to write the code to do it. As I mentioned earlier, This part is already done.
+**Johnny:** Yes, but we don't have to write the code to do it. As I mentioned earlier, someone already took care of that.
 
 **Benjamin**: Lucky us.
 
-**Johnny**: Our work starts from the point where the deserialized data is passed to the application logic as a DTO. The request entry point is in a class called `TicketOffice`:
+**Johnny**: Our work starts from the point where the deserialized data is passed to the application as a DTO. The request entry point is in a class called `TicketOffice`:
 
 ```csharp
 [SomeKindOfController]
@@ -163,11 +163,11 @@ public class TicketOffice
 }
 ```
 
-**Johnny:** As I can see, it has some annotations specific to a web framework, so we will probably not implement the use case directly in the `MakeReservation` method to avoid coupling our use case logic to the code that has to meet the requirements of a specific framework.
+**Johnny:** I see that the class is decorated with attributes specific to a web framework, so we will probably not implement the use case directly in the `MakeReservation` method to avoid coupling our use case logic to the code that has to meet the requirements of a specific framework.
 
-**Benjamin:** So what you're saying is that you're trying to keep the `TicketOffice` class as much away from the business logic as you can?
+**Benjamin:** So what you're saying is that you're trying to keep the `TicketOffice` class away from the application logic as much you can?
 
-**Johnny:** Yes, in a way, I think about it as an anti-corruption layer. I only need it to wrap all the objects into appropriate abstractions and run the use case where it is us who dictate the conditions, not a framework.
+**Johnny:** Yes. I only need it to wrap all the data into appropriate abstractions which I design to match my preferences, not the framework. Then, in these abstractions, I can freely code my solution the way I like.
 
 ## Bootstrap
 
@@ -181,7 +181,7 @@ public class TicketOffice
 
 **Benjamin:** Why would I like to see a composition root?
 
-**Johnny:** Well, the first reason is that it is very close to the entry point of the application, so it is a chance for you to see how the application manages its dependencies. The second reason is that each time we will be adding a new class that has the same lifespan as the application, we will need to go to the composition root and modify it. Sooo it would probably be nice to be able to tell where it is and know how to work with it.
+**Johnny:** Well, the first reason is that it is very close to the entry point of the application, so it is a chance for you to see how the application manages its dependencies. The second reason is that each time we will be adding a new class that has the same lifespan as the application, we will need to go to the composition root and modify it. Sooo I'd probably like to know where it is and how I should work with it.
 
 **Benjamin:** I thought I could find that later, but while we're at it, can you show me the composition root?
 
@@ -201,7 +201,7 @@ public class Application
 
 **Benjamin:** Good to see it doesn't require us to use any fancy reflection-based mechanism for composing objects.
 
-**Johnny:** Yes, we're lucky about that. We can just create the objects with the `new` operator and pass them to the framework. Another important information is that we have a single `TicketOffice` instance to handle all the requests. This means that we cannot store any state related to a single request inside this instance as it will come into conflict with other requests.
+**Johnny:** Yes, we're lucky about that. We can just create the objects with the `new` operator and pass them to the framework. Another important piece of information is that we have a single `TicketOffice` instance to handle all the requests. This means that we cannot store any state related to a single request inside this instance as it will come into conflict with other requests.
 
 ## Writing the first Statement
 
@@ -209,16 +209,18 @@ public class Application
 
 **Benjamin:** Ok, where do we start from? Should we write some kind of a class called "Reservation" or "Train" first?
 
-**Johnny:** No, what we will do is we will start from the inputs and work our way towards the inside of the application. Then, if necessary, to the outputs again.
+**Johnny:** No, what we will do is we will start from the inputs and work our way towards the inside of the application. Then, if necessary, to the outputs.
 
 **Benjamin:** I don't think I understand what you're talking about. Do you mean this "outside-in" approach that you mentioned yesterday?
 
-**Johnny:** Yes and don't worry if you didn't get what I said, I will explain as we go. For now, the only thing I mean by it is that we will follow the path of the request as it comes from the outside of our application and start implementing in the first place where the request is not handled as it should be. Specifically, this means we start at:
+**Johnny:** Yes, and don't worry if you didn't get what I said, I will explain as we go. For now, the only thing I mean by it is that we will follow the path of the request as it comes from the outside of our application and start implementing in the first place where the request is not handled as it should be. Specifically, this means we start at:
 
 ```csharp
+[SomeKindOfController]
 public class TicketOffice
 {
-    public ReservationDto MakeReservation(ReservationRequestDto requestDto) 
+    [SuperFrameworkMethod]
+    public ReservationDto MakeReservation(ReservationRequestDto requestDto)
     {
         throw new NotImplementedException("Not implemented");
     }
@@ -256,7 +258,7 @@ Then, I need to add my first Statement. I know that in this Statement, I need to
 
 **Johnny:** so what strategy do you use for starting with a false Statement?
 
-**Benjamin:** "invoke method when you have one", as far as I remember.
+**Benjamin:** "invoke a method when you have one", as far as I remember.
 
 **Johnny:** So what's the code going to look like?
 
@@ -295,9 +297,9 @@ uses a variable `requestDto` that does not exist. Let's generate it using our ID
 public void ShouldXXXXX() //TODO better name
 ```
 
-**Johnny:** My opinion is that this is not necessary, because the compiler, by failing on this line, has already created a sort of TODO item for us, just not on our TODO list but the compiler error log. This is different than e.g. the need to change a method name, which the compiler will not remind us about.
+**Johnny:** My opinion is that this is not necessary, because the compiler, by failing on this line, has already created a sort of TODO item for us, just not on our TODO list but the compiler error log. This is different than e.g. a need to change a method's name, which the compiler will not remind us about.
 
-**Benjamin:** So my TODO list is composed of compile errors, false Statements and the items I manually mark as `TODO`? Is this how I should understand it?
+**Benjamin:** So my TODO list is composed of compile errors, false Statements, and the items I manually mark as `TODO`? Is this how I should understand it?
 
 **Johnny:** Exactly. Going back to the `requestDto` variable, let's create it.
 
@@ -313,7 +315,7 @@ We need to assign something to the variable.
 
 **Benjamin:** You mean we don't mock DTOs?
 
-**Johnny:** No, there's no need to. DTOs are, by definition, data structures and mocking involves polymorphism which applies to behavior rather than data. Later I will explain it in more detail. For now, just accept my word on it.
+**Johnny:** No, there's no need. DTOs are, by definition, data structures and mocking involves polymorphism which applies to behavior rather than data. Later I will explain it in more detail. For now, just accept my word on it.
 
 **Benjamin:** Sooo... if it's not going to be a mock, then let's generate an anonymous value for it using the `Any.Instance<>()` method.
 
@@ -333,7 +335,7 @@ var requestDto = Any.Instance<ReservationRequestDto>();
 
 ### Setting up the expectation
 
-**Johnny:** Yes, and now the Statement compiles, so after everything compiles, our Statement seems to be false. This is because of this line:
+**Johnny:** Yes, and now the Statement compiles, and it seems to be false. This is because of this line:
 
 ```csharp
 Assert.True(false);
@@ -361,7 +363,7 @@ In our Statement, we don't do anything with it.
 
 **Benjamin:** Ok, let me guess, you want me to go to the Statement, assign this return value to a variable and then assert its equality to... what exactly?
 
-**Johnny:** For now, to an expected value, which we don't know yet what's going to be, but we will worry about it later when it really blocks us.
+**Johnny:** For now, to an expected value, which we don't know yet, but we will worry about it later when it really blocks us.
 
 **Benjamin:** This is one of those situations where we need to imagine that we already have something we don't, right?. Ok, here goes:
 
@@ -407,13 +409,13 @@ Assert.Equal(expectedReservationDto, reservationDto);
 
 **Benjamin:** Well, if you put it this way... Now our problem is that the expected value from the assertion is something the production code doesn't know about - this is just something we created in our Statement. This means that this assertion does not assert the outcome of the behavior of the production code. How do we solve this?
 
-**Johnny:** This is where we need to exercise our design skills to introduce some new collaborators. This task is hard at the boundaries of application logic where we need to draw the collaborators, not from the domain, but rather think about design patterns that will allow us to reach our goals. Every time we enter our application logic, we do so with a specific use case in mind. In this particular example, our use case is "making a reservation". A use case is typically represented by either a method in a facade[^FacadePattern] or a command object[^CommandPattern]. Commands are a bit more complex but more scalable. If making a reservation was our only use case, it probably wouldn't make sense to use it. But as we already have more high priority requests for features, I believe we can assume that commands will be a better fit.
+**Johnny:** This is where we need to exercise our design skills to introduce some new collaborators. This task is hard at the boundaries of application logic where we need to draw the collaborators not from the domain, but rather think about design patterns that will allow us to reach our goals. Every time we enter our application logic, we do so with a specific use case in mind. In this particular example, our use case is "making a reservation". A use case is typically represented by either a method in a facade[^FacadePattern] or a command object[^CommandPattern]. Commands are a bit more complex but more scalable. If making a reservation was our only use case, it probably wouldn't make sense to use it. But as we already have more high priority requests for features, I believe we can assume that commands will be a better fit.
 
 **Benjamin:** So you propose to use a more complex solution - isn't that "big design up front"?
 
 **Johnny:** I believe that it isn't. Remember I'm using just *a bit* more complex solution. The cost of implementation is only a bit higher as well as the cost of maintenance in case I'm wrong. If for some peculiar reason someone says tomorrow that they don't need the rest of the features at all, the increase in complexity will be negligible taking into account the small size of the overall codebase. If, however, we add more features, then using commands will save us some time in the longer run. Thus, given what I know, [I am not adding this to support speculative new features, but to make the code easier to modify in the long run](https://martinfowler.com/bliki/Yagni.html). I agree though that [choosing just enough complexity for a given moment is a difficult task](https://www.youtube.com/watch?v=aCLBd3a1rwk).
 
-**Benjamin:** I still don't get it how introducing a command is going to help us here. Typically, a command has an `Execute()` method that doesn't return anything. How then will it give us the response that we need to return from the `MakeReservation()`? And also, there's this another issue: how is this command going to be created? It will probably require the request passed as one of its constructor parameters. This means we cannot just pass the command to the `TicketOffice`'s constructor as the first time we can access the request is when the `MakeReservation()` method is invoked.
+**Benjamin:** I still don't get how introducing a command is going to help us here. Typically, a command has an `Execute()` method that doesn't return anything. How then will it give us the response that we need to return from the `MakeReservation()`? And also, there's another issue: how is this command going to be created? It will probably require the request passed as one of its constructor parameters. This means we cannot just pass the command to the `TicketOffice`'s constructor as the first time we can access the request is when the `MakeReservation()` method is invoked.
 
 **Johnny:** Yes, I agree with both of your concerns. Thankfully, when you choose to go with commands, typically there are standard solutions to the problems you mentioned. The commands can be created using factories and they can convey their results using a pattern called *collecting parameter*[^KerievskyCollectingParameter] - we will pass an object inside the command to gather all the events from handling the use case and then be able to prepare a response for us.
 
@@ -703,19 +705,19 @@ the only interaction between a `TicketOffice` and `ReservationInProgress` it des
 
 **Benjamin:** Oh right... the `ReservationDto` needs to be created by the `ReservationInProgress` based on the current state of the application and the data in the `ReservationRequestDto`, but the `ReservationInProgress` knows nothing about any of these things so far.
 
-**Johnny:** Yes, filling the `ReservationInProgress` is one of the responsibilities of the application we are writing. If we did it all in the `TicketOffice` class, this class would surely have too much to handle and our Statement would grow immensely. So we need to push the responsibility of handling our use case further to other collaborating objects and use mocks for those objects here.
+**Johnny:** Yes, filling the `ReservationInProgress` is one of the responsibilities of the application we are writing. If we did it all in the `TicketOffice` class, this class would surely have too much to handle and our Statement would grow immensely. So we need to push the responsibility of handling our use case further to other collaborating roles and use mocks to play those roles here.
 
 **Benjamin:** So what do you propose?
 
 **Johnny:** Remember our discussion from several minutes ago? Usually, when I push a use case-related logic to another object at the system boundary, I pick from among the Facade pattern and the Command pattern. Facades are simpler but less scalable, while commands are way more scalable and composable but a new command object needs to be created by the application each time a use case is triggered and a new command class needs to be created by a programmer when support for a new use case is added to the system.
 
-**Benjamin:** Ok, I already know that you prefer commands.
+**Benjamin:** I already know that you prefer commands.
 
-**Johnny:** Well, yeah, bear with me if only for the sake of seeing how commands can be used here. I am sure you could figure out the Facade option by yourself.
+**Johnny:** Yeah, bear with me if only for the sake of seeing how commands can be used here. I am sure you could figure out the Facade option by yourself.
 
-**Benjamin:** Ok, so what do I type?
+**Benjamin:** What do I type?
 
-**Johnny:** Well, let's assume we have this command and then let's think about what we want our `TicketOffice` to do with it.
+**Johnny:** Let's assume we have this command and then let's think about what we want our `TicketOffice` to do with it.
 
 **Benjamin:** We want the `TicketOffice` to execute the command, obviously..?
 
@@ -726,6 +728,14 @@ the only interaction between a `TicketOffice` and `ReservationInProgress` it des
 ```csharp
 reservationCommand.Received(1).Execute(reservationInProgress);
 ```
+
+
+
+
+
+
+
+
 
 I already passed the `reservationInProgress` as the command will need to fill it.
 
