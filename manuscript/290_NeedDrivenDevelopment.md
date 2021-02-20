@@ -729,23 +729,15 @@ the only interaction between a `TicketOffice` and `ReservationInProgress` it des
 reservationCommand.Received(1).Execute(reservationInProgress);
 ```
 
-
-
-
-
-
-
-
-
 I already passed the `reservationInProgress` as the command will need to fill it.
 
-**Johnny:** Wait, it so happens that I prefer another way of passing this `reservationInProgress` to the `Execute()` method. Please, for now, make the `Execute()` method parameterless.
+**Johnny:** Wait, it so happens that I prefer another way of passing this `reservationInProgress` to the `reservationCommand`. Please, for now, make the `Execute()` method parameterless.
 
 **Benjamin:** As you wish, but I thought this would be a good place to pass it.
 
-**Johnny:** It might look like it, but typically, I want my commands to have parameterless execution methods. This way I can compose them more freely, using patterns such as decorator.
+**Johnny:** It might look like it, but typically, I want my commands to have parameterless execution methods. This way I can compose them more freely, using patterns such as decorator[^DecoratorPattern].
 
-**Benjamin:** As you wish. I removed the parameter and now the `THEN` section looks like this:
+**Benjamin:** As you wish. I reverted the last change and now the `THEN` section looks like this:
 
 ```csharp
 //THEN
@@ -753,7 +745,7 @@ reservationCommand.Received(1).Execute();
 Assert.Equal(expectedReservationDto, reservationDto);
 ```
 
-and it doesn't compile of course. So I already know that to have this command, I need to introduce a variable of a type that I have to pretend already exists. Aaaand, I already know it should be a mock since I verify that it received a call to its `Execute()` method.
+and it doesn't compile of course. `reservationCommand` doesn't exist, so I need to introduce it. Of course, the type of this variable doesn't exist as well -- I need to pretend it does. And, I already know it should be a mock since I specify that it should have received a call to its `Execute()` method.
 
 **Johnny:** (nods)
 
@@ -763,7 +755,7 @@ and it doesn't compile of course. So I already know that to have this command, I
 var reservationCommand = Substitute.For<ReservationCommand>();
 ```
 
-For the sake of this line, I pretended that I have an interface called `ReservationCommand`, and now I need to create it to make the code compile.
+For the sake of this line, I pretend that I have an interface called `ReservationCommand`, and now I need to create it to make the code compile.
 
 ```csharp
 public interface ReservationCommand
@@ -772,7 +764,7 @@ public interface ReservationCommand
 }
 ```
 
-and the code still doesn't compile because in the Statement, I expect to receive a call to an `Execute()` method on the command but there's no such method. I can fix it by adding this method on the command interface:
+but that's not enough, because in the Statement, I expect to receive a call to an `Execute()` method on the command and there's no such method. I can fix it by adding it on the command interface:
 
 ```csharp
 public interface ReservationCommand
@@ -798,9 +790,9 @@ and now everything compiles again.
 
 **Johnny:** I understand why you feel that way. Still, this is a consequence of my design choice. We wouldn't need a command factory if we went with a facade. In simple apps, I just use a facade and do away with this dilemma. I could also drop the use of the collecting parameter pattern and then I wouldn't need a factory for reservations in progress, but that would mean I would not resolve the command-query separation principle violation and would need to push this violation further into my code. To cheer you up, this is an entry point for a use case where we need to wrap some things in abstractions, so I don't expect this many factories in the rest of the code. I treat this part as a sort of adapting layer which protects me from everything imposed by outside of my application logic which I don't want to deal with inside of my application logic.
 
-**Benjamin:** I will need to trust you on that. I hope it will make things easier later because for now... ugh...
+**Benjamin:** I will need to trust you on that. I hope it makes things easier later because for now... ugh...
 
-**Johnny:** Let's introduce the factory mock. Of course, before I define it, I want to use it first in the Statement to feel a need for it. This code needs to go into the `GIVEN` section:
+**Johnny:** Let's introduce the factory mock. Of course, before I define it, I want to use it first in the Statement to feel a need for it. I will expand the `GIVEN` section with an assumption that a factory, asked for a command, returns out `reservationCommand`:
 
 ```csharp
 //GIVEN
@@ -813,7 +805,7 @@ This doesn't compile because we have no `commandFactory` yet.
 
 **Benjamin:** Oh, I can see that the factory's `CreateReservationCommand()` is where you decided to pass the `reservationInProgress` that I wanted to pass to the `Execute()` method earlier. Clever. By leaving the command's `Execute()` method parameterless, you made it more abstract and made the interface decoupled from any particular argument types. On the other hand, the command is created in the same scope it is used, so there is literally no issue with passing all the parameters through the factory method.
 
-**Johnny:** That's right. We now know we need a factory, plus that it needs to be a mock since we configure it to return a command when it is asked for one. I propose something like this:
+**Johnny:** That's right. We now know we need a factory, plus that it needs to be a mock since we configure it to return a command when it is asked for one. So let's declare the factory, pretending we have an interface for it:
 
 ```csharp
 //GIVEN
@@ -824,7 +816,7 @@ commandFactory.CreateReservationCommand(requestDto, reservationInProgress)
     .Returns(reservationCommand);
 ```
 
-**Benjamin:** ...and the `CommandFactory` doesn't exist, so let's create it:
+**Benjamin:** ...and the `CommandFactory` interface doesn't exist, so let's create it:
 
 ```csharp
 public interface CommandFactory
@@ -876,7 +868,7 @@ public void ShouldXXXXX() //TODO better name
 
 **Benjamin:** I can see that the command factory is not passed anywhere from the Statement - the `TicketOffice` doesn't know about it.
 
-**Johnny:** Yes, and, lucky us, a factory is something that can have the same lifetime scope as the `TicketOffice` since to create the factory, we don't need to know anything about a request for reservation. This is why we can pass it through the constructor of `TicketOffice`. Which means that these two lines:
+**Johnny:** Yes, and, lucky us, a factory is something that can have the same lifetime scope as the `TicketOffice` since to create the factory, we don't need to know anything about a request for reservation. This is why we can safely pass it through the constructor of `TicketOffice`. Which means that these two lines:
 
 ```csharp
 var commandFactory = Substitute.For<CommandFactory>();
@@ -891,7 +883,7 @@ var ticketOffice = new TicketOffice(
     reservationInProgressFactory, commandFactory);
 ```
 
-As this doesn't compile, we need to add a parameter of type `CommandFactory` to the constructor:
+A constructor with such a signature does not exist, so to make this compile, we need to add a parameter of type `CommandFactory` to the constructor:
 
 ```csharp
 public TicketOffice(
@@ -948,7 +940,7 @@ I think we can say:
 
 ```csharp
 public void 
-ShouldExecuteReservationCommandAndReturnResponseWhenMakingReservation()
+ShouldExecuteReservationCommandAndReturnResponseWhenAskedToMakeReservation()
 ```
 
 **Benjamin:** Just curious... Didn't you tell me to watch out for the "and" word in Statement names and that it may suggest something is wrong with the scenario.
@@ -965,7 +957,7 @@ ShouldExecuteReservationCommandAndReturnResponseWhenMakingReservation()
 
 ```csharp
 [Fact] public void
-ShouldExecuteReservationCommandAndReturnResponseWhenMakingReservation()
+ShouldExecuteReservationCommandAndReturnResponseWhenAskedToMakeReservation()
 {
   //GIVEN
   var requestDto = Any.Instance<ReservationRequestDto>();
@@ -996,13 +988,13 @@ ShouldExecuteReservationCommandAndReturnResponseWhenMakingReservation()
 }
 ```
 
-**Johnny:** I think it is complete, but we won't know that until we see the assertions failing and then passing. For now, the implementation of the  `MakeReservation()` method throws an exception and this exception makes our Statement stop at the `WHEN` stage, not even getting to the assertions.
+**Johnny:** I think it is complete, but we won't know that until we see the assertions failing and then passing. For now, the implementation of the `MakeReservation()` method throws an exception and this exception makes our Statement stop at the `WHEN` stage, not even getting to the assertions.
 
 **Benjamin:** But I can't just put the right implementation in yet, right? This is what you have always told me.
 
 **Johnny:** Yes, ideally, we should see the assertion errors to gain confidence that the Statement *can* turn false when the expected behavior is not in place.
 
-**Benjamin:** This can only mean one thing - return `null` from the `TicketOffice` instead of throwing the exception. Right?
+**Benjamin:** This can only mean one thing -- return `null` from the `TicketOffice` instead of throwing the exception. Right?
 
 **Johnny:** Yes, let me do it. I'll just change this code:
 
@@ -1033,7 +1025,7 @@ is failing, because it expects an `expectedReservationDto` from the `reservation
 ```csharp
 reservationInProgressFactory.FreshInstance()
     .Returns(reservationInProgress);
- reservationInProgress.ToDto()
+reservationInProgress.ToDto()
     .Returns(expectedReservationDto);
 ```
 
@@ -1084,11 +1076,11 @@ reservationCommand.Received(1).Execute();
 
 and this one fails. To make it pass, We need to create a command and execute it.
 
-### Making the Statement true - the second assertion
+### Making the Statement true -- the second assertion
 
 **Benjamin:** Wait, why are you calling this an "assertion"? There isn't a word "assert" anywhere in this line. Shouldn't we just call it "mock verification" or something like that?
 
-**Johnny:** I'm OK with "mock verification", however, I consider it correct to call it an assertion as well, because, in essence, that's what it is - a check that throws an exception when a condition is not met.
+**Johnny:** I'm OK with "mock verification", however, I consider it correct to call it an assertion as well, because, in essence, that's what it is -- a check that throws an exception when a condition is not met.
 
 **Benjamin:** OK, if that's how you put it...
 
@@ -1128,7 +1120,7 @@ var reservationCommand = _commandFactory.CreateReservationCommand(
 return reservationInProgress.ToDto();
 ```
 
-But this code is not complete yet - I still need to execute the created command like this:
+But this code is not complete yet -- I still need to execute the created command like this:
 
 ```csharp
 var reservationInProgress = _reservationInProgressFactory.FreshInstance();
@@ -1156,3 +1148,7 @@ return reservationInProgress.ToDto();
 This is how Johnny and Benjamin accomplished their first Statement using TDD and mock with an outside-in design approach. What will follow in the next chapter is a small retrospective with comments on what these guys did. One thing I'd like to mention now is that the outside-in approach does not rely solely on unit-level Statements, so what you saw here is not the full picture. We will get to that soon.
 
 [^POEAA]: Patterns of enterprise application architecture, M. Fowler.
+[^FacadePattern]: https://www.pmi.org/disciplined-agile/the-design-patterns-repository/the-facade-pattern
+[^CommandPattern]: https://www.pmi.org/disciplined-agile/the-design-patterns-repository/the-command-pattern
+[^DecoratorPattern]: https://www.pmi.org/disciplined-agile/the-design-patterns-repository/the-decorator-pattern
+[^KerievskyCollectingParameter]: Refactoring to Patterns, Joshua Kerievsky
