@@ -925,7 +925,7 @@ public class TicketOfficeCommandFactory : CommandFactory
 
 **Benjamin:** Hey, this time you gave the class a better name than the previous factory which was called `TodoReservationInProgressFactory`. Why didn't you want to leave it for later this time?
 
-**Johnny:** This time, I think I have a better idea of how to name this class. Typically, I name concrete classes based on something from their implementation and I find the names hard to find when I don't have this implementation yet. This time I believe I have a name that can last a bit, which is also why I didn't leave a TODO comment next to this name. Still, further work can invalidate my naming choice and I will be happy to change the name when the need arises. For now, it should suffice.
+**Johnny:** This time, I think I have a better idea of how to name this class. Typically, I name concrete classes based on something from their implementation and I find the names hard to find when I don't have this implementation yet. This time I believe I have a name that can last a bit, which is also why I didn't leave a TODO comment next to this name. Still, further work can invalidate my naming choice, and I will be happy to change the name when the need arises. For now, it should suffice.
 
 ### Giving the Statement a name
 

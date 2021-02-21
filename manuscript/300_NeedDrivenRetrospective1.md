@@ -1,6 +1,6 @@
 # Test-driving at the input boundary -- a retrospective
 
-A lot of things happened in the last chapter and I feel some of them deserve a deeper dive. The purpose of this chapter is to do a small retrospective of what Johnny and Benjamin did when test-driving a controller for the train reservation system.
+A lot of things happened in the last chapter and I feel some of them deserve a deeper dive. The purpose of this chapter is to do a small retrospective of what Johnny and Benjamin did when test-driving a controller-type class for the train reservation system.
 
 ## Outside-in development
 
@@ -10,20 +10,20 @@ Johnny and Benjamin started their development almost entirely at the peripherals
 Object3 -> Object2 -> Object1
 ```
 
-Before adopting the outside-in approach, my habit was to start with the objects at the end of the dependency chain (which would typically be at the end of the control flow as well) because I had everything I needed to run and check them. Looking at the graph above, I could develop and run the logic in `Object1` because it did not require dependencies. Then, I could develop `Object2` because it depends on `Object1` that I already created and I could then do that with `Object3` because it depends only on `Object2` that I already had. At any given time, I could run everything I created up to that point.
+Before adopting the outside-in approach, my habit was to start with the objects at the end of the dependency chain (which would typically be at the end of the control flow as well) because I had everything I needed to run and check them. Looking at the graph above, I could develop and run the logic in `Object1` because it did not require dependencies. Then, I could develop `Object2` because it depended on `Object1` that I already created and I could then do the same with `Object3` because it depended only on `Object2` that I already had. At any given time, I could run everything I created up to that point.
 
 The outside-in approach contradicted this habit of mine, because the objects I had to start with were the ones that had to have dependencies and these dependencies did not exist yet. Looking at the example above, I would need to start with `Object3`, which could not be instantiated without `Object2`, which, in turn, could not be instantiated without `Object1`.
 
 "If this feels difficult, then why bother?" you might ask. My reasons are:
 
 1. By starting from the inputs and going inside, I allow my interfaces and protocols to be shaped by use cases rather than by the underlying technology. That does not mean I can always ignore the technology stuff, but I consider the use case logic to be the main driver. This way, my protocols tend to be more abstract which in turn enforces higher composability.
-1. Every line of code I introduce is there because the use case needs it. Every method, every interface, and class exists because there already exists someone who needs it to perform its obligations. This way, I ensure I only implement the stuff that's needed and that it is shaped the way the users find it comfortable to use. Before adpoting this approach, I would start from the inside of the system and I would design classes by guessing how they would be used and I would later regret these guesses, because of the rework and complexity they would often create.
+1. Every line of code I introduce is there because the use case needs it. Every method, every interface, and class exists because there already exists someone who needs it to perform its obligations. This way, I ensure I only implement the stuff that's needed and that it is shaped the way the users find it comfortable to use. Before adpoting this approach, I would start from the inside of the system and I would design classes by guessing how they would be used and I would later often regret these guesses, because of the rework and complexity they would create.
 
 For me, these pros outweigh the cons. Moreover, I found I can mitigate the uncomfortable feeling of starting from the inputs ("there is nothing I can fully run") with the following practices:
 
-1. Using TDD with mocks -- TDD encourages every little piece of code to be executed well before the whole task completion and mock objects serve as the first collaborators that allow this execution to happen.
+1. Using TDD with mocks -- TDD encourages every little piece of code to be executed well before the whole task completion. Mock objects serve as the first collaborators that allow this execution to happen. To take advantage of mocks, at least in C#, I need to use interfaces more liberally than in a typical development approach. A property of interfaces is that they typically don't contain implementation[^csandjavainterfaces], so they can be used to cut the dependency chain. In other words, whereas without interfaces, I would need all three: `Object1`, `Object2` and `Object3` to instantiate and use `Object3`, I could alternatively introduce an interface that `Object3` would depend on and `Object2` would implement. This would allow me to use `Object3` before its concrete collaborators exist, simply by supplying a mock object as its dependency.
 1. Slicing the scope of work into smaller vertical parts (e.g. scenarios, stories, etc.) that can be implemented faster than a full-blown feature. We had a taste of this in action when Johnny and Benjamin were developing the calculator in one of the first chapters of this book.
-1. Not starting with a unit-level Statement, but instead, writing on a higher-level first (e.g. end-to-end or against another architectural boundary). I could then make this bigger Statement work, then refactor the initial objects out of this small piece of working code. Only after having this initial structure in place would I start using unit-level Statements with mocks. This approach is what I will be aiming at eventually, but for this chapter and several more chapters, I want to focus on the mocks and OO design, so I left this part for later.
+1. Not starting with a unit-level Statement, but instead, writing on a higher-level first (e.g. end-to-end or against another architectural boundary). I could then make this bigger Statement work, then refactor the initial objects out of this small piece of working code. Only after having this initial structure in place would I start using unit-level Statements with mocks. This approach is what I will be aiming at eventually, but for this and several furter chapters, I want to focus on the mocks and object-oriented design, so I left this part for later.
 
 ## Workflow specification
 
@@ -42,9 +42,9 @@ reservationInProgressFactory.FreshInstance().Returns(reservationInProgress);`
 You may question why Johnny and Benjamin did not write something like  
 `reservationInProgressFactory.Received().FreshInstance()` at the end.
 
-One reason is that a factory resembles a function -- it is not supposed to have any visible side-effects. As such, calling the factory is not a goal of the behavior I specify -- it will always be only a means to an end. For example, the goal of this behavior Johnny and Benjamin specified was to execute the command and return its result. The factory was brought to existence to make getting there easier.
+One reason is that a factory resembles a function -- it is not supposed to have any visible side-effects. As such, calling the factory is not a goal of the behavior I specify -- it will always be only a mean to an end. For example, the goal of the behavior Johnny and Benjamin specified was to execute the command and return its result. The factory was brought to existence to make getting there easier.
 
-This also means that I allow the factory method to be called many times in the implementation without altering the expected behavior in the Statement. For example, if the code of the `MakeReservation()` method Johnny and Benjamin were test-driving did not look like this:
+Also, Johnny and Benjamin allowed the factory to be called many times in the implementation without altering the expected behavior in the Statement. For example, if the code of the `MakeReservation()` method they were test-driving did not look like this:
 
 ```csharp
 var reservationInProgress = _reservationInProgressFactory.FreshInstance();
@@ -71,7 +71,7 @@ return reservationInProgress.ToDto();
 
 then the behavior of this method would still be correct. Sure, it would do some needless work, but when writing Statements, I care about externally visible behavior, not lines of production code. I leave more freedom to the implementation and try not to overspecify.
 
-On the other hand, consider the command -- it is supposed to have a side effect, because I expect it to alter some kind of reservation registry in the end. So if I sent the `Execute()` message more than once:
+On the other hand, consider the command -- it is supposed to have a side effect, because I expect it to alter some kind of reservation registry in the end. So if I sent the `Execute()` message more than once like this:
 
 ```csharp
 var reservationInProgress = _reservationInProgressFactory.FreshInstance();
@@ -91,13 +91,13 @@ then it could possibly alter the behavior -- maybe by reserving more seats than 
 reservationCommand.Received(1).Execute();
 ```
 
-The approach to specifying functions and side-effects I described above is what Steve Freeman and Nat Pryce call "Allow queries; expect commands"[^GOOS].
+The approach to specifying functions and side-effects I described above is what Steve Freeman and Nat Pryce call "Allow queries; expect commands"[^GOOS]. According to their terminology, the factory is a "query" -- side-effect-free logic returning some kind of result. The `ReservationCommand`, on the other side, is a "command" - not producing any kind of result, but causing a side-effect like a state change or an I/O operation.
 
 ## Data Transfer Objects and TDD
 
 While looking at the initial data structures, Johnny and Benjamin called them Data Transfer Objects.
 
-A Data Transfer Object is a pattern to describe objects responsible for exchanging information between processes[^PEAA]. As processes cannot really exchange objects, the purpose of DTOs is to be serialized into some kind of payload that is then transferred to another process which deserializes the data. So, we can have DTOs representing output that our process sends out and  and DTOs representing input that our process receives.
+A Data Transfer Object is a pattern to describe objects responsible for exchanging information between processes[^PEAA]. As processes cannot really exchange objects, the purpose of DTOs is to be serialized into some kind of data format and then transferred in that form to another process which deserializes the data. So, we can have DTOs representing output that our process sends out and DTOs representing input that our process receives.
 
 As you might have seen, DTOs are typically just data structures. That may come as surprising, because for several chapters now, I have repeatedly stressed how I prefer to bundle data and behavior together. Isn't this breaking all the principles that I mentioned?
 
@@ -114,14 +114,14 @@ These are some of the reasons why processes send data to each other. And when th
 While DTOs, similarly to value objects, carry and represent data, their purpose and design constraints are different.
 
 1. Values have value semantics, i.e. they can be compared based on their content. This is one of the core principles of their design. DTOs don't need to have value semantics (if I add value semantics to DTOs, I do it because I find it convenient for some reason, not because it's a part of the domain model).
-1. DTOs must be easily serializable and deserializable from some kind of data exchange format (i.e. JSON or XML).
+1. DTOs must be easily serializable and deserializable from some kind of data exchange format (e.g. JSON or XML).
 1. Values may contain behavior, even quite complex (an example of this would be the `Replace()` method of the `String` class), while DTOs typically contain no behavior at all.
 1. Despite the previous point, DTOs may contain value objects, as long as these value objects can be reliably serialized and deserialized without loss of information. Value objects don't contain DTOs.
 1. Values represent atomic and well-defined concepts (like text, date, money), while DTOs mostly function as bundles of data.
 
 ### DTOs and mocks
 
-As we observed in the example of Johnny and Benjamin writing their first Statement, they did not mock DTOs. This is a general rule -- a DTO is a piece of data, it does not represent an implementation of an abstract protocol nor does it benefit from polymorphism the way objects do. Also, it is typically far easier to create an instance of a DTO than to mock it. Imagine we have the following DTO:
+As we observed in the example of Johnny and Benjamin writing their first Statement, they did not mock DTOs. It's a general rule -- a DTO is a piece of data, it does not represent an implementation of an abstract protocol nor does it benefit from polymorphism the way objects do. Also, it is typically far easier to create an instance of a DTO than to mock it. Imagine we have the following DTO:
 
 ```csharp
 public class LoginDto
@@ -163,7 +163,7 @@ loginDto.Password.Returns("Bond");
 
 Not only is this more verbose, it also does not buy us anything. Hence my advice:
 
-A> Do not try to mock DTOs in your Statements. Create the real thing.
+A> Do not try to mock a DTO in your Statements. Create the real thing.
 
 ### Creating DTOs in Statements
 
@@ -221,8 +221,8 @@ A factory method can be useful if there is a single distinguishing factor about 
 ```csharp
 public UserDto AnyUserWith(params Privilege[] privileges)
 {
-  var dto = Any.Instance<UserDto>();
-  dto.Privileges = privileges;
+  var dto = Any.Instance<UserDto>()
+    .WithPropertyValue(user => user.Privileges, privileges);
   return dto;
 }
 ```
@@ -244,7 +244,12 @@ Note that the value for each field is configured separately. Typically, the buil
 var user = new UserBuilder().WithName("Johnny").Build();
 ```
 
-I am not showing an example implementation on purpose, because one of the further chapters will include a longer discussion on test data builders.
+I am not showing an example implementation on purpose, because one of the further chapters will include a longer discussion of test data builders.
+
+
+
+
+
 
 ## Using a `ReservationInProgress`
 
@@ -381,3 +386,4 @@ This chapter hopefully connected all the missing dots of the last one. The next 
 [^ploehtestdatabuilder]: https://blog.ploeh.dk/2017/08/15/test-data-builders-in-c/
 [^GOOS]: Steve Freeman, Nat Pryce, Growing Object Oriented Software Guided By Tests
 [^CollectingParameter]: https://wiki.c2.com/?CollectingParameter
+[^csandjavainterfaces]: though both C# and Java in their current versions allow putting logic in interfaces. Still, due to convention and some constraints, interfaces in those languages are still considered as beings without implementation.
