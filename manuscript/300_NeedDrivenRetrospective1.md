@@ -246,11 +246,6 @@ var user = new UserBuilder().WithName("Johnny").Build();
 
 I am not showing an example implementation on purpose, because one of the further chapters will include a longer discussion of test data builders.
 
-
-
-
-
-
 ## Using a `ReservationInProgress`
 
 A controversial point of the design in the last chapter might be the usage of a `ReservationInProgress` class. The core idea of this abstraction is to collect the data needed to produce a result. To introduce this object, we needed a separate factory, which made the design more complex. Thus, some questions might pop into your mind:
@@ -330,9 +325,9 @@ reservationCommand.Execute();
 return reservationQuery.Make();
 ```
 
-Note that in this case, there is nothing like "result in progress", but on the other hand, we need to generate the id for the command, as the query must use the same id. This approach might be attractive provided that:
+Note that in this case, there is nothing like "result in progress", but on the other hand, we need to generate the id for the command, as the query must use the same id. This approach might appeal to you if:
 
-1. You don't mind that store your changes in a database or external service, your logic might need to access it twice -- once during the command, and again during the query.
+1. You don't mind that if you store your changes in a database or an external service, your logic might need to call it twice -- once during the command, and again during the query.
 2. The state that is modified by the command is queryable (i.e. a potential destination API for data allows executing both commands and queries on the data). It's not always a given.
 
 There are more options, but I'd like to stop here as this is not the main concern of this book.
@@ -346,13 +341,13 @@ This question can be broken into two parts:
 
 The answer to the first one is: it depends on what the `ReservationInProgress` is coupled to. In this specific example, it is just creating a DTO to be returned to the client. In such a case, it does not necessarily need any knowledge of the framework that is being used to run the application. This lack of coupling to the framework would allow me to place creating `ReservationInProgress` in the same factory. However, if this class needed to decide e.g. HTTP status codes or create responses required by a specific framework or in a specified format (e.g. JSON or XML), then I would opt, as Johnny and Benjamin did, for separating it from the command factory. This is because the command factory belongs to the world of application logic and I want my application logic to be independent of the framework, the transport protocols, and the payload formats that I use.
 
-The answer to the second question (whether we need a factory at all) is: it depends whether you care about specifying the controller behavior on the unit level. If yes, then it may be handy to have a factory just to control the creation of `ReservationInProgress`. If you don't want to (e.g. you drive this logic with higher-level Statements, which we will talk about in one of the next parts), then you can decide to just create the object inside the controller method or even make the controller itself implement the `ReservationInProgress` interface (though if you did that, you would need to make sure a single controller instance is not shared between multiple requests, as it would contain mutable state).
+The answer to the second question (whether we need a factory at all) is: it depends whether you care about specifying the controller behavior on the unit level. If yes, then it may be handy to have a factory to control the creation of `ReservationInProgress`. If you don't want to (e.g. you drive this logic with higher-level Specification, which we will talk about in one of the next parts), then you can decide to just create the object inside the controller method or even make the controller itself implement the `ReservationInProgress` interface (though if you did that, you would need to make sure a single controller instance is not shared between multiple requests, as it would contain mutable state).
 
 #### Should I specify the controller behavior on the unit level?
 
-As I mentioned, it's up to you. As controllers often serve as adapters between a framework and the application logic, they are constrained by the framework and so there is not that much value in driving their design with unit-level Statements. It might be more accurate to say that these Statements are examples of *integration Statements* because they often describe how the application is integrated into a framework rather.
+As I mentioned, it's up to you. As controllers often serve as adapters between a framework and the application logic, they are constrained by the framework and so there is not that much value in driving their design with unit-level Statements. It might be more accurate to say that these Statements are closer to *integration Specification* because they often describe how the application is integrated into a framework.
 
-An alternative to specifying the integration on the unit level could be driving it with higher-level Statements (which I will be talking about in detail in the coming parts of this book). For example, I might write a Statement describing how my application works end-to-end, then write a controller (or another framework adapter) code without a dedicated unit-level Statement for it and then use unit-level Statements to drive the application logic. When the end-to-end Statement passes, it means that the integration that my controller was to provide, works.
+An alternative to specifying the integration on the unit level could be driving it with higher-level Statements (which I will be talking about in detail in the coming parts of this book). For example, I might write a Statement describing how my application works end-to-end, then write a controller (or another framework adapter) code without a dedicated unit-level Statement for it and then use unit-level Statements to drive the application logic. When the end-to-end Statement passes, it means that the integration that my controller was meant to provide, works.
 
 There are some preconditions for this approach to work, but I will cover them when talking about higher-level Statements in the further parts of this book.
 
@@ -370,13 +365,13 @@ Had he lacked these things, he would have probably written the simplest thing th
 
 ## Do I need all of this to do TDD?
 
-The last chapter might have left you confused. If you are wondering whether you need to use controllers, collecting parameters, commands and factories in order to do TDD, than my answer is *no*. Moreover, there are many debates on the internet whether these particular patterns are the right ones to use and even I don't like using controllers with problems such as this one (although I used it because this is what many web frameworks offer as a default choice).
+The last chapter might have left you confused. If you are wondering whether you need to use controllers, collecting parameters, commands and factories in order to do TDD, than my answer is *not necessarily*. Moreover, there are many debates on the internet whether these particular patterns are the right ones to use and even I don't like using controllers with problems such as this one (although I used it because this is what many web frameworks offer as a default choice).
 
 I needed all of this stuff to create an example that resembles a real-life problem. The most important lesson though is that, while making the design decisions was up to Johnny and Benjamin's knowledge and experience, writing the Statement code before the implementation *informed* these design decisions, helping them distribute the responsibilities across collaborating objects.
 
 ## What's next?
 
-This chapter hopefully connected all the missing dots of the last one. The next chapter will focus on test-driving object creation, which I will show you using a factory as an example.
+This chapter hopefully connected all the missing dots of the last one. The next chapter will focus on test-driving object creation.
 
 [^walkingskeleton]: https://wiki.c2.com/?WalkingSkeleton
 [^workflowspecification]: http://www.sustainabletdd.com/2012/02/testing-best-practices-test-categories.html
