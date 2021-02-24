@@ -1,3 +1,56 @@
+# Test-driving factories
+
+In this chapter, we join Johnny and Benjaminas they continue their outside-in TDD journey. In this chapter, they will take on test-driving a factory.
+
+**Johnny:** What's nest on our TODO list?
+
+**Benjamin:** There are two instances of `NotImplementedException`, both from factories that we introduced when implementing the last Statement.
+
+This one is for creating instances of `ReservationInProgress` - remember? You gave it a bogus name on purpose.
+
+```csharp
+public class TodoReservationInProgressFactory : ReservationInProgressFactory
+{
+    public ReservationInProgress FreshInstance()
+    {
+        throw new NotImplementedException();
+    }
+}
+```
+
+**Johnny:** Oh, yeah that one...
+
+**Benjamin:** and there is another one for creating commands - `TickerOfficeCommandFactory`:
+
+```csharp
+public class TicketOfficeCommandFactory : CommandFactory
+{
+  public ReservationCommand CreateReservationCommand(
+    ReservationRequestDto requestDto,
+    ReservationInProgress reservationInProgress)
+  {
+      throw new NotImplementedException();
+  }
+}
+```
+
+**Johnny:** Let's do this one.
+
+**Benjamin:** Why this one?
+
+Johnny: No big reason. I just want to dig into the domain logic as soon as possible.
+
+Benjamin: Right. We don't have a Specification for this class, so let's create one?
+
+```csharp
+public class TicketOfficeCommandFactorySpecification
+{
+     
+}
+```
+
+
+
 1. No refactoring
 1. There will be no story slicing
 1. No higher level tests
