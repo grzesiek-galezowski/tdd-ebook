@@ -40,21 +40,57 @@ public class TicketOfficeCommandFactory : CommandFactory
 
 Johnny: No big reason. I just want to dig into the domain logic as soon as possible.
 
-Benjamin: Right. We don't have a Specification for this class, so let's create one?
+Benjamin: Right. We don't have a Specification for this class, so let's create one.
 
 ```csharp
 public class TicketOfficeCommandFactorySpecification
 {
-     
+
 }
 ```
 
+Johnny: Go on, I think you will be able to write this Statement mostly without my help.
+
+Benjamin: The beginning looks easy. I'll add a new Statement which I don't know yet what I'm going to call.
+
+```csharp
+public class TicketOfficeCommandFactorySpecification
+{
+ [Fact]
+ public void ShouldCreateXXXXXXXXX() //TODO rename
+ {
+  Assert.True(false);
+ }
+}
+```
+
+Now, as you've told me before, I already know the class I am testing: `TicketOfficeCommandFactory`. It implements an interface that I already used in the previous Statement, so it already has a method: `CreateReservationCommand`. I'll just create an instance of the class and call the method:
+
+```csharp
+public class TicketOfficeCommandFactorySpecification
+{
+ [Fact]
+ public void ShouldCreateXXXXXXXXX() //TODO rename
+ {
+  //GIVEN
+  var factory = new TicketOfficeCommandFactory();
+  
+  //WHEN
+  factory.CreateReservationCommand();
+
+  //THEN
+  Assert.True(false);
+ }
+}
+```
+
+Then I look at the signature of the `CreateReservationCommand` method
 
 
 1. No refactoring
-1. There will be no story slicing
-1. No higher level tests
-1. ..?
+2. There will be no story slicing
+3. No higher level tests
+4. ..?
 
 
 //////////////////////////////////
