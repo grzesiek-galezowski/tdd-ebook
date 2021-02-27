@@ -16,7 +16,7 @@ With this out of our way, let's join Johnny and Benjamin and see what kind of is
 
 **Johnny:** And about the seat reservation process?
 
-**Benjamin:** Oh yeah, that... I mean, why didn't they still automate the process? Is this even thinkable that in the 21st century I cannot reserve a seat through the internet?
+**Benjamin:** Oh, that... I mean, why didn't they still automate the process? Is this even thinkable that in the 21st century I cannot reserve a seat through the internet?
 
 **Johnny:** I kinda hoped you'd say that because our next assignment is to do exactly that.
 
@@ -109,7 +109,7 @@ public class ReservationDto
 }
 ```
 
-**Benjamin:** OK, I can see that there's a train ID, which is... the same as the one in the request, I suppose?
+**Benjamin:** I see that there's a train ID, which is... the same as the one in the request, I suppose?
 
 **Johnny:** Right. It's used to correlate the request and the response.
 
@@ -119,7 +119,7 @@ public class ReservationDto
 
 **Benjamin:** but the `PerSeatTickets` field... it is a list of `TicketDto`, which as I understand is one of our custom types. Where is it?
 
-**Johnny:** Oh, yeah, I forgot to show it to you. `TicketDto` is defined as:
+**Johnny:** I forgot to show it to you. `TicketDto` is defined as:
 
 ```csharp
 public class TicketDto
@@ -137,7 +137,7 @@ public class TicketDto
 
 so it has a coach name and a seat number, and we have a list of these in our reservation.
 
-**Benjamin:** Ok, so a single reservation can contain many tickets and each ticket is for a single place in a specific coach, right?
+**Benjamin:** So a single reservation can contain many tickets and each ticket is for a single place in a specific coach, right?
 
 **Johnny:** Yes.
 
@@ -181,7 +181,7 @@ public class TicketOffice
 
 **Benjamin:** Why would I like to see a composition root?
 
-**Johnny:** Well, the first reason is that it is very close to the entry point of the application, so it is a chance for you to see how the application manages its dependencies. The second reason is that each time we will be adding a new class that has the same lifespan as the application, we will need to go to the composition root and modify it. Sooo I'd probably like to know where it is and how I should work with it.
+**Johnny:** The first reason is that it is very close to the entry point of the application, so it is a chance for you to see how the application manages its dependencies. The second reason is that each time we will be adding a new class that has the same lifespan as the application, we will need to go to the composition root and modify it. Sooo I'd probably like to know where it is and how I should work with it.
 
 **Benjamin:** I thought I could find that later, but while we're at it, can you show me the composition root?
 
@@ -207,7 +207,7 @@ public class Application
 
 **Johnny:** Anyway, I think we're ready to start.
 
-**Benjamin:** Ok, where do we start from? Should we write some kind of a class called "Reservation" or "Train" first?
+**Benjamin:** But where do we start from? Should we write some kind of a class called "Reservation" or "Train" first?
 
 **Johnny:** No, what we will do is we will start from the inputs and work our way towards the inside of the application. Then, if necessary, to the outputs.
 
@@ -361,7 +361,7 @@ public ReservationDto MakeReservation(ReservationRequestDto requestDto)
 
 In our Statement, we don't do anything with it.
 
-**Benjamin:** Ok, let me guess, you want me to go to the Statement, assign this return value to a variable and then assert its equality to... what exactly?
+**Benjamin:** Let me guess, you want me to go to the Statement, assign this return value to a variable and then assert its equality to... what exactly?
 
 **Johnny:** For now, to an expected value, which we don't know yet, but we will worry about it later when it really blocks us.
 
@@ -386,7 +386,7 @@ public void ShouldXXXXX() //TODO better name
 
 There, I did what you asked. So please explain to me now how did it get us any closer to our goal?
 
-**Johnny:** Well, we transformed our problem from "what assertion to write" into "what is the reservation that we expect". This is indeed a step in the right direction.
+**Johnny:** We transformed our problem from "what assertion to write" into "what is the reservation that we expect". This is indeed a step in the right direction.
 
 **Benjamin:** Please enlighten me then - what is "the reservation that we expect"?
 
@@ -425,7 +425,7 @@ Assert.Equal(expectedReservationDto, reservationDto);
 
 **Benjamin:** Ok, lead the way.
 
-**Johnny:** Alright, let's start with the `GIVEN` section. Here, we need to say that we assume that the collecting parameter mock, let's call it `reservationInProgress` will give us the `expectedReservationDto` (which is already defined in the body of the Statement) when asked:
+**Johnny:** Let's start with the `GIVEN` section. Here, we need to say that we assume that the collecting parameter mock, let's call it `reservationInProgress` will give us the `expectedReservationDto` (which is already defined in the body of the Statement) when asked:
 
 ```csharp
 //GIVEN
@@ -499,7 +499,7 @@ public void ShouldXXXXX() //TODO better name
 
 ### Introducing a factory collaborator
 
-**Benjamin:** Ok, I think I managed to catch up. Can I grab the keyboard?
+**Benjamin:** I think I managed to catch up. Can I grab the keyboard?
 
 **Johnny:** I was about to suggest it. Here.
 
@@ -507,7 +507,7 @@ public void ShouldXXXXX() //TODO better name
 
 **Johnny:** Remember our discussion about separating object use from construction?
 
-**Benjamin:** Yeah, I guess I know what you're getting at. The `TicketOffice` should somehow get an already created `ReservationInProgress` object from the outside. It can get it e.g. through a constructor or from a factory.
+**Benjamin:** I guess I know what you're getting at. The `TicketOffice` should somehow get an already created `ReservationInProgress` object from the outside. It can get it e.g. through a constructor or from a factory.
 
 **Johnny:** Yes, and if you look at the lifetime scope of our `TicketOffice`, which is created once at the start of the application, it can't accept a `ReservationInProgress` through a constructor, because every time a new reservation request is made, we want to have a new `ReservationInProgress`, so passing it through a `TicketOffice` constructor would force us to create a new `TicketOffice` every time as well. Thus, the solution that better fits our current situation is...
 
@@ -515,11 +515,11 @@ public void ShouldXXXXX() //TODO better name
 
 **Johnny:** Exactly.
 
-**Benjamin:** Ok, so how to write it in the Statement?
+**Benjamin:** How to write it in the Statement?
 
 **Johnny:** First, write only what you need. The factory needs to be a mock because we need to configure it so that when asked, it returns our `ReservationInProgress` mock. So let's write that return configuration first, pretending we already have the factory available in our Statement body.
 
-**Benjamin:** Let me see... right, that should do it:
+**Benjamin:** Let me see... that should do it:
 
 ```csharp
 //GIVEN
@@ -797,13 +797,13 @@ and now everything compiles again.
 ```csharp
 //GIVEN
 ...
-commandFactory.CreateReservationCommand(requestDto, reservationInProgress)
+commandFactory.CreateNewReservationCommand(requestDto, reservationInProgress)
     .Returns(reservationCommand);
 ```
 
 This doesn't compile because we have no `commandFactory` yet.
 
-**Benjamin:** Oh, I can see that the factory's `CreateReservationCommand()` is where you decided to pass the `reservationInProgress` that I wanted to pass to the `Execute()` method earlier. Clever. By leaving the command's `Execute()` method parameterless, you made it more abstract and made the interface decoupled from any particular argument types. On the other hand, the command is created in the same scope it is used, so there is literally no issue with passing all the parameters through the factory method.
+**Benjamin:** Oh, I can see that the factory's `CreateNewReservationCommand()` is where you decided to pass the `reservationInProgress` that I wanted to pass to the `Execute()` method earlier. Clever. By leaving the command's `Execute()` method parameterless, you made it more abstract and made the interface decoupled from any particular argument types. On the other hand, the command is created in the same scope it is used, so there is literally no issue with passing all the parameters through the factory method.
 
 **Johnny:** That's right. We now know we need a factory, plus that it needs to be a mock since we configure it to return a command when it is asked for one. So let's declare the factory, pretending we have an interface for it:
 
@@ -812,7 +812,7 @@ This doesn't compile because we have no `commandFactory` yet.
 ...
 var commandFactory = Substitute.For<CommandFactory>();
 ...
-commandFactory.CreateReservationCommand(requestDto, reservationInProgress)
+commandFactory.CreateNewReservationCommand(requestDto, reservationInProgress)
     .Returns(reservationCommand);
 ```
 
@@ -825,12 +825,12 @@ public interface CommandFactory
 }
 ```
 
-and let's add the missing `CreateReservationCommand` method:
+and let's add the missing `CreateNewReservationCommand` method:
 
 ```csharp
 public interface CommandFactory
 {
-  ReservationCommand CreateReservationCommand(
+  ReservationCommand CreateNewReservationCommand(
     ReservationRequestDto requestDto,
     ReservationInProgress reservationInProgress);
 }
@@ -852,7 +852,7 @@ public void ShouldXXXXX() //TODO better name
   var expectedReservationDto = Any.Instance<ReservationDto>();
   var reservationCommand = Substitute.For<ReservationCommand>();
   
-  commandFactory.CreateReservationCommand(requestDto, reservationInProgress)
+  commandFactory.CreateNewReservationCommand(requestDto, reservationInProgress)
     .Returns(reservationCommand);
   reservationInProgressFactory.FreshInstance().Returns(reservationInProgress);
   reservationInProgress.ToDto().Returns(expectedReservationDto);
@@ -914,7 +914,7 @@ which in turn forces us to create the `TicketOfficeCommandFactory` class:
 ```csharp
 public class TicketOfficeCommandFactory : CommandFactory
 {
-  public ReservationCommand CreateReservationCommand(
+  public ReservationCommand CreateNewReservationCommand(
     ReservationRequestDto requestDto,
     ReservationInProgress reservationInProgress)
   {
@@ -947,7 +947,7 @@ ShouldExecuteReservationCommandAndReturnResponseWhenAskedToMakeReservation()
 
 **Johnny:** Yes, and in this particular case, there *is* something wrong - the class `TicketOffice` violates the command-query separation principle. This is also why the Statement looks so messy. For this class, however, we don't have a big choice since our framework requires this kind of method signature. That's also why we are working so hard in this class to introduce the collecting parameter and protect the rest of the design from the violation.
 
-**Benjamin:** Ok, I hope the future Statements will be easier to write than this one.
+**Benjamin:** I hope the future Statements will be easier to write than this one.
 
 **Johnny:** Me too.
 
@@ -974,7 +974,7 @@ ShouldExecuteReservationCommandAndReturnResponseWhenAskedToMakeReservation()
 
   reservationInProgressFactory.FreshInstance()
     .Returns(reservationInProgress);
-  commandFactory.CreateReservationCommand(requestDto, reservationInProgress)
+  commandFactory.CreateNewReservationCommand(requestDto, reservationInProgress)
     .Returns(reservationCommand);
   reservationInProgress.ToDto()
     .Returns(expectedReservationDto);
@@ -1057,7 +1057,7 @@ public TicketOffice(
 
 **Johnny:** Yes, I could and I usually do that. But since we are training, I want to show you that we will be forced to do so anyway to make the second assertion pass.
 
-**Benjamin:** Ok, go on.
+**Benjamin:** Go on.
 
 **Johnny:** Now I have to modify the `MakeReservation()` method by adding the following code that creates the reservation in progress and makes it return a DTO:
 
@@ -1115,7 +1115,7 @@ and now in the `MakeReservation()` method, I can ask the factory to create a com
 
 ```csharp
 var reservationInProgress = _reservationInProgressFactory.FreshInstance();
-var reservationCommand = _commandFactory.CreateReservationCommand(
+var reservationCommand = _commandFactory.CreateNewReservationCommand(
   requestDto, reservationInProgress);
 return reservationInProgress.ToDto();
 ```
@@ -1124,7 +1124,8 @@ But this code is not complete yet -- I still need to execute the created command
 
 ```csharp
 var reservationInProgress = _reservationInProgressFactory.FreshInstance();
-var reservationCommand = _commandFactory.CreateReservationCommand(requestDto, reservationInProgress);
+var reservationCommand = _commandFactory.CreateNewReservationCommand(
+  requestDto, reservationInProgress);
 reservationCommand.Execute();
 return reservationInProgress.ToDto();
 ```
@@ -1133,11 +1134,11 @@ return reservationInProgress.ToDto();
 
 **Benjamin:** Wow, this isn't a lot of code for such a big Statement that we wrote.
 
-**Johnny:** Yeah, the real complexity is not even in the lines of code, but the number of dependencies that we had to drag inside. Note that we have two factories in here. Each factory is a dependency and it creates another dependency. This is better visible in the Statement than in the production method and this is why I find it a good idea to pay close attention to how a Statement is growing and using it as a feedback mechanism for the quality of my design. For this particular class, the design issue we observe in the Statement can't be helped a lot since, as I mentioned, this is the boundary where we need to wrap things in abstractions.
+**Johnny:** The real complexity is not even in the lines of code, but the number of dependencies that we had to drag inside. Note that we have two factories in here. Each factory is a dependency and it creates another dependency. This is better visible in the Statement than in the production method and this is why I find it a good idea to pay close attention to how a Statement is growing and using it as a feedback mechanism for the quality of my design. For this particular class, the design issue we observe in the Statement can't be helped a lot since, as I mentioned, this is the boundary where we need to wrap things in abstractions.
 
 **Benjamin:** You'll have to explain this bit about design quality a bit more later.
 
-**Johnny:** Yeah, sure. Tea?
+**Johnny:** Sure. Tea?
 
 **Benjamin:** Coffee.
 

@@ -11,10 +11,10 @@ This one is for creating instances of `ReservationInProgress` - remember? You ga
 ```csharp
 public class TodoReservationInProgressFactory : ReservationInProgressFactory
 {
-    public ReservationInProgress FreshInstance()
-    {
-        throw new NotImplementedException();
-    }
+  public ReservationInProgress FreshInstance()
+  {
+   throw new NotImplementedException();
+  }
 }
 ```
 
@@ -25,11 +25,11 @@ public class TodoReservationInProgressFactory : ReservationInProgressFactory
 ```csharp
 public class TicketOfficeCommandFactory : CommandFactory
 {
-  public ReservationCommand CreateReservationCommand(
+  public ReservationCommand CreateNewReservationCommand(
     ReservationRequestDto requestDto,
     ReservationInProgress reservationInProgress)
   {
-      throw new NotImplementedException();
+   throw new NotImplementedException();
   }
 }
 ```
@@ -64,7 +64,7 @@ public class TicketOfficeCommandFactorySpecification
 }
 ```
 
-Now, as you've told me before, I already know the class I am testing: `TicketOfficeCommandFactory`. It implements an interface that I already used in the previous Statement, so it already has a method: `CreateReservationCommand`. I'll just create an instance of the class and call the method:
+Now, as you've told me before, I already know the class I am testing: `TicketOfficeCommandFactory`. It implements an interface that I already used in the previous Statement, so it already has a method: `CreateNewReservationCommand`. I'll just create an instance of the class and call the method:
 
 ```csharp
 public class TicketOfficeCommandFactorySpecification
@@ -76,7 +76,7 @@ public class TicketOfficeCommandFactorySpecification
   var factory = new TicketOfficeCommandFactory();
   
   //WHEN
-  factory.CreateReservationCommand();
+  factory.CreateNewReservationCommand();
 
   //THEN
   Assert.True(false);
@@ -84,7 +84,65 @@ public class TicketOfficeCommandFactorySpecification
 }
 ```
 
-Then I look at the signature of the `CreateReservationCommand` method
+This doesn't compile, of course. Then I look at the signature of the `CreateNewReservationCommand` method and I see that it returns a command but also accepts two arguments:
+
+```csharp
+public class TicketOfficeCommandFactorySpecification
+{
+ [Fact]
+ public void ShouldCreateXXXXXXXXX() //TODO rename
+ {
+  //GIVEN
+  var factory = new TicketOfficeCommandFactory();
+  
+  //WHEN
+  var command = factory.CreateNewReservationCommand(
+    Any.Instance<ReservationRequestDto>(),
+    Any.Instance<ReservationInProgress>());
+
+  //THEN
+  Assert.True(false);
+ }
+}
+```
+
+I used `Any.Instance<>()` to generate anonymous instances of both the DTO and the `ReservationInProgress`.
+
+Johnny: That's exactly what I'd do. I'd only assign them to variables if I needed to use them somewhere else in the Statement.
+
+Benjamin: The Statement compiles. I still have the assertion to write. What exactly should I assert? From the factory, I'm getting back a command, but it only has an `Execute()` method. Everything else is hidden.
+
+Johnny: There isn't much we can check when specifying a factory behavior. In this case, we can only specify the expected type of the command.
+
+Benjamin: Wait, isn't this already in the signature? Looking at the creation method, I can already see that the returned type is `ReservationCommand`... wait!
+
+Johnny: I thought you'd notice that. `ReservationCommand` is an interface. But an object needs to have a concrete type and this type is what we need to specify in this Statement. We don't have this type yet. We are on the verge of discovering it, and when we do, some new items will be added to our TODO list.
+
+Benjamin: I'll call the class `NewReservationComand` and modify my Statement to assert the type. Also, I think I know now how to name this Statement:
+
+```csharp
+public class TicketOfficeCommandFactorySpecification
+{
+ [Fact]
+ public void ShouldCreateNewReservationCommandWhenRequested()
+ {
+  //GIVEN
+  var factory = new TicketOfficeCommandFactory();
+  
+  //WHEN
+  var command = factory.CreateNewReservationCommand(
+    Any.Instance<ReservationRequestDto>(),
+    Any.Instance<ReservationInProgress>());
+
+  //THEN
+  Assert.IsType<NewReservationCommand>(command);
+ }
+}
+```
+
+Johnny: Now, let's see - the Statement looks like it's complete. You did it almost without my help.
+
+Benjamin: Thanks. The code does not compile though. The `NewReservationCommand` type does not exist.
 
 
 1. No refactoring

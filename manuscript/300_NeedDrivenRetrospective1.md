@@ -48,7 +48,7 @@ Also, Johnny and Benjamin allowed the factory to be called many times in the imp
 
 ```csharp
 var reservationInProgress = _reservationInProgressFactory.FreshInstance();
-var reservationCommand = _commandFactory.CreateReservationCommand(
+var reservationCommand = _commandFactory.CreateNewReservationCommand(
   requestDto, reservationInProgress);
 reservationCommand.Execute();
 return reservationInProgress.ToDto();
@@ -63,7 +63,7 @@ reservationInProgress = _reservationInProgressFactory.FreshInstance();
 reservationInProgress = _reservationInProgressFactory.FreshInstance();
 reservationInProgress = _reservationInProgressFactory.FreshInstance();
 
-var reservationCommand = _commandFactory.CreateReservationCommand(
+var reservationCommand = _commandFactory.CreateNewReservationCommand(
   requestDto, reservationInProgress);
 reservationCommand.Execute();
 return reservationInProgress.ToDto();
@@ -75,7 +75,7 @@ On the other hand, consider the command -- it is supposed to have a side effect,
 
 ```csharp
 var reservationInProgress = _reservationInProgressFactory.FreshInstance();
-var reservationCommand = _commandFactory.CreateReservationCommand(
+var reservationCommand = _commandFactory.CreateNewReservationCommand(
   requestDto, reservationInProgress);
 reservationCommand.Execute();
 reservationCommand.Execute();
@@ -317,7 +317,7 @@ The second option to avoid a collecting parameter would be to just let the comma
 
 ```csharp
 var reservationId = _idGenerator.GenerateId();
-var reservationCommand = _factory.CreateReservationCommand(
+var reservationCommand = _factory.CreateNewReservationCommand(
   requestDto, reservationId);
 var reservationQuery = _factory.CreateReservationQuery(reservationId);
 
