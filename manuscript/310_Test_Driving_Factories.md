@@ -213,8 +213,17 @@ public class NewReservationCommand : ReservationCommand
 }
 ```
 
-The code still doesn't compile, because the interface has some methods we need to implement in the `NewReservationComand`. Any implementation will do as these methods are outside the scope of the current Statement. We only want to make the compiler happy.
+The code still doesn't compile, because the interface has an `Execute()` method we need to implement in the `NewReservationComand`. Any implementation will do as the logic of this method is outside the scope of the current Statement. We only need to make the compiler happy. Our IDE can generate the default method body for us. This should do:
 
+```csharp
+public class NewReservationCommand : ReservationCommand
+{
+ public void Execute()
+ {
+  throw new NotImplementedException();    
+ } 
+}
+```
 
 
 
