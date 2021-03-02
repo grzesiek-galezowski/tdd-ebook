@@ -142,7 +142,80 @@ public class TicketOfficeCommandFactorySpecification
 
 Johnny: Now, let's see - the Statement looks like it's complete. You did it almost without my help.
 
-Benjamin: Thanks. The code does not compile though. The `NewReservationCommand` type does not exist.
+Benjamin: Thanks. The code does not compile, though. The `NewReservationCommand` type does not exist.
+
+Johnny: Let's introduce it then:
+
+```csharp
+public class NewReservationCommand
+{
+
+}
+```
+
+Benjamin: Shouldn't it implement the `ReservationCommand` interface?
+
+Johnny: We don't need to do that yet. The compiler only complained that the type doesn't exist.
+
+Benjamin: The code compiles now, but the Statement is false because the `CreateNewReservationCommand` method throw a `NotImplementedException`:
+
+```csharp
+public ReservationCommand CreateNewReservationCommand(
+    ReservationRequestDto requestDto,
+    ReservationInProgress reservationInProgress)
+  {
+   throw new NotImplementedException();
+  }
+```
+
+Johnny: Remember what I told you the last time?
+
+Benjamin: Yes, that the Statement needs to be false for the right reason.
+
+Johnny: Exactly. `NotImplementedException` is not the right reason. I will change the above code to return null:
+
+```csharp
+public ReservationCommand CreateNewReservationCommand(
+    ReservationRequestDto requestDto,
+    ReservationInProgress reservationInProgress)
+  {
+   return null;
+  }
+```
+
+Now the Statement is false because this assertion fails:
+
+```csharp
+Assert.IsType<NewReservationCommand>(command);
+```
+
+Benjamin: it complains that the command is null.
+
+Johnny: So the right time came to put in the correct implementation:
+
+```csharp
+public ReservationCommand CreateNewReservationCommand(
+    ReservationRequestDto requestDto,
+    ReservationInProgress reservationInProgress)
+  {
+   return new NewReservationCommand();
+  }
+```
+
+Benjamin: But this doesn't compile -- the `NewReservationComand` doesn't implement the `ReservationCommand` interface, I told you this before.
+
+Johnny: and the compiler forces us to implement this interface:
+
+```csharp
+public class NewReservationCommand : ReservationCommand
+{
+
+}
+```
+
+The code still doesn't compile, because the interface has some methods we need to implement in the `NewReservationComand`. Any implementation will do as these methods are outside the scope of the current Statement. We only want to make the compiler happy.
+
+
 
 
 1. No refactoring
