@@ -1,8 +1,8 @@
-# Test-driving factories
+# Test-driving object creation
 
 In this chapter, we join Johnny and Benjaminas they continue their outside-in TDD journey. In this chapter, they will take on test-driving a factory.
 
-**Johnny:** What's nest on our TODO list?
+**Johnny:** What's next on our TODO list?
 
 **Benjamin:** There are two instances of `NotImplementedException`, both from factories that we introduced when implementing the last Statement.
 
@@ -220,7 +220,7 @@ public class NewReservationCommand : ReservationCommand
 {
  public void Execute()
  {
-  throw new NotImplementedException();    
+  throw new NotImplementedException();
  } 
 }
 ```
@@ -273,5 +273,3 @@ and all Statements will still be true.
 **Johnny**: Anyway it looks like we're done with this Statement, so let's take a short break.
 
 **Benjamin**: Sure!
-
-

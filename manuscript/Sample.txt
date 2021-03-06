@@ -37,7 +37,8 @@
 290_NeedDrivenDevelopment.md
 300_NeedDrivenRetrospective1.md
 310_Test_Driving_Factories.md
+320_Test_Driving_Factories_retrospective.md
 End.md
-320_Unnamed_Yet.md
+330_Unnamed_Yet.md
 400_Dealing_with_3rd_party.md
 990_Further_reading.md
