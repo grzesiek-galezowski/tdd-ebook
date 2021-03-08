@@ -65,12 +65,67 @@ then we would need three Statements to specify its behavior:
 
 Likewise, if our factory needs to return a collection - we need to state our expectations of it. Consider the following Statement:
 
+```csharp
+[Fact] public void
+ShouldCreateProcessingStepsInTheRightOrder()
+{
+ //GIVEN
+ var factory = new ProcessingStepsFactory();
+ 
+ //WHEN
+ var steps = factory.CreateStepsForNewItemRequest();
 
+ //THEN
+ Assert.Equal(3, steps.Count);
+ Assert.IsType<ValidationStep>(steps[0]);
+ Assert.IsType<ExecutionStep>(steps[1]);
+ Assert.IsType<ReportingStep>(steps[2]);
+}
+```
 
+It says that the created collection should contain three items and states the expected types of those items.
 
-collection
+Last but not least, sometimes we specify the creation of value objects
 
-structural inspection?
+## Value object creation
+
+Value objects are typically created using factory methods. Depending on whether the constructor of such value object is public or not, we can accomodate these factory methods differently in our Specification.
+
+When a public constructor is available, we can state the expected equality of an object created using a factory method to another object created using the constructor:
+
+```csharp
+[Fact] public void
+ShouldBeEqualToIdWithGroupType()
+{
+ //GIVEN
+ var groupName = Any.String();
+ 
+ //WHEN
+ var id = EntityId.ForGroup(groupName);
+ 
+ //THEN
+ Assert.Equal(new EntityId(groupName, EntityTypes.Group), id);
+}
+```
+
+When factory methods are the only means of creating value objects, we just use these methods in our Statements and either state the expected data or expected behaviors. For example, the following Statement says that an absolute directory path should become an absolute file path after appending a file name:
+
+```csharp
+[Fact]
+public void ShouldBecomeAnAbsoluteFilePathAfterAppendingFileName()
+{
+ //GIVEN
+ var dirPath = AbsoluteDirectoryPath............>();
+ var fileName = Any.Instance<FileName>();
+ AbsoluteFilePath absoluteFilePath = dirPath + fileName;
+ 
+ //WHEN
+ var dirObtainedFromPath = absoluteFilePath.ParentDirectory();
+ //THEN
+ Assert.Equal(dirPath, dirObtainedFromPath);
+}
+```
+
 
 What about value creation?
 
