@@ -1,12 +1,12 @@
 # Test-driving object creation
 
-In this chapter, we join Johnny and Benjaminas they continue their outside-in TDD journey. In this chapter, they will take on test-driving a factory.
+In this chapter, we join Johnny and Benjamin as they continue their outside-in TDD journey. In this chapter, they will be test-driving a factory.
 
 **Johnny:** What's next on our TODO list?
 
-**Benjamin:** There are two instances of `NotImplementedException`, both from factories that we introduced when implementing the last Statement.
+**Benjamin:** There are two instances of `NotImplementedException`, both from factories that we discovered when implementing the last Statement.
 
-This one is for creating instances of `ReservationInProgress` -- remember? You gave it a bogus name on purpose.
+The first factory is for creating instances of `ReservationInProgress` -- remember? You gave it a bogus name on purpose. Look:
 
 ```csharp
 public class TodoReservationInProgressFactory : ReservationInProgressFactory
@@ -18,9 +18,9 @@ public class TodoReservationInProgressFactory : ReservationInProgressFactory
 }
 ```
 
-**Johnny:** Oh, yeah that one...
+**Johnny:** Oh, yeah, that one...
 
-**Benjamin:** and there is another one for creating commands -- `TickerOfficeCommandFactory`:
+**Benjamin:** and the second factory is for creating commands -- it's called `TicketOfficeCommandFactory`:
 
 ```csharp
 public class TicketOfficeCommandFactory : CommandFactory
@@ -64,7 +64,7 @@ public class TicketOfficeCommandFactorySpecification
 }
 ```
 
-Now, as you've told me before, I already know the class I am testing: `TicketOfficeCommandFactory`. It implements an interface that I already used in the previous Statement, so it already has a method: `CreateNewReservationCommand`. I'll just create an instance of the class and call the method:
+Now, as you've told me before, I already know what class I am describing -- it's `TicketOfficeCommandFactory`. It implements an interface that I discovered in the previous Statement, so it already has a method: `CreateNewReservationCommand`. So in the Statement, I'll just create an instance of the class and call the method, because why not?
 
 ```csharp
 public class TicketOfficeCommandFactorySpecification
@@ -84,7 +84,7 @@ public class TicketOfficeCommandFactorySpecification
 }
 ```
 
-This doesn't compile, of course. Then I look at the signature of the `CreateNewReservationCommand` method and I see that it returns a command but also accepts two arguments:
+This doesn't compile. To find out why, I look at the signature of the `CreateNewReservationCommand` method, and I see that it not only returns a command, but also accepts two arguments. I need to take that into account in the Statement:
 
 ```csharp
 public class TicketOfficeCommandFactorySpecification
@@ -108,13 +108,13 @@ public class TicketOfficeCommandFactorySpecification
 
 I used `Any.Instance<>()` to generate anonymous instances of both the DTO and the `ReservationInProgress`.
 
-**Johnny**: That's exactly what I'd do. I'd only assign them to variables if I needed to use them somewhere else in the Statement.
+**Johnny**: That's exactly what I'd do. I'd assign them to variables only if I needed to use them somewhere else in the Statement.
 
-**Benjamin**: The Statement compiles. I still have the assertion to write. What exactly should I assert? From the factory, I'm getting back a command, but it only has an `Execute()` method. Everything else is hidden.
+**Benjamin**: The Statement compiles. I still have the assertion to write. What exactly should I assert? The command I'm getting back from the factory has only a `void Execute()` method. Everything else is hidden.
 
-**Johnny**: There isn't much we can check when specifying a factory behavior. In this case, we can only specify the expected type of the command.
+**Johnny**: Typically, there isn't much we can specify about the objects created by factories. In this case, we can only state the expected type of the command.
 
-**Benjamin**: Wait, isn't this already in the signature? Looking at the creation method, I can already see that the returned type is `ReservationCommand`... wait!
+**Benjamin**: Wait, isn't this already in the signature of the factory? Looking at the creation method, I can already see that the returned type is `ReservationCommand`... wait!
 
 **Johnny**: I thought you'd notice that. `ReservationCommand` is an interface. But an object needs to have a concrete type and this type is what we need to specify in this Statement. We don't have this type yet. We are on the verge of discovering it, and when we do, some new items will be added to our TODO list.
 
@@ -227,7 +227,7 @@ public class NewReservationCommand : ReservationCommand
 
 The `NotImplementedException` will be added to our TODO list and we'll specify its behavior with another Statement later.
 
-**Benjamin**: The Statement we were writing seems to be true now. I'm bothered by something, though. What about the arguments that we are passing to the `CreateNewReservationCommand` method? There are two: 
+**Benjamin**: Our current Statement seems to be true now. I'm bothered by something, though. What about the arguments that we are passing to the `CreateNewReservationCommand` method? There are two: 
 
 ```csharp
 public ReservationCommand CreateNewReservationCommand(
