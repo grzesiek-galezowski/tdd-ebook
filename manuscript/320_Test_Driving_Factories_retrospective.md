@@ -26,15 +26,15 @@ public class NewReservationCommand : ReservationCommand
 }
 ```
 
-This way they got a new class to test-drive and the `NotImplementedException` that appeared in the generated `Execute` method, landed on their TODO list. As their next step, they could pick this TODO item and begin working on them. 
+This way they got a new class to test-drive, and the `NotImplementedException` that appeared in the generated `Execute` method, landed on their TODO list. As their next step, they could pick this TODO item and begin working on them. 
 
-So as you can see, specifying the factory's behavior, although not perfect as a test, allows continuing the flow of TDD.
+So as you can see, a Statement specifying the factory's behavior, although not perfect as a test, allowed continuing the flow of TDD.
 
 ## What do we specify in the creational Statements?
 
-Johnny and Benjamin specified what should be the type of the created object. Indirectly, they also specified that the created object should not be a null. Is there anything else we might want to include in creational specification?
+Johnny and Benjamin specified what should be the type of the created object. Indirectly, they also specified that the created object should not be a null. Is there anything else we might want to include in a creational specification?
 
-Sometimes, factories make decision what kind of object to return. In such cases, we might want to specify the different choices that the factory can make. For example if a factory looks like this:
+Sometimes, factories make a decision on what kind of object to return. In such cases, we might want to specify the different choices that the factory can make. For example if a factory looks like this:
 
 ```csharp
 public class SomeKindOfFactory
@@ -89,7 +89,7 @@ Last but not least, sometimes we specify the creation of value objects
 
 ## Value object creation
 
-Value objects are typically created using factory methods. Depending on whether the constructor of such value object is public or not, we can accomodate these factory methods differently in our Specification.
+Value objects are typically created using factory methods. Depending on whether the constructor of such value object is public or not, we can accommodate these factory methods differently in our Specification.
 
 When a public constructor is available, we can state the expected equality of an object created using a factory method to another object created using the constructor:
 
@@ -115,27 +115,29 @@ When factory methods are the only means of creating value objects, we just use t
 public void ShouldBecomeAnAbsoluteFilePathAfterAppendingFileName()
 {
  //GIVEN
- var dirPath = AbsoluteDirectoryPath............>();
- var fileName = Any.Instance<FileName>();
- AbsoluteFilePath absoluteFilePath = dirPath + fileName;
+ var dirPath = AbsoluteDirectoryPath.Value("C:\\");
+ var fileName = FileName.Value("file.txt");
  
  //WHEN
- var dirObtainedFromPath = absoluteFilePath.ParentDirectory();
+ AbsoluteFilePath absoluteFilePath = dirPath.Append(fileName);
+
  //THEN
- Assert.Equal(dirPath, dirObtainedFromPath);
+ Assert.Equal(
+     AbsoluteDirectoryPath.Value("C:\\file.txt"), 
+     absoluteFilePath);
 }
 ```
 
+Of course, the factory methods for value objects may have some additional behavior like validation -- we need to specify it as well. For example, the Statement below says that an exception should be thrown when I try to create an absolute file path from a null string:
 
-What about value creation?
+```csharp
+[Fact]
+public void ShouldNotAllowToBeCreatedWithNullValue()
+{
+ Assert.Throws<ArgumentNullException>(() => AbsoluteFilePath.Value(null));
+}
+```
 
-DTO creation (builder)
+## Summary
 
-## What other creational patterns exist?
-
-factory method
-
-builder
-
-
-[^StructuralInspection]: 
+That was a quick ride through writing creational Statements. Though not thorough as tests, they create needs to new abstractions, allowing us to continue the TDD process.
