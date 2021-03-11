@@ -154,4 +154,4 @@ public void ShouldNotAllowToBeCreatedWithNullValue()
 
 ## Summary
 
-That was a quick ride through writing creational Statements. Though not thorough as tests, they create needs to new abstractions, allowing us to continue the TDD process. When we start our TDD process from higher-level Statements, we can defer specifying factories or even avoid it altogether.
+That was a quick ride through writing creational Statements. Though not thorough as tests, they create needs to new abstractions, allowing us to continue the TDD process. When we start our TDD process from higher-level Statements, we can defer specifying factories and sometimes even avoid it altogether.
