@@ -38,6 +38,8 @@
 300_NeedDrivenRetrospective1.md
 310_Test_Driving_Factories.md
 320_Test_Driving_Factories_retrospective.md
+330_Test-Driving_Command.md
+340_Test-Driving_Command_retrospective.md
 End.md
 390_Unnamed_Yet.md
 400_Dealing_with_3rd_party.md
