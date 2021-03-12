@@ -93,7 +93,7 @@ The reason I didn't see my mistake was that I was running more than one test at 
 
 How does treating tests as Statements and evaluating them before making them true help here? The fundamental difference is that the workflow of TDD is: test -- fail -- pass, test -- fail -- pass, test -- fail -- pass... In other words, we expect each Statement to be proven false at least once. So every time we miss the "fail" stage, we get feedback from our process that something suspicious is happening. This allows us to investigate and fix the problem if necessary.
 
-### 2. Misplacing test setup
+### 2. Misplacing Statement setup
 
 Ok, this may sound even funnier, but it happened to me a couple of times as well, so I assume it may happen to you one day, especially if you are in a hurry.
 
@@ -156,7 +156,7 @@ What it does is it sets up an object used by every Statement. So, each Statement
       <parameter name="login">Johnny</parameter>
       <parameter name="Role">Admin</parameter>
       <parameter name="Password Expiry (days)">30</parameter>
-    /subsection>
+    </subsection>
     <!-- and so on and on and on...-->
   </section>
 </config>
