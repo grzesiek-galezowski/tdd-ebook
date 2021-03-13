@@ -25,16 +25,195 @@ Benjamin: Yes, "start by invoking a method if you have one". I'll start then.
 This is what I can write almost brain-dead:
 
 ```csharp
+public class NewReservationCommandSpecification
+{
+ [Fact] public void
+ ShouldXXXXXXXXXXX() //TODO change the name
+ {
+  //GIVEN
+  var command = new NewReservationCommand();
+  
+  //WHEN
+  command.Execute();
+ 
+  //THEN
+  Assert.True(false); //TODO unfinished
+ }
+}
+```
+
+We need to think now what should happen when we execute the command.
+
+Johnny: To do that, we need to look back to the input data for this use case. We passed it to the factory and forgot about it. Here's how it looks like:
+
+```csharp
+public class ReservationRequestDto
+{
+  public readonly string TrainId;
+  public readonly uint SeatCount;
+
+  public ReservationRequestDto(string trainId, uint seatCount)
+  {
+    TrainId = trainId;
+    SeatCount = seatCount;
+  }
+}
+```
+
+The first part is train id -- it says on which train we should reserve the seats. So we need to somehow pick a train from the fleet. Then, on that train, we need to reserve as many seats as the customer requests. This is the second part of the user request.
+
+Benjamin: Aren't we going to update the data in some kind of persistent storage? I doubt that the railways company would want the reservation to disappear on application restart.
+
+Johnny: Yes, we need to act as if there was some kind of persistence. Anyway, I can see two roles here:
+
+1. A fleet - which is from where we pick the train and where we save our changes
+1. A train - which is going to handle the reservation logic.
+
+Both of them need to be mocks, because I expect them to play active roles in this scenario. Given all of this, my first stab would be something like this:
+
+```csharp
 [Fact] public void
-ShouldXXXXXXXXXXX() //TODO change the name
+ShouldReserveSeatsInSpecifiedTrainWhenExecuted()
 {
  //GIVEN
- var command = new NewReservationCommand();
+ var command = new NewReservationCommand(fleet);
  
+ fleet.Pick(trainId).Returns(train);
+
  //WHEN
  command.Execute();
 
  //THEN
- Assert.True(false); //TODO unfinished
+ Received.InOrder(() =>
+ {
+  train.ReserveSeats(seatCount);
+  fleet.UpdateInformationAbout(train);
+ };
 }
+```
 
+Benjamin: I can see there are many things missing here. For instance, we don't have the `train` and `fleet` variables. 
+
+Johnny: We created a need for them. I think we can safely introduce them into the Statement.
+
+```csharp
+[Fact] public void
+ShouldReserveSeatsInSpecifiedTrainWhenExecuted()
+{
+ //GIVEN
+ var fleet = Substitute.For<TrainFleet>();
+ var train = Substitute.For<ReservableTrain>();
+ var command = new NewReservationCommand(fleet);
+ 
+ fleet.Pick(trainId).Returns(train);
+
+ //WHEN
+ command.Execute();
+
+ //THEN
+ Received.InOrder(() =>
+ {
+  train.ReserveSeats(seatCount);
+  fleet.UpdateInformationAbout(train);
+ };
+}
+```
+
+Benjamin: I see two new types.
+
+Johnny: They symbolize the roles we just discovered.
+
+Benjamin: Also, I can see that you used `Received.InOrder()`
+
+Johnny: That's because we need to reserve the seats before we update the information in some kind of storage. If we got the order wrong, the change could be lost.
+
+Benjamin: But there's something missing in this Statement. I just looked at the outputs out users expect:
+
+```csharp
+public class ReservationDto
+{
+  public readonly string TrainId;
+  public readonly string ReservationId;
+  public readonly List<TicketDto> PerSeatTickets;
+
+  public ReservationDto(
+    string trainId,
+    List<TicketDto> perSeatTickets,
+    string reservationId)
+  {
+    TrainId = trainId;
+    PerSeatTickets = perSeatTickets;
+    ReservationId = reservationId;
+  }
+}
+```
+
+how exactly are we going to pass all of this information back to the user when the `train.ReserveSeats(seatCount)` call you invented is not expected to return anything?
+
+Johnny: Ah, yes, I almost forgot - we've got the `ReservationInProgress` instance that we passed to the factory, but not here, right? The `ReservationInProgress` was invented exactly for this purpose - to gather the information necessary to produce a result of the whole operation. Let me just quickly update the Statement:
+
+```csharp
+[Fact] public void
+ShouldReserveSeatsInSpecifiedTrainWhenExecuted()
+{
+ //GIVEN
+ var fleet = Substitute.For<TrainFleet>();
+ var train = Substitute.For<ReservableTrain>();
+ var reservationInProgress = Any.Instance<ReservationInProgress>();
+ var command = new NewReservationCommand(fleet, reservationInProgress);
+ 
+ fleet.Pick(trainId).Returns(train);
+
+ //WHEN
+ command.Execute();
+
+ //THEN
+ Received.InOrder(() =>
+ {
+  train.ReserveSeats(seatCount, reservationInProgress);
+  fleet.UpdateInformationAbout(train);
+ };
+}
+```
+
+Benjamin: Why are you passing the `reservationInProgress` further to the `ReserveSeats` method?
+
+Johnny: The command does not have the necessary information to pass to the `reservationInProgress` once the reservation is successful. We need to defer it to the `ReservableTrain` implementations to further decide the best place to use it.
+
+ Benjamin: I see. And you're missing two more variables -- `trainId` and `seatCount` -- and not only definitions, but also we don't pass them to the command at all. They are only present in our assumptions and expectations.
+
+ Johnny: Right, let me correct that.
+
+```csharp
+[Fact] public void
+ShouldReserveSeatsInSpecifiedTrainWhenExecuted()
+{
+ //GIVEN
+ var fleet = Substitute.For<TrainFleet>();
+ var train = Substitute.For<ReservableTrain>();
+ var trainId = Any.String();
+ var seatCount = Any.UnsignedInt();
+ var reservationInProgress = Any.Instance<ReservationInProgress>();
+ var command = new NewReservationCommand(
+   trainId,
+   seatCount,
+   fleet, 
+   reservationInProgress);
+ 
+ fleet.Pick(trainId).Returns(train);
+
+ //WHEN
+ command.Execute();
+
+ //THEN
+ Received.InOrder(() =>
+ {
+  train.ReserveSeats(seatCount, reservationInProgress);
+  fleet.UpdateInformationAbout(train);
+ };
+}
+```
+
+Benjamin: Why is `seatCount` a `uint`?
+
+TODO: why is ID a string????

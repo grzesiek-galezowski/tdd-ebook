@@ -213,5 +213,5 @@ What is the equivalent of the marked steps in the Statement-first approach? Ther
 
 In this chapter, I tried to show you that the choice of *when* we write our Specification often makes a huge difference and that there are numerous benefits of starting with a Statement. When we consider the Specification as what it really is -- not only as a suite of tests that check runtime correctness -- then the Statement-first approach becomes less awkward and less counter-intuitive.
 
-[^copypaste]: I know copy-pasting code is considered harmful and we shouldn't be doing that. When writing unit-level Statements, I make some exceptions from that rule. This will be explained in further parts.
+[^copypaste]: I know copy-pasting code is considered harmful and we shouldn't be doing that. When writing unit-level Statements, I make some exceptions to that rule. This will be explained in further parts.
 
