@@ -216,4 +216,49 @@ ShouldReserveSeatsInSpecifiedTrainWhenExecuted()
 
 Benjamin: Why is `seatCount` a `uint`?
 
-TODO: why is ID a string????
+Johnny: Look it up in the DTO - it's a `uint` there. I don't see the need to redefine that here.
+
+Benjamin: Fine, but what about the trainId - it's a `string`. Didn't you tell me we need to use value objects for concepts like this?
+
+Johnny: Yes, and we will refactor this `string` into a value object, especially that train id comparisons should be case-insensitive. But first, I want to finish this Statement before I go into defining and specifying a new type. Still, we'd best leave a TODO note to get back to it later:
+
+```csharp
+ var trainId = Any.String(); //TODO extract value object
+```
+
+So far so good, I think we have a complete Statement. Want to take the keyboard?
+
+Benjamin: Thanks. Let's start implementing it then. First, I will start with these two interfaces:
+
+```csharp
+var fleet = Substitute.For<TrainFleet>();
+var train = Substitute.For<ReservableTrain>();
+```
+
+They don't exist so this code doesn't compile. I can easily fix this by introducing the interfaces:
+
+```csharp
+interface TrainFleet
+{
+}
+
+interface ReservableTrain
+{
+}
+```
+
+Now for this part:
+
+```csharp
+var command = new NewReservationCommand(
+   trainId,
+   seatCount,
+   fleet, 
+   reservationInProgress);
+```
+
+It doesn't compile because the command does not accept any constructor parameters, but we are passing four.
+
+
+
+TODO one more question: repo.Update(x) or x.UpdateIn(repo)??????
