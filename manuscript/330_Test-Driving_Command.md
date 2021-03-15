@@ -127,7 +127,7 @@ Benjamin: Also, I can see that you used `Received.InOrder()`
 
 Johnny: That's because we need to reserve the seats before we update the information in some kind of storage. If we got the order wrong, the change could be lost.
 
-Benjamin: But there's something missing in this Statement. I just looked at the outputs out users expect:
+Benjamin: But there's something missing in this Statement. I just looked at the outputs our users expect:
 
 ```csharp
 public class ReservationDto
@@ -238,11 +238,11 @@ var train = Substitute.For<ReservableTrain>();
 They don't exist so this code doesn't compile. I can easily fix this by introducing the interfaces:
 
 ```csharp
-interface TrainFleet
+public interface TrainFleet
 {
 }
 
-interface ReservableTrain
+public interface ReservableTrain
 {
 }
 ```
@@ -257,7 +257,179 @@ var command = new NewReservationCommand(
    reservationInProgress);
 ```
 
-It doesn't compile because the command does not accept any constructor parameters, but we are passing four.
+It doesn't compile because the command does not accept any constructor parameters, but we are passing four. Let's create this constructor, then:
+
+```csharp
+public class NewReservationCommand : ReservationCommand
+{
+ public NewReservationCommand(
+  string trainId,
+  uint seatCount,
+  TrainFleet fleet,
+  ReservationInProgress reservationInProgress)
+ {
+
+ }
+
+ public void Execute()
+ {
+  throw new NotImplementedException();
+ } 
+}
+```
+
+Our Statement can now invoke this constructor, but we broke the `TicketOfficeCommandFactory` which also creates a `NewReservationCommand`. Look:
+
+```csharp
+public ReservationCommand CreateNewReservationCommand(
+    ReservationRequestDto requestDto,
+    ReservationInProgress reservationInProgress)
+ {
+  //Stopped compiling:
+  return new NewReservationCommand();
+ }
+```
+
+Johnny: We need to fix the factory the same way we needed to fix the composition root when test-driving the controller. Let's see... Here:
+
+```csharp
+public ReservationCommand CreateNewReservationCommand(
+    ReservationRequestDto requestDto,
+    ReservationInProgress reservationInProgress)
+ {
+  return new NewReservationCommand(
+   requestDto.TrainId,
+   requestDto.SeatCount,
+   new TodoTrainFleet(), // TODO fix name and scope
+   reservatonInProgress
+   );
+ }
+```
+
+Benjamin: The parameter passing looks straightforward to me except the `TodoTrainFleet()` - I already know that the name is a placeholder - you already did something like that earlier. But what aboout the lifetime scope?
+
+Johnny: It's also a placeholder. For now, I want to make the compiler happy, at the same time keeping existing Statements true and introducing a new class that will bring new items to our TODO list.
+
+Benjamin: New TODO items?
+
+Johnny: Yes. Look - the type `TodoTrainFleet` is not implemented yet. I'll do it now:
+
+```csharp
+public class TodoTrainFleet
+{
+
+}
+```
+
+This doesn't match the signature of the command constructor, which expects a `TrainFleet`, so I need to implement this interface:
+
+```csharp
+public class TodoTrainFleet : TrainFleet
+{
+
+}
+```
+
+This, in turn, will force me to implement the methods from the `TrainFleet` interface. Although this interface doesn't define any methods yet, we already discovered two in our Statement, so it will shortly need to get them to make the compiler happy. They will both contain throwing `NotImplementedException` which will land on the TODO list.
+
+Benjamin: I see. Anyway, the factory compiles again. We've still got this part left:
+
+```csharp
+ fleet.Pick(trainId).Returns(train);
+
+ //WHEN
+ command.Execute();
+
+ //THEN
+ Received.InOrder(() =>
+ {
+  train.ReserveSeats(seatCount, reservationInProgress);
+  fleet.UpdateInformationAbout(train);
+ };
+```
+
+Johnny: That's just introducing three methods. You can handle it.
+
+Benjamin: Thanks. The first one is `fleet.Pick(trainId).Returns(train)`. I'll just generate the `Pick` method using my IDE:
+
+```csharp
+public interface TrainFleet
+{
+ ReservableTrain Pick(string trainId);
+}
+```
+
+The `TrainFleet` has an implementation -- the `TodoTrainFleet` we talked about several minutes ago. It needs to implement the method as well or it won't compile:
+
+```csharp
+public class TodoTrainFleet : TrainFleet
+{
+ public ReservableTrain Pick(string trainId)
+ {
+   throw new NotImplementedException();
+ }
+}
+```
+
+This will land on our TODO list just as you mentioned. Nice!
+
+Then comes the next line from the Statement: `train.ReserveSeats(seatCount, reservationInProgress)` and I'll generate a method signature out of it the same as from the previous line.
+
+```csharp
+public interface ReservableTrain
+{
+ void ReserveSeats(uint seatCount, ReservationInProgress reservationInProgress);
+}
+```
+
+And the same fate meets the last line: `fleet.UpdateInformationAbout(train)` which needs to be added to the interface:
+
+```csharp
+public interface TrainFleet
+{
+ ReservableTrain Pick(string trainId);
+ void UpdateInformationAbout(ReservableTrain train);
+}
+```
+
+Also, this methods needs to be defined in the `TodoTrainFleet` class:
+
+```csharp
+public class TodoTrainFleet : TrainFleet
+{
+ public ReservableTrain Pick(string trainId)
+ {
+   throw new NotImplementedException();
+ }
+
+ void UpdateInformationAbout(ReservableTrain train)
+ {
+   throw new NotImplementedException();
+ }
+}
+```
+
+Johnny: Again, this will be added to the TODO list, so we can revisit it later. Seems like the Statement compiles and, as expected, is false, but not for the right reason.
+
+Benjamin: Let me see... yes, a `NotImplementedException` is thrown from the command's `Execute()` method.
+
+Johnny: Let's get rid of it.
+
+Benjamin: Sure. I removed the throw and the method is empty now:
+
+```csharp
+ public void Execute()
+ {
+  
+ }
+```
+
+TODO make it pass
+
+
+
+
+
 
 
 
