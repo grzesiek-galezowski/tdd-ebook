@@ -424,7 +424,38 @@ Benjamin: Sure. I removed the throw and the method is empty now:
  }
 ```
 
-TODO make it pass
+The Statement is false now because of the expected calls do not match.
+
+Johnny: Which means we are finally ready to code some behavior into the `NewReservationCommand` class. First, let's assign all the constructor parameters to fields - we're going to need them.
+
+Benjamin: Here it is:
+
+```csharp
+public class NewReservationCommand : ReservationCommand
+{
+ private readonly string _trainId;
+ private readonly uint _seatCount;
+ private readonly TraingFleet _fleet;
+ private readonly ReservationInProgress _reservationInProgress;
+
+ public NewReservationCommand(
+  string trainId,
+  uint seatCount,
+  TrainFleet fleet,
+  ReservationInProgress reservationInProgress)
+ {
+  _trainId = trainId;
+  _seatCount = seatCount;
+  _fleet = fleet;
+  _reservationInProgress = reservationInProgress;
+ }
+
+ public void Execute()
+ {
+  throw new NotImplementedException();
+ } 
+}
+```
 
 
 
