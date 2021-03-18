@@ -2,11 +2,16 @@
 
 **Johnny:** What's next on our TODO list?
 
-**Benjamin:** We have a single reminder to change the name of the factory that creates `ReservationInProgress` instances. Also, we have two places where a `NotImplementedException` suggests there's something left to implement. The first one is the mentioned factory. The second one is the `NewReservationComand` class that we discovered when writing a Statement for the factory.
+**Benjamin:** We have...
 
-**Johnny:** Let's do the command. I suspect the complexity we put inside the controller will pay back here and we will be able to do some TDD with mocks on our own terms.
+* a single reminder to change the name of the factory that creates `ReservationInProgress` instances. 
+* Also, we have two places where a `NotImplementedException` suggests there's something left to implement. 
+  * The first one is the mentioned factory. 
+  * The second one is the `NewReservationComand` class that we discovered when writing a Statement for the factory.
 
-**Benjamin:** Can't wait to see that. Here's the code of the command we have so far:
+**Johnny:** Let's do the `NewReservationComand`. I suspect the complexity we put inside the controller will pay back here and we will be able to test-drive the command logic on our own terms.
+
+**Benjamin:** Can't wait to see that. Here's the current code of the command:
 
 ```csharp
 public class NewReservationCommand : ReservationCommand
@@ -18,11 +23,9 @@ public class NewReservationCommand : ReservationCommand
 }
 ```
 
-**Johnny:** So we have the class and method signature. Seems we can use the usual strategy of writing new Statement.
+**Johnny:** So we have the class and method signature. It seems we can use the usual strategy of writing new Statement.
 
-**Benjamin:** Yes, "start by invoking a method if you have one". I'll start then.
-
-This is what I can write almost brain-dead:
+**Benjamin:** You mean "start by invoking a method if you have one"? I thought of the same. Let me try it.
 
 ```csharp
 public class NewReservationCommandSpecification
@@ -42,9 +45,11 @@ public class NewReservationCommandSpecification
 }
 ```
 
-We need to think now what should happen when we execute the command.
+This is what I could write almost brain-dead. I just took the parts we have and put them in the Statement.
 
-**Johnny:** To do that, we need to look back to the input data for this use case. We passed it to the factory and forgot about it. Here's how it looks like:
+The assertion is still missing - the one we have is merely a placeholder. This is the right time to think what should happen when we execute the command.
+
+**Johnny:** To come up with that expected behavior, we need to look back to the input data for the whole use case. We passed it to the factory and forgot about it. So just as a reminder - here's how it looks like:
 
 ```csharp
 public class ReservationRequestDto
@@ -60,16 +65,20 @@ public class ReservationRequestDto
 }
 ```
 
-The first part is train id -- it says on which train we should reserve the seats. So we need to somehow pick a train from the fleet. Then, on that train, we need to reserve as many seats as the customer requests. This is the second part of the user request.
+The first part is train id -- it says on which train we should reserve the seats. So we need to somehow pick a train from the fleet for reservation. Then, on that train, we need to reserve as many seats as the customer requests. The requested seat count is the second part of the user request.
 
 **Benjamin:** Aren't we going to update the data in some kind of persistent storage? I doubt that the railways company would want the reservation to disappear on application restart.
 
-**Johnny:** Yes, we need to act as if there was some kind of persistence. Anyway, I can see two roles here:
+**Johnny:** Yes, we need to act as if there was some kind of persistence. 
 
-1. A fleet - which is from where we pick the train and where we save our changes
+Given all of above, I can see two new roles in our scenario:
+
+1. A fleet - from which we pick the train and where we save our changes
 1. A train - which is going to handle the reservation logic.
 
-Both of them need to be mocks, because I expect them to play active roles in this scenario. Given all of this, my first stab would be something like this:
+Both of these roles need to be modeled as mocks, because I expect them to play active roles in this scenario.
+
+Let's expand our Statement with our discoveries. 
 
 ```csharp
 [Fact] public void
@@ -92,9 +101,9 @@ ShouldReserveSeatsInSpecifiedTrainWhenExecuted()
 }
 ```
 
-**Benjamin:** I can see there are many things missing here. For instance, we don't have the `train` and `fleet` variables. 
+**Benjamin:** I can see there are many things missing here. For instance, we don't have the `train` and `fleet` variables.
 
-**Johnny:** We created a need for them. I think we can safely introduce them into the Statement.
+**Johnny:** We created a need for them. I think we can safely introduce them into the Statement now.
 
 ```csharp
 [Fact] public void
@@ -119,15 +128,15 @@ ShouldReserveSeatsInSpecifiedTrainWhenExecuted()
 }
 ```
 
-**Benjamin:** I see two new types.
+**Benjamin:** I see two new types: `TrainFleet` and `ReservableTrain`.
 
 **Johnny:** They symbolize the roles we just discovered.
 
-**Benjamin:** Also, I can see that you used `Received.InOrder()`
+**Benjamin:** Also, I can see that you used `Received.InOrder()` from NSubstitute to specify the expected call order.
 
 **Johnny:** That's because we need to reserve the seats before we update the information in some kind of storage. If we got the order wrong, the change could be lost.
 
-**Benjamin:** But there's something missing in this Statement. I just looked at the outputs our users expect:
+**Benjamin:** But something is missing in this Statement. I just looked at the outputs our users expect:
 
 ```csharp
 public class ReservationDto
@@ -148,9 +157,9 @@ public class ReservationDto
 }
 ```
 
-how exactly are we going to pass all of this information back to the user when the `train.ReserveSeats(seatCount)` call you invented is not expected to return anything?
+That's a lot of info we need to pass back to the user. How exactly are we going to do that when the `train.ReserveSeats(seatCount)` call you invented is not expected to return anything?
 
-**Johnny:** Ah, yes, I almost forgot - we've got the `ReservationInProgress` instance that we passed to the factory, but not here, right? The `ReservationInProgress` was invented exactly for this purpose - to gather the information necessary to produce a result of the whole operation. Let me just quickly update the Statement:
+**Johnny:** Ah, yes, I almost forgot - we've got the `ReservationInProgress` instance that we passed to the factory, but not yet to the command, right? The `ReservationInProgress` was invented exactly for this purpose - to gather the information necessary to produce a result of the whole operation. Let me just quickly update the Statement:
 
 ```csharp
 [Fact] public void
@@ -176,11 +185,13 @@ ShouldReserveSeatsInSpecifiedTrainWhenExecuted()
 }
 ```
 
+Now the `ReserveSeats` method accepts `reservationInProgress`.
+
 **Benjamin:** Why are you passing the `reservationInProgress` further to the `ReserveSeats` method?
 
-**Johnny:** The command does not have the necessary information to pass to the `reservationInProgress` once the reservation is successful. We need to defer it to the `ReservableTrain` implementations to further decide the best place to use it.
+**Johnny:** The command does not have the necessary information to fill the `reservationInProgress` once the reservation is successful. We need to defer it to the `ReservableTrain` implementations to further decide the best place to do that.
 
- **Benjamin:** I see. And you're missing two more variables -- `trainId` and `seatCount` -- and not only definitions, but also we don't pass them to the command at all. They are only present in our assumptions and expectations.
+ **Benjamin:** I see. Looking at the Statement again - we're missing two more variables -- `trainId` and `seatCount` -- and not only their definitions, but also we don't pass them to the command at all. They are only present in our assumptions and expectations.
 
  **Johnny:** Right, let me correct that.
 
@@ -218,9 +229,9 @@ ShouldReserveSeatsInSpecifiedTrainWhenExecuted()
 
 **Johnny:** Look it up in the DTO - it's a `uint` there. I don't see the need to redefine that here.
 
-**Benjamin:** Fine, but what about the trainId - it's a `string`. Didn't you tell me we need to use value objects for concepts like this?
+**Benjamin:** Fine, but what about the `trainId` - it's a `string`. Didn't you tell me we need to use domain-related value objects for concepts like this?
 
-**Johnny:** Yes, and we will refactor this `string` into a value object, especially that train id comparisons should be case-insensitive. But first, I want to finish this Statement before I go into defining and specifying a new type. Still, we'd best leave a TODO note to get back to it later:
+**Johnny:** Yes, and we will refactor this `string` into a value object, especially that we have a requirement that train id comparisons should be case-insensitive. But first, I want to finish this Statement before I go into defining and specifying a new type. Still, we'd best leave a TODO note to get back to it later:
 
 ```csharp
  var trainId = Any.String(); //TODO extract value object
@@ -235,7 +246,7 @@ var fleet = Substitute.For<TrainFleet>();
 var train = Substitute.For<ReservableTrain>();
 ```
 
-They don't exist so this code doesn't compile. I can easily fix this by introducing the interfaces:
+They don't exist, so this code doesn't compile. I can easily fix this by creating the interfaces in the production code:
 
 ```csharp
 public interface TrainFleet
@@ -257,7 +268,7 @@ var command = new NewReservationCommand(
    reservationInProgress);
 ```
 
-It doesn't compile because the command does not accept any constructor parameters, but we are passing four. Let's create this constructor, then:
+It doesn't compile because the command does not accept any constructor parameters yet. Let's create a fitting constructor, then:
 
 ```csharp
 public class NewReservationCommand : ReservationCommand
@@ -278,7 +289,7 @@ public class NewReservationCommand : ReservationCommand
 }
 ```
 
-Our Statement can now invoke this constructor, but we broke the `TicketOfficeCommandFactory` which also creates a `NewReservationCommand`. Look:
+Our Statement can now invoke this constructor, but we broke the `TicketOfficeCommandFactory` which also creates a `NewReservationCommand` instance. Look:
 
 ```csharp
 public ReservationCommand CreateNewReservationCommand(
@@ -306,13 +317,13 @@ public ReservationCommand CreateNewReservationCommand(
  }
 ```
 
-**Benjamin:** The parameter passing looks straightforward to me except the `TodoTrainFleet()` - I already know that the name is a placeholder - you already did something like that earlier. But what aboout the lifetime scope?
+**Benjamin:** The parameter passing looks straightforward to me except the `TodoTrainFleet()` -- I already know that the name is a placeholder - you already did something like that earlier. But what about the lifetime scope?
 
-**Johnny:** It's also a placeholder. For now, I want to make the compiler happy, at the same time keeping existing Statements true and introducing a new class that will bring new items to our TODO list.
+**Johnny:** It's also a placeholder. For now, I want to make the compiler happy, at the same time keeping existing Statements true and introducing a new class -- `TodoTrainFleet` --  that will bring new items to our TODO list.
 
 **Benjamin:** New TODO items?
 
-**Johnny:** Yes. Look - the type `TodoTrainFleet` is not implemented yet. I'll do it now:
+**Johnny:** Yes. Look -- the type `TodoTrainFleet` does not exist yet. I'll create it now:
 
 ```csharp
 public class TodoTrainFleet
@@ -321,7 +332,7 @@ public class TodoTrainFleet
 }
 ```
 
-This doesn't match the signature of the command constructor, which expects a `TrainFleet`, so I need to implement this interface:
+This doesn't match the signature of the command constructor, which expects a `TrainFleet`, so I need to make `TodoTrainFleet` implement this interface:
 
 ```csharp
 public class TodoTrainFleet : TrainFleet
@@ -330,9 +341,9 @@ public class TodoTrainFleet : TrainFleet
 }
 ```
 
-This, in turn, will force me to implement the methods from the `TrainFleet` interface. Although this interface doesn't define any methods yet, we already discovered two in our Statement, so it will shortly need to get them to make the compiler happy. They will both contain throwing `NotImplementedException` which will land on the TODO list.
+Now I am forced to implement the methods from the `TrainFleet` interface. Although this interface doesn't define any methods yet, we already discovered two in our Statement, so it will shortly need to get them to make the compiler happy. They will both contain code throwing `NotImplementedException`, which will land on the TODO list.
 
-**Benjamin:** I see. Anyway, the factory compiles again. We've still got this part left:
+**Benjamin:** I see. Anyway, the factory compiles again. We still got this part of the Statement left:
 
 ```csharp
  fleet.Pick(trainId).Returns(train);
@@ -347,6 +358,8 @@ This, in turn, will force me to implement the methods from the `TrainFleet` inte
   fleet.UpdateInformationAbout(train);
  };
 ```
+
+////////////////////////////////////////////////////////////////////
 
 **Johnny:** That's just introducing three methods. You can handle it.
 
