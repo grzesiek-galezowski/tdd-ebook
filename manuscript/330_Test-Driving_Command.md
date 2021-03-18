@@ -489,7 +489,10 @@ Johnny: The Statement is now true.
 
 Benjamin: Now that I look at this code, it's not protected from any kind of exceptions that might be thrown from either the `_fleet` or the `train`.
 
+Johnny: Add that to the TODO list - we will have to take care of that, sooner or later. For now, let's take a break.
 
+## Summary
 
+In this chapter, Johnny and Benjamin used interface discovery again. They used some technical and some domain-related reasons to create a need for new abstractions. These abstractions were then pulled into the Statement. Remember Johnny and Benjamin extended effort when test-driving the controller. This effort paid off now - they were free to shape abstractions mostly outside the constraints imposed by a specific framework.
 
-TODO one more question: repo.Update(x) or x.UpdateIn(repo)??????
+This chapter does not have a retrospective companion chapter like the previous ones. Most of the interesting stuff that happened here was already explained.
