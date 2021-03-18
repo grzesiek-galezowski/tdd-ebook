@@ -457,9 +457,37 @@ public class NewReservationCommand : ReservationCommand
 }
 ```
 
+Johnny: Now, let's just write the calls expected in the Statement, but in the opposite order.
 
+Benjamin: To make sure the order is asserted correctly in the Statement?
 
+Johnny: Exactly.
 
+Benjamin: Ok.
+
+```csharp
+public void Execute()
+{
+ var train = _fleet.Pick(_trainId);
+ _fleet.UpdateInformationAbout(train);
+ train.ReserveSeats(seatCount);
+}
+```
+
+The Statement is still false, this time because of the wrong call order. Now that we have confirmed that we need to make the calls in the right order, I suspect you want me to reverse it, so...
+
+```csharp
+public void Execute()
+{
+ var train = _fleet.Pick(_trainId);
+ train.ReserveSeats(seatCount, reservationInProgress);
+  _fleet.UpdateInformationAbout(train);
+}
+```
+
+Johnny: The Statement is now true.
+
+Benjamin: Now that I look at this code, it's not protected from any kind of exceptions that might be thrown from either the `_fleet` or the `train`.
 
 
 
