@@ -359,11 +359,9 @@ Now I am forced to implement the methods from the `TrainFleet` interface. Althou
  };
 ```
 
-////////////////////////////////////////////////////////////////////
-
 **Johnny:** That's just introducing three methods. You can handle it.
 
-**Benjamin:** Thanks. The first one is `fleet.Pick(trainId).Returns(train)`. I'll just generate the `Pick` method using my IDE:
+**Benjamin:** Thanks. The first line is `fleet.Pick(trainId).Returns(train)`. I'll just generate the `Pick` method using my IDE:
 
 ```csharp
 public interface TrainFleet
@@ -372,7 +370,7 @@ public interface TrainFleet
 }
 ```
 
-The `TrainFleet` has an implementation -- the `TodoTrainFleet` we talked about several minutes ago. It needs to implement the method as well or it won't compile:
+The `TrainFleet` interface is implemented by the `TodoTrainFleet` we talked about several minutes ago. It needs to implement the `Pick` method as well or else it won't compile:
 
 ```csharp
 public class TodoTrainFleet : TrainFleet
@@ -384,7 +382,7 @@ public class TodoTrainFleet : TrainFleet
 }
 ```
 
-This will land on our TODO list just as you mentioned. Nice!
+This `NotImplementedException` will land on our TODO list just as you mentioned. Nice!
 
 Then comes the next line from the Statement: `train.ReserveSeats(seatCount, reservationInProgress)` and I'll generate a method signature out of it the same as from the previous line.
 
@@ -395,7 +393,9 @@ public interface ReservableTrain
 }
 ```
 
-And the same fate meets the last line: `fleet.UpdateInformationAbout(train)` which needs to be added to the interface:
+`ReservableTrain` interface doesn't have any implementations so far, so nothing more to do with this method.
+
+The last line: `fleet.UpdateInformationAbout(train)` which needs to be added to the `TrainFleet` interface:
 
 ```csharp
 public interface TrainFleet
@@ -405,7 +405,7 @@ public interface TrainFleet
 }
 ```
 
-Also, this methods needs to be defined in the `TodoTrainFleet` class:
+Also, we need to define this method in the `TodoTrainFleet` class:
 
 ```csharp
 public class TodoTrainFleet : TrainFleet
@@ -422,13 +422,13 @@ public class TodoTrainFleet : TrainFleet
 }
 ```
 
-**Johnny:** Again, this will be added to the TODO list, so we can revisit it later. Seems like the Statement compiles and, as expected, is false, but not for the right reason.
+**Johnny:** This `NotImplementedException` will be added to the TODO list as well, so we can revisit it later. It looks like the Statement compiles and, as expected, is false, but not for the right reason.
 
 **Benjamin:** Let me see... yes, a `NotImplementedException` is thrown from the command's `Execute()` method.
 
 **Johnny:** Let's get rid of it.
 
-**Benjamin:** Sure. I removed the throw and the method is empty now:
+**Benjamin:** Sure. I removed the `throw` and the method is empty now:
 
 ```csharp
  public void Execute()
@@ -437,11 +437,11 @@ public class TodoTrainFleet : TrainFleet
  }
 ```
 
-The Statement is false now because of the expected calls do not match.
+The Statement is false now because the expected calls are not matched.
 
-**Johnny:** Which means we are finally ready to code some behavior into the `NewReservationCommand` class. First, let's assign all the constructor parameters to fields - we're going to need them.
+**Johnny:** Which means we are finally ready to code some behavior into the `NewReservationCommand` class. First, let's assign all the constructor parameters to fields -- we're going to need them.
 
-**Benjamin:** Here it is:
+**Benjamin:** Here:
 
 ```csharp
 public class NewReservationCommand : ReservationCommand
@@ -470,7 +470,7 @@ public class NewReservationCommand : ReservationCommand
 }
 ```
 
-**Johnny:** Now, let's just write the calls expected in the Statement, but in the opposite order.
+**Johnny:** Now, let's add the calls expected in the Statement, but in the opposite order.
 
 **Benjamin:** To make sure the order is asserted correctly in the Statement?
 
@@ -498,7 +498,7 @@ public void Execute()
 }
 ```
 
-**Johnny:** The Statement is now true.
+**Johnny:** Exactly. The Statement is now true. Congratulations!
 
 **Benjamin:** Now that I look at this code, it's not protected from any kind of exceptions that might be thrown from either the `_fleet` or the `train`.
 
@@ -506,6 +506,8 @@ public void Execute()
 
 ## Summary
 
-In this chapter, Johnny and Benjamin used interface discovery again. They used some technical and some domain-related reasons to create a need for new abstractions. These abstractions were then pulled into the Statement. Remember Johnny and Benjamin extended effort when test-driving the controller. This effort paid off now - they were free to shape abstractions mostly outside the constraints imposed by a specific framework.
+In this chapter, Johnny and Benjamin used interface discovery again. They used some technical and some domain-related reasons to create a need for new abstractions and design their communication protocols. These abstractions were then pulled into the Statement. 
 
-This chapter does not have a retrospective companion chapter like the previous ones. Most of the interesting stuff that happened here was already explained.
+Remember Johnny and Benjamin extended effort when test-driving the controller. This effort paid off now - they were free to shape abstractions mostly outside the constraints imposed by a specific framework.
+
+This chapter does not have a retrospective companion chapter like the previous ones. Most of the interesting stuff that happened here was already explained earlier.
