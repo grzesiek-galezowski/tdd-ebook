@@ -41,6 +41,8 @@ public class TrainId
 
 **Johnny**: No. This is a general rule -- we don't mock value objects. They don't represent abstract, polymorphic behaviors. For the same reasons we don't create an interface and mocks for `string` or `int`, we don't do that for `TrainId`.
 
+## Value semantics
+
 **Benjamin**: So is there anything for us left to write?
 
 **Johnny**: Yes. I decided that this `TrainId` should be a value object and my design principles for value objects demand it to hold some more guarantees than results from a mere refactoring. Also, don't forget that the comparison of train ids needs to be case-insensitive. This is something we've not specified anywhere.
@@ -108,9 +110,9 @@ We also need to remove the existing Equals() method.
 - TrainId must be sealed, or derivatives will be able to override GetHashCode() with mutable code.
 ```
 
-I am impressed that the library took care of the equality methods, equality operators and `GetHashCode()`.
+I am impressed that the library took care of the equality methods, equality operators, and `GetHashCode()`.
 
-Johnny: Nice, huh? Ok, let's end this part and add the `sealed` keyword. The full source code of the class looks like this:
+Johnny: Nice, huh? Ok, let's end this part and add the `sealed` keyword. The complete source code of the class looks like this:
 
 
 ```csharp
@@ -142,7 +144,9 @@ public sealed class TrainId : ValueType<TrainId>
 
 **Benjamin**: And the Statement is true.
 
-**Johnny**: Yes, what's left on our TODO list?
+## Case-insensitive comparison
+
+**Johnny**: What's left on our TODO list?
 
 **Benjamin**: Two items:
 
@@ -173,11 +177,27 @@ ShouldBeEqualToAnotherIdCreatedFromSameStringWithDifferentLetterCase()
 
 How about that?
 
-Johnny: Nice. Let's make the Statement true.
+**Johnny**: Nice. Let's make the Statement true. Fortunately, we can do this by changing the `GetAllAttributesToBeUsedForEquality` method from:
 
-What about equality operators?
+```csharp
+protected override IEnumerable<object> GetAllAttributesToBeUsedForEquality
+{
+ yield return _value;
+}
+```
 
-TODO lowercase test
+to:
+
+```csharp
+protected override IEnumerable<object> GetAllAttributesToBeUsedForEquality
+{
+ yield return _value.ToLower();
+}
+```
+
+By the way, we need to write a similar Statement for equality operator. Let's add it to our TODO list for now, we'll get back to it later.
+
+## Input validation
 
 TODO validations
 
