@@ -43,15 +43,15 @@ public class TrainId
 
 **Benjamin**: So is there anything for us left to write?
 
-**Johnny**: Yes. I decided that this `TrainId` should be a value object and my design principles for value objects demand it to hold some more guarantees than results from a mere refactoring. Also, don't forget that the comparison of train ids needs to be case insensitive. This is something we've not specified anywhere.
+**Johnny**: Yes. I decided that this `TrainId` should be a value object and my design principles for value objects demand it to hold some more guarantees than results from a mere refactoring. Also, don't forget that the comparison of train ids needs to be case-insensitive. This is something we've not specified anywhere.
 
 **Benjamin**: You mentioned "more guarantees". Do you mean equality?
 
-**Johnny**: Yes, C# as a language expects equality to follow certain rules. I want this object to implement them. Also, I want to implement `GetHashCode` properly and make sure instances of this class are immutable.
+**Johnny**: Yes, C# as a language expects equality to follow certain rules. I want this object to implement them. Also, I want to implement `GetHashCode` properly and make sure instances of this class are immutable. Last but not least, I'd like the factory method `From` to throw an exception when null or empty string are passed. Neither of them should be considered a valid ID.
 
 **Benjamin**: Sounds like a lot of Statements to write.
 
-**Johnny**: Not really. Look -- I downloaded a library that checks all of that for me. This way, all I need to write is:
+**Johnny**: Not really. Add the validation and lowercase comparison to TODO list. In the meantime -- look -- I downloaded a library that will help me with the immutability and equality part. This way, all I need to write is:
 
 ```csharp
 [Fact] public void
@@ -72,7 +72,7 @@ After evaluating this Statement, I get the following output:
 
 **Benjamin**: Very clever. So these are the rules that our `TrainId` doesn't follow yet. Are you going to implement them one by one?
 
-**Johnny**: Hehe, no. The implementation would be so schematic (TODOOOOOO) that I'd either use my IDE to generate the necessary implementation of use a library. Lately, I prefer the latter. So let me just download a library called [Value](https://www.nuget.org/packages/Value/) and use it on our `TrainId`.
+**Johnny**: Hehe, no. The implementation would be so dull that I'd either use my IDE to generate the necessary implementation or use a library. Lately, I prefer the latter. So let me just download a library called [Value](https://www.nuget.org/packages/Value/) and use it on our `TrainId`.
 
 First off, the `TrainId` needs to inherit from `ValueType` generic class like this:
 
@@ -80,7 +80,7 @@ First off, the `TrainId` needs to inherit from `ValueType` generic class like th
 public class TrainId : ValueType<TrainId>
 ```
 
-This ingeritance requires us to implement the following method:
+This inheritance requires us to implement the following method:
 
 ```csharp
 protected override IEnumerable<object> GetAllAttributesToBeUsedForEquality
@@ -110,11 +110,9 @@ We also need to remove the existing Equals() method.
 
 I am impressed that the library took care of the equality methods, equality operators and `GetHashCode()`.
 
-Other libraries - mutability detector and equalsverifier
+Johnny: Nice, huh? Ok, let's end this part and add the `sealed` keyword. The full source code of the class looks like this:
 
-TODO value library (Value)
-TODO sealed
- 
+
 ```csharp
 public sealed class TrainId : ValueType<TrainId>
 {
@@ -142,25 +140,44 @@ public sealed class TrainId : ValueType<TrainId>
 }
 ```
 
+**Benjamin**: And the Statement is true.
+
+**Johnny**: Yes, what's left on our TODO list?
+
+**Benjamin**: Two items:
+
+* Comparison of train ids should be case-insensitive.
+* `null` and empty string should not be allowed as valid train ids.
+
+**Johnny**: Let's do the case-insensitive comparison, it should be relatively straightforward.
+
+**Benjamin**: Ok, let me write the Statement.
+
+```csharp
+public void [Fact]
+ShouldBeEqualToAnotherIdCreatedFromSameStringWithDifferentLetterCase()
+{
+ //GIVEN
+ var idStringLowercase = Any.LowercaseString();
+ var idFromLowercaseString = TrainId.From(idStringLowercase);
+ var idFromUppercaseString = TrainId.From(idStringLowercase.ToUpper());
+ 
+ //WHEN
+ var equalityOutcome = 
+   idFromLowercaseString.Equals(idFromUppercaseString);
+
+ //THEN
+ Assert.True(equalityOutcome);
+}
+```
+
+How about that?
+
+Johnny: Nice. Let's make the Statement true.
+
+What about equality operators?
+
 TODO lowercase test
-
-Before:
-
-```csharp
-protected override IEnumerable<object> GetAllAttributesToBeUsedForEquality
-{
- yield return _value;
-}
-```
-
-After:
-
-```csharp
-protected override IEnumerable<object> GetAllAttributesToBeUsedForEquality
-{
- yield return _value;
-}
-```
 
 TODO validations
 
@@ -191,6 +208,10 @@ Do we specify the `ToString()`? Not necessarily... There is already a Statement 
 
 
 
+Other libraries - mutability detector and equalsverifier
+
+TODO value library (Value)
+TODO sealed
 
 
 Driven by design principles, already covered by an existing test, because we don't mock value objects.
