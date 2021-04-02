@@ -112,7 +112,7 @@ We also need to remove the existing Equals() method.
 
 I am impressed that the library took care of the equality methods, equality operators, and `GetHashCode()`.
 
-Johnny: Nice, huh? Ok, let's end this part and add the `sealed` keyword. The complete source code of the class looks like this:
+**Johnny**: Nice, huh? Ok, let's end this part and add the `sealed` keyword. The complete source code of the class looks like this:
 
 
 ```csharp
@@ -199,9 +199,9 @@ By the way, we need to write a similar Statement for equality operator. Let's ad
 
 ## Input validation
 
-TODO validations
+**Johnny**: Let's take care of the `From` method - it should disallow null input -- we expect an exception when we pass a `null` inside.
 
-Before:
+For now, the method looks like this:
 
 ```csharp
 public static TrainId From(string trainIdAsString)
@@ -210,7 +210,19 @@ public static TrainId From(string trainIdAsString)
 }
 ```
 
-After:
+**Benjamin**: OK, let me write a Statement about the expected behavior:
+
+```csharp
+[Fact] public void
+ShouldThrowWhenCreatedWithANullInput()
+{
+  Assert.Throws<ArgumentNullException>(() => TrainId.From(null));
+}
+```
+
+That was easy, huh?
+
+Johnny: Thanks. The Statement is false because it expects an exception but nothing is thrown. Let's make it true.
 
 ```csharp
 public static TrainId From(string trainIdAsString)
@@ -222,6 +234,7 @@ public static TrainId From(string trainIdAsString)
  return new TrainId(trainIdAsString);
 }
 ```
+
 
 Do we specify the `ToString()`? Not necessarily... There is already a Statement that will turn false.
 
