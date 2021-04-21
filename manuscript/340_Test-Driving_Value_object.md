@@ -37,19 +37,19 @@ public class TrainId
 
 **Johnny**: That's because while you were drinking your tea, I extracted this type from an existing implementation that was already a response to false Statements.
 
-**Benjamin**: I see. So we didn't mock this class in other Statements, right?
+**Benjamin**: I see. So we didn't mock the `TrainId` class in other Statements, right?
 
 **Johnny**: No. This is a general rule -- we don't mock value objects. They don't represent abstract, polymorphic behaviors. For the same reasons we don't create an interface and mocks for `string` or `int`, we don't do that for `TrainId`.
 
 ## Value semantics
 
-**Benjamin**: So is there anything for us left to write?
+**Benjamin**: So, given the existing implementation, is there anything left for us to write?
 
-**Johnny**: Yes. I decided that this `TrainId` should be a value object and my design principles for value objects demand it to hold some more guarantees than results from a mere refactoring. Also, don't forget that the comparison of train ids needs to be case-insensitive. This is something we've not specified anywhere.
+**Johnny**: Yes. I decided that this `TrainId` should be a value object and my design principles for value objects demand it to hold some more guarantees than ones resulting from a mere refactoring. Also, don't forget that the comparison of train ids needs to be case-insensitive. This is something we've not specified anywhere.
 
 **Benjamin**: You mentioned "more guarantees". Do you mean equality?
 
-**Johnny**: Yes, C# as a language expects equality to follow certain rules. I want this object to implement them. Also, I want to implement `GetHashCode` properly and make sure instances of this class are immutable. Last but not least, I'd like the factory method `From` to throw an exception when null or empty string are passed. Neither of them should be considered a valid ID.
+**Johnny**: Yes, C# as a language expects equality to follow certain rules. I want this class to implement them. Also, I want it to implement `GetHashCode` properly and make sure instances of this class are immutable. Last but not least, I'd like the factory method `From` to throw an exception when null or empty string are passed. Neither of these inputs should lead to creating a valid ID.
 
 **Benjamin**: Sounds like a lot of Statements to write.
 
@@ -59,22 +59,40 @@ public class TrainId
 [Fact] public void
 ShouldHaveValueSemantics()
 {
- Assert.HasValueSemantics<TrainId>();
+ var trainIdString = Any.String();
+ var otherTrainIdString = Any.OtherThan(trainIdString);
+ Assert.HasValueSemantics<TrainId>(
+   new Func<TrainId>[]
+   {
+    () => TrainId.From(trainIdString)
+   },
+   new Func<TrainId>[]
+   {
+    () => TrainId.From(otherTrainIdString);
+   },
+ );
 }
 ```
+
+This assertion accepts two arrays:
+
+- the first array contains factory functions that create objects that should be equal to each other. For now, we only have a single example, because I didn't touch the lowercase vs uppercase issue. But when I do, the array will contain more entries to stress that ids created from the same string with different letter casing should be considered equal.
 
 After evaluating this Statement, I get the following output:
 
 ```txt
 - TrainId must be sealed, or derivatives will be able to override GetHashCode() with mutable code.
-- a.GetHashCode() and b.GetHashCode() should return same values when both are created with same arguments.
+
+- a.GetHashCode() and b.GetHashCode() should return same values for equal objects.
+
 - a.Equals(null) should return false, but instead threw System.NullReferenceException: Object reference not set to an instance of an object.
+
 - '==' and '!=' operators are not implemented
 ```
 
 **Benjamin**: Very clever. So these are the rules that our `TrainId` doesn't follow yet. Are you going to implement them one by one?
 
-**Johnny**: Hehe, no. The implementation would be so dull that I'd either use my IDE to generate the necessary implementation or use a library. Lately, I prefer the latter. So let me just download a library called [Value](https://www.nuget.org/packages/Value/) and use it on our `TrainId`.
+**Johnny**: Hehe, no. The implementation would be so dull that I'd either use my IDE to generate the necessary implementation or, again, use a library. Lately, I prefer the latter. So let me just download a library called [Value](https://www.nuget.org/packages/Value/) and use it on our `TrainId`.
 
 First off, the `TrainId` needs to inherit from `ValueType` generic class like this:
 
@@ -113,7 +131,6 @@ We also need to remove the existing Equals() method.
 I am impressed that the library took care of the equality methods, equality operators, and `GetHashCode()`.
 
 **Johnny**: Nice, huh? Ok, let's end this part and add the `sealed` keyword. The complete source code of the class looks like this:
-
 
 ```csharp
 public sealed class TrainId : ValueType<TrainId>
@@ -155,29 +172,31 @@ public sealed class TrainId : ValueType<TrainId>
 
 **Johnny**: Let's do the case-insensitive comparison, it should be relatively straightforward.
 
-**Benjamin**: Ok, let me write the Statement.
+**Benjamin**: Ok, you mentioned that we would need to expand the Statement you wrote, by adding another "equal value factory" to it. Let me try. What do you think about this?
 
 ```csharp
-public void [Fact]
-ShouldBeEqualToAnotherIdCreatedFromSameStringWithDifferentLetterCase()
+[Fact] public void
+ShouldHaveValueSemantics()
 {
- //GIVEN
- var idStringLowercase = Any.LowercaseString();
- var idFromLowercaseString = TrainId.From(idStringLowercase);
- var idFromUppercaseString = TrainId.From(idStringLowercase.ToUpper());
- 
- //WHEN
- var equalityOutcome = 
-   idFromLowercaseString.Equals(idFromUppercaseString);
-
- //THEN
- Assert.True(equalityOutcome);
+ var trainIdString = Any.String();
+ var otherTrainIdString = Any.OtherThan(trainIdString);
+ Assert.HasValueSemantics<TrainId>(
+   new Func<TrainId>[]
+   {
+    () => TrainId.From(trainIdString.ToUpper())
+    () => TrainId.From(trainIdString.ToLower())
+   },
+   new Func<TrainId>[]
+   {
+    () => TrainId.From(otherTrainIdString);
+   },
+ );
 }
 ```
 
-How about that?
+How about that? From what you explained to me, I understand that by adding a second factory to the first array, I say that both instances should be treated as equal - the one with lowercase string and the one with uppercase string.
 
-**Johnny**: Nice. Let's make the Statement true. Fortunately, we can do this by changing the `GetAllAttributesToBeUsedForEquality` method from:
+**Johnny**: Exactly. Now, let's make the Statement true. Fortunately, we can do this by changing the `GetAllAttributesToBeUsedForEquality` method from:
 
 ```csharp
 protected override IEnumerable<object> GetAllAttributesToBeUsedForEquality
@@ -195,7 +214,7 @@ protected override IEnumerable<object> GetAllAttributesToBeUsedForEquality
 }
 ```
 
-By the way, we need to write a similar Statement for equality operator. Let's add it to our TODO list for now, we'll get back to it later.
+Aaand done! The assertion checked `Equals`, equality operators and `GetHashCode()` and everything seems to be working. We can move on to the next item on our TODO list.
 
 ## Input validation
 
@@ -222,7 +241,7 @@ ShouldThrowWhenCreatedWithANullInput()
 
 That was easy, huh?
 
-Johnny: Thanks. The Statement is false because it expects an exception but nothing is thrown. Let's make it true.
+Johnny: Thanks. The Statement is currently false because it expects an exception but nothing is thrown. Let's make it true by implementing the `null` check.
 
 ```csharp
 public static TrainId From(string trainIdAsString)
@@ -234,6 +253,8 @@ public static TrainId From(string trainIdAsString)
  return new TrainId(trainIdAsString);
 }
 ```
+
+TODO!!!!!!!!!!!!!!!!
 
 
 Do we specify the `ToString()`? Not necessarily... There is already a Statement that will turn false.
