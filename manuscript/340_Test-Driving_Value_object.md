@@ -39,7 +39,7 @@ public class TrainId
 
 **Benjamin**: I see. So we didn't mock the `TrainId` class in other Statements, right?
 
-**Johnny**: No. This is a general rule -- we don't mock value objects. They don't represent abstract, polymorphic behaviors. For the same reasons we don't create an interface and mocks for `string` or `int`, we don't do that for `TrainId`.
+**Johnny**: No. This is a general rule -- we don't mock value objects. They don't represent abstract, polymorphic behaviors. For the same reasons we don't create interfaces and mocks for `string` or `int`, we don't do it for `TrainId`.
 
 ## Value semantics
 
@@ -241,7 +241,7 @@ ShouldThrowWhenCreatedWithANullInput()
 
 That was easy, huh?
 
-Johnny: Thanks. The Statement is currently false because it expects an exception but nothing is thrown. Let's make it true by implementing the `null` check.
+**Johnny**: Thanks. The Statement is currently false because it expects an exception but nothing is thrown. Let's make it true by implementing the `null` check.
 
 ```csharp
 public static TrainId From(string trainIdAsString)
@@ -254,13 +254,13 @@ public static TrainId From(string trainIdAsString)
 }
 ```
 
-TODO!!!!!!!!!!!!!!!!
+## Summary
 
+Johnny and Benjamin have one more behavior left to specify, but following them won't probably bring any new insights. Thus, I'd like to close this chapter. Before I do, several points of summary of what to remember about when test-driving value objects:
 
-Do we specify the `ToString()`? Not necessarily... There is already a Statement that will turn false.
-
-
-
+1. Value objects are often (though not always) refactored retroactively from existing code. As such, they will already have some coverage from specifications of objects that use these value objects.
+1. If above is the case, the existing specification will not cover all the guarantees a value object must give. The additional Statements we write to ensure an object is a proper value object are not driven by existing logic, but by our design principles.
+1. There are many conditions that apply to equality and hash codes of value objects. TODO: own assertions, libraries.........
 
 Other libraries - mutability detector and equalsverifier
 
