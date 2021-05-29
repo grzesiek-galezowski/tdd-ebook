@@ -1,5 +1,33 @@
+# Dealing with troublesome dependencies
 
+Examples of the dependencies: Files, threads, clock, database, communication channels (http, service bus, websockets, GUI)
+Why are they problematic? Non-deterministic, slow feedback, hard to setup, bind tests to implementation
 
+Drive using intention, not implementation ()
+
+Example: clock (getting current time)
+
+version with mock:
+
+```csharp
+[Fact] public void
+ShouldSayItIsExpiredWhenItsPastItsExpiryDate()
+{
+ //GIVEN
+ var expiryDate = Any.DateTime();
+ var session = new Session(expiryDate);
+ //WHEN
+ //THEN
+}
+```
+
+Time is easy. 
+There is usually one way we want time served.
+Normally, we just ask clock.GetTime() without parameters
+We can use a mock or just create a fake settable clock like in Noda time (https://nodatime.org/1.4.x/api/NodaTime.Testing.FakeClock.html)
+Example: threads
+Example: timers
+Example: files (how to name this abstraction?)
 
 
 
