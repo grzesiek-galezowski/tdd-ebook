@@ -15,19 +15,88 @@ ShouldSayItIsExpiredWhenItsPastItsExpiryDate()
 {
  //GIVEN
  var expiryDate = Any.DateTime();
- var session = new Session(expiryDate);
+ var clock = Substitute.For<Clock>();
+ var session = new Session(expiryDate, clock);
+
+ clock.CurrentTime.Returns(expiryDate + TimeSpan.FromSeconds(1));
+ 
  //WHEN
+ var isExpired = session.IsExpired();
+
  //THEN
+ Assert.True(isExpired);
 }
 ```
+
+version with IsPast:
+
+```csharp
+[Fact] public void
+ShouldSayItIsExpiredWhenItsPastItsExpiryDate()
+{
+ //GIVEN
+ var expiryDate = Any.DateTime();
+ var clock = Substitute.For<Clock>();
+ var session = new Session(expiryDate, clock);
+
+ clock.IsPast(expiryDate).Returns(true);
+ 
+ //WHEN
+ var isExpired = session.IsExpired();
+
+ //THEN
+ Assert.True(isExpired);
+}
+```
+
+(not sure yet which to use)
+
+version with fake implementation
+
+```csharp
+[Fact] public void
+ShouldSayItIsExpiredWhenItsPastItsExpiryDate()
+{
+ //GIVEN
+ var expiryDate = Any.DateTime();
+ var clock = new SettableClock();
+ var session = new Session(expiryDate, clock);
+
+ clock.SetTo(expiryDate + TimeSpan.FromSeconds(1));
+ 
+ //WHEN
+ var isExpired = session.IsExpired();
+
+ //THEN
+ Assert.True(isExpired);
+}
+```
+
+Pros: can set some intelligent behavior, e.g. increment in current time every time it's queried or coherent behavior of methods like `IsPast()` (give example of implementation of `IsExpired()` that uses IsPast instead of `CurrentTime`).
+
+```csharp
+public bool IsExpired()
+{
+ return _clock.IsPast(_expiryTime);
+}
+```
+
 
 Time is easy. 
 There is usually one way we want time served.
 Normally, we just ask clock.GetTime() without parameters
 We can use a mock or just create a fake settable clock like in Noda time (https://nodatime.org/1.4.x/api/NodaTime.Testing.FakeClock.html)
-Example: threads
-Example: timers
-Example: files (how to name this abstraction?)
+
+
+## Example: threads
+
+Threads: Special role for dispatching callbacks. Warning - probably not working very well with lambdas - needs method group. In the Spec we verify the thread was dispatched.
+
+## Example: timers
+
+Timers are two cases - 1 that the timer was set, and 2 that timer has expired.
+
+## Example: files (how to name this abstraction?)
 
 
 
