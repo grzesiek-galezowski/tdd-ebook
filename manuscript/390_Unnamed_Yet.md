@@ -1,5 +1,7 @@
 # Dealing with troublesome dependencies
 
+When doing the outside-in interface discovery and implementing collaborator after collaborator, there's often a point when we reach the boundaries of our application, which means we must execute some kind of I/O operation (like calling external API via HTTP) or use a class that is part of some kind of third-party package (e.g. provided by our framework of choice). In such cases, the freedom with which we could shape our object-oriented reality is hugely constrained by these dependencies.
+
 Examples of the dependencies: Files, threads, clock, database, communication channels (http, service bus, websockets, GUI)
 Why are they problematic? Non-deterministic, slow feedback, hard to setup, bind tests to implementation
 
