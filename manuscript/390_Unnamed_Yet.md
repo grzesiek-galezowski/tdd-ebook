@@ -1,15 +1,16 @@
 # Dealing with troublesome dependencies
 
-When doing the outside-in interface discovery and implementing collaborator after collaborator, there's often a point when we reach the boundaries of our application, which means we must execute some kind of I/O operation (like calling external API via HTTP) or use a class that is part of some kind of third-party package (e.g. provided by our framework of choice). In such cases, the freedom with which we could shape our object-oriented reality is hugely constrained by these dependencies.
+When doing the outside-in interface discovery and implementing collaborator after collaborator, there's often a point when we reach the boundaries of our application, which means we must execute some kind of I/O operation (like calling external API via HTTP) or use a class that is part of some kind of third-party package (e.g. provided by our framework of choice). In such cases, the freedom with which we could shape our object-oriented reality is hugely constrained by these dependencies. Even though we still drive the behaviors using our intention, we need to increasingly remember that the direction we take has to match the technology at the end.
 
-Examples of the dependencies: Files, threads, clock, database, communication channels (http, service bus, websockets, GUI)
-Why are they problematic? Non-deterministic, slow feedback, hard to setup, bind tests to implementation
+There are multiple examples of such technology. Files, threads, clock, database, communication channels (e.g. http, service bus, websockets), graphical user interfaces... We need to somehow adapt them to our metaphor of the system and vice versa.
 
-Drive using intention, not implementation ()
+## What time is it?
 
-Example: clock (getting current time)
+Consider a task that requires getting the current time. Imagine we have a session that expires at one point. We create a class called `Session` and allow querying whether it's expired or not. To answer that question, the session needs to know its expiry time and the current time, and compare them. In such a case, we can model the source of current time as some kind of "clock" abstraction. Here are several examples of how to do that.
 
-version with mock:
+### A query for current time with a mock framework
+
+We can model the clock as merely a service that delivers current time (e.g. via some kind of `.CurrentTime` property) The `Session` class is thus responsible for doing the calculation. An example Statement describing this behavior could look like this:
 
 ```csharp
 [Fact] public void
@@ -20,7 +21,7 @@ ShouldSayItIsExpiredWhenItsPastItsExpiryDate()
  var clock = Substitute.For<Clock>();
  var session = new Session(expiryDate, clock);
 
- clock.CurrentTime.Returns(expiryDate + TimeSpan.FromSeconds(1));
+ clock.CurrentTime.Returns(expiryDate + TimeSpan.FromTicks(1));
  
  //WHEN
  var isExpired = session.IsExpired();
@@ -29,6 +30,8 @@ ShouldSayItIsExpiredWhenItsPastItsExpiryDate()
  Assert.True(isExpired);
 }
 ```
+
+### More responsibility allocation in the clock abstraction
 
 version with IsPast:
 
@@ -99,6 +102,8 @@ Threads: Special role for dispatching callbacks. Warning - probably not working 
 Timers are two cases - 1 that the timer was set, and 2 that timer has expired.
 
 ## Example: files (how to name this abstraction?)
+
+Why are they problematic? Non-deterministic, slow feedback, hard to setup, bind tests to implementation
 
 
 
