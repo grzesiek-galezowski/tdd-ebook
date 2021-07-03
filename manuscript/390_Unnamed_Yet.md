@@ -33,7 +33,7 @@ ShouldSayItIsExpiredWhenItsPastItsExpiryDate()
 
 ### More responsibility allocation in the clock abstraction
 
-version with IsPast:
+Our previous attempt at the clock abstraction was just to abstract away the services granted by a real time source (like `DateTime.UtcNow`). We can make this abstraction fit our specific use case better by giving it a `IsPast()` method that will accept an expiry time and just tell us whether it's past that time or not:
 
 ```csharp
 [Fact] public void
