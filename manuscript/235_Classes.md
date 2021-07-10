@@ -242,7 +242,7 @@ In this chapter, I tried to give you some advice on designing classes that do no
 
 [^SRPMethods]: This principle can be applied to methods as well, but we are not going to cover this part, because it is not directly tied to the notion of composability and this is not a design book ;-).
 
-[^SRP]: http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod. 
+[^SRP]: http://www.butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod. 
 
 [^srponstackoverflow]: https://stackoverflow.fogbugz.com/default.asp?W29030
 

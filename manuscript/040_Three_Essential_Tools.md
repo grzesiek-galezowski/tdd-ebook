@@ -136,7 +136,7 @@ To be honest, I can't wait to show you how the test we just wrote looks like wh
 1. The `Multiplication_ShouldResultInAMultiplicationOfTwoPassedNumbers()` method is a **Test Method**.
 1. The `AssertTwoIntegersAreEqual()` method is an **Assertion** -- a condition that, when not met, ends a test with failure.
 
-To our joy, those three elements are present as well when we use a test framework. Moreover, they are far more advanced than what we have. To illustrate this, here is (finally!) the same test we wrote above, now using the [xUnit.Net](http://xunit.github.io/) test framework:
+To our joy, those three elements are present as well when we use a test framework. Moreover, they are far more advanced than what we have. To illustrate this, here is (finally!) the same test we wrote above, now using the [xUnit.Net](https://xunit.net/) test framework:
 
 ```csharp
 [Fact] public void 
