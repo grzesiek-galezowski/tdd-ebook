@@ -1,14 +1,18 @@
 # Dealing with troublesome dependencies
 
-When doing the outside-in interface discovery and implementing collaborator after collaborator, there's often a point when we reach the boundaries of our application, which means we must execute some kind of I/O operation (like calling external API via HTTP) or use a class that is part of some kind of third-party package (e.g. provided by our framework of choice). In such cases, the freedom with which we could shape our object-oriented reality is hugely constrained by these dependencies. Even though we still drive the behaviors using our intention, we need to increasingly remember that the direction we take has to match the technology at the end.
+When doing the outside-in interface discovery and implementing collaborator after collaborator, there's often a point when we reach the boundaries of our application, which means we must execute some kind of I/O operation (like calling external API via HTTP) or use a class that is part of some kind of third-party package (e.g. provided by our framework of choice). In these places, the freedom with which we could shape our object-oriented reality is hugely constrained by these dependencies. Even though we still drive the behaviors using our intention, we need to increasingly remember that the direction we take has to match the technology with which we communicate with the outside world at the end.
 
 There are multiple examples of such technology. Files, threads, clock, database, communication channels (e.g. http, service bus, websockets), graphical user interfaces... We need to somehow adapt them to our metaphor of the system and vice versa.
 
+/////////TODO: random? non-deterministic?
+
 ## What time is it?
 
-Consider a task that requires getting the current time. Imagine we have a session that expires at one point. We create a class called `Session` and allow querying whether it's expired or not. To answer that question, the session needs to know its expiry time and the current time, and compare them. In such a case, we can model the source of current time as some kind of "clock" abstraction. Here are several examples of how to do that.
+Consider getting the current time.
 
-### A query for current time with a mock framework
+Imagine our application manages sessions that expire at one point. We model the concept of a session by creating a class called `Session` and allow querying whether it's expired or not. To answer that question, the session needs to know its expiry time and the current time, and calculate their difference. In such a case, we can model the source of current time as some kind of "clock" abstraction. Here are several examples of how to do that.
+
+### A query for the current time with a mock framework
 
 We can model the clock as merely a service that delivers current time (e.g. via some kind of `.CurrentTime` property) The `Session` class is thus responsible for doing the calculation. An example Statement describing this behavior could look like this:
 
@@ -33,7 +37,7 @@ ShouldSayItIsExpiredWhenItsPastItsExpiryDate()
 
 ### More responsibility allocation in the clock abstraction
 
-Our previous attempt at the clock abstraction was just to abstract away the services granted by a real time source (like `DateTime.UtcNow`). We can make this abstraction fit our specific use case better by giving it a `IsPast()` method that will accept an expiry time and just tell us whether it's past that time or not:
+Our previous attempt at the clock abstraction was just to abstract away the services granted by a real time source ("what's the current time?"). We can make this abstraction fit our specific use case better by giving it a `IsPast()` method that will accept an expiry time and just tell us whether it's past that time or not. One of the Statements using the `IsPast()` method could look like this:
 
 ```csharp
 [Fact] public void
@@ -54,9 +58,22 @@ ShouldSayItIsExpiredWhenItsPastItsExpiryDate()
 }
 ```
 
-(not sure yet which to use)
+This time, I am also using a mock to stand in for a `Clock` implementation. 
 
-version with fake implementation
+The upside of this is that the abstraction is more tuned to our specific need. The downside is that the calculation of the time difference between current and expiry time is done in a class that will be at least very difficult to put under test as it will rely on the system clock.
+
+### A fake clock
+
+If the services provided by an interface such as `Clock` are simple enough, we can create our own implementation for use in Statements. Such implementation would take away all the pain of working with a real external resource and instead give us a simplified or more controllable version. For example, a fake implementation of the `Clock` interface might look like this:
+
+```csharp
+class SettableClock : IClock
+{
+ public DateTime CurrentTime { get; set; } = DateTime.MinValue;
+}
+```
+
+This implementation of `IClock` has not only a getter for the current time (which is inherited from the `IClock` interface), but it also has a setter. The "current time" as returned by the `SettableClock` instance does not come from system clock, but can instead be set to a deterministic value. Here's how the use of `SettableClock` looks like in a Statement:
 
 ```csharp
 [Fact] public void
@@ -67,7 +84,7 @@ ShouldSayItIsExpiredWhenItsPastItsExpiryDate()
  var clock = new SettableClock();
  var session = new Session(expiryDate, clock);
 
- clock.SetTo(expiryDate + TimeSpan.FromSeconds(1));
+ clock.CurrentTime = expiryDate + TimeSpan.FromSeconds(1);
  
  //WHEN
  var isExpired = session.IsExpired();
@@ -77,15 +94,7 @@ ShouldSayItIsExpiredWhenItsPastItsExpiryDate()
 }
 ```
 
-Pros: can set some intelligent behavior, e.g. increment in current time every time it's queried or coherent behavior of methods like `IsPast()` (give example of implementation of `IsExpired()` that uses IsPast instead of `CurrentTime`).
-
-```csharp
-public bool IsExpired()
-{
- return _clock.IsPast(_expiryTime);
-}
-```
-
+I could also do the second version of clock - the one with `IsPast()` method - in a very similar way. I would just need to put some extra intelligence into the `SettableClock`, duplicating tiny bits of real implementation. In this case, it's not a big issue, but there can be times when this can be an overkill. For a fake to be warranted, the fake implementation must be much, much simpler than the real implementation that we intend to use.
 
 Time is easy. 
 There is usually one way we want time served.
