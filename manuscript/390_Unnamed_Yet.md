@@ -96,19 +96,98 @@ ShouldSayItIsExpiredWhenItsPastItsExpiryDate()
 
 I could also do the second version of clock - the one with `IsPast()` method - in a very similar way. I would just need to put some extra intelligence into the `SettableClock`, duplicating tiny bits of real implementation. In this case, it's not a big issue, but there can be times when this can be an overkill. For a fake to be warranted, the fake implementation must be much, much simpler than the real implementation that we intend to use.
 
-Time is easy. 
-There is usually one way we want time served.
-Normally, we just ask clock.GetTime() without parameters
-We can use a mock or just create a fake settable clock like in Noda time (https://nodatime.org/1.4.x/api/NodaTime.Testing.FakeClock.html)
+An advantage of a fake is that it can be reused (e.g. a reusable settable clock abstraction can be found in Noda Time and Joda Time libraries). A disadvantage is that the most sophisticated code sits inside the fake, the more probable it is that it will contain bugs. If a very intelligent fake is still worth it despite the complexity (and I've seen several cases when it was), I'd consider writing some Specification around the fake implementation.
+
+# Timers
+
+1. Timers are asynchronous in nature
+2. Timers consist of two signals - one outgoing and one incoming. We need to wait for the expiry, but 
+
+Timers are two cases - 1 that the timer was set, and 2 that timer has expired.
+
+In general, there are two cases where we interact with the operating system:
+
+We tell our code to use the operating system's resources (start a thread, write to a hard drive etc.)
+We tell the operating system to use our code (when a timer expires, when a thread execution finishes etc.)
+Timers
+The topic of today's post is a combination of both above cases. Timers work as a way to say "in X milliseconds (or any other time unit), invoke Y and in the meantime, let me do my job."
+
+
+
+The scheduling phase is where our code uses the timer and the calling back phase is where the timer uses our code. But before I show you how to properly handle this kind of situation, let's examine how things can go wrong.
+
+The time has come to draw a line between the behaviors of our code and the operating system. In a specification of a class using a timer, we want to describe three behaviors in particular:
+
+It should create the timer passing desired method as callback
+It should schedule the timer for desired number of time units
+It should perform a desired behavior when the callback is invoked
+To achieve this goal, we have to get rid of the timer by creating a thinnest possible wrapping layer. This layer has to be super thin because it's the code we're NOT going to write specs against. So, here we go - a timer wrapper:
+
+public interface IPeriodicExecution
+{
+  TimerCallback Callback { get; }
+  void Schedule(int milliseconds);
+  void Halt();
+}
+
+By the way, this is not the main topic of this post, but note that because the IPeriodicExecution interface has this callback property I mentioned, we can actually test-drive this factory object in the following way:
+
+[Test]
+public void ShouldCreatePeriodicExecutionWithSpecifiedCallback()
+{
+  var anyCallback = Substitute.For<TimerCallback>();
+  var factory = new PeriodicExecutionFactory();
+  var periodicExecution = factory.Create(anyCallback);
+
+  Assert.AreSame(anyCallback, periodicExecution.Callback);
+}
+Ok, now we're ready to write the specs for the three behaviors from this section start. The first one: "Should schedule the timer for desired number of time units":
+
+[Test]
+public void 
+ShouldSchedulePeriodicExecutionEverySpecifiedNumberOfMilliseconds()
+{
+  //GIVEN
+  var anyAction = Substitute.For<Action<DateTime>>();
+  var factory = Substitute.For<IPeriodicExecutionFactory>();
+  var periodicExecution = Substitute.For<IPeriodicExecution>();
+  var anyNumberOfMilliseconds = Any.PositiveInteger();
+  var notification = new CurrentTimeNotification2(anyAction, factory);
+
+  factory.Create(notification.NotifyAboutCurrentTime).Returns(periodicExecution);
+
+  //WHEN
+  notification.Schedule(anyNumberOfMilliseconds);
+
+  //THEN
+  periodicExecution.Received().Schedule(anyNumberOfMilliseconds);
+}
+And the second one: "Should perform a desired behavior when the callback is invoked":
+
+[Test]
+public void 
+ShouldInvokeActionWithCurrentTimeWhenTimerExpires()
+{
+  //GIVEN
+  bool gotCalled = false;
+  var factory = Substitute.For<IPeriodicExecutionFactory>();
+  var notification = 
+    new CurrentTimeNotification2(_ => gotCalled = true, factory);
+
+  //WHEN
+  notification.NotifyAboutCurrentTime(Any.Object());
+
+  //THEN
+  Assert.IsTrue(gotCalled);
+}
+And that's it. Note that this set of two specifications better describe what the actual object does, not how it works when connected to the timer. This way, they're more accurate as specifications of the class than the one using Thread.Sleep().
+
 
 
 ## Example: threads
 
 Threads: Special role for dispatching callbacks. Warning - probably not working very well with lambdas - needs method group. In the Spec we verify the thread was dispatched.
 
-## Example: timers
-
-Timers are two cases - 1 that the timer was set, and 2 that timer has expired.
 
 ## Example: files (how to name this abstraction?)
 
