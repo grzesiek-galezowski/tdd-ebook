@@ -98,7 +98,84 @@ I could also do the second version of clock - the one with `IsPast()` method - i
 
 An advantage of a fake is that it can be reused (e.g. a reusable settable clock abstraction can be found in Noda Time and Joda Time libraries). A disadvantage is that the most sophisticated code sits inside the fake, the more probable it is that it will contain bugs. If a very intelligent fake is still worth it despite the complexity (and I've seen several cases when it was), I'd consider writing some Specification around the fake implementation.
 
-# Timers
+## Timers
+
+Timers are objects that allow deferred or periodic code execution. Typically, a timer usage is composed of three stages:
+
+1. Scheduling the timer expiry for a specific point in time, passing it a callback to execute on expiry. Usually a timer can be told whether to continue the next cycle after the current one is finished, or stop.
+1. When the timer expiry is scheduled, it runs asynchronously in some kind of background thread.
+1. When the timer expires, the code that was passed during scheduling is executed and the timer either begins another cycle, or stops.
+
+I> In C# these days, almost everything asynchronous is done using `Task` class, and `async`-`await` keywords. Despite that, I decided to leave them out of this chapter to make it better understandable to non-C# users. So forgive me for a little less realistic example and I hope you can map that to your modern code.
+
+From the point of view of our collaboration design, the important parts are point 1 and 3. Let's tackle them one by one.
+
+First let's imagine we create a new session, add it to some kind of cache and set a timer expiring every 10 seconds to check whether privileges of the session owner are still valid. After the expiry time, the cache should remove the session. A Statement for that might look like this:
+
+```csharp
+[Fact] public void
+ShouldAddCreatedSessionToCacheAndScheduleItsExpiryWhenExecuted()
+{
+ //GIVEN
+ var sessionData = Any.Instance<SessionData>();
+ var id = Any.Instance<SessionId>();
+ var session = Any.Instance<Session>();
+ var sessionFactory = Substitute.For<SessionFactory>();
+ var cache = Substitute.For<SessionCache>();
+ var periodicTasks = Substitute.For<PeriodicTasks>();
+ var command = new CreateSessionCommand(id, sessionFactory, cache, sessionData);
+ 
+ sessionFactory.CreateNewSessionFrom(sessionData).Returns(session);
+
+ //WHEN
+ command.Execute();
+
+ //THEN
+ Received.InOrder(() =>
+ {
+  cache.Add(id, session);
+  periodicTasks.Schedule(TimeSpan.FromSeconds(10), session.RefreshPrivileges);
+ });
+}
+```
+
+Note that I created a `PeriodicTasks` interface to model an abstraction for running... well... periodic tasks. This seems like a generic abstraction and might be made a bit more domain-oriented if needed. For our toy example, it should do. The `PeriodicTask` interface looks like this:
+
+```csharp
+interface PeriodicTasks
+{
+ void Schedule(TimeSpan period, Action actionRanOnExpiry);
+}
+```
+
+In the Statement above, I only specified that a periodic operation should be scheduled. Specifying how the `PeriodicTasks` implementation carries out its job is out of scope.
+
+The `PeriodicTasks` interface is designed so that I don't have to pass a lambda, because that would make it harder to compare arguments between expected and actual invocations in the Statement. So if I had to pass an argument to the `Schedule` method, I would have probably designed the `PeriodicTasks` like this:
+
+```csharp
+interface PeriodicTasks
+{
+ void Schedule(TimeSpan period, Action<int> actionRanOnExpiry, int argument);
+}
+```
+
+or as an interface with a generic method:
+
+```csharp
+interface PeriodicTasks
+{
+ void Schedule<TArg>(TimeSpan period, Action<TArg> actionRanOnExpiry, TArg argument);
+}
+```
+
+
+//TODO no lambdas
+//TODO what if I want to use a func
+//TODO schedule private method
+
+
+
+//TODO
 
 1. Timers are asynchronous in nature
 2. Timers consist of two signals - one outgoing and one incoming. We need to wait for the expiry, but 
@@ -132,7 +209,7 @@ public interface IPeriodicExecution
 
 By the way, this is not the main topic of this post, but note that because the IPeriodicExecution interface has this callback property I mentioned, we can actually test-drive this factory object in the following way:
 
-[Test]
+[Fact]
 public void ShouldCreatePeriodicExecutionWithSpecifiedCallback()
 {
   var anyCallback = Substitute.For<TimerCallback>();
@@ -143,7 +220,7 @@ public void ShouldCreatePeriodicExecutionWithSpecifiedCallback()
 }
 Ok, now we're ready to write the specs for the three behaviors from this section start. The first one: "Should schedule the timer for desired number of time units":
 
-[Test]
+[Fact]
 public void 
 ShouldSchedulePeriodicExecutionEverySpecifiedNumberOfMilliseconds()
 {
@@ -164,7 +241,7 @@ ShouldSchedulePeriodicExecutionEverySpecifiedNumberOfMilliseconds()
 }
 And the second one: "Should perform a desired behavior when the callback is invoked":
 
-[Test]
+[Fact]
 public void 
 ShouldInvokeActionWithCurrentTimeWhenTimerExpires()
 {
@@ -182,7 +259,16 @@ ShouldInvokeActionWithCurrentTimeWhenTimerExpires()
 }
 And that's it. Note that this set of two specifications better describe what the actual object does, not how it works when connected to the timer. This way, they're more accurate as specifications of the class than the one using Thread.Sleep().
 
+TODO: async timer in .NET 6
 
+```
+var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
+
+while (await timer.WaitForNextTickAsync())
+{
+    Console.WriteLine(DateTime.UtcNow);
+}
+```
 
 ## Example: threads
 
