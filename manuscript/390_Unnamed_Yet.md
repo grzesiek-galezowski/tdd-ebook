@@ -110,11 +110,13 @@ I> In C# these days, almost everything asynchronous is done using `Task` class, 
 
 From the point of view of our collaboration design, the important parts are point 1 and 3. Let's tackle them one by one.
 
+### Scheduling a periodic task
+
 First let's imagine we create a new session, add it to some kind of cache and set a timer expiring every 10 seconds to check whether privileges of the session owner are still valid. After the expiry time, the cache should remove the session. A Statement for that might look like this:
 
 ```csharp
 [Fact] public void
-ShouldAddCreatedSessionToCacheAndScheduleItsExpiryWhenExecuted()
+ShouldAddCreatedSessionToCacheAndScheduleItsPeriodicPrivilegesRefreshWhenExecuted()
 {
  //GIVEN
  var sessionData = Any.Instance<SessionData>();
@@ -134,7 +136,7 @@ ShouldAddCreatedSessionToCacheAndScheduleItsExpiryWhenExecuted()
  Received.InOrder(() =>
  {
   cache.Add(id, session);
-  periodicTasks.Schedule(TimeSpan.FromSeconds(10), session.RefreshPrivileges);
+  periodicTasks.RunEvery(TimeSpan.FromSeconds(10), session.RefreshPrivileges);
  });
 }
 ```
@@ -144,18 +146,18 @@ Note that I created a `PeriodicTasks` interface to model an abstraction for runn
 ```csharp
 interface PeriodicTasks
 {
- void Schedule(TimeSpan period, Action actionRanOnExpiry);
+ void RunEvery(TimeSpan period, Action actionRanOnExpiry);
 }
 ```
 
 In the Statement above, I only specified that a periodic operation should be scheduled. Specifying how the `PeriodicTasks` implementation carries out its job is out of scope.
 
-The `PeriodicTasks` interface is designed so that I don't have to pass a lambda, because that would make it harder to compare arguments between expected and actual invocations in the Statement. So if I had to pass an argument to the `Schedule` method, I would have probably designed the `PeriodicTasks` like this:
+The `PeriodicTasks` interface is designed so that I don't have to pass a lambda, because that would make it harder to compare arguments between expected and actual invocations in the Statement. So if I had to pass an argument to the `RunEvery` method, I would have probably designed the `PeriodicTasks` like this:
 
 ```csharp
 interface PeriodicTasks
 {
- void Schedule(TimeSpan period, Action<int> actionRanOnExpiry, int argument);
+ void RunEvery(TimeSpan period, Action<int> actionRanOnExpiry, int argument);
 }
 ```
 
@@ -164,115 +166,75 @@ or as an interface with a generic method:
 ```csharp
 interface PeriodicTasks
 {
- void Schedule<TArg>(TimeSpan period, Action<TArg> actionRanOnExpiry, TArg argument);
+ void RunEvery<TArg>(TimeSpan period, Action<TArg> actionRanOnExpiry, TArg argument);
 }
 ```
 
+If I needed different sets of arguments, I could just add more methods to the `PeriodicTasks` interface, provided I don't couple it to any specific domain-related class (in such a case, I'd rather split `PeriodicTasks` into several more domain-specific interfaces).
 
-//TODO no lambdas
-//TODO what if I want to use a func
-//TODO schedule private method
+### Expiry
 
+Specifying a case when the timer expires and the scheduled task needs to be executed is even easier. We just need to do what the timer code would do - invoke the scheduled code from our Statement. For my session example, assuming that an implementation of the `Session` interface is a class called `UserSession`, I could the following Statement to describe a behavior where losing privileges to access session content leads to event being generated:
 
-
-//TODO
-
-1. Timers are asynchronous in nature
-2. Timers consist of two signals - one outgoing and one incoming. We need to wait for the expiry, but 
-
-Timers are two cases - 1 that the timer was set, and 2 that timer has expired.
-
-In general, there are two cases where we interact with the operating system:
-
-We tell our code to use the operating system's resources (start a thread, write to a hard drive etc.)
-We tell the operating system to use our code (when a timer expires, when a thread execution finishes etc.)
-Timers
-The topic of today's post is a combination of both above cases. Timers work as a way to say "in X milliseconds (or any other time unit), invoke Y and in the meantime, let me do my job."
-
-
-
-The scheduling phase is where our code uses the timer and the calling back phase is where the timer uses our code. But before I show you how to properly handle this kind of situation, let's examine how things can go wrong.
-
-The time has come to draw a line between the behaviors of our code and the operating system. In a specification of a class using a timer, we want to describe three behaviors in particular:
-
-It should create the timer passing desired method as callback
-It should schedule the timer for desired number of time units
-It should perform a desired behavior when the callback is invoked
-To achieve this goal, we have to get rid of the timer by creating a thinnest possible wrapping layer. This layer has to be super thin because it's the code we're NOT going to write specs against. So, here we go - a timer wrapper:
-
-public interface IPeriodicExecution
+```csharp
+[Fact] public void 
+ShouldNotifyObserverThatSessionIsClosedOnPrivilegesRefreshWhenUserLosesAccessToSessionContent()
 {
-  TimerCallback Callback { get; }
-  void Schedule(int milliseconds);
-  void Halt();
-}
+ //GIVEN
+ var user = Substitute.For<User>();
+ var sessionContent = Any.Instance<SessionContent>();
+ var sessionEventObserver = Substitute.For<SessionEventObserver>();
+ var id = Any.Instance<SessionId>();
+ var session = new UserSession(id, sessionContent, user, sessionEventObserver);
+ 
+ user.HasAccessTo(sessionContent).Returns(false);
 
-By the way, this is not the main topic of this post, but note that because the IPeriodicExecution interface has this callback property I mentioned, we can actually test-drive this factory object in the following way:
+ //WHEN
+ session.RefreshPrivileges();
 
-[Fact]
-public void ShouldCreatePeriodicExecutionWithSpecifiedCallback()
-{
-  var anyCallback = Substitute.For<TimerCallback>();
-  var factory = new PeriodicExecutionFactory();
-  var periodicExecution = factory.Create(anyCallback);
-
-  Assert.AreSame(anyCallback, periodicExecution.Callback);
-}
-Ok, now we're ready to write the specs for the three behaviors from this section start. The first one: "Should schedule the timer for desired number of time units":
-
-[Fact]
-public void 
-ShouldSchedulePeriodicExecutionEverySpecifiedNumberOfMilliseconds()
-{
-  //GIVEN
-  var anyAction = Substitute.For<Action<DateTime>>();
-  var factory = Substitute.For<IPeriodicExecutionFactory>();
-  var periodicExecution = Substitute.For<IPeriodicExecution>();
-  var anyNumberOfMilliseconds = Any.PositiveInteger();
-  var notification = new CurrentTimeNotification2(anyAction, factory);
-
-  factory.Create(notification.NotifyAboutCurrentTime).Returns(periodicExecution);
-
-  //WHEN
-  notification.Schedule(anyNumberOfMilliseconds);
-
-  //THEN
-  periodicExecution.Received().Schedule(anyNumberOfMilliseconds);
-}
-And the second one: "Should perform a desired behavior when the callback is invoked":
-
-[Fact]
-public void 
-ShouldInvokeActionWithCurrentTimeWhenTimerExpires()
-{
-  //GIVEN
-  bool gotCalled = false;
-  var factory = Substitute.For<IPeriodicExecutionFactory>();
-  var notification = 
-    new CurrentTimeNotification2(_ => gotCalled = true, factory);
-
-  //WHEN
-  notification.NotifyAboutCurrentTime(Any.Object());
-
-  //THEN
-  Assert.IsTrue(gotCalled);
-}
-And that's it. Note that this set of two specifications better describe what the actual object does, not how it works when connected to the timer. This way, they're more accurate as specifications of the class than the one using Thread.Sleep().
-
-TODO: async timer in .NET 6
-
-```
-var timer = new PeriodicTimer(TimeSpan.FromSeconds(1));
-
-while (await timer.WaitForNextTickAsync())
-{
-    Console.WriteLine(DateTime.UtcNow);
+ //THEN
+ sessionEventObserver.Received(1).OnSessionClosed();
 }
 ```
 
-## Example: threads
+For the purpose of this example, I am skipping other Statements (the one above should not be the only one) and multithreaded access (timers are typically ran from other threads, so if they access mutable state, this state must be protected from concurrent modification).
 
-Threads: Special role for dispatching callbacks. Warning - probably not working very well with lambdas - needs method group. In the Spec we verify the thread was dispatched.
+## Threads
+
+I usually see threads used in two situations:
+
+1. To run several tasks in parallel. For example, we have several independent, heavy calculations and we want to do them at the same time (not one after another) to make the execution of the code end earlier.
+1. To defer some code to an asynchronous background job. This job can run even after the method that started it finishes execution.
+
+### Parallel execution
+
+In the first case, the threading is an implementation detail of the method being called by the Statement. The Statement itself doesn't have to know anything about it. Sometimes, though, it needs to know that certain operations might not execute in the same order every time. Consider the an example, where we evaluate payment for multiple employees. Each evaluation is a costly operation, so implementation-wise, we want to do them in parallel. A Statement describing such operation could look like this:
+
+```csharp
+public void [Fact]
+ShouldEvaluatePaymentForAllEmployees() BUGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+{
+ //GIVEN
+ var employee1 = Substitute.For<Employee>();
+ var employee2 = Substitute.For<Employee>();
+ var employee3 = Substitute.For<Employee>();
+ var employees = new Employees(employee1, employee2, employee3);
+
+ //WHEN
+ employees.EvaluatePayment();
+
+ //THEN
+ employee1.Received(1).EvaluatePayment();
+ employee2.Received(1).EvaluatePayment();
+ employee3.Received(1).EvaluatePayment();
+}
+```
+
+Note that the Statement doesn't mention multithreading at all, because that's the implementation detail of the `EvaluatePayment` method on `Employees`. However, note also that the Statement doesn't specify the order in which the payment is evaluated for each employee. Part of that is because the order doesn't matter and the Statement accurately describes that. If, however, the Statement specified the order, it would not only be overspecified, but also could run non-deterministically, as in the case of parallel execution, the order in which the methods would be called on each employee could be different.
+
+### Background task
+
+TODOOOOOOOOO
 
 
 ## Example: files (how to name this abstraction?)
