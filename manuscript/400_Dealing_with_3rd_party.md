@@ -1,26 +1,10 @@
 ﻿# Mock objects as a design tool
 
-## Outside-in development
-
-## Worked example
-
-Johhny and Benjamin, creating subscription, subscription is validated (as few fields as possible) when a subscription is created, a notification is sent. Use command pattern, collecting parameter, maybe observer. Note that until we do something with this subscription, there is no need to store it. Second example - scheduled expiry.
-
-## Programming by intention
-
 ## Responsibility-Driven Design
-
-## Specifying factories
 
 # What not to mock?
 
 ## Internals
-
-## How to use value objects in Statements?
-
-## How to specify value objects?
-
-## Terminal nodes in object graph
 
 # Guidance of test smells
 
@@ -29,20 +13,6 @@ Johhny and Benjamin, creating subscription, subscription is validated (as few fi
 ## Lots of stubbing
 
 ## Specifying private members
-
-## Mocking third party
-
-### Mocking time
-
-### Mocking random
-
-### Mocking long-running threads
-
-### Mocking timers with callbacks
-
-### Mocking asynchronous tasks
-
-### Mocking databases
 
 # Revisiting topics from chapter 1
 

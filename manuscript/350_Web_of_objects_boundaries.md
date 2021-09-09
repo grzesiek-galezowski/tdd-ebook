@@ -106,13 +106,13 @@ ShouldSayItIsExpiredWhenItsPastItsExpiryDate()
 }
 ```
 
-I could also do the second version of clock - the one with `IsPast()` method - in a very similar way. I would just need to put some extra intelligence into the `SettableClock`, duplicating tiny bits of real `Clock` implementation. In this case, it's not a big issue, but there can be cases when this can be an overkill. For a fake to be warranted, the fake implementation must be much, much simpler than the real implementation that we intend to use.
+I could also do the second version of the clock - the one with `IsPast()` method - in a very similar way. I would just need to put some extra intelligence into the `SettableClock`, duplicating tiny bits of real `Clock` implementation. In this case, it's not a big issue, but there can be cases when this can be an overkill. For a fake to be warranted, the fake implementation must be much, much simpler than the real implementation that we intend to use.
 
 An advantage of a fake is that it can be reused (e.g. a reusable settable clock abstraction can be found in Noda Time and Joda Time libraries). A disadvantage is that the more sophisticated code sits inside the fake, the more probable it is that it will contain bugs. If a very intelligent fake is still worth it despite the complexity (and I've seen several cases when it was), I'd consider writing some Specification around the fake implementation.
 
 ### Other usages of this approach
 
-The same approach as we used with a system clock can be taken with e.g. random value generators.
+The same approach as we used with a system clock can be taken with other sources of non-deterministic values, e.g. random value generators.
 
 ## Timers
 
@@ -128,11 +128,9 @@ Typically, a timer usage is composed of three stages:
 
 From the point of view of our collaboration design, the important parts are point 1 and 3. Let's tackle them one by one.
 
-//TODOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-
 ### Scheduling a periodic task
 
-First let's imagine we create a new session, add it to some kind of cache and set a timer expiring every 10 seconds to check whether privileges of the session owner are still valid. After the expiry time, the cache should remove the session. A Statement for that might look like this:
+First let's imagine we create a new session, add it to some kind of cache and set a timer expiring every 10 seconds to check whether privileges of the session owner are still valid. A Statement for that might look like this:
 
 ```csharp
 [Fact] public void
@@ -172,7 +170,7 @@ interface PeriodicTasks
 
 In the Statement above, I only specified that a periodic operation should be scheduled. Specifying how the `PeriodicTasks` implementation carries out its job is out of scope.
 
-The `PeriodicTasks` interface is designed so that I don't have to pass a lambda, because that would make it harder to compare arguments between expected and actual invocations in the Statement. So if I had to pass an argument to the `RunEvery` method, I would have probably designed the `PeriodicTasks` like this:
+The `PeriodicTasks` interface is designed so that I can pass a method group instead of a lambda, because requiring lambdas would make it harder to compare arguments between expected and actual invocations in the Statement. So if I wanted to schedule a periodic invocation of a method that has an argument (say, a single `int`), I would add a `RunEvery` method that would look like this:
 
 ```csharp
 interface PeriodicTasks
@@ -181,7 +179,7 @@ interface PeriodicTasks
 }
 ```
 
-or as an interface with a generic method:
+or I could make the method generic:
 
 ```csharp
 interface PeriodicTasks
@@ -190,7 +188,7 @@ interface PeriodicTasks
 }
 ```
 
-If I needed different sets of arguments, I could just add more methods to the `PeriodicTasks` interface, provided I don't couple it to any specific domain-related class (in such a case, I'd rather split `PeriodicTasks` into several more domain-specific interfaces).
+If I needed different sets of arguments, I could just add more methods to the `PeriodicTasks` interface, provided I don't couple it to any specific domain-related class (if I needed that, I'd rather split `PeriodicTasks` into several more domain-specific interfaces).
 
 ### Expiry
 
@@ -213,26 +211,28 @@ ShouldNotifyObserverThatSessionIsClosedOnPrivilegesRefreshWhenUserLosesAccessToS
  session.RefreshPrivileges();
 
  //THEN
- sessionEventObserver.Received(1).OnSessionClosed();
+ sessionEventObserver.Received(1).OnSessionClosed(id);
 }
 ```
 
-For the purpose of this example, I am skipping other Statements (the one above should not be the only one) and multithreaded access (timers are typically ran from other threads, so if they access mutable state, this state must be protected from concurrent modification).
+For the purpose of this example, I am skipping other Statements (for example you might want to specify a behavior when the `RefreshPrivileges` is called multiple times as that's what the timer is ultimately going to do) and multithreaded access (timer callbacks are typically executed from other threads, so if they access mutable state, this state must be protected from concurrent modification).
 
 ## Threads
 
 I usually see threads used in two situations:
 
-1. To run several tasks in parallel. For example, we have several independent, heavy calculations and we want to do them at the same time (not one after another) to make the execution of the code end earlier.
-1. To defer some code to an asynchronous background job. This job can run even after the method that started it finishes execution.
+1. To run several tasks in parallel. For example, we have several independent, heavy calculations and we want to do them at the same time (not one after another) to make the execution of the code finish earlier.
+1. To defer execution of some logic to an asynchronous background job. This job can still be running even after the method that started it finishes execution.
 
 ### Parallel execution
 
-In the first case, the threading is an implementation detail of the method being called by the Statement. The Statement itself doesn't have to know anything about it. Sometimes, though, it needs to know that certain operations might not execute in the same order every time. Consider the an example, where we evaluate payment for multiple employees. Each evaluation is a costly operation, so implementation-wise, we want to do them in parallel. A Statement describing such operation could look like this:
+In the first case -- one of parallel execution -- multithreading is an implementation detail of the method being called by the Statement. The Statement itself doesn't have to know anything about it. Sometimes, though, it needs to know that certain operations might not execute in the same order every time.
+
+Consider the an example, where we evaluate payment for multiple employees. Each evaluation is a costly operation, so implementation-wise, we want to do them in parallel. A Statement describing such operation could look like this:
 
 ```csharp
 public void [Fact]
-ShouldEvaluatePaymentForAllEmployees() BUGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
+ShouldEvaluatePaymentForAllEmployees()
 {
  //GIVEN
  var employee1 = Substitute.For<Employee>();
@@ -250,13 +250,12 @@ ShouldEvaluatePaymentForAllEmployees() BUGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG
 }
 ```
 
-Note that the Statement doesn't mention multithreading at all, because that's the implementation detail of the `EvaluatePayment` method on `Employees`. However, note also that the Statement doesn't specify the order in which the payment is evaluated for each employee. Part of that is because the order doesn't matter and the Statement accurately describes that. If, however, the Statement specified the order, it would not only be overspecified, but also could run non-deterministically, as in the case of parallel execution, the order in which the methods would be called on each employee could be different.
+Note that the Statement doesn't mention multithreading at all, because that's the implementation detail of the `EvaluatePayment` method on `Employees`. However, note also that the Statement doesn't specify the order in which the payment is evaluated for each employee. Part of that is because the order doesn't matter and the Statement accurately describes that. If, however, the Statement specified the order, it would not only be overspecified, but also could be evaluated as true or false non-deterministically. That's because in the case of parallel execution, the order in which the methods would be called on each employee could be different.
 
 ### Background task
 
-Using threads to run background tasks is like using timers that run only once. Use a similar approach to timers.
+Using threads to run background tasks is like using timers that run only once. Just use a similar approach to timers.
 
 ## Others
 
-There are other dependencies like I/O devices, random value generators or third-party SDKs (e.g. an SDK for connecting to a message bus), but I won't go into them as the strategy for them is the same - don't use them directly in your domain-related code. Instead, think about what role they play domain-wise and model that role as an interface. Then use the problematic resource inside a class implementing this interface. Such class will be covered by another kind of Specification which I will cover in the next part.
-
+There are other dependencies like I/O devices, random value generators or third-party SDKs (e.g. an SDK for connecting to a message bus), but I won't go into them as the strategy for them is the same - don't use them directly in your domain-related code. Instead, think about what role they play domain-wise and model that role as an interface. Then use the problematic resource inside a class implementing this interface. Such class will be covered by another kind of Specification which I will cover further in the book.
