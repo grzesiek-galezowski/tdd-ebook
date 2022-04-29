@@ -7,9 +7,9 @@
 * a single reminder to change the name of the factory that creates `ReservationInProgress` instances. 
 * Also, we have two places where a `NotImplementedException` suggests there's something left to implement. 
   * The first one is the mentioned factory. 
-  * The second one is the `NewReservationComand` class that we discovered when writing a Statement for the factory.
+  * The second one is the `NewReservationCommand` class that we discovered when writing a Statement for the factory.
 
-**Johnny:** Let's do the `NewReservationComand`. I suspect the complexity we put inside the controller will pay back here and we will be able to test-drive the command logic on our own terms.
+**Johnny:** Let's do the `NewReservationCommand`. I suspect the complexity we put inside the controller will pay back here and we will be able to test-drive the command logic on our own terms.
 
 **Benjamin:** Can't wait to see that. Here's the current code of the command:
 

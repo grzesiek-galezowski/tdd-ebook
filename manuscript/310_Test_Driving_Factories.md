@@ -118,7 +118,7 @@ I used `Any.Instance<>()` to generate anonymous instances of both the DTO and th
 
 **Johnny**: I thought you'd notice that. `ReservationCommand` is an interface. But an object needs to have a concrete type and this type is what we need to specify in this Statement. We don't have this type yet. We are on the verge of discovering it, and when we do, some new items will be added to our TODO list.
 
-**Benjamin**: I'll call the class `NewReservationComand` and modify my Statement to assert the type. Also, I think I know now how to name this Statement:
+**Benjamin**: I'll call the class `NewReservationCommand` and modify my Statement to assert the type. Also, I think I know now how to name this Statement:
 
 ```csharp
 public class TicketOfficeCommandFactorySpecification
@@ -202,7 +202,7 @@ public ReservationCommand CreateNewReservationCommand(
   }
 ```
 
-**Benjamin**: But this doesn't compile -- the `NewReservationComand` doesn't implement the `ReservationCommand` interface, I told you this before.
+**Benjamin**: But this doesn't compile -- the `NewReservationCommand` doesn't implement the `ReservationCommand` interface, I told you this before.
 
 **Johnny**: and the compiler forces us to implement this interface:
 
@@ -213,7 +213,7 @@ public class NewReservationCommand : ReservationCommand
 }
 ```
 
-The code still doesn't compile, because the interface has an `Execute()` method we need to implement in the `NewReservationComand`. Any implementation will do as the logic of this method is outside the scope of the current Statement. We only need to make the compiler happy. Our IDE can generate the default method body for us. This should do:
+The code still doesn't compile, because the interface has an `Execute()` method we need to implement in the `NewReservationCommand`. Any implementation will do as the logic of this method is outside the scope of the current Statement. We only need to make the compiler happy. Our IDE can generate the default method body for us. This should do:
 
 ```csharp
 public class NewReservationCommand : ReservationCommand

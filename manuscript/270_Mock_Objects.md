@@ -184,7 +184,7 @@ There is a tool that fulfills these three requirements better than others I know
 
 1. Mocks add almost no side effects of its own. Although they do have some hardcoded default behaviors (e.g. when a method returning `int` is called on a mock, it returns `0` by default), but these behaviors are as default and meaningless as they can possibly be. This allows us to put more trust in our Specification.
 1. Mocks are easy to control - every mocking library comes provided with an API for defining pre-canned method call results and for verification of received calls. Having such API provides convenience, at least from my point of view.
-1. Mocks can be trivial to maintain. While you can write your own mocks (i.e. your own implementation of an interface that allows setting up and verifying calls), mos of us use libraries that generate them, typically using a reflection feature of a programming language (in our case, C#). Typically, mock libraries free us from having to maintain mock implementations, lowering the friction of writing and maintaining our executable Statements.
+1. Mocks can be trivial to maintain. While you can write your own mocks (i.e. your own implementation of an interface that allows setting up and verifying calls), most of us use libraries that generate them, typically using a reflection feature of a programming language (in our case, C#). Typically, mock libraries free us from having to maintain mock implementations, lowering the friction of writing and maintaining our executable Statements.
 
  So let's use a mock in place of `Channel`! This makes our environment of the specified behavior look like this:
 

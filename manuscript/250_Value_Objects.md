@@ -51,7 +51,7 @@ From now on, let's put the money concept aside and focus only on the product nam
 
 ### What options do we have to address product name changes?
 
-To support new requirements, we have to find all places where we use the product name (by the way, an IDE will not help us much in this search, because we would be searching for all the occurrences of type `string`) and make the same change. Every time we need to do something like this (i.e. we have to make the same change in multiple places an there is a non-zero possibility we'll miss at least one of those places), it means that we have introduced redundancy. Remember? We talked about redundancy when discussing factories and mentioned that redundancy is about conceptual duplication that forces us to make the same change (not literally, but conceptually) in several places.
+To support new requirements, we have to find all places where we use the product name (by the way, an IDE will not help us much in this search, because we would be searching for all the occurrences of type `string`) and make the same change. Every time we need to do something like this (i.e. we have to make the same change in multiple places and there is a non-zero possibility we'll miss at least one of those places), it means that we have introduced redundancy. Remember? We talked about redundancy when discussing factories and mentioned that redundancy is about conceptual duplication that forces us to make the same change (not literally, but conceptually) in several places.
 
 Al Shalloway coined a humorous "law" regarding redundancy, called *The Shalloway's Law*, which says:
 

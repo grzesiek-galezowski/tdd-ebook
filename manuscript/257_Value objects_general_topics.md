@@ -106,7 +106,7 @@ public Date getDate() {
 
 which many of us tended to forget. This cloning approach, by the way, may have introduced a performance penalty because the objects were cloned every time, even when the code that was calling the `getDate()` had no intention of modifying the date[^dateoptimization].
 
-Even when we follow the suggestion of avoiding getters, the same applies when our class passes the date somewhere. Look at the body of a method, called `dumptInto()`:
+Even when we follow the suggestion of avoiding getters, the same applies when our class passes the date somewhere. Look at the body of a method, called `dumpInto()`:
 
 ```java
 public void dumpInto(Destination destination) {
