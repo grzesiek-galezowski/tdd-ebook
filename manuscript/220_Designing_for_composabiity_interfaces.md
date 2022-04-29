@@ -77,7 +77,7 @@ This does not mean that events or callbacks are bad. It's just that they are not
 
 ## Small interfaces
 
-Ok, so we said that he interfaces are "the way to go" for reaching the strong composability we're striving for. Does merely using interfaces guarantee us that the composability will be strong? The answer is "no" -- while using interfaces as "slots" is a necessary step in the right direction, it alone does not produce the best composability.
+Ok, so we said that the interfaces are "the way to go" for reaching the strong composability we're striving for. Does merely using interfaces guarantee us that the composability will be strong? The answer is "no" -- while using interfaces as "slots" is a necessary step in the right direction, it alone does not produce the best composability.
 
 One of the other things we need to consider is the size of interfaces. Let's state one thing that is obvious regarding this:
 
@@ -167,7 +167,7 @@ In this approach, we create more interfaces (which some of you may not like), bu
 It pays off. For example, one day, we may get a requirement that all writes to the organizational structure (i.e. the admin-related operations) have to be traced. In such case, all we have to do is to create a proxy class implementing `OrganizationalStructureAdminCommands` interface, which wraps the original class' methods with a notification to an observer (that can be either the trace that is required or anything else we like):
 
 ```csharp
-public class NotifyingAdminComands : OrganizationalStructureAdminCommands
+public class NotifyingAdminCommands : OrganizationalStructureAdminCommands
 {
   public NotifyingCommands(
     OrganizationalStructureAdminCommands wrapped,
@@ -187,7 +187,7 @@ public class NotifyingAdminComands : OrganizationalStructureAdminCommands
 }
 ```
 
-Note that when defining the above class, we only had to implement one interface: `OrganizationalStructureAdminCommands`, and could ignore the existence of `OrganizationalStructureClientCommands`. This is because of the interface split we did before. If we had not separated interfaces for admin and client access, our `NotifyingAdminComands` class would have to implement the `ListAllEmployees` method (and others) and make it delegate to the original wrapped instance. This is not difficult, but it's unnecessary effort. Splitting the interface into two smaller ones spared us this trouble. 
+Note that when defining the above class, we only had to implement one interface: `OrganizationalStructureAdminCommands`, and could ignore the existence of `OrganizationalStructureClientCommands`. This is because of the interface split we did before. If we had not separated interfaces for admin and client access, our `NotifyingAdminCommands` class would have to implement the `ListAllEmployees` method (and others) and make it delegate to the original wrapped instance. This is not difficult, but it's unnecessary effort. Splitting the interface into two smaller ones spared us this trouble. 
 
 #### Interfaces should model roles
 
