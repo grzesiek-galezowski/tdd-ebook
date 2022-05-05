@@ -21,11 +21,11 @@ You need to have an account on leanpub to access epub and mobi formats, but pdf 
 
 ### Additional Links
 
-<a href="https://github.com/grzesiek-galezowski/tdd-toolkit">
+<a href="https://github.com/grzesiek-galezowski/any">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/manuscript/images/webpage/tdd-toolkit.png" />C# (.NET Standard 2.0) TDD Toolkit
 </a>&nbsp;
-<a href="https://github.com/grzesiek-galezowski/any">
-  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/manuscript/images/webpage/tdd-toolkit.png" />C# (OLD) TDD Toolkit
+<a href="https://github.com/grzesiek-galezowski/tdd-toolkit">
+  <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/manuscript/images/webpage/tdd-toolkit.png" />C# (OLD) TDD Toolkit, dead
 </a>&nbsp;
 <a href="https://github.com/grzesiek-galezowski/AutoFixtureGenerator#any-method-helpers">
   <img src="https://raw.github.com/grzesiek-galezowski/tdd-ebook/master/manuscript/images/webpage/tdd-toolkit.png" />Java TDD Toolkit
