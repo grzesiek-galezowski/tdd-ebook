@@ -22,7 +22,7 @@ The language of choice for the code examples is C#. That said, I wanted the book
 
 ### Naming conventions
 
-Most languages have their default naming conventions. For example, in Java, a class name is written with pascal case (e.g. `UserAccount`), methods and fields are written with camel case, e.g. `payTaxes` and constants/readonly fields are typically written in underscored upper-case (e.g. `CONNECTED_NODES`).
+Most languages have their default naming conventions. For example, in Java, a class name is written with pascal case (e.g. `UserAccount`), methods and fields are written with camel case, e.g. `payTaxes` and constants/read-only fields are typically written in underscored upper-case (e.g. `CONNECTED_NODES`).
 
 C# uses pascal case for both classes and methods (e.g. `UserAccount`, `PayTaxes`, `ConnectedNodes`). For fields, there are several naming conventions. I chose the one starting with underscore (e.g. `_myDependency`). There are other minor differences, but these are the ones you are going to encounter quite often.
 
