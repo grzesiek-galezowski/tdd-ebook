@@ -2,9 +2,14 @@
 
 ## Responsibility-Driven Design
 
-# What not to mock?
+TDD with mocks follows RDD, so what?
+Model roles. Everything else might go into values and internals.
+But there is already a metaphor of the web
 
-## Internals
+Ok, so maybe a CRC card?
+
+Not every class is part of the web. One example is value objects. Another example are simple data structures, or DTOs.
+
 
 # Guidance of test smells
 
@@ -33,6 +38,8 @@
 until you pop it out through the constructor, it's object's private business.
 
 mocks rely on the boundaries being stable. If wrong on this, tests need to be rewritten, but the feedbak from tests allows stabilizing the boundaries further. And there are not that many tests to change as we test small pieces of code.
+
+well-designed interactions should limit the impact of change
 
 -# Part 4: Application architecture
 

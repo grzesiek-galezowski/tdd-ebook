@@ -41,6 +41,7 @@
 330_Test-Driving_Command.md
 340_Test-Driving_Value_object.md
 350_Web_of_objects_boundaries.md
+360_Internals.md
 End.md
 400_Dealing_with_3rd_party.md
 990_Further_reading.md
