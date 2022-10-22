@@ -45,7 +45,36 @@ class CountingObserver : Observer, CounterOwner
 }
 ```
 
-The `_count` field is owned and initialized by a `CountingObserver` instance. It's only exposed when its copy is passed to the `Handle` method. Sure, we could introduce a collaborator interface, e.g. called `Counter`, give it methods like `Increment()` and `GetValue()`, but for me, if all I want is passing the number how many times something is called, I'd rather make it a part of the class implementation to do the counting.
+The `_count` field is owned and initialized by a `CountingObserver` instance. It's only exposed when its copy is passed to the `Handle` method of the `out` object. Sure, we could introduce a collaborator interface, e.g. called `Counter`, give it methods like `Increment()` and `GetValue()`, but for me, if all I want is counting how many times something is called, I'd rather make it a part of the class implementation to do the counting.
+
+# Value object fields
+
+The counter from the last example was already a value, but I thought I'd mention about richer value objects.
+
+```csharp
+class CommandlineSession
+{
+ private AbsolutePath _workingDirectory;
+
+ public X(PathRoot root)
+ {
+  _workingDirectory = root.AsAbsolutePath();
+ }
+
+ public void Enter(DirectoryName dirName)
+ {
+  _workingDirectory = _workingDirectory.Append(dirName);
+ }
+
+ public void Execute(Command command)
+ {
+  command.ExecuteIn(_currentPath);
+ }
+ //...
+}
+```
+
+This `CommandlineSession` class has a private field called `_workingDirectory`, symbolizing the working directory of the current console session. Even though the initial value is based on passed argument, the field is managed internally and only passed to a command so that it knows where to execute.
 
 
 
