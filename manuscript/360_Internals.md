@@ -24,7 +24,7 @@ Overexposing internals leads, among others, to chatty protocols and big interfac
 
 In this chapter, I will give some examples of such internals.
 
-# Primitive fields
+## Primitive fields
 
 Consider the following `CountingObserver` toy class that counts how many times it was notified and allows passing that further:
 
@@ -47,7 +47,7 @@ class CountingObserver : Observer, CounterOwner
 
 The `_count` field is owned and initialized by a `CountingObserver` instance. It's only exposed when its copy is passed to the `Handle` method of the `out` object. Sure, we could introduce a collaborator interface, e.g. called `Counter`, give it methods like `Increment()` and `GetValue()`, but for me, if all I want is counting how many times something is called, I'd rather make it a part of the class implementation to do the counting.
 
-# Value object fields
+## Value object fields
 
 The counter from the last example was already a value, but I thought I'd mention about richer value objects.
 
@@ -76,8 +76,37 @@ class CommandlineSession
 
 This `CommandlineSession` class has a private field called `_workingDirectory`, symbolizing the working directory of the current console session. Even though the initial value is based on passed argument, the field is managed internally and only passed to a command so that it knows where to execute.
 
+## Collections
 
+Raw collections of items (like lists, hashsets, arrays etc.) aren't viewed as peers. Even if I write classed that accept collection interfaces as parameters (e.g. IList in C#), I never mock them, but rather, just use one of the built-in classes.
 
+Here's an example of a `RunningSessions` class initializing and utilizing a collection:
+
+```csharp
+public class SessionsList : Sessions
+{
+ private Dictionary<SessionId, Session> _sessions 
+  = new Dictionary<SessionId, Session>();
+
+ public void RunNew(SessionId id)
+ {
+  var session = _sessionFactory.CreateNewSession(id)
+  session.Start();
+  _sessions[id] = session;
+ }
+
+ public void StopAll()
+ {
+  foreach(var session in _sessions.Values())
+  {
+   _session.Stop();
+  }
+ }
+ //...
+}
+```
+
+The dictionary used here is not exposed to the external world.
 
 What is internal is a choice (new A(new B) vs new A()). Internal is a building block of a single web node.
 
