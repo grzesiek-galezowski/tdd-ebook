@@ -80,15 +80,15 @@ This `CommandlineSession` class has a private field called `_workingDirectory`, 
 
 Raw collections of items (like lists, hashsets, arrays etc.) aren't viewed as peers. Even if I write classed that accept collection interfaces as parameters (e.g. IList in C#), I never mock them, but rather, just use one of the built-in classes.
 
-Here's an example of a `RunningSessions` class initializing and utilizing a collection:
+Here's an example of a `InMemorySessions` class initializing and utilizing a collection:
 
 ```csharp
-public class SessionsList : Sessions
+public class InMemorySessions : Sessions
 {
  private Dictionary<SessionId, Session> _sessions 
   = new Dictionary<SessionId, Session>();
 
- public void RunNew(SessionId id)
+ public void StartNew(SessionId id)
  {
   var session = _sessionFactory.CreateNewSession(id)
   session.Start();
@@ -106,9 +106,65 @@ public class SessionsList : Sessions
 }
 ```
 
-The dictionary used here is not exposed to the external world.
+The dictionary used here is not exposed at all to the external world. It's only used internally. I can't pass a mock implementation and even if I could, I'd rather leave the behavior as owned by the `InMemorySessions`.
 
-What is internal is a choice (new A(new B) vs new A()). Internal is a building block of a single web node.
+## Toolbox classes and objects
+
+These classes and objects are not really abstractions of any specific domain, but they help make the implementation more concise, reducing the number of lines of code I have to write to get the job done. One example is a C# `Regex` class for regular expressions. Here's an example that utilizes a `Regex` instance to count the number of lines in a piece of text:
+
+```csharp
+class LocCalculator
+{
+ private static readonly Regex NewlineRegex 
+  = new Regex(@"\r\n|\r|\n", RegexOptions.Compiled);
+
+ public uint CalculateLinesCount(string content)
+ {
+  return NewlineRegex.Split(contentText).Length;
+ }
+}
+```
+
+Again, I feel like the knowledge on how to split a string into several lines should belong to the `LocCalculator` class. I wouldn't introduce and mock an abstraction (e.g. called a `LineSplitter` unless there were some kind of domain rules associated with splitting the text).
+
+## Third party library classes
+
+Below is an example that uses a C# fault injection framework, Simmy. The class decorates a real storage class and allows to configure throwing exceptions instead of talking to the storage object. The example might seem a little convoluted and the class isn't production-ready anyway, the only thing I need you to note is that there are a lot of classes and methods only used inside the class and not visible from the outside.
+
+```csharp
+public class FaultInjectablePersonStorage : PersonStorage
+{
+ private readonly PersonStorage _storage;
+ private readonly InjectOutcomePolicy _chaosPolicy;
+
+ public FaultInjectablePersonStorage(bool injectionEnabled, PersonStorage storage)
+ {
+  _storage = storage;
+  _chaosPolicy = MonkeyPolicy.InjectException(with =>
+    with.Fault(new Exception("thrown from exception attack!"))
+     .InjectionRate(1)
+     .EnabledWhen((context, token) => injectionEnabled)
+  );
+ }
+
+ public List<Person> GetPeople()
+ {
+  var capturedResult = _chaosPolicy.ExecuteAndCapture(() => _storage.GetPeople());
+  if (capturedResult.Outcome == OutcomeType.Failure)
+  {
+   throw capturedResult.FinalException;
+  }
+  else
+  {
+   return capturedResult.Result;
+  }
+ }
+}
+```
+
+## I/O, threading etc.
+
+Clock, BackgroundJobs.Run()
 
 Steve Freeman: small clusters of objects.
 
@@ -119,6 +175,7 @@ What internals do we have?
 3. Utils (e.g. I wrote my util for generating hash code or my own class for joining strings or calculations)
 4. library classes (if communication with library class is important, maybe wrap it with another class where it becomes an internal)
 5. synchronization primitives?
+6. I/O
 
 can value be internal?
 can data structure be internal?
