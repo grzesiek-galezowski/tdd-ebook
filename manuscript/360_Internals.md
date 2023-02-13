@@ -1,8 +1,8 @@
-# The boundaries of a class
+# What's inside the class?
+
+TODO reference to GOOS
 
 Design follows RDD process (lol). This way we discover a lot of peers of the current class.
-
-## Internals
 
 Internals are not stereotypes
 
@@ -18,36 +18,78 @@ class Sender
 }
 ```
 
-In this example, the `Recipient` is a peer of `Sender` in the web of objects I described in object-oriented primer (provided `Recipient` is not a value object or a data structure). Both `Sender` and `Recipient` are part of the web of objects I described in object-oriented primer. But not every class is part of the web. I already mentioned value objects and data structures. They might be part of the public API of a class but are not its peers. Another category is class internals - stuff that is created and owned by its instances. Internals are encapsulated inside the object and only exposed as needed. They are a part of why the objects of the class behave the way they do, but we cannot pass our own implementation to customize that behavior. This is why we can't mock the internals and we don't want to.
+In this example, the `Recipient` is a peer of `Sender` in the web of objects (provided `Recipient` is not a value object or a data structure). Both `Sender` and `Recipient` are part of the web of objects I described in object-oriented primer. But not every class is part of the web. I already mentioned value objects and data structures. They might be part of the public API of a class but are not its peers.
 
-Overexposing internals leads, among others, to chatty protocols and big interfaces, as we will see in the next chapters.
+Another category are internals - objects created and owned by other objects, tied to the lifespans of their owners.
 
-In this chapter, I will give some examples of such internals.
+## Internals are implementation details
 
-## Primitive fields
+Internals are encapsulated inside the object, hidden from the outside world - exposing them should be considered a rare exception rather than a rule. They are a part of why their owner objects behave the way they do, but we cannot pass our own implementation to customize that behavior. This is why we can't mock the internals. Luckily we also don't want to. Meddling into the internals of an object would be breaking encapsulation and coupling to the things that are volatile.
+
+Internals can be sometimes passed to other objects without breaking encapsulation. Let's take a look at this piece of code:
+
+```csharp
+public class MessageChain 
+{
+  private List<Message> _messages = new List<Message>();
+  private string _recipientAddress;
+
+  public MessageChain(String recipientAddress) 
+  {
+    _recipientAddress = recipientAddress;
+  }
+
+  public void Add(String title, String body) 
+  {
+    _messages.Add(new Message(_recipientAddress, title, body));
+  }
+
+  public void Send(MessageDestination destination) 
+  {
+    //let's assume SendMany() accepts an IReadOnlyList<Message>
+    destination.SendMany(_messages);
+  }
+}
+```
+
+In this example, the `_messages` object is passed to the `destination`, but the `destination` doesn't know where it got the list from, so this interaction doesn't necessarily expose structural details of the `MessageChain` class.
+
+## Examples of internals
+
+Below, I listed several examples of categories of objects that can become internals of other objects.
+
+### Primitive fields
 
 Consider the following `CountingObserver` toy class that counts how many times it was notified and allows passing that further:
 
 ```csharp
-class CountingObserver : Observer, CounterOwner
+class ObserverWithThreshold : Observer
 {
  private int _count = 0;
+ private Observer _nextObserver;
+ private int _threshold;
 
+ public ObserverWithThreshold(int threshold, Observer nextObserver)
+ {
+  _threshold = threshold;
+  _nextObserver = nextObserver;
+ }
+ 
  public void Notify()
  {
   _count++;
- }
- 
- public void DumpValueInto(Out out)
- {
-  out.Handle(_count);
+  if(_count > _threshold)
+  {
+    _count = 0;
+    _nextObserver.Notify();
+  }
  }
 }
 ```
 
 The `_count` field is owned and initialized by a `CountingObserver` instance. It's only exposed when its copy is passed to the `Handle` method of the `out` object. Sure, we could introduce a collaborator interface, e.g. called `Counter`, give it methods like `Increment()` and `GetValue()`, but for me, if all I want is counting how many times something is called, I'd rather make it a part of the class implementation to do the counting.
 
-## Value object fields
+### Value object fields
 
 The counter from the last example was already a value, but I thought I'd mention about richer value objects.
 
@@ -76,7 +118,7 @@ class CommandlineSession
 
 This `CommandlineSession` class has a private field called `_workingDirectory`, symbolizing the working directory of the current console session. Even though the initial value is based on passed argument, the field is managed internally and only passed to a command so that it knows where to execute.
 
-## Collections
+### Collections
 
 Raw collections of items (like lists, hashsets, arrays etc.) aren't viewed as peers. Even if I write classed that accept collection interfaces as parameters (e.g. IList in C#), I never mock them, but rather, just use one of the built-in classes.
 
@@ -108,7 +150,7 @@ public class InMemorySessions : Sessions
 
 The dictionary used here is not exposed at all to the external world. It's only used internally. I can't pass a mock implementation and even if I could, I'd rather leave the behavior as owned by the `InMemorySessions`.
 
-## Toolbox classes and objects
+### Toolbox classes and objects
 
 These classes and objects are not really abstractions of any specific domain, but they help make the implementation more concise, reducing the number of lines of code I have to write to get the job done. One example is a C# `Regex` class for regular expressions. Here's an example that utilizes a `Regex` instance to count the number of lines in a piece of text:
 
@@ -127,7 +169,7 @@ class LocCalculator
 
 Again, I feel like the knowledge on how to split a string into several lines should belong to the `LocCalculator` class. I wouldn't introduce and mock an abstraction (e.g. called a `LineSplitter` unless there were some kind of domain rules associated with splitting the text).
 
-## Third party library classes
+### Some third-party library classes
 
 Below is an example that uses a C# fault injection framework, Simmy. The class decorates a real storage class and allows to configure throwing exceptions instead of talking to the storage object. The example might seem a little convoluted and the class isn't production-ready anyway, the only thing I need you to note is that there are a lot of classes and methods only used inside the class and not visible from the outside.
 
@@ -162,7 +204,7 @@ public class FaultInjectablePersonStorage : PersonStorage
 }
 ```
 
-## I/O, threading etc.
+### I/O, threading etc.
 
 Clock, BackgroundJobs.Run()
 
