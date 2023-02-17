@@ -34,6 +34,8 @@ Another useful category are internals -- objects created and owned by other obje
 
 Internals are encapsulated inside its owner objects, hidden from the outside world. Exposing internals should be considered a rare exception rather than a rule. They are a part of why their owner objects behave the way they do, but we cannot pass our own implementation to customize that behavior. This is why we can't mock the internals. Luckily we also don't want to. Meddling into the internals of an object would be breaking encapsulation and coupling to the things that are volatile in our design.
 
+![An internal vs a peer](images/internals_vs_peers.png)
+
 Internals can be sometimes passed to other objects without breaking encapsulation. Let's take a look at this piece of code:
 
 ```csharp
