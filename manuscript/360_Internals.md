@@ -1,37 +1,45 @@
-# What's inside the class?
+# What's inside the object?
 
-TODO reference to GOOS
+## What are object's peers?
 
-Design follows RDD process (lol). This way we discover a lot of peers of the current class.
+So far we talked a lot about communication between objects by sending messages to each other and being composed in a web. This is how peer object work with each other.
 
-Internals are not stereotypes
+The name peer comes from the objects being on the same level of visibility - there is no hierarchical relationship between peers. When two peers collaborate, none of them can be called an owner of the other. They are connected by one object receiving a reference to another object.
 
-So far I said that an object exchanges messages with its peers.
+Here's an example
 
 ```csharp
 class Sender
 {
-    public Sender(Recipient c)
-    {
-        //...
-    }
+ public Sender(Recipient recipient)
+ {
+  _recipient = recipient
+  //...
+ }
 }
 ```
 
-In this example, the `Recipient` is a peer of `Sender` in the web of objects (provided `Recipient` is not a value object or a data structure). Both `Sender` and `Recipient` are part of the web of objects I described in object-oriented primer. But not every class is part of the web. I already mentioned value objects and data structures. They might be part of the public API of a class but are not its peers.
+In this example, the `Recipient` is a peer of `Sender` (provided `Recipient` is not a value object or a data structure). The sender doesn't know 
 
-Another category are internals - objects created and owned by other objects, tied to the lifespans of their owners.
+* the concrete type of `recipient`
+* when `recipient` was created
+* by whom `recipient` was created
+* how long will `recipient` object live after the `Sender` instance is destroyed
 
-## Internals are implementation details
+## What are object's internals?
 
-Internals are encapsulated inside the object, hidden from the outside world - exposing them should be considered a rare exception rather than a rule. They are a part of why their owner objects behave the way they do, but we cannot pass our own implementation to customize that behavior. This is why we can't mock the internals. Luckily we also don't want to. Meddling into the internals of an object would be breaking encapsulation and coupling to the things that are volatile.
+Not every object is part of the web. I already mentioned value objects and data structures. They might be part of the public API of a class but are not its peers.
+
+Another useful category are internals -- objects created and owned by other objects, tied to the lifespans of their owners.
+
+Internals are encapsulated inside its owner objects, hidden from the outside world. Exposing internals should be considered a rare exception rather than a rule. They are a part of why their owner objects behave the way they do, but we cannot pass our own implementation to customize that behavior. This is why we can't mock the internals. Luckily we also don't want to. Meddling into the internals of an object would be breaking encapsulation and coupling to the things that are volatile in our design.
 
 Internals can be sometimes passed to other objects without breaking encapsulation. Let's take a look at this piece of code:
 
 ```csharp
 public class MessageChain 
 {
-  private List<Message> _messages = new List<Message>();
+  private IReadOnlyList<Message> _messages = new List<Message>();
   private string _recipientAddress;
 
   public MessageChain(String recipientAddress) 
@@ -46,13 +54,12 @@ public class MessageChain
 
   public void Send(MessageDestination destination) 
   {
-    //let's assume SendMany() accepts an IReadOnlyList<Message>
     destination.SendMany(_messages);
   }
 }
 ```
 
-In this example, the `_messages` object is passed to the `destination`, but the `destination` doesn't know where it got the list from, so this interaction doesn't necessarily expose structural details of the `MessageChain` class.
+In this example, the `_messages` object is passed to the `destination`, but the `destination` doesn't know where it got this list from, so this interaction doesn't necessarily expose structural details of the `MessageChain` class.
 
 ## Examples of internals
 
@@ -205,6 +212,19 @@ public class FaultInjectablePersonStorage : PersonStorage
 ```
 
 ### I/O, threading etc.
+
+TODO:
+
+Explain what peers are and how they differ from internals. It's important to provide a clear definition of what peers are and how they differ from internals in order to help readers understand the concept.
+
+Provide examples of peers. Just like you have examples of internals, it would be helpful to provide examples of peers as well. For example, you could discuss classes that collaborate with the class you're describing, or other objects that the class interacts with.
+
+Address common misconceptions or confusion points. You could discuss common misconceptions or confusion points that people might have about the concept of peers vs internals, and explain why those misconceptions are incorrect. For example, some people might think that all dependencies should be considered internals, when in fact some dependencies should be treated as peers.
+
+Discuss the benefits of separating peers and internals. It would be helpful to explain why it's beneficial to separate peers and internals, and how doing so can make your code more maintainable, testable, and easier to understand.
+
+Provide best practices for identifying and separating peers and internals. You could provide some tips or best practices for identifying which parts of your code should be considered peers or internals, and how to separate them effectively.
+
 
 Clock, BackgroundJobs.Run()
 
