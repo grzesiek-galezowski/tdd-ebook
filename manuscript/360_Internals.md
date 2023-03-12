@@ -2,9 +2,9 @@
 
 ## What are object's peers?
 
-So far we talked a lot about communication between objects by sending messages to each other and being composed in a web. This is how peer object work with each other.
+So far I talked a lot about communication between objects by sending messages to each other and being composed in a web. This is how peer object work with each other.
 
-The name peer comes from the objects being on the same level of visibility - there is no hierarchical relationship between peers. When two peers collaborate, none of them can be called an owner of the other. They are connected by one object receiving a reference to another object.
+The name peer comes from the objects being working on equal footing -- there is no hierarchical relationship between peers. When two peers collaborate, none of them can be called an owner of the other. They are connected by one object receiving a reference to another object.
 
 Here's an example
 
@@ -19,12 +19,13 @@ class Sender
 }
 ```
 
-In this example, the `Recipient` is a peer of `Sender` (provided `Recipient` is not a value object or a data structure). The sender doesn't know 
+In this example, the `Recipient` is a peer of `Sender` (provided `Recipient` is not a value object or a data structure). The sender doesn't know:
 
 * the concrete type of `recipient`
 * when `recipient` was created
 * by whom `recipient` was created
 * how long will `recipient` object live after the `Sender` instance is destroyed
+* which other objects collaborate with `recipient`
 
 ## What are object's internals?
 
@@ -96,18 +97,41 @@ class ObserverWithThreshold : Observer
 }
 ```
 
-The `_count` field is owned and initialized by a `CountingObserver` instance. It's only exposed when its copy is passed to the `Handle` method of the `out` object. Sure, we could introduce a collaborator interface, e.g. called `Counter`, give it methods like `Increment()` and `GetValue()`, but for me, if all I want is counting how many times something is called, I'd rather make it a part of the class implementation to do the counting.
+The `_count` field is owned and initialized by a `CountingObserver` instance. It's only exposed when its copy is passed to the `Handle` method of the `out` object. 
+
+An example Statement of behavior for this class could look like this:
+
+```csharp
+[Fact] public void 
+ShouldNotifyTheNextObserverWhenItIsNotifiedMoreTimesThanTheThreshold()
+{
+ //GIVEN
+ var nextObserver = Substitute.For<Observer>();
+ var observer = new ObserverWithThreshold(2, nextObserver);
+ 
+ observer.Notify();
+ observer.Notify();
+
+ //WHEN
+ observer.Notify();
+ 
+ //THEN
+ nextObserver.Received(1).Notify();
+}
+```
+
+The current notification count is not exposed anywhere. I am only passing the threshold that that the notification count needs to exceed. If I really wanted, I could introduce a collaborator interface for the counter, e.g. called `Counter`, give it methods like `Increment()` and `GetValue()` and the pass a mock from the Statement, but for me, if all I want is counting how many times something is called, I'd rather make it a part of the class implementation to do the counting.
 
 ### Value object fields
 
 The counter from the last example was already a value, but I thought I'd mention about richer value objects.
 
 ```csharp
-class CommandlineSession
+public class CommandlineSession
 {
  private AbsolutePath _workingDirectory;
 
- public X(PathRoot root)
+ public CommandlineSession(PathRoot root)
  {
   _workingDirectory = root.AsAbsolutePath();
  }
@@ -119,17 +143,48 @@ class CommandlineSession
 
  public void Execute(Command command)
  {
-  command.ExecuteIn(_currentPath);
+  command.ExecuteIn(_workingDirectory);
  }
  //...
 }
 ```
 
-This `CommandlineSession` class has a private field called `_workingDirectory`, symbolizing the working directory of the current console session. Even though the initial value is based on passed argument, the field is managed internally and only passed to a command so that it knows where to execute.
+This `CommandlineSession` class has a private field called `_workingDirectory`, symbolizing the working directory of the current console session. Even though the initial value is based on passed argument, the field is managed internally and only passed to a command so that it knows where to execute. An example Statement for the behavior of the `CommandLineSession` could look like this:
+
+```csharp
+[Fact] public void
+ShouldExecuteCommandInEnteredWorkingDirectory()
+{
+ //GIVEN
+ var pathRoot = Any.Instance<PathRoot>();
+ var commandline = new CommandLineSession(pathRoot);
+ var subDirectoryLevel1 = Any,Insytance<DirectoryName>();
+ var subDirectoryLevel2 = Any,Insytance<DirectoryName>();
+ var subDirectoryLevel3 = Any,Insytance<DirectoryName>();
+ var command = Substitute.For<Command>();
+
+ commandline.Enter(subDirectoryLevel1);
+ commandline.Enter(subDirectoryLevel2);
+ commandline.Enter(subDirectoryLevel3);
+ 
+ //WHEN
+ commandLine.Execute(command);
+
+ //THEN
+ command.Received(1).Execute(
+  AbsolutePath.Combine(
+   pathRoot, 
+   subDirectoryLevel1,
+   subDirectoryLevel2,
+   subDirectoryLevel3));
+}
+```
+
+Again, I don't have any access to the internal `_workingDirectory` field. I can only predict its value and create an expected value in my Statement. Note that I am not even using the same methods to combine the paths - while the production code is using the `Append()` method, my Statement is using a static `Combine` method on an `AbsolutePath` type. This shows that my Statement is oblivious to how exactly the internal state is managed by the `CommandLineSession` class.
 
 ### Collections
 
-Raw collections of items (like lists, hashsets, arrays etc.) aren't viewed as peers. Even if I write classed that accept collection interfaces as parameters (e.g. IList in C#), I never mock them, but rather, just use one of the built-in classes.
+Raw collections of items (like lists, hashsets, arrays etc.) aren't viewed as peers. Even if I write classed that accept collection interfaces as parameters (e.g. `IList` in C#), I never mock them, but rather, use one of the built-in classes.
 
 Here's an example of a `InMemorySessions` class initializing and utilizing a collection:
 
@@ -138,10 +193,16 @@ public class InMemorySessions : Sessions
 {
  private Dictionary<SessionId, Session> _sessions 
   = new Dictionary<SessionId, Session>();
+ private SessionFactory _sessionFactory;
+
+ public InMemorySessions(SessionFactory sessionFactory)
+ {
+  _sessionFactory = sessionFactory;
+ }
 
  public void StartNew(SessionId id)
  {
-  var session = _sessionFactory.CreateNewSession(id)
+  var session = _sessionFactory.CreateNewSession(id);
   session.Start();
   _sessions[id] = session;
  }
@@ -157,7 +218,42 @@ public class InMemorySessions : Sessions
 }
 ```
 
-The dictionary used here is not exposed at all to the external world. It's only used internally. I can't pass a mock implementation and even if I could, I'd rather leave the behavior as owned by the `InMemorySessions`.
+The dictionary used here is not exposed at all to the external world. It's only used internally. I can't pass a mock implementation and even if I could, I'd rather leave the behavior as owned by the `InMemorySessions`. An example Statement for the `InMemorySessions` class demonstrated how the dictionary is not visible outside the class:
+
+```csharp
+[Fact] public void
+ShouldStopAddedSessionsWhenAskedToStopAll()
+{
+ //GIVEN
+ var sessionFactory = Substitute.For<SessionFactory>();
+ var sessions = new InMemorySessions(sessionFactory);
+ var sessionId1 = Any.Instance<SessionId>();
+ var sessionId2 = Any.Instance<SessionId>();
+ var sessionId3 = Any.Instance<SessionId>();
+ var session1 = Substitute.For<Session>();
+ var session2 = Substitute.For<Session>();
+ var session3 = Substitute.For<Session>();
+ 
+ sessionFactory.CreateNewSession(sessionId1)
+  .Returns(session1);
+ sessionFactory.CreateNewSession(sessionId2)
+  .Returns(session2);
+ sessionFactory.CreateNewSession(sessionId3)
+  .Returns(session3);
+
+ sessions.StartNew(sessionId1);
+ sessions.StartNew(sessionId2);
+ sessions.StartNew(sessionId3);
+
+ //WHEN
+ sessions.StopAll();
+
+ //THEN
+ session1.Received(1).Stop();
+ session2.Received(1).Stop();
+ session3.Received(1).Stop();
+}
+```
 
 ### Toolbox classes and objects
 
