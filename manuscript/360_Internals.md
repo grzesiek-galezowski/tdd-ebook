@@ -2,9 +2,9 @@
 
 ## What are object's peers?
 
-So far I talked a lot about communication between objects by sending messages to each other and being composed in a web. This is how peer object work with each other.
+So far I talked a lot about objects being composed in a web and communicating by sending messages to each other. They work together as *peers*.
 
-The name peer comes from the objects being working on equal footing -- there is no hierarchical relationship between peers. When two peers collaborate, none of them can be called an owner of the other. They are connected by one object receiving a reference to another object.
+The name peer comes from the objects being working on equal footing -- there is no hierarchical relationship between peers. When two peers collaborate, none of them can be called an "owner" of the other. They are connected by one object receiving a reference to another object.
 
 Here's an example
 
@@ -13,7 +13,7 @@ class Sender
 {
  public Sender(Recipient recipient)
  {
-  _recipient = recipient
+  _recipient = recipient;
   //...
  }
 }
@@ -33,7 +33,7 @@ Not every object is part of the web. I already mentioned value objects and data 
 
 Another useful category are internals -- objects created and owned by other objects, tied to the lifespans of their owners.
 
-Internals are encapsulated inside its owner objects, hidden from the outside world. Exposing internals should be considered a rare exception rather than a rule. They are a part of why their owner objects behave the way they do, but we cannot pass our own implementation to customize that behavior. This is why we can't mock the internals. Luckily we also don't want to. Meddling into the internals of an object would be breaking encapsulation and coupling to the things that are volatile in our design.
+Internals are encapsulated inside its owner objects, hidden from the outside world. Exposing internals should be considered a rare exception rather than a rule. They are a part of why their owner objects behave the way they do, but we cannot pass our own implementation to customize that behavior. This is also why we can't mock the internals - there is no extension point we can use. Luckily we also don't want to. Meddling into the internals of an object would be breaking encapsulation and coupling to the things that are volatile in our design.
 
 ![An internal vs a peer](images/internals_vs_peers.png)
 
@@ -42,35 +42,37 @@ Internals can be sometimes passed to other objects without breaking encapsulatio
 ```csharp
 public class MessageChain 
 {
-  private IReadOnlyList<Message> _messages = new List<Message>();
-  private string _recipientAddress;
+ private IReadOnlyList<Message> _messages = new List<Message>();
+ private string _recipientAddress;
 
-  public MessageChain(String recipientAddress) 
-  {
-    _recipientAddress = recipientAddress;
-  }
+ public MessageChain(string recipientAddress) 
+ {
+  _recipientAddress = recipientAddress;
+ }
 
-  public void Add(String title, String body) 
-  {
-    _messages.Add(new Message(_recipientAddress, title, body));
-  }
+ public void Add(string title, string body) 
+ {
+  _messages.Add(new Message(_recipientAddress, title, body));
+ }
 
-  public void Send(MessageDestination destination) 
-  {
-    destination.SendMany(_messages);
-  }
+ public void Send(MessageDestination destination) 
+ {
+  destination.SendMany(_messages);
+ }
 }
 ```
 
 In this example, the `_messages` object is passed to the `destination`, but the `destination` doesn't know where it got this list from, so this interaction doesn't necessarily expose structural details of the `MessageChain` class.
 
+The distinction between peers and internals was introduced by Steve Freeman and Nat Pryce in their book Growing Object-Oriented Software Guided By Tests.
+
 ## Examples of internals
 
-Below, I listed several examples of categories of objects that can become internals of other objects.
+How to discover that an object should be an internal rather than a peer? Below, I listed several examples of categories of objects that can become internals of other objects. I hope these examples help you train the sense of identifying the internals in your design.
 
-### Primitive fields
+### Primitives
 
-Consider the following `CountingObserver` toy class that counts how many times it was notified and allows passing that further:
+Consider the following `CountingObserver` toy class that counts how many times it was notified and when a threshold is reached, passes that notification further:
 
 ```csharp
 class ObserverWithThreshold : Observer
@@ -97,7 +99,7 @@ class ObserverWithThreshold : Observer
 }
 ```
 
-The `_count` field is owned and initialized by a `CountingObserver` instance. It's only exposed when its copy is passed to the `Handle` method of the `out` object. 
+The `_count` field is owned and maintained by a `CountingObserver` instance. It's invisible outside an `ObserverWithThreshold` object.
 
 An example Statement of behavior for this class could look like this:
 
@@ -120,11 +122,13 @@ ShouldNotifyTheNextObserverWhenItIsNotifiedMoreTimesThanTheThreshold()
 }
 ```
 
-The current notification count is not exposed anywhere. I am only passing the threshold that that the notification count needs to exceed. If I really wanted, I could introduce a collaborator interface for the counter, e.g. called `Counter`, give it methods like `Increment()` and `GetValue()` and the pass a mock from the Statement, but for me, if all I want is counting how many times something is called, I'd rather make it a part of the class implementation to do the counting.
+The current notification count is not exposed outside of the ObserverWithThreshold object. I am only passing the threshold that the notification count needs to exceed. If I really wanted, I could, instead of using an int, introduce a collaborator interface for the counter, e.g. called `Counter`, give it methods like `Increment()` and `GetValue()` and the pass a mock from the Statement, but for me, if all I want is counting how many times something is called, I'd rather make it a part of the class implementation to do the counting. It feels simpler if the counter is not exposed.
 
 ### Value object fields
 
 The counter from the last example was already a value, but I thought I'd mention about richer value objects.
+
+Consider a class representing a commandline session. It allows executing commands within the scope of a working directory. An implementation of this class could look like this:
 
 ```csharp
 public class CommandlineSession
@@ -149,7 +153,7 @@ public class CommandlineSession
 }
 ```
 
-This `CommandlineSession` class has a private field called `_workingDirectory`, symbolizing the working directory of the current console session. Even though the initial value is based on passed argument, the field is managed internally and only passed to a command so that it knows where to execute. An example Statement for the behavior of the `CommandLineSession` could look like this:
+This `CommandlineSession` class has a private field called `_workingDirectory`, representing the working directory of the current commandline session. Even though the initial value is based on the constructor argument, the field is managed internally from there on and only passed to a command so that it knows where to execute. An example Statement for the behavior of the `CommandLineSession` could look like this:
 
 ```csharp
 [Fact] public void
@@ -180,11 +184,11 @@ ShouldExecuteCommandInEnteredWorkingDirectory()
 }
 ```
 
-Again, I don't have any access to the internal `_workingDirectory` field. I can only predict its value and create an expected value in my Statement. Note that I am not even using the same methods to combine the paths - while the production code is using the `Append()` method, my Statement is using a static `Combine` method on an `AbsolutePath` type. This shows that my Statement is oblivious to how exactly the internal state is managed by the `CommandLineSession` class.
+Again, I don't have any access to the internal `_workingDirectory` field. I can only predict its value and create an expected value in my Statement. Note that I am not even using the same methods to combine the paths in both the Statement and the production code - while the production code is using the `Append()` method, my Statement is using a static `Combine` method on an `AbsolutePath` type. This shows that my Statement is oblivious to how exactly the internal state is managed by the `CommandLineSession` class.
 
 ### Collections
 
-Raw collections of items (like lists, hashsets, arrays etc.) aren't viewed as peers. Even if I write classed that accept collection interfaces as parameters (e.g. `IList` in C#), I never mock them, but rather, use one of the built-in classes.
+Raw collections of items (like lists, hashsets, arrays etc.) aren't typically viewed as peers. Even if I write a class that accepts a collection interface (e.g. `IList` in C#) as a parameter, I never mock the collection interface, but rather, use one of the built-in collections.
 
 Here's an example of a `InMemorySessions` class initializing and utilizing a collection:
 
@@ -257,26 +261,44 @@ ShouldStopAddedSessionsWhenAskedToStopAll()
 
 ### Toolbox classes and objects
 
-These classes and objects are not really abstractions of any specific domain, but they help make the implementation more concise, reducing the number of lines of code I have to write to get the job done. One example is a C# `Regex` class for regular expressions. Here's an example that utilizes a `Regex` instance to count the number of lines in a piece of text:
+Toolbox classes and objects are not really abstractions of any specific problem domain, but they help make the implementation more concise, reducing the number of lines of code I have to write to get the job done. One example is a C# `Regex` class for regular expressions. Here's an example of a line count calculator that utilizes a `Regex` instance to count the number of lines in a piece of text:
 
 ```csharp
 class LocCalculator
 {
  private static readonly Regex NewlineRegex 
-  = new Regex(@"\r\n|\r|\n", RegexOptions.Compiled);
+  = new Regex(@"\r\n|\n", RegexOptions.Compiled);
 
- public uint CalculateLinesCount(string content)
+ public uint CountLinesIn(string content)
  {
   return NewlineRegex.Split(contentText).Length;
  }
 }
 ```
 
-Again, I feel like the knowledge on how to split a string into several lines should belong to the `LocCalculator` class. I wouldn't introduce and mock an abstraction (e.g. called a `LineSplitter` unless there were some kind of domain rules associated with splitting the text).
+Again, I feel like the knowledge on how to split a string into several lines should belong to the `LocCalculator` class. I wouldn't introduce and mock an abstraction (e.g. called a `LineSplitter` unless there were some kind of domain rules associated with splitting the text). An example Statement describing the behavior of the calculator would look like this:
+
+```csharp
+[Fact] public void
+ShouldCountLinesDelimitedByCrLf()
+{
+ //GIVEN
+ var text = $"{Any.String()}\r\n{Any.String()}\r\n{Any.String()}";
+ var calculator = new LocCalculator();
+ 
+ //WHEN
+ var lineCount = calculator.CountLinesIn(text);
+
+ //THEN
+ Assert.Equal(3, lineCount);
+}
+```
+
+The regular expression object is nowhere to be seen - it remains hidden as an implementation detail of the `LocCalculator` class.
 
 ### Some third-party library classes
 
-Below is an example that uses a C# fault injection framework, Simmy. The class decorates a real storage class and allows to configure throwing exceptions instead of talking to the storage object. The example might seem a little convoluted and the class isn't production-ready anyway, the only thing I need you to note is that there are a lot of classes and methods only used inside the class and not visible from the outside.
+Below is an example that uses a C# fault injection framework, Simmy. The class decorates a real storage class and allows to configure throwing exceptions instead of talking to the storage object. The example might seem a little convoluted and the class isn't production-ready anyway. Note that a lot of classes and methods are only used inside the class and not visible from the outside.
 
 ```csharp
 public class FaultInjectablePersonStorage : PersonStorage
@@ -309,34 +331,29 @@ public class FaultInjectablePersonStorage : PersonStorage
 }
 ```
 
-### I/O, threading etc.
+An example Statement could look like this:
 
-TODO:
+```csharp
+[Fact] public void
+ShouldReturnPeopleFromInnerInstanceWhenTheirRetrievalIsSuccessfulAndInjectionIsDisabled()
+{
+ //GIVEN
+ var innerStorage = Substitute.For<PersonStorage>();
+ var peopleInInnerStorage = Any.List<Person>();
+ var storage = new FaultInjectablePersonStorage(false, innerStorage);
 
-Explain what peers are and how they differ from internals. It's important to provide a clear definition of what peers are and how they differ from internals in order to help readers understand the concept.
+ innerStorage.GetPeople().Returns(peopleFromInnerStorage);
 
-Provide examples of peers. Just like you have examples of internals, it would be helpful to provide examples of peers as well. For example, you could discuss classes that collaborate with the class you're describing, or other objects that the class interacts with.
+ //WHEN
+ var result = storage.GetPeople();
 
-Address common misconceptions or confusion points. You could discuss common misconceptions or confusion points that people might have about the concept of peers vs internals, and explain why those misconceptions are incorrect. For example, some people might think that all dependencies should be considered internals, when in fact some dependencies should be treated as peers.
+ //THEN
+ Assert.Equal(peopleInInnerStorage, result);
+}
+```
 
-Discuss the benefits of separating peers and internals. It would be helpful to explain why it's beneficial to separate peers and internals, and how doing so can make your code more maintainable, testable, and easier to understand.
+and it has no trace of the Simmy library.
 
-Provide best practices for identifying and separating peers and internals. You could provide some tips or best practices for identifying which parts of your code should be considered peers or internals, and how to separate them effectively.
+## Summary
 
-
-Clock, BackgroundJobs.Run()
-
-Steve Freeman: small clusters of objects.
-
-What internals do we have?
-
-1. Value objects, ints etc.
-2. Collections
-3. Utils (e.g. I wrote my util for generating hash code or my own class for joining strings or calculations)
-4. library classes (if communication with library class is important, maybe wrap it with another class where it becomes an internal)
-5. synchronization primitives?
-6. I/O
-
-can value be internal?
-can data structure be internal?
-Can value be a peer?
+In this chapter, I argued that not all communication between objects should be represented as public protocols. Instead, some of them should be encapsulated inside the object. I also provided several examples to help you find such internal collaborators.
