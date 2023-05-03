@@ -498,7 +498,7 @@ public class HiddenSession : Session
     _innerSession = innerSession;
   }
 
-  public void DoSomethig()
+  public void DoSomething()
   {
     // forward the message to wrapped instance:
     _innerSession.DoSomething();
