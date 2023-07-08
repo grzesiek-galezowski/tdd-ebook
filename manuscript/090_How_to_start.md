@@ -22,7 +22,7 @@ I have seen many people not caring about how their Statements are named. This is
 - `testWrongPacketOrder1()`
 - `testWrongPacketOrder2()`
 
-and try for yourself how difficult it is to answer the following questions:
+and see how difficult it is to answer the following questions:
 
 1. How do you know what situation each Statement describes?
 1. How do you know whether the Statement describes a single situation or several at the same time?
