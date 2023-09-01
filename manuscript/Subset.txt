@@ -1,2 +1,1 @@
-290_NeedDrivenDevelopment.md
-300_NeedDrivenRetrospective1.md
+370_Design_smells.md

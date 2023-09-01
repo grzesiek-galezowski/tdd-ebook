@@ -356,4 +356,4 @@ and it has no trace of the Simmy library.
 
 ## Summary
 
-In this chapter, I argued that not all communication between objects should be represented as public protocols. Instead, some of them should be encapsulated inside the object. I also provided several examples to help you find such internal collaborators.
+In this chapter, I argued that not all communication between objects should be represented as public protocols. Instead, some of it should be encapsulated inside the object. I also provided several examples to help you find such internal collaborators.
