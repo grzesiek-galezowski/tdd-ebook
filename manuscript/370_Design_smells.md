@@ -3,6 +3,7 @@
 ## General description
 
 what does smell mean?
+why test smells can mean code smells?
 
 ## Flavors
 
