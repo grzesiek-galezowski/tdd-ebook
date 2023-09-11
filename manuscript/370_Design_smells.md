@@ -9,21 +9,27 @@ why test smells can mean code smells?
 
 * testing the same thing in many places
   * Redundancy
+  * When this is not a problem - decoupling of different contexts, no real redundancy
 * Many mocks/ Bloated constructor (GOOS) / Too many dependencies (GOOS)
   * Coupling
   * Lack of abstractions
+  * Not a problem when: facades
 * Mock stubbing and verifying the same call
   * Breaking CQS
-* Blinking test (Any + boolean flags and ifs on them) 
+  * When not a problem: close to I/O boundary
+* Blinking test (Any + boolean flags and ifs on them)
   * too much focus on data instead of abstractions
   * lack of data encapsulation
+  * When not a problem: when it's only a test problem (badly written test). Still a problem but not design problem.
 * Excessive setups (sustainabletdd) - both preparing data & preparing the unit with additional calls 
   * chatty protocols
   * issues with cohesion
   * coupling (e.g. to lots of data that is needed)
+  * When not a problem: higher level tests (e.g. configuration upload) - maybe this still means bad higher level architecture?
 * Combinatorial explosion (TODO: confirm name)
   * cohesion issues?
   * too low abstraction level (e.g. ifs to collection)
+  * When not a problem: decision tables (domain logic is based on many decisions and we already decoupled them from other parts of logic)
 * Need to assert on private fields
   * Cohesion
 * pass-through tests (test simple forwarding of calls)
