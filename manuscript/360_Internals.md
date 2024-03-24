@@ -4,7 +4,7 @@
 
 So far I talked a lot about objects being composed in a web and communicating by sending messages to each other. They work together as *peers*.
 
-The name peer comes from the objects being working on equal footing -- there is no hierarchical relationship between peers. When two peers collaborate, none of them can be called an "owner" of the other. They are connected by one object receiving a reference to another object.
+The name peer comes from the objects working on equal footing -- there is no hierarchical relationship between peers. When two peers collaborate, none of them can be called an "owner" of the other. They are connected by one object receiving a reference to another object - its "address".
 
 Here's an example
 

@@ -1,4 +1,6 @@
-# Design smells
+# Design smells visible in the Specification
+
+Sometimes, when writing the Specification, certain code patterns occur that make the individual Statements hard to write, read or maintain. This may mean that the Specification code should be improved, maybe by extracting the common part into a method, or maybe by using a testing tool's feature. Before I reach that conclusion, however, I try to 
 
 ## General description
 
