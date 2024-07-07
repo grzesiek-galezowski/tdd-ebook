@@ -526,7 +526,7 @@ This concludes my writing on value objects. I never thought there would be so mu
 
 [^tddbyexample]: This example is loosely based on Kent Beck's book Test-Driven Development By Example.
 
-[^csharpstructs]: C# has structs, which can sometimes come in handy when implementing values, even though they have some constraints (see https://stackoverflow.com/questions/333829/why-cant-i-define-a-default-constructor-for-a-struct-in-net).
+[^csharpstructs]: C# has structs, which can sometimes come in handy when implementing values, even though they have some constraints (see https://stackoverflow.com/questions/333829/why-cant-i-define-a-default-constructor-for-a-struct-in-net). Also, since more recent releases, C# has records which can be sometimes used to cut some of the boilerplate.
 
 [^naivemoneyexample]: I am aware that this example looks a bit naive - after all, adding money in several currencies would imply they need to be converted to a single currency and the exchange rates would then apply, which could make us lose money. Kent Beck acknowledged and solved this problem in his book Test-Driven Development By Example - be sure to take a look at his solution if you're interested. 
 

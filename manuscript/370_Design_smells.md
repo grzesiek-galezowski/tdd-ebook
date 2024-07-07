@@ -19,7 +19,7 @@ why test smells can mean code smells?
 * Mock stubbing and verifying the same call
   * Breaking CQS
   * When not a problem: close to I/O boundary
-* Blinking test (Any + boolean flags and ifs on them)
+* Blinking test (Any + boolean flags and ifs on them, multiple ways of getting the same information)
   * too much focus on data instead of abstractions
   * lack of data encapsulation
   * When not a problem: when it's only a test problem (badly written test). Still a problem but not design problem.
