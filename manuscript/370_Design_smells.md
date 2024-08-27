@@ -1,6 +1,76 @@
 # Design smells visible in the Specification
 
-Sometimes, when writing the Specification, certain code patterns occur that make the individual Statements hard to write, read or maintain. This may mean that the Specification code should be improved, maybe by extracting the common part into a method, or maybe by using a testing tool's feature. Before I reach that conclusion, however, I try to 
+In earlier chapters, I stressed multiple times how mock objects can and should be used as design tools, helping flesh out the protocols between collaborating objects. There is a principle beneath that that I call *Test-design approach mismatch*. And it goes like this:
+
+"Test automation approach and design approach need to live in symbiosis, i.e. build on a similar sets of assumptions. If they do, they reinforce each other. If they don't, they cause friction."
+
+I find this to be universally true. For example, if I test an asynchronous application as if I was testing a synchronous application or if I try to test JSON web API using a clicking tool, my code will either not work correctly or look weird. I will probably need to put extra work to compensate for the mismatch in paradigms between my testing approach and my design approach. For this reason some who prefer much different design approaches [consider mock objects a smell](https://medium.com/javascript-scene/mocking-is-a-code-smell-944a70c90a6a).
+
+I am seeing it on the unit level as well. In this book, I am using the specification terminology instead of testing terminology. Thus I can say that by writing my Specification on unit level and using mock objects in my Statements, I am assuming the design has certain properties. If it doesn't , I will have a harder time reading the Specification and maintaining it.
+
+TODO write something more
+
+Sometimes, when writing the Specification, certain code patterns occur that make the individual Statements hard to write, read or maintain. This may mean that the Specification code should be improved, maybe by extracting the common part into a method, or maybe by using a testing tool's feature. Before I reach that conclusion, however, I try to XXXXXXXXXXXXXXXXX
+
+
+## Design smells' catalog
+
+### Specifying the same behavior in many places
+
+Sometimes, when I write a Statement, I have a deja vu and start thinking "I remember specifying a behavior like this already". I will feel this especially when that other time is not so long ago, maybe even a couple of minutes.
+
+TODO: an example where I have two implementations of the same interfaces and they contain partially the same behavior (e.g. one method needs to be implemented in each and the implementation is the same).
+
+I then find my motivation to specify the same behavior for the second or third time dropping. This may be a signal that maybe I should extract the common behavior to a separate role or maybe introduce a value object and use it in both the Statement and the implementation.
+
+One way or another, it's a sign of redundancy creeping in.
+
+#### When this is not a problem
+
+TODO: decoupling of different contexts, no real redundancy
+TODO: Not a real redundancy
+
+### Many mocks
+
+Sometimes, when writing a Statement I find myself creating many mock objects. I don't think there's a good specific number, but the situation I'm looking for is when a fatigue sets in: "oh, ANOTHER mock..?".
+
+Having many mocks can be a result of multiple design issues:
+
+#### Too fine-grained role separation
+
+can we introduce too many roles? Probably.
+
+For example, we might have a cache class playing three roles: `ItemWriter` for saving items, `ItemReader` for reading items and `ExpiryCheck` for checking if a specific item is expired. While I consider striving for more fine-grained roles to be a good idea, if all of them are used in the same place, we now have to create three mocks for what seems like a consistent set of obligations scattered across three different interfaces.
+
+#### Doing too much
+
+It may be that a class needs lots of dependencies because it does too much. It may do validation, read configuration, page through persistent records, handle errors etc. The problem with this is that when the class is coupled to too many things, there are many reasons for the class to change.
+
+A remedy for this could be to extract parts of the logic into separate classes so that our specified class does less with less peers.
+
+#### Mocks returning mocks returning mocks
+
+This one is discussed further, because it's a separate problem. Still, one of the symptoms of it may be many mocks needed in a Statement.
+
+
+0. too fine grained role separation
+1. Many mocks - coupling maybe extract some
+2. too many set up return values - probably not tell don't ask
+3. too many unused mocks - probably an issue with cohesion (facades are OK)
+
+### Mock stubbing and verifying the same call
+
+```csharp
+interface ISlotAssignment
+{
+  public void AssignSlot(int slotNumber);
+}
+```
+
+
+
+### Trying to mock a third-party interface
+
 
 ## General description
 

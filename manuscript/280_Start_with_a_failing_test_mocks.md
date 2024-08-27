@@ -40,7 +40,7 @@ public class DataDispatch
 }
 ```
 
-Where did I get this class from in this shape? Well, let's assume for now that I am in the middle of development and this class is a result of my previous TDD activities (after reading this and the next chapter, you'll hopefully have a better feel on how it happens).
+Where did I get this class from in this shape? Well, let's assume for now that I am in the middle of development and this class is a result of my earlier TDD activities (after reading this and the next chapter, you'll hopefully have a better feel on how it happens).
 
 ## The first behavior
 
@@ -63,9 +63,9 @@ ShouldXXXXXXXXXYYY() //TODO give a better name
 
 Note several things:
 
-1. I'm currently using a dummy name for the Statement and I added a TODO item to my list to correct it later when I define the purpose and behavior of `DataDispatch`.
+1. I'm now using a placeholder name for the Statement and I added a TODO item to my list to correct it later when I define the purpose and behavior of `DataDispatch`.
 1. According to its signature, the `ApplyTo()` method takes an argument, but I didn't provide any in the Statement. For now, I don't want to think too hard, I just want to brain-dump everything I know.
-1. the `//THEN` section is empty for now -- it only contains a single assertion that is designed to fail when the execution flow reaches it (this way I protect myself from mistakenly making the Statement true until I state my real expectations). I will define the `//THEN` section once I figure out what is the purpose that I want to give this class and the behavior that I want to specify.
+1. the `//THEN` section is empty for now -- it only has a single assertion that is designed to fail when the execution flow reaches it (this way I protect myself from mistakenly making the Statement true until I state my real expectations). I will define the `//THEN` section once I figure out what is the purpose that I want to give this class and the behavior that I want to specify.
 1. If you remember the `Channel` interface from the last chapter, then imagine that it doesn't exist yet and that I don't even know that I will need it. I will "discover" it later.
 
 ### Leaning on the compiler

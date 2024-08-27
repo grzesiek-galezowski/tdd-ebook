@@ -353,7 +353,7 @@ There are some preconditions for this approach to work, but I will cover them wh
 
 ## Interface discovery and the sources of abstractions
 
-As promised, the previous chapter included some interface discovery, even though it wasn't a typical way of applying this approach. This is because, as I mentioned, the goal of the Statement was to describe integration between the framework and the application code. Still, writing the Statement allowed Johnny and Benjamin to discover what their controller needs from the application to pass all the necessary data to it and to get the result without violating the command-query separation principle.
+As promised, the earlier chapter included some interface discovery, even though it wasn't a typical way of applying this approach. This is because, as I mentioned, the goal of the Statement was to describe integration between the framework and the application code. Still, writing the Statement allowed Johnny and Benjamin to discover what their controller needs from the application to pass all the necessary data to it and to get the result without violating the command-query separation principle.
 
 The different abstractions Johnny pulled into existence were driven by:
 
