@@ -45,18 +45,49 @@ ShouldReportAllEmployeesWhenExecuted()
 }
 ```
 
-TODO another report and header and footer to a separate class.
+Now, another Statement for a different rule:
 
-TODO: an example where I have two implementations of the same interfaces and they contain partially the same behavior (e.g. one method needs to be implemented in each and the implementation is the same).
+```csharp
+[Fact] public void
+ShouldReportTotalCost()
+{
+  //GIVEN
+  var calculatedTotalCost = Any.Integer();
+  var reportBuilder = Substitute.For<ReportBuilder>();
+  var costReportingRule = new EmployeeReport(totalCost, reportBuilder);
 
-I then find my motivation to specify the same behavior for the second or third time dropping. This may be a signal that maybe I should extract the common behavior to a separate role or maybe introduce a value object and use it in both the Statement and the implementation.
+  //WHEN
+  employeeReportingRule.Execute();
 
-One way or another, it's a sign of redundancy creeping in.
+  //THEN
+  Received.InOrder(() =>
+  {
+    reportBuilder.AddHeader();
+    reportBuilder.AddTotalCost(totalCost);
+    reportBuilder.AddFooter();
+  });
+}
+```
+
+And note that I have to specify again that a header and a footer is added to the report. This might mean there is redundancy in the design and maybe every report or at least most of them, need a header and a footer. This observation, amplified of the feeling of pointlessness from describing the same behavior several times, may lead me to try to extract some logic into a separate object, maybe a decorator, that will add footer before the main part of the report and footer at the end.
 
 #### When this is not a problem
 
-TODO: decoupling of different contexts, no real redundancy
-TODO: Not a real redundancy
+The trick with recognizing redundancy in the design is to detect whether the behavior in both places will change for the same reasons and in the same way. This is usually true if both places duplicate the same domain rule. But consider these two functions:
+
+```csharp
+double CmToM(double value)
+{ 
+  return value/100;
+}
+
+double PercentToFraction(double value)
+{ 
+  return value/100;
+}
+```
+
+While the implementation is the same, the domain rule is different. In such situations, we're not talking about redundancy, but coincidence.
 
 ### Many mocks
 
