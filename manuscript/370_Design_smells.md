@@ -87,7 +87,7 @@ double PercentToFraction(double value)
 }
 ```
 
-While the implementation is the same, the domain rule is different. In such situations, we're not talking about redundancy, but coincidence.
+While the implementation is the same, the domain rule is different. In such situations, we're not talking about redundancy, but coincidence. Also see [Vladimir Khorikov's excellent post about this topic](https://enterprisecraftsmanship.com/posts/dry-damp-unit-tests/)
 
 ### Many mocks
 
