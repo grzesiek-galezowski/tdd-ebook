@@ -87,19 +87,16 @@ double PercentToFraction(double value)
 }
 ```
 
-While the implementation is the same, the domain rule is different. In such situations, we're not talking about redundancy, but coincidence. Also see [Vladimir Khorikov's excellent post about this topic](https://enterprisecraftsmanship.com/posts/dry-damp-unit-tests/)
+While the implementation is the same, the domain rule is different. In such situations, we're not talking about redundancy, but coincidence. Also see [Vladimir Khorikov's excellent post on this topic](https://enterprisecraftsmanship.com/posts/dry-damp-unit-tests/). 
+
+Redundancy in the code is often referred to as "DRY (don't repeat yourself) violation". Remember that DRY is about domain rules, not code.
 
 ### Many mocks
 
-Sometimes, when writing a Statement I find myself creating many mock objects. I don't think there's a good specific number, but the situation I'm looking for is when a fatigue sets in: "oh, ANOTHER mock..?".
+So far, I have advertised using mocks in modelling roles in the Statements. So, mocking is good, right? Well, not exactly. Through mock objects, we can see how the class we specify interacts with its context. If the interactions are complex, then the Statements will show that. This isn't something we should ignore. Quite the contrary, the ability to see this problem through our Statements is one of the main reasons we use mocks.
 
-Having many mocks can be a result of several design issues:
+One of the symptoms of the design issues is that we have too many mocks. We can feel the pain either when writing the Statement ("oh no, I need another mock") or when reading ("so many mocks, I can't see where something real happens").
 
-#### Too fine-grained role separation
-
-can we introduce too many roles? Probably.
-
-For example, we might have a cache class playing three roles: `ItemWriter` for saving items, `ItemReader` for reading items and `ExpiryCheck` for checking if a specific item is expired. While I consider striving for more fine-grained roles to be a good idea, if all are used in the same place, we now have to create three mocks for what seems like a consistent set of obligations scattered across three different interfaces.
 
 #### Doing too much
 
@@ -233,6 +230,16 @@ Many times, I encountered people using data generators such as `Any` as a free p
 TODO: example
 
 TODO: lack of abstraction
+
+TODO: do I need this?
+
+#### Too fine-grained role separation
+
+can we introduce too many roles? Probably.
+
+For example, we might have a cache class playing three roles: `ItemWriter` for saving items, `ItemReader` for reading items and `ExpiryCheck` for checking if a specific item is expired. While I consider striving for more fine-grained roles to be a good idea, if all are used in the same place, we now have to create three mocks for what seems like a consistent set of obligations scattered across three different interfaces.
+
+
 
 ## General description
 
