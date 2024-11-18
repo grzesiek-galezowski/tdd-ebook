@@ -466,7 +466,7 @@ ShouldDisplayEnteredDigits()
 }
 ```
 
-**Johnny:** I see that you're learning fast. You got the parts about naming ans structuring a Statement right. There's one thing we will have to work on here though.
+**Johnny:** I see that you're learning fast. You got the parts about naming and structuring a Statement right. There's one thing we will have to work on here though.
 
 **Benjamin:** What is it?
 
