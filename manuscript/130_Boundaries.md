@@ -173,8 +173,8 @@ This approach has two advantages:
 
 However, there is also one disadvantage -- we can't be sure the newly added enum member is used in this Statement. In the previous example, we didn't care that much about the values that were used, because:
 
-- `char` range was quite large so specifying the behaviors for all the values could prove troublesome and inefficient given our desired confidence level,
-- `char` is a fixed set of values -- we can't expand `char` as we expand enums, so there is no need to worry about the future.
+- `int` range was quite large so specifying the behaviors for all the values could prove troublesome and inefficient given our desired confidence level,
+- `int` is a fixed set of values -- we can't expand `int` as we expand enums, so there is no need to worry about the future.
 
 So what if there are only two more roles except `Roles.Admin`, e.g. `Auditor` and `CasualUser`? In such cases, I sometimes write a Statement that's executed against all the non-exceptional values, using xUnit.net's `[Theory]` attribute that allows me to execute the same Statement code with different sets of arguments. An example here would be:
 
