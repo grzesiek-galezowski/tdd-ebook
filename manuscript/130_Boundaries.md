@@ -27,7 +27,7 @@ ShouldPopLastPushedItem()
 }
 ```
 
-In this case, the values of the first two integer numbers pushed on the stack doesn't matter -- the described relationship between input and output is independent of the actual values we use. As we saw in the last chapter, this is the typical case where we would apply Constrained Non-Determinism.
+In this case, the values of the first two integer numbers pushed on the stack do not matter -- the described relationship between input and output is independent of the actual values we use. As we saw in the last chapter, this is the typical case where we would apply Constrained Non-Determinism.
 
 Sometimes, however, specified objects exhibit different behaviors based on what is passed to their constructors or methods or what they get by calling other objects. For example:
 
@@ -349,10 +349,10 @@ The previous examples focused on a single boundary. So, what about a situation 
 
 ### Example -- driving license
 
-Let's consider the following example: we live in a country where a citizen can get a driving license only after their 18th birthday, but before 65th (the government decided that people after 65 may have worse sight and that it's safer not to give them new driving licenses). Let's assume that are trying to develop a class that answers the question of whether we can apply for a driving license and the values returned by this query is as follows:
+Let's consider the following example: we live in a country where a citizen can get a driving license only after their 18th birthday, but before 65th (the government decided that people after 65 may have worse sight and that it's safer not to give them new driving licenses). Let's assume that we are trying to develop a class that answers the question of whether we can apply for a driving license and the values returned by this query is as follows:
 
 1. Age \< 18 -- returns enum value `QueryResults.TooYoung`
-2. 18 \<= age \>= 65 -- returns enum value `QueryResults.AllowedToApply`
+2. 18 \<= age \<= 65 -- returns enum value `QueryResults.AllowedToApply`
 3. Age \> 65 -- returns enum value `QueryResults.TooOld`
 
 Now, remember I wrote that I specify the behaviors with boundaries by using the edge values? This approach, when applied to the situation I just described, would give me the following Statements:
