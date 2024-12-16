@@ -27,7 +27,7 @@ ShouldPopLastPushedItem()
 }
 ```
 
-In this case, the values of the first two integer numbers pushed on the stack doesn't matter -- the described relationship between input and output is independent of the actual values we use. As we saw in the last chapter, this is the typical case where we would apply Constrained Non-Determinism.
+In this case, the values of the first two integer numbers pushed on the stack do not matter -- the described relationship between input and output is independent of the actual values we use. As we saw in the last chapter, this is the typical case where we would apply Constrained Non-Determinism.
 
 Sometimes, however, specified objects exhibit different behaviors based on what is passed to their constructors or methods or what they get by calling other objects. For example:
 
