@@ -352,7 +352,7 @@ The previous examples focused on a single boundary. So, what about a situation 
 Let's consider the following example: we live in a country where a citizen can get a driving license only after their 18th birthday, but before 65th (the government decided that people after 65 may have worse sight and that it's safer not to give them new driving licenses). Let's assume that we are trying to develop a class that answers the question of whether we can apply for a driving license and the values returned by this query is as follows:
 
 1. Age \< 18 -- returns enum value `QueryResults.TooYoung`
-2. 18 \<= age \>= 65 -- returns enum value `QueryResults.AllowedToApply`
+2. 18 \<= age \<= 65 -- returns enum value `QueryResults.AllowedToApply`
 3. Age \> 65 -- returns enum value `QueryResults.TooOld`
 
 Now, remember I wrote that I specify the behaviors with boundaries by using the edge values? This approach, when applied to the situation I just described, would give me the following Statements:
